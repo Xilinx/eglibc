@@ -1,0 +1,8 @@
+2006-08-23  Joseph S. Myers  <joseph@codesourcery.com>
+
+	* manual/arith.texi (fesetexceptflag): Use single line for
+	@deftypefun.
+	* manual/sysinfo.texi (sysctl): Likewise.
+	* manual/errno.texi (error_print_progname): Remove space between
+	"error_print_progname" and ")".
+
