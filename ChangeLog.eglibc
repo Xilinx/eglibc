@@ -1,3 +1,10 @@
+2006-08-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/atest-exp.c (main): Cast hex value to mp_limb_t before
+	shifting.
+	* math/atest-exp2.c (read_mpn_hex): Likewise.
+	* math/atest-sincos.c (main): Likewise.
+
 2006-08-23  Joseph S. Myers  <joseph@codesourcery.com>
 
 	* manual/arith.texi (fesetexceptflag): Use single line for

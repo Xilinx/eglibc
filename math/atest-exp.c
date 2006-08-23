@@ -171,7 +171,9 @@ main (void)
 
    memset (e2, '\0', sizeof (mp1));
    for (i = -1; i < 100 && i < FRAC / 4; i++)
-     e2[(FRAC - i * 4 - 4) / mpbpl] |= ((strchr (hexdig, exp1[i + 1]) - hexdig)
+     e2[(FRAC - i * 4 - 4) / mpbpl] |= ((mp_limb_t) (strchr (hexdig,
+							     exp1[i + 1])
+						     - hexdig)
 					<< (FRAC - i * 4 - 4) % mpbpl);
 
    if (mpn_cmp (ex, e2, SZ) >= 0)

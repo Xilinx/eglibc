@@ -73,7 +73,8 @@ read_mpn_hex(mp_limb_t *x, const char *str)
 
   memset (x, 0, sizeof (mp1));
   for (i = -1; i < 100 && i < FRAC / 4; ++i)
-    x[(FRAC - i * 4 - 4) / mpbpl] |= ((strchr (hexdig, str[i + 1]) - hexdig)
+    x[(FRAC - i * 4 - 4) / mpbpl] |= ((mp_limb_t) (strchr (hexdig, str[i + 1])
+						   - hexdig)
 				      << (FRAC - i * 4 - 4) % mpbpl);
 }
 
