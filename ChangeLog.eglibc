@@ -1,5 +1,10 @@
 2006-08-23  Joseph Myers  <joseph@codesourcery.com>
 
+	* soft-fp/quad.h (_FP_UNION_Q): Use _FP_W_TYPE for frac
+	bit-fields.
+
+2006-08-23  Joseph Myers  <joseph@codesourcery.com>
+
 	* math/atest-exp.c (main): Cast hex value to mp_limb_t before
 	shifting.
 	* math/atest-exp2.c (read_mpn_hex): Likewise.

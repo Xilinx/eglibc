@@ -178,11 +178,11 @@ union _FP_UNION_Q
 #if __BYTE_ORDER == __BIG_ENDIAN
     unsigned sign  : 1;
     unsigned exp   : _FP_EXPBITS_Q;
-    unsigned long frac1 : _FP_FRACBITS_Q-(_FP_IMPLBIT_Q != 0)-_FP_W_TYPE_SIZE;
-    unsigned long frac0 : _FP_W_TYPE_SIZE;
+    _FP_W_TYPE frac1 : _FP_FRACBITS_Q-(_FP_IMPLBIT_Q != 0)-_FP_W_TYPE_SIZE;
+    _FP_W_TYPE frac0 : _FP_W_TYPE_SIZE;
 #else
-    unsigned long frac0 : _FP_W_TYPE_SIZE;
-    unsigned long frac1 : _FP_FRACBITS_Q-(_FP_IMPLBIT_Q != 0)-_FP_W_TYPE_SIZE;
+    _FP_W_TYPE frac0 : _FP_W_TYPE_SIZE;
+    _FP_W_TYPE frac1 : _FP_FRACBITS_Q-(_FP_IMPLBIT_Q != 0)-_FP_W_TYPE_SIZE;
     unsigned exp   : _FP_EXPBITS_Q;
     unsigned sign  : 1;
 #endif
