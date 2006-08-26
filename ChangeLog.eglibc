@@ -1,3 +1,16 @@
+2006-08-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* io/test-lfs.c (do_prepare): Give name_len type size_t.
+	* io/tst-fcntl.c (do_prepare): Likewise.
+	* posix/tst-exec.c (do_prepare): Likewise.
+	* posix/tst-preadwrite.c (do_prepare): Likewise.
+	* posix/tst-spawn.c (do_prepare): Likewise.
+	* posix/tst-truncate.c (do_prepare): Likewise.
+	* rt/tst-aio.c (do_prepare): Likewise.
+	* rt/tst-aio64.c (do_prepare): Likewise.
+	* stdlib/test-canon2.c (do_prepare): Give test_dir_len type
+	size_t.
+
 2006-08-23  Joseph Myers  <joseph@codesourcery.com>
 
 	* elf/dl-reloc.c (_dl_relocate_object): Do not try to allocate
