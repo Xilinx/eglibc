@@ -1,3 +1,12 @@
+2006-08-31  Mark Mitchell  <mark@codesourcery.com>
+            Julian Brown  <julian@codesourcery.com>
+
+	* Makefile (headers): Add bits/predefs.h.
+	* include/features.h (__STDC_IEC_559__): Do not define.
+	(__STDC_IEC_559_COMPLEX__): Likewise.
+	(<bits/predefs.h>): Include.
+	* bits/predefs.h: New file.
+
 2006-08-26  Joseph Myers  <joseph@codesourcery.com>
 
 	* io/test-lfs.c (do_prepare): Give name_len type size_t.

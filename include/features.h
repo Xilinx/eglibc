@@ -285,9 +285,8 @@
 # define __USE_FORTIFY_LEVEL 0
 #endif
 
-/* We do support the IEC 559 math functionality, real and complex.  */
-#define __STDC_IEC_559__		1
-#define __STDC_IEC_559_COMPLEX__	1
+/* Define __STDC_IEC_559__ and other similar macros.  */
+#include <bits/predefs.h>
 
 /* wchar_t uses ISO 10646-1 (2nd ed., published 2000-09-15) / Unicode 3.1.  */
 #define __STDC_ISO_10646__		200009L
