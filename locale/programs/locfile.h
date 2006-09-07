@@ -67,6 +67,8 @@ extern void write_all_categories (struct localedef_t *definitions,
 
 extern int swap_endianness_p;
 
+extern unsigned int uint32_align_mask;
+
 /* Change the output to be big-endian if BIG_ENDIAN is true and
    little-endian otherwise.  */
 static inline void

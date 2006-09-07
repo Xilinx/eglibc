@@ -542,6 +542,9 @@ compare_files (const char *filename1, const char *filename2, size_t size,
    machine running localedef.  */
 int swap_endianness_p;
 
+/* The target's value of __align__(uint32_t) - 1.  */
+unsigned int uint32_align_mask = 3;
+
 /* When called outside a start_locale_structure()/end_locale_structure()
    or start_locale_prelude()/end_locale_prelude() block, record that the
    next byte in FILE's obstack will be the first byte of a new element.

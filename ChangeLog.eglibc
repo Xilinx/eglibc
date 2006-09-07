@@ -1,5 +1,20 @@
 2006-09-07  Richard Sandiford  <richard@codesourcery.com>
 
+	* locale/programs/ld-collate.c (obstack_int32_grow): Only use
+	obstack_int_grow if the object size is int-aligned.
+	(obstack_int32_grow_fast): Likewise obstack_int_grow_fast.
+	(new_element): Handle <U0000> as a single character.
+	(collate_output): Use uint32_align_mask.  Use obstack_int32_grow_fast
+	rather than obstack_int32_grow for an int32 that has already been
+	allocated.
+	* locale/programs/localedef.c (OPT_UINT32_ALIGN): New macro.
+	(options): Add --uint32-align.
+	(parse_opt): Handle it.
+	* locale/programs/locfile.c (uint32_align_mask): New variable.
+	* locale/programs/locfile.h (uint32_align_mask): Declare.
+
+2006-09-07  Richard Sandiford  <richard@codesourcery.com>
+
 	* argp/argp-help.c (__argp_short_program_name): Protect function name
 	from macro expansion.
 	* argp/argp-namefrob.h: Don't include mempcpy.h, strcase.h,

@@ -44,7 +44,8 @@ __attribute ((always_inline))
 obstack_int32_grow (struct obstack *obstack, int32_t data)
 {
   data = maybe_swap_uint32 (data);
-  if (sizeof (int32_t) == sizeof (int))
+  if (sizeof (int32_t) == sizeof (int)
+      && (obstack_object_size (obstack) & (__alignof__ (int) - 1)) == 0)
     obstack_int_grow (obstack, data);
   else
     obstack_grow (obstack, &data, sizeof (int32_t));
@@ -55,7 +56,8 @@ __attribute ((always_inline))
 obstack_int32_grow_fast (struct obstack *obstack, int32_t data)
 {
   data = maybe_swap_uint32 (data);
-  if (sizeof (int32_t) == sizeof (int))
+  if (sizeof (int32_t) == sizeof (int)
+      && (obstack_object_size (obstack) & (__alignof__ (int) - 1)) == 0)
     obstack_int_grow_fast (obstack, data);
   else
     obstack_grow (obstack, &data, sizeof (int32_t));
@@ -327,6 +329,9 @@ new_element (struct locale_collate_t *collate, const char *mbs, size_t mbslen,
     {
       size_t nwcs = wcslen_uint32 (wcs);
       uint32_t zero = 0;
+      /* Handle <U0000> as a single character.  */
+      if (nwcs == 0)
+	nwcs = 1;
       obstack_grow (&collate->mempool, wcs, nwcs * sizeof (uint32_t));
       obstack_grow (&collate->mempool, &zero, sizeof (uint32_t));
       newp->wcs = (uint32_t *) obstack_finish (&collate->mempool);
@@ -2040,8 +2045,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 	struct element_t *runp = collate->mbheads[ch];
 	struct element_t *lastp;
 
-	assert ((obstack_object_size (&extrapool)
-		 & (__alignof__ (int32_t) - 1)) == 0);
+	assert ((obstack_object_size (&extrapool) & uint32_align_mask) == 0);
 
 	tablemb[ch] = -obstack_object_size (&extrapool);
 
@@ -2067,10 +2071,10 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 
 		/* Compute how much space we will need.  */
 		added = ((sizeof (int32_t) + 1 + 2 * (runp->nmbs - 1)
-			  + __alignof__ (int32_t) - 1)
-			 & ~(__alignof__ (int32_t) - 1));
+			  + uint32_align_mask)
+			 & ~uint32_align_mask);
 		assert ((obstack_object_size (&extrapool)
-			 & (__alignof__ (int32_t) - 1)) == 0);
+			 & uint32_align_mask) == 0);
 		obstack_make_room (&extrapool, added);
 
 		/* More than one consecutive entry.  We mark this by having
@@ -2128,10 +2132,10 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		weightidx = output_weight (&weightpool, collate, runp);
 
 		added = ((sizeof (int32_t) + 1 + runp->nmbs - 1
-			  + __alignof__ (int32_t) - 1)
-			 & ~(__alignof__ (int32_t) - 1));
+			  + uint32_align_mask)
+			 & ~uint32_align_mask);
 		assert ((obstack_object_size (&extrapool)
-			 & (__alignof__ (int32_t) - 1)) == 0);
+			 & uint32_align_mask) == 0);
 		obstack_make_room (&extrapool, added);
 
 		obstack_int32_grow_fast (&extrapool, weightidx);
@@ -2143,8 +2147,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 	      }
 
 	    /* Add alignment bytes if necessary.  */
-	    while ((obstack_object_size (&extrapool)
-		    & (__alignof__ (int32_t) - 1)) != 0)
+	    while ((obstack_object_size (&extrapool) & uint32_align_mask) != 0)
 	      obstack_1grow_fast (&extrapool, '\0');
 
 	    /* Next entry.  */
@@ -2153,15 +2156,14 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 	  }
 	while (runp != NULL);
 
-	assert ((obstack_object_size (&extrapool)
-		 & (__alignof__ (int32_t) - 1)) == 0);
+	assert ((obstack_object_size (&extrapool) & uint32_align_mask) == 0);
 
 	/* If the final entry in the list is not a single character we
            add an UNDEFINED entry here.  */
 	if (lastp->nmbs != 1)
 	  {
-	    int added = ((sizeof (int32_t) + 1 + 1 + __alignof__ (int32_t) - 1)
-			 & ~(__alignof__ (int32_t) - 1));
+	    int added = ((sizeof (int32_t) + 1 + 1 + uint32_align_mask)
+			 & ~uint32_align_mask);
 	    obstack_make_room (&extrapool, added);
 
 	    obstack_int32_grow_fast (&extrapool, 0);
@@ -2171,15 +2173,13 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 	    obstack_1grow_fast (&extrapool, 0);
 
 	    /* Add alignment bytes if necessary.  */
-	    while ((obstack_object_size (&extrapool)
-		    & (__alignof__ (int32_t) - 1)) != 0)
+	    while ((obstack_object_size (&extrapool) & uint32_align_mask) != 0)
 	      obstack_1grow_fast (&extrapool, '\0');
 	  }
       }
 
   /* Add padding to the tables if necessary.  */
-  while ((obstack_object_size (&weightpool) & (__alignof__ (int32_t) - 1))
-	 != 0)
+  while ((obstack_object_size (&weightpool) & uint32_align_mask) != 0)
     obstack_1grow (&weightpool, 0);
 
   /* Now add the four tables.  */
@@ -2298,7 +2298,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		    /* And add the end byte sequence.  Without length this
 		       time.  */
 		    for (i = 1; i < curp->nwcs; ++i)
-		      obstack_int32_grow (&extrapool, curp->wcs[i]);
+		      obstack_int32_grow_fast (&extrapool, curp->wcs[i]);
 		  }
 		else
 		  {
