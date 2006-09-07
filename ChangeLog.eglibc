@@ -1,3 +1,68 @@
+2006-09-07  Richard Sandiford  <richard@codesourcery.com>
+
+	* locale/programs/3level.h (TABLE): Remove "result" field.
+	(TABLE,_finalize): Replace with...
+	(add_locale_,TABLE): ...this new function.  Add data directly to a
+	locale_file instead of building up a result block.
+	* locale/programs/ld-address.c (address_output): Use the new
+	locale_file interface.
+	* locale/programs/ld-collate.c (obstack_int32_grow)
+	(obstack_int32_grow_fast): Pass the value through maybe_swap_uint32.
+	(collate_finish): Don't call collseq_table_finalize.
+	(output_weightwc): Use maybe_swap_uint32_obstack to reorder the
+	weights array.
+	(collate_output): Likewise the wide collation string.  Don't call
+	collidx_table_finalize.   Use the new locale_file interface.
+	* locale/programs/ld-ctype.c (wcwidth_table, wctrans_table)
+	(wctrans_table_add): Move definitions.
+	(wctype_table): Likewise.  Remove "result" field.
+	(locale_ctype_t): Make "class_3level" an array of wctype_tables,
+	"map_3level" an array of wctrans_tables and "width" a wcwidth_table.
+	(ctype_output): Hoist the setting of default_missing_len and reuse it
+	in the DEFAULT_MISSING case.  Use the new locale_file interface.
+	(wctype_finalize): Replace with...
+	(add_locale_wctype_table): ...this new function.  Alter as for
+	add_locale_TABLE above.
+	(allocate_arrays): Adjust for new types of locale_ctype_t fields.
+	Don't call wctype_table_finalize, wctrans_table_finalize or
+	wcwidth_table_finalize.
+	* locale/programs/ld-identification.c (identification_output): Use
+	the new locale_file interface.
+	* locale/programs/ld-measurement.c (measurement_output): Likewise.
+	* locale/programs/ld-messages.c (messages_output): Likewise.
+	* locale/programs/ld-monetary.c (monetary_output): Likewise.
+	* locale/programs/ld-name.c (name_output): Likewise.
+	* locale/programs/ld-numeric.c (numeric_output): Likewise.
+	* locale/programs/ld-paper.c (paper_output): Likewise.
+	* locale/programs/ld-telephone.c (telephone_output): Likewise.
+	* locale/programs/ld-time.c (time_output): Likewise.
+	* locale/programs/localedef.c (OPT_LITTLE_ENDIAN): Define.
+	(OPT_BIG_ENDIAN): Define.
+	(options): Add --big-endian and --little-endian.
+	(parse_opt): Handle them.
+	* locale/programs/locfile.c: Include assert.h, wchar.h and
+	localeinfo.h.
+	(obstack_chunk_alloc, obstack_chunk_free): Define.
+	(swap_endianness_p, record_offset, init_locale_data, align_locale_data)
+	(add_locale_empty, add_locale_raw_data, add_locale_raw_obstack)
+	(add_locale_string, add_locale_wstring, add_locale_uint32)
+	(add_locale_uint32_array, add_locale_char, start_locale_structure)
+	(end_locale_structure, start_locale_prelude, end_locale_prelude): New.
+	(write_locale_data): Replace iovec arguments with a locale_file.
+	Build three iovecs internally, one for the header, one for the offsets
+	array and one for the data itself.
+	* locale/programs/locfile.h: Include obstack.h.
+	(locale_file): Redefine as a file-building structure.
+	(swap_endianness_p): Declare.
+	(set_big_endian, swap_uint32, maybe_swap_uint32)
+	(maybe_swap_uint32_array, maybe_swap_uint32_obstack): New functions.
+	(init_locale_data, align_locale_data, add_locale_empty)
+	(add_locale_raw_data, add_locale_raw_obstack, add_locale_string)
+	(add_locale_wstring, add_locale_uint32, add_locale_uint32_array)
+	(add_locale_char, start_locale_structure, end_locale_structure)
+	(start_locale_prelude, end_locale_prelude): Declare.
+	(write_locale_data): Adjust prototype as for locfile.c change.
+
 2006-08-31  Mark Mitchell  <mark@codesourcery.com>
             Julian Brown  <julian@codesourcery.com>
 
