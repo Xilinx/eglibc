@@ -619,7 +619,7 @@ add_locale_string (struct locale_file *file, const char *string)
 void
 add_locale_wstring (struct locale_file *file, const uint32_t *string)
 {
-  add_locale_uint32_array (file, string, wcslen ((wchar_t *) string) + 1);
+  add_locale_uint32_array (file, string, wcslen_uint32 (string) + 1);
 }
 
 /* Record that FILE's next element is the 32-bit integer VALUE.  */

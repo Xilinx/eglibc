@@ -280,4 +280,49 @@ extern void identification_output (struct localedef_t *locale,
 				   const struct charmap_t *charmap,
 				   const char *output_path);
 
+static inline size_t
+wcslen_uint32 (const uint32_t *str)
+{
+  size_t len = 0;
+  while (str[len] != 0)
+    len++;
+  return len;
+}
+
+static inline int
+wmemcmp_uint32 (const uint32_t *s1, const uint32_t *s2, size_t n)
+{
+  while (n-- != 0)
+    {
+      int diff = *s1++ - *s2++;
+      if (diff != 0)
+	return diff;
+    }
+  return 0;
+}
+
+static inline int
+wcscmp_uint32 (const uint32_t *s1, const uint32_t *s2)
+{
+  while (*s1 != 0 && *s1 == *s2)
+    s1++, s2++;
+  return *s1 - *s2;
+}
+
+static inline uint32_t *
+wmemcpy_uint32 (uint32_t *s1, const uint32_t *s2, size_t n)
+{
+  return memcpy (s1, s2, n * sizeof (uint32_t));
+}
+
+static inline uint32_t *
+wcschr_uint32 (const uint32_t *s, uint32_t ch)
+{
+  do
+    if (*s == ch)
+      return (uint32_t *) s;
+  while (*s++ != 0);
+  return 0;
+}
+
 #endif /* locfile.h */

@@ -1,5 +1,39 @@
 2006-09-07  Richard Sandiford  <richard@codesourcery.com>
 
+	* argp/argp-help.c (__argp_short_program_name): Protect function name
+	from macro expansion.
+	* argp/argp-namefrob.h: Don't include mempcpy.h, strcase.h,
+	strchrnul.h and strndup.h
+	* locale/programs/charmap-dir.c: Don't include spawn.h if
+	NO_COMPRESS is defined.
+	(fopen_uncompressed): Suppress if NO_COMPRESS is defined.
+	(charmap_open): Guard callers in the same way.
+	* locale/programs/ld-collate.c (new_element): Call wcslen_uint32
+	instead of wcslen.
+	(collate_finish, collate_output): Likewise wmemcmp_uint32/wmemcmp.
+	* locale/programs/ld-ctype.c (find_idx): Fix prototype.
+	(ctype_startup): Fix cast.
+	(ctype_output, read_translit_entry): Call wcslen_uint32 instead
+	of wcslen.
+	(ctype_read): Use BITw and BIT instead of _ISwdigit and _ISdigit.
+	(allocate_arrays): Call wcslen_uint32 instead of wcslen, wcscmp_uint32
+	instead of wcscmp, and wmemcpy_uint32 instead of wmemcpy.
+	* locale/programs/ld-time.c (time_finish): Initialize wt_fmt_ampm
+	and wdate_fmt with constant uint32_t arrays instead of wide character
+	strings.  Call wcschr_uint32 instead of wcschr.
+	* locale/programs/linereader.c (get_string): Fix type of wide
+	character buffer.
+	* locale/programs/localedef.c (main): Don't call sysconf if
+	NO_SYSCONF is defined.
+	* locale/programs/locarchive.c (enlarge_archive): Avoid C99
+	constructs.
+	* locale/programs/locfile.c (add_locale_wstring): Call wcslen_uint32
+	instead of wcslen.
+	* locale/programs/locfile.h (wcslen_uint32, wmemcmp_uint32)
+	(wcscmp_uint32, wmemcpy_uint32, wcschr_uint32): New functions.
+
+2006-09-07  Richard Sandiford  <richard@codesourcery.com>
+
 	* locale/programs/3level.h (TABLE): Remove "result" field.
 	(TABLE,_finalize): Replace with...
 	(add_locale_,TABLE): ...this new function.  Add data directly to a

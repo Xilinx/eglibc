@@ -233,6 +233,7 @@ enlarge_archive (struct locarhandle *ah, const struct locarhead *head)
   struct namehashent *oldnamehashtab;
   struct locrecent *oldlocrectab;
   struct locarhandle new_ah;
+  struct oldlocrecent *oldlocrecarray;
   size_t prefix_len = output_prefix ? strlen (output_prefix) : 0;
   char archivefname[prefix_len + sizeof (ARCHIVE_NAME)];
   char fname[prefix_len + sizeof (ARCHIVE_NAME) + sizeof (".XXXXXX") - 1];
@@ -338,7 +339,7 @@ enlarge_archive (struct locarhandle *ah, const struct locarhead *head)
 				       + head->locrectab_offset);
 
   /* Sort the old locrec table in order of data position.  */
-  struct oldlocrecent oldlocrecarray[head->namehash_size];
+  oldlocrecarray = alloca (sizeof (*oldlocrecarray) * head->namehash_size);
   for (cnt = 0, loccnt = 0; cnt < head->namehash_size; ++cnt)
     if (oldnamehashtab[cnt].locrec_offset != 0)
       {
@@ -950,9 +951,9 @@ add_locale_to_archive (ah, name, data, replace)
 	unsigned int nstrings;
 	unsigned int strindex[0];
       } *filedata = data[LC_CTYPE].addr;
+      char *normalized_codeset_name = NULL;
       codeset = (char *) filedata
 	+ filedata->strindex[_NL_ITEM_INDEX (_NL_CTYPE_CODESET_NAME)];
-      char *normalized_codeset_name = NULL;
 
       normalized_codeset = _nl_normalize_codeset (codeset, strlen (codeset));
       mask |= XPG_NORM_CODESET;

@@ -268,7 +268,7 @@ static void ctype_map_new (struct linereader *lr,
 			   struct locale_ctype_t *ctype,
 			   const char *name, const struct charmap_t *charmap);
 static uint32_t *find_idx (struct locale_ctype_t *ctype, uint32_t **table,
-			   size_t *max, size_t *act, unsigned int idx);
+			   size_t *max, size_t *act, uint32_t idx);
 static void set_class_defaults (struct locale_ctype_t *ctype,
 				const struct charmap_t *charmap,
 				struct repertoire_t *repertoire);
@@ -309,9 +309,8 @@ ctype_startup (struct linereader *lr, struct localedef_t *locale,
 
 	  /* We have seen no names yet.  */
 	  ctype->charnames_max = charmap->mb_cur_max == 1 ? 256 : 512;
-	  ctype->charnames =
-	    (unsigned int *) xmalloc (ctype->charnames_max
-				      * sizeof (unsigned int));
+	  ctype->charnames = (uint32_t *) xmalloc (ctype->charnames_max
+						   * sizeof (uint32_t));
 	  for (cnt = 0; cnt < 256; ++cnt)
 	    ctype->charnames[cnt] = cnt;
 	  ctype->charnames_act = 256;
@@ -934,7 +933,7 @@ ctype_output (struct localedef_t *locale, const struct charmap_t *charmap,
   allocate_arrays (ctype, charmap, ctype->repertoire);
 
   default_missing_len = (ctype->default_missing
-			 ? wcslen ((wchar_t *) ctype->default_missing)
+			 ? wcslen_uint32 (ctype->default_missing)
 			 : 0);
 
   init_locale_data (&file, nelems);
@@ -1940,7 +1939,7 @@ read_translit_entry (struct linereader *ldfile, struct locale_ctype_t *ctype,
 	    ignore = 1;
 	  else
 	    /* This value is usable.  */
-	    obstack_grow (ob, to_wstr, wcslen ((wchar_t *) to_wstr) * 4);
+	    obstack_grow (ob, to_wstr, wcslen_uint32 (to_wstr) * 4);
 
 	  first = 0;
 	}
@@ -2487,8 +2486,8 @@ with character code range values one must use the absolute ellipsis `...'"));
 	    }
 
 	handle_tok_digit:
-	  class_bit = _ISwdigit;
-	  class256_bit = _ISdigit;
+	  class_bit = BITw (tok_digit);
+	  class256_bit = BIT (tok_digit);
 	  handle_digits = 1;
 	  goto read_charclass;
 
@@ -3973,8 +3972,7 @@ allocate_arrays (struct locale_ctype_t *ctype, const struct charmap_t *charmap,
 
 	  while (idx < number)
 	    {
-	      int res = wcscmp ((const wchar_t *) sorted[idx]->from,
-				(const wchar_t *) runp->from);
+	      int res = wcscmp_uint32 (sorted[idx]->from, runp->from);
 	      if (res == 0)
 		{
 		  replace = 1;
@@ -4011,11 +4009,11 @@ allocate_arrays (struct locale_ctype_t *ctype, const struct charmap_t *charmap,
       for (cnt = 0; cnt < number; ++cnt)
 	{
 	  struct translit_to_t *srunp;
-	  from_len += wcslen ((const wchar_t *) sorted[cnt]->from) + 1;
+	  from_len += wcslen_uint32 (sorted[cnt]->from) + 1;
 	  srunp = sorted[cnt]->to;
 	  while (srunp != NULL)
 	    {
-	      to_len += wcslen ((const wchar_t *) srunp->str) + 1;
+	      to_len += wcslen_uint32 (srunp->str) + 1;
 	      srunp = srunp->next;
 	    }
 	  /* Plus one for the extra NUL character marking the end of
@@ -4039,18 +4037,18 @@ allocate_arrays (struct locale_ctype_t *ctype, const struct charmap_t *charmap,
 	  ctype->translit_from_idx[cnt] = from_len;
 	  ctype->translit_to_idx[cnt] = to_len;
 
-	  len = wcslen ((const wchar_t *) sorted[cnt]->from) + 1;
-	  wmemcpy ((wchar_t *) &ctype->translit_from_tbl[from_len],
-		   (const wchar_t *) sorted[cnt]->from, len);
+	  len = wcslen_uint32 (sorted[cnt]->from) + 1;
+	  wmemcpy_uint32 (&ctype->translit_from_tbl[from_len],
+			  sorted[cnt]->from, len);
 	  from_len += len;
 
 	  ctype->translit_to_idx[cnt] = to_len;
 	  srunp = sorted[cnt]->to;
 	  while (srunp != NULL)
 	    {
-	      len = wcslen ((const wchar_t *) srunp->str) + 1;
-	      wmemcpy ((wchar_t *) &ctype->translit_to_tbl[to_len],
-		       (const wchar_t *) srunp->str, len);
+	      len = wcslen_uint32 (srunp->str) + 1;
+	      wmemcpy_uint32 (&ctype->translit_to_tbl[to_len],
+			      srunp->str, len);
 	      to_len += len;
 	      srunp = srunp->next;
 	    }

@@ -240,12 +240,14 @@ main (int argc, char *argv[])
      ctype locale.  (P1003.2 4.35.5.2)  */
   setlocale (LC_CTYPE, "POSIX");
 
+#ifndef NO_SYSCONF
   /* Look whether the system really allows locale definitions.  POSIX
      defines error code 3 for this situation so I think it must be
      a fatal error (see P1003.2 4.35.8).  */
   if (sysconf (_SC_2_LOCALEDEF) < 0)
     WITH_CUR_LOCALE (error (3, 0, _("\
 FATAL: system does not define `_POSIX2_LOCALEDEF'")));
+#endif
 
   /* Process charmap file.  */
   charmap = charmap_read (charmap_file, verbose, 1, be_quiet, 1);

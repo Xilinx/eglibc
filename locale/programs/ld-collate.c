@@ -325,7 +325,7 @@ new_element (struct locale_collate_t *collate, const char *mbs, size_t mbslen,
     }
   if (wcs != NULL)
     {
-      size_t nwcs = wcslen ((wchar_t *) wcs);
+      size_t nwcs = wcslen_uint32 (wcs);
       uint32_t zero = 0;
       obstack_grow (&collate->mempool, wcs, nwcs * sizeof (uint32_t));
       obstack_grow (&collate->mempool, &zero, sizeof (uint32_t));
@@ -1165,6 +1165,7 @@ sequence is not lower than that of the last character"), "LC_COLLATE");
 		{
 		  struct element_t *elem;
 		  size_t namelen;
+		  void *ptr;
 
 		  /* I don't this this can ever happen.  */
 		  assert (seq->name != NULL);
@@ -1177,7 +1178,6 @@ sequence is not lower than that of the last character"), "LC_COLLATE");
 		  /* Now we are ready to insert the new value in the
 		     sequence.  Find out whether the element is
 		     already known.  */
-		  void *ptr;
 		  if (find_entry (&collate->seq_table, seq->name, namelen,
 				  &ptr) != 0)
 		    {
@@ -1331,12 +1331,12 @@ order for `%.*s' already defined at %s:%Zu"),
 	      struct charseq *seq;
 	      uint32_t wc;
 	      int cnt;
+	      void *ptr;
 
 	      /* Generate the the name.  */
 	      sprintf (buf + preflen, base == 10 ? "%ld" : "%lX", from);
 
 	      /* Look whether this name is already defined.  */
-	      void *ptr;
 	      if (find_entry (&collate->seq_table, buf, symlen, &ptr) == 0)
 		{
 		  /* Copy back the result.  */
@@ -1744,8 +1744,7 @@ symbol `%s' has the same encoding as"), (*eptr)->name);
 
 	      if ((*eptr)->nwcs == runp->nwcs)
 		{
-		  int c = wmemcmp ((wchar_t *) (*eptr)->wcs,
-				   (wchar_t *) runp->wcs, runp->nwcs);
+		  int c = wmemcmp_uint32 ((*eptr)->wcs, runp->wcs, runp->nwcs);
 
 		  if (c == 0)
 		    {
@@ -2242,9 +2241,9 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		   one consecutive entry.  */
 		if (runp->wcnext != NULL
 		    && runp->nwcs == runp->wcnext->nwcs
-		    && wmemcmp ((wchar_t *) runp->wcs,
-				(wchar_t *)runp->wcnext->wcs,
-				runp->nwcs - 1) == 0
+		    && wmemcmp_uint32 (runp->wcs,
+				       runp->wcnext->wcs,
+				       runp->nwcs - 1) == 0
 		    && (runp->wcs[runp->nwcs - 1]
 			== runp->wcnext->wcs[runp->nwcs - 1] + 1))
 		  {
@@ -2268,9 +2267,9 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		      runp = runp->wcnext;
 		    while (runp->wcnext != NULL
 			   && runp->nwcs == runp->wcnext->nwcs
-			   && wmemcmp ((wchar_t *) runp->wcs,
-				       (wchar_t *)runp->wcnext->wcs,
-				       runp->nwcs - 1) == 0
+			   && wmemcmp_uint32 (runp->wcs,
+					      runp->wcnext->wcs,
+					      runp->nwcs - 1) == 0
 			   && (runp->wcs[runp->nwcs - 1]
 			       == runp->wcnext->wcs[runp->nwcs - 1] + 1));
 
