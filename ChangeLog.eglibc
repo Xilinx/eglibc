@@ -1,5 +1,9 @@
 2006-09-07  Richard Sandiford  <richard@codesourcery.com>
 
+	* sysdeps/unix/sysv/linux/getcwd.c: Include sys/param.h.
+
+2006-09-07  Richard Sandiford  <richard@codesourcery.com>
+
 	* locale/programs/ld-collate.c (obstack_int32_grow): Only use
 	obstack_int_grow if the object size is int-aligned.
 	(obstack_int32_grow_fast): Likewise obstack_int_grow_fast.
