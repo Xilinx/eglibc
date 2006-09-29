@@ -207,7 +207,7 @@ tests = tst-typesizes \
 	tst-cond1 tst-cond2 tst-cond3 tst-cond4 tst-cond5 tst-cond6 tst-cond7 \
 	tst-cond8 tst-cond9 tst-cond10 tst-cond11 tst-cond12 tst-cond13 \
 	tst-cond14 tst-cond15 tst-cond16 tst-cond17 tst-cond18 tst-cond19 \
-	tst-cond20 tst-cond21 \
+	tst-cond20 tst-cond21 tst-cond22 \
 	tst-robust1 tst-robust2 tst-robust3 tst-robust4 tst-robust5 \
 	tst-robust6 tst-robust7 tst-robust8 \
 	tst-robustpi1 tst-robustpi2 tst-robustpi3 tst-robustpi4 \
@@ -235,7 +235,7 @@ tests = tst-typesizes \
 	tst-cancel6 tst-cancel7 tst-cancel8 tst-cancel9 tst-cancel10 \
 	tst-cancel11 tst-cancel12 tst-cancel13 tst-cancel14 tst-cancel15 \
 	tst-cancel16 tst-cancel17 tst-cancel18 tst-cancel19 tst-cancel20 \
-	tst-cancel21 tst-cancel22 tst-cancel23 tst-cancel24 \
+	tst-cancel21 tst-cancel22 tst-cancel23 tst-cancel24 tst-cancel25 \
 	tst-cleanup0 tst-cleanup1 tst-cleanup2 tst-cleanup3 tst-cleanup4 \
 	tst-flock1 tst-flock2 \
 	tst-signal1 tst-signal2 tst-signal3 tst-signal4 tst-signal5 \

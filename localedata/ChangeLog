@@ -1,8 +1,37 @@
+2006-09-20  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2823]
+	* locales/mk_MK: Fix date_fmt.  Add week, first_weekday, and
+	first_workday information.
+	Patch by Damjan Georgievski.
+
+2006-09-05  Ulrich Drepper  <drepper@redhat.com>
+
+	* locales/or_IN (mon): Fix February string.
+
+2006-08-24  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2695]
+	* locales/et_EE: Update LC_ADDRESS category.
+	Patch by Priit Laes <amd@store20.com>.
+
+2006-08-23  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2662]
+	* locales/bn_BD: Fix abday and day spelling of Tuesday.
+
+	[BZ #2473]
+	* locales/en_NZ: Define am/pm formats.
+
+2006-08-22  Ulrich Drepper  <drepper@redhat.com>
+
+	* locales/nn_NO: Copy more categories from nb_NO.
+
 2006-08-19  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #3034]
 	* locales/ml_IN (abmon): Fix June entry.
-	* locales/bn_IN: (abday): Fix Tuesday entry.
+	* locales/bn_IN (abday): Fix Tuesday entry.
 	(day): Likewise.
 	(abmon): Fix January and February entries.
 	(mon): Likewise.

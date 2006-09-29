@@ -1376,7 +1376,7 @@ charclass_symbolic_ellipsis (struct linereader *ldfile,
     {
     invalid_range:
       lr_error (ldfile,
-		_("`%s' and `%.*s' are no valid names for symbolic range"),
+		_("`%s' and `%.*s' are not valid names for symbolic range"),
 		last_str, (int) now->val.str.lenmb, nowstr);
       return;
     }
@@ -2149,6 +2149,9 @@ ctype_read (struct linereader *ldfile, struct localedef_t *result,
 	      if (locfile_read (copy_locale, charmap) != 0)
 		goto skip_category;
 	    }
+
+	  if (copy_locale->categories[LC_CTYPE].ctype == NULL)
+	    return;
 	}
 
       lr_ignore_rest (ldfile, 1);
@@ -3628,7 +3631,7 @@ translit_flatten (struct locale_ctype_t *ctype,
 
       other = find_locale (LC_CTYPE, copy_locale, copy_repertoire, charmap);
 
-      if (other == NULL)
+      if (other == NULL || other->categories[LC_CTYPE].ctype == NULL)
 	{
 	  WITH_CUR_LOCALE (error (0, 0, _("\
 %s: transliteration data from locale `%s' not available"),

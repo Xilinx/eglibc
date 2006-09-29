@@ -2061,7 +2061,9 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 typedef struct malloc_chunk* mbinptr;
 
 /* addressing -- note that bin_at(0) does not exist */
-#define bin_at(m, i) ((mbinptr)((char*)&((m)->bins[(i)<<1]) - (SIZE_SZ<<1)))
+#define bin_at(m, i) \
+  (mbinptr) (((char *) &((m)->bins[((i) - 1) * 2]))			      \
+	     - offsetof (struct malloc_chunk, fd))
 
 /* analog of ++bin */
 #define next_bin(b)  ((mbinptr)((char*)(b) + (sizeof(mchunkptr)<<1)))
@@ -2301,7 +2303,7 @@ struct malloc_state {
   mchunkptr        last_remainder;
 
   /* Normal bins packed as described above */
-  mchunkptr        bins[NBINS * 2];
+  mchunkptr        bins[NBINS * 2 - 2];
 
   /* Bitmap of bins */
   unsigned int     binmap[BINMAPSIZE];
@@ -2860,6 +2862,7 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
   unsigned long   sum;            /* for updating stats */
 
   size_t          pagemask  = mp_.pagesize - 1;
+  bool            tried_mmap = false;
 
 
 #if HAVE_MMAP
@@ -2883,6 +2886,7 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
       is no following chunk whose prev_size field could be used.
     */
     size = (nb + SIZE_SZ + MALLOC_ALIGN_MASK + pagemask) & ~pagemask;
+    tried_mmap = true;
 
     /* Don't try if size wraps around 0 */
     if ((unsigned long)(size) > (unsigned long)(nb)) {
@@ -2966,7 +2970,8 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
     /* First try to extend the current heap. */
     old_heap = heap_for_ptr(old_top);
     old_heap_size = old_heap->size;
-    if (grow_heap(old_heap, MINSIZE + nb - old_size) == 0) {
+    if ((long) (MINSIZE + nb - old_size) > 0
+	&& grow_heap(old_heap, MINSIZE + nb - old_size) == 0) {
       av->system_mem += old_heap->size - old_heap_size;
       arena_mem += old_heap->size - old_heap_size;
 #if 0
@@ -3006,7 +3011,7 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
 	set_foot(old_top, (old_size + 2*SIZE_SZ));
       }
     }
-    else
+    else if (!tried_mmap)
       /* We can at least try to use to mmap memory.  */
       goto try_mmap;
 
@@ -3621,6 +3626,29 @@ public_rEALLOc(Void_t* oldmem, size_t bytes)
   (void)mutex_unlock(&ar_ptr->mutex);
   assert(!newp || chunk_is_mmapped(mem2chunk(newp)) ||
 	 ar_ptr == arena_for_chunk(mem2chunk(newp)));
+
+  if (newp == NULL)
+    {
+      /* Try harder to allocate memory in other arenas.  */
+      newp = public_mALLOc(bytes);
+      if (newp != NULL)
+	{
+	  MALLOC_COPY (newp, oldmem, oldsize - 2 * SIZE_SZ);
+#if THREAD_STATS
+	  if(!mutex_trylock(&ar_ptr->mutex))
+	    ++(ar_ptr->stat_lock_direct);
+	  else {
+	    (void)mutex_lock(&ar_ptr->mutex);
+	    ++(ar_ptr->stat_lock_wait);
+	  }
+#else
+	  (void)mutex_lock(&ar_ptr->mutex);
+#endif
+	  _int_free(ar_ptr, oldmem);
+	  (void)mutex_unlock(&ar_ptr->mutex);
+	}
+    }
+
   return newp;
 }
 #ifdef libc_hidden_def
@@ -4166,7 +4194,7 @@ _int_malloc(mstate av, size_t bytes)
       fwd->bk = victim;
       bck->fd = victim;
 
-      if (size >= nb)
+      if (size >= nb + MINSIZE)
 	any_larger = true;
 #define MAX_ITERS	10000
       if (++iters >= MAX_ITERS)
@@ -4203,8 +4231,14 @@ _int_malloc(mstate av, size_t bytes)
         /* Split */
         else {
           remainder = chunk_at_offset(victim, nb);
-          unsorted_chunks(av)->bk = unsorted_chunks(av)->fd = remainder;
-          remainder->bk = remainder->fd = unsorted_chunks(av);
+          /* We cannot assume the unsorted list is empty and therefore
+             have to perform a complete insert here.  */
+	  bck = unsorted_chunks(av);
+	  fwd = bck->fd;
+	  remainder->bk = bck;
+	  remainder->fd = fwd;
+	  bck->fd = remainder;
+	  fwd->bk = remainder;
           set_head(victim, nb | PREV_INUSE |
 		   (av != &main_arena ? NON_MAIN_ARENA : 0));
           set_head(remainder, remainder_size | PREV_INUSE);
@@ -4289,8 +4323,15 @@ _int_malloc(mstate av, size_t bytes)
         else {
           remainder = chunk_at_offset(victim, nb);
 
-          unsorted_chunks(av)->bk = unsorted_chunks(av)->fd = remainder;
-          remainder->bk = remainder->fd = unsorted_chunks(av);
+	  /* We cannot assume the unsorted list is empty and therefore
+	     have to perform a complete insert here.  */
+	  bck = unsorted_chunks(av);
+	  fwd = bck->fd;
+	  remainder->bk = bck;
+	  remainder->fd = fwd;
+	  bck->fd = remainder;
+	  fwd->bk = remainder;
+
           /* advertise as last remainder */
           if (in_smallbin_range(nb))
             av->last_remainder = remainder;

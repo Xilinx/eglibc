@@ -201,7 +201,7 @@ struct pthread
     mutex->__data.__list.__next						      \
       = THREAD_GETMEM (THREAD_SELF, robust_list.__next);		      \
     THREAD_SETMEM (THREAD_SELF, robust_list.__next,			      \
-		   ((uintptr_t) &mutex->__data.__list) | val);		      \
+		   (void *) (((uintptr_t) &mutex->__data.__list) | val));     \
   } while (0)
 # define DEQUEUE_MUTEX(mutex) \
   do {									      \
@@ -295,6 +295,10 @@ struct pthread
 
   /* True if thread must stop at startup time.  */
   bool stopped_start;
+
+  /* The parent's cancel handling at the time of the pthread_create
+     call.  This might be needed to undo the effects of a cancellation.  */
+  int parent_cancelhandling;
 
   /* Lock to synchronize access to the descriptor.  */
   lll_lock_t lock;

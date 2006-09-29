@@ -1,3 +1,393 @@
+2006-09-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* libio/stdio.h: Move open_wmemstream prototype to ...
+	* wcsmbs/wchar.h: ... here.
+
+2006-09-25  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3252]
+	* sysdeps/unix/sysv/linux/powerpc/fchownat.c (fchownat): Handle only
+	fchownat syscall and __ASSUME_LCHOWN_SYSCALL case inline, call
+	__{,l}chown to handle the rest.
+	* sysdeps/unix/sysv/linux/i386/fchownat.c (fchownat): Handle only
+	fchownat syscall and __ASSUME_32BITUIDS case inline, call
+	__{,l}chown to handle the rest.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/fchownat.c: Include
+	i386/fchownat.c.
+	* sysdeps/unix/sysv/linux/s390/s390-32/fchownat.c: Likewise.
+	* sysdeps/unix/sysv/linux/sh/fchownat.c: Likewise.
+
+	[BZ #3253]
+	* posix/glob.c (glob_in_dir): Don't alloca one struct globlink at a
+	time, rather allocate increasingly bigger arrays of pointers, if
+	possible with alloca, if too large with malloc.
+
+2006-09-24  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Updated.
+
+	* sysdeps/ieee754/ldbl-128/s_lrintl.c (__lrintl): Fix 2 typos.
+
+2006-09-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (rfc3484_sort): Implement rule 4,
+	home addresses.
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request): Recognize
+	IFA_F_HOMEADDRESS flag for interfaces.
+	* include/ifaddrs.h (struct in6addrinfo): Define
+	in6ai_homeaddress.
+
+2006-09-21  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3225]
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/sysdep.h (PTR_MANGLE3,
+	PTR_DEMANGLE3): Define.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/sysdep.h (PTR_MANGLE3,
+	PTR_DEMANGLE3): Likewise.
+	* sysdeps/powerpc/powerpc32/__longjmp-common.S (__longjmp): Use them.
+	* sysdeps/powerpc/powerpc32/fpu/__longjmp-common.S (__longjmp):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/__longjmp-common.S (__longjmp): Likewise.
+
+2006-09-20  Jakub Jelinek  <jakub@redhat.com>
+
+	* po/libc.pot: Regenerated.
+	* po/be.po: Updated.
+	* po/ca.po: Likewise.
+	* po/cs.po: Likewise.
+	* po/da.po: Likewise.
+	* po/de.po: Likewise.
+	* po/el.po: Likewise.
+	* po/en_GB.po: Likewise.
+	* po/es.po: Likewise.
+	* po/fi.po: Likewise.
+	* po/fr.po: Likewise.
+	* po/gl.po: Likewise.
+	* po/hr.po: Likewise.
+	* po/hu.po: Likewise.
+	* po/ja.po: Likewise.
+	* po/ko.po: Likewise.
+	* po/nb.po: Likewise.
+	* po/nl.po: Likewise.
+	* po/pl.po: Likewise.
+	* po/pt_BR.po: Likewise.
+	* po/ru.po: Likewise.
+	* po/rw.po: Likewise.
+	* po/sk.po: Likewise.
+	* po/sv.po: Likewise.
+	* po/tr.po: Likewise.
+	* po/zh_CN.po: Likewise.
+	* po/zh_TW.po: Likewise.
+
+	[BZ #3137]
+	* iconv/iconv_prog.c (main): Fix spelling in error message.
+	* iconv/iconvconfig.c (main): Likewise.
+	* locale/programs/ld-collate.c (handle_ellipsis): Likewise.
+	* locale/programs/ld-ctype.c (charclass_symbolic_ellipsis): Likewise.
+	* locale/programs/localedef.c (main): Likewise.
+	* locale/programs/repertoire.c (repertoire_read): Likewise.
+	* timezone/zdump.c (main): Likewise.
+	* nscd/connections.c (handle_request): Fix spelling in log message.
+	Patch by Malcolm Parsons <malcolm.parsons@gmail.com>.
+
+2006-09-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* inet/inet6_option.c: Also emit linker warnings for the RFC 2292
+	interfaces.
+
+2006-09-20  Andreas Jaeger  <aj@suse.de>
+
+	* math/libm-test.inc (lrint_test_upward): Fix typo.
+
+2006-06-17  Joseph S. Myers  <joseph@codesourcery.com>
+
+	[BZ #2592]
+	* math/libm-test.inc (lrint_test_tonearest): New function.
+	(lrint_test_towardzero): New function.
+	(lrint_test_downward): New function.
+	(lrint_test_upward): New function.
+	(main): Run these new tests.
+	* sysdeps/ieee754/dbl-64/s_llrint.c (__llrint): Correct rounding
+	of values near to 0.
+	(two52): Use double not long double.
+	* sysdeps/ieee754/dbl-64/s_lrint.c (__lrint): Likewise.
+	* sysdeps/ieee754/flt-32/s_llrintf.c (__llrintf): Likewise.
+	(two23): Use float not double.
+	* sysdeps/ieee754/flt-32/s_lrintf.c (__lrintf): Likewise.
+	(two23): Use float not double.
+	* sysdeps/ieee754/ldbl-128/s_llrintl.c (__llrintl): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_lrintl.c (__lrintl): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_llrintl.c (__llrintl): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_lrintl.c (__lrintl): Likewise.
+
+2006-09-20  Martin Schwidefsky  <schwidefsky@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/s390-32/makecontext.c (__makecontext):
+	Cast sp to unsigned long to avoid compiler warning.
+	Use __makecontext_ret function instead of a trampoline on the stack.
+	(__makecontext_ret): New function.
+	* sysdeps/unix/sysv/linux/s390/s390-64/makecontext.c: Likewise.
+
+2006-09-19  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/dl-cache.c (HWCAP_CHECK): If _DL_PLATFORMS_COUNT, but
+	platform == -1, reject any libs with non-zero _DL_HWCAP_PLATFORM
+	bits.
+
+2006-09-19  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-close.c (_dl_close): If dependency is not unloaded make
+	sure no reference to the unloaded map's search list remains in the
+	dependency's scope.
+
+2006-09-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/Makefile: Add rules to build and run unload7 test.
+	* elf/unload7.c: New test.
+	* elf/unload7mod1.c: New file.
+	* elf/unload7mod2.c: New file.
+
+2006-09-18  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sys/ptrace.h (PT_GETEVENTMSG): Fix pasto.
+	* sysdeps/unix/sysv/linux/s390/sys/ptrace.h (PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG, PTRACE_GETSIGINFO, PTRACE_SETSIGINFO): Define.
+	* sysdeps/unix/sysv/linux/powerpc/sys/ptrace.h (PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG, PTRACE_GETSIGINFO, PTRACE_SETSIGINFO): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/ptrace.h (PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG, PTRACE_GETSIGINFO, PTRACE_SETSIGINFO): Likewise.
+	* sysdeps/unix/sysv/linux/ia64/sys/ptrace.h (PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG): Likewise.
+	(PTRACE_GETSIGINFO, PTRACE_SETSIGINFO): Change to the arch independent
+	values.
+
+2006-09-17  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/sys/ptrace.h (PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG, PTRACE_GETSIGINFO, PTRACE_SETSIGINFO): Define.
+	* sysdeps/unix/sysv/linux/ptrace.c (ptrace): Check PTRACE_SETOPTIONS,
+	PTRACE_GETEVENTMSG, PTRACE_GETSIGINFO and PTRACE_SETSIGINFO.
+
+2006-09-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/register-dump.h (register_dump): Don't
+	write '\0' to the fd.
+	* sysdeps/mach/hurd/powerpc/register-dump.h (register_dump): Likewise.
+	* sysdeps/powerpc/powerpc64/register-dump.h (register_dump): Likewise.
+	Change regs to unsigned long pointer from unsigned int, fix fscr
+	offset.
+
+2006-09-14  Jakub Jelinek  <jakub@redhat.com>
+
+	* io/Makefile (CFLAGS-fstatat.c): Set.
+	(CFLAGS-fstatat64.c): Likewise.
+	(CFLAGS-mknodat.c): Likewise.
+
+	* sysdeps/ieee754/ldbl-128ibm/s_llrintl.c: Comment fixes.
+	* sysdeps/ieee754/ldbl-128ibm/s_llroundl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_lrintl.c: Rewritten.
+	* sysdeps/ieee754/ldbl-128ibm/s_lroundl.c: Rewritten.
+
+2006-09-14  Jakub Jelinek  <jakub@redhat.com>
+	    Steven Munroe  <sjmunroe@us.ibm.com>
+
+	* sysdeps/powerpc/dl-procinfo.c (_dl_powerpc_cap_flags): Add 4 new cap
+	names to the beginning.  Rename "cell" to "cellbe".
+	(_dl_powerpc_platforms): New.
+	* sysdeps/powerpc/dl-procinfo.h (_DL_HWCAP_FIRST): Decrease.
+	(HWCAP_IMPORTANT): Remove power{4,5,5+} and cell.
+	(_DL_PLATFORMS_COUNT, _DL_FIRST_PLATFORM): Define.
+	(_DL_HWCAP_PLATFORM): Define to new mask.
+	(_dl_platform_string, _dl_string_platform): New functions.
+	* sysdeps/powerpc/sysdep.h (PPC_FEATURE_BOOKE, PPC_FEATURE_SMT,
+	PPC_FEATURE_ICACHE_SNOOP, PPC_FEATURE_ARCH_2_05): Define.
+
+2006-09-12  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #2526]
+	* README.libm: Fix a thinko in sqrt algorithm description.
+
+	[BZ #3143]
+	* manual/string.texi (argz_delete): Fix prototype.
+	Patch by <alpt@freaknet.org>.
+
+2006-08-26  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #3138]
+	* io/test-lfs.c (do_prepare): Give name_len type size_t.
+	* io/tst-fcntl.c (do_prepare): Likewise.
+	* posix/tst-exec.c (do_prepare): Likewise.
+	* posix/tst-preadwrite.c (do_prepare): Likewise.
+	* posix/tst-spawn.c (do_prepare): Likewise.
+	* posix/tst-truncate.c (do_prepare): Likewise.
+	* rt/tst-aio.c (do_prepare): Likewise.
+	* rt/tst-aio64.c (do_prepare): Likewise.
+	* stdlib/test-canon2.c (do_prepare): Give test_dir_len type
+	size_t.
+
+2006-09-09  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2821]
+	* time/mktime.c (guess_time_tm): Fix overflow detection.
+	* time/Makefile (tests): Add bug-mktime1.
+	* time/bug-mktime1.c: New file.
+
+	[BZ #3189, #3188]
+	* misc/sys/mman.h (remap_file_pages): Make available for _GNU_SOURCE.
+	(mremap): Likewise.
+
+2006-09-07  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #1006]
+	* sysdeps/sparc/sparc64/dl-machine.h (elf_machine_rela):
+	Ensure relocation doesn't clobber any bits outside of the
+	immediate field for R_SPARC_TLS_LE_HIX22, R_SPARC_WDISP30,
+	R_SPARC_HI22 and R_SPARC_H44.
+
+	[BZ #2775]
+	* malloc/malloc.c (sYSMALLOc): Only call grow_heap if
+	(long) (MINSIZE + nb - old_size) is positive.
+
+	* malloc/arena.c (grow_heap): When growing bail even if new_size
+	is negative.
+
+	[BZ #3155]
+	* sysdeps/powerpc/powerpc32/fpu/s_lrint.S (__lrint): Don't access
+	stack below r1.
+
+2006-09-06  Jakub Jelinek  <jakub@redhat.com>
+
+	* posix/regex_internal.c (re_string_reconstruct): Handle
+	offset < pstr->valid_raw_len && pstr->offsets_needed case.
+	Ensure no bytes read before raw_mbs array.  Pass a saved copy of
+	pstr->valid_len - 1 rather than pstr->valid_raw_len - 1 to
+	re_string_context_at.
+	* posix/Makefile: Add rules to build and run bug-regex26 test.
+	* posix/bug-regex26.c: New test.
+
+	* locale/programs/ld-collate.c (collate_read): Goto sym_equiv_free
+	rather than col_sym_free.  Move seqp declaration earlier.
+
+	* resolv/gai_suspend.c (gai_suspend): Make sure result is initialized.
+
+2006-09-05  Jakub Jelinek  <jakub@redhat.com>
+
+	* nscd/initgrcache.c (addinitgroupsX): Move any_success
+	decl before first goto out.
+
+2006-09-04  Jakub Jelinek  <jakub@redhat.com>
+
+	* Makerules (shlib.lds): If have-hash-style, put .hash section
+	at the end of the RO segment.
+
+2006-09-04  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/do-lookup.h (do_lookup_x): Initialize symidx in case the new
+	style hash table format is used.
+
+2006-09-04  Jakub Jelinek  <jakub@redhat.com>
+
+	* resolv/res_mkquery.c (res_nmkquery): Set hp->id to statp->id after
+	randomization rather than before.
+	* resolv/res_init.c (res_randomid): Don't call gettimeofday here.
+
+2006-08-31  Jakub Jelinek  <jakub@redhat.com>
+
+	* dlfcn/Makefile (LDLIBS-bug-atexit3-lib.so): Add ld.so.
+
+	* malloc/malloc.c (_int_malloc): Use full list insert and not
+	shortcut which assumes the list is empty for large requests
+	too.
+
+	* elf/tst-addr1.c (do_test): Allow i.dli_sname "_IO_printf".
+
+2006-08-30  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/alpha/bits/fcntl.h (splice): Add offin
+	and offout arguments to the prototype.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h (splice): Likewise.
+	* sysdeps/unix/sysv/linux/syscalls.list (splice): Adjust args string.
+
+2006-08-28  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-load.c (_dl_init_paths): Expand DSTs.
+
+	* elf/dl-open.c (dl_open_worker): Allow $LIB and $PLATFORM in
+	dlopen parameters.
+
+2006-08-28  Jakub Jelinek  <jakub@redhat.com>
+
+	* inet/getnameinfo.c (getnameinfo): For AF_INET, check errno
+	only if herrno is NETDB_INTERNAL.  Handle errors other than
+	ERANGE outside of the loops, handle TRY_AGAIN.
+
+	* locale/programs/ld-ctype.c (translit_flatten): Issue error
+	if other's ctype category was missing.
+	* locale/programs/ld-collate.c (collate_read): Return if
+	copy_locale's collate category is missing.
+
+2006-08-27  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2684]
+	* malloc/malloc.c (public_rEALLOc): Try harder by using other
+	arenas if allocation failed.
+	Patch mostly by Jan Edler <jan.edler@indexengines.com>.
+
+2006-08-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c (bin_at): Rewrite to be more clear and to not
+	waste bins[0..1].
+	(malloc_state): Reduce bins size by 2.
+	(_int_malloc): Fix test for large enough buffer for early termination.
+	When no unsorted block matches perfectly and an exiting block has
+	to be split, use full list insert and not shortcut which assumes
+	the list is empty.
+
+	* locale/programs/ld-ctype.c (ctype_read): Better patch for read
+	failure.
+
+2006-08-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* locale/programs/ld-ctype.c (ctype_read): If CTYPE is NULL, don't
+	do anything.
+
+	* sysdeps/generic/ldsodefs.h (DL_ADDR_SYM_MATCH): For undefined
+	symbol require exact match (these are PLTs).
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/ldsodefs.h
+	(_dl_ppc64_addr_sym_match): Likewise.
+
+	[BZ #2683]
+	* elf/dl-addr.c (_dl_addr): Don't ignore all undefined symbols.
+	If symbol has a value use it.
+	* elf/tst-dladdr1.c: New file.
+	* elf/Makefile: Add rules to build and run tst-addr1.
+
+2006-08-24  Jakub Jelinek  <jakub@redhat.com>
+
+	* malloc/malloc.c (sYSMALLOc): Avoid infinite loop if MMAP
+	keeps failing and heap growth or new heap creation isn't
+	successful either.
+	* malloc/tst-malloc.c (main): Add new tests.
+
+2006-08-24  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #2734]
+	* sysdeps/i386/bits/byteswap.h (__bswap_32): Use same conditions
+	as in the x86-64 code to use bswap.
+
+2006-05-21  Joseph S. Myers  <joseph@codesourcery.com>
+
+	[BZ #2680]
+	* posix/unistd.h (getlogin_r): Condition on __USE_POSIX199506, not
+	__USE_UNIX98.
+	* posix/bits/unistd.h: Likewise.
+
 2006-05-15  Mike Frysinger  <vapier@gentoo.org>
 
 	[BZ #2751]

@@ -1,4 +1,4 @@
-/* Copyright (C) 1995-2002, 2003, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 1995-2002, 2003, 2005, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@gnu.org>, 1995.
 
@@ -1302,7 +1302,7 @@ order for `%.*s' already defined at %s:%Zu"),
 	    {
 	    invalid_range:
 	      lr_error (ldfile, _("\
-`%s' and `%.*s' are no valid names for symbolic range"),
+`%s' and `%.*s' are not valid names for symbolic range"),
 			startp->name, (int) lento, endp->name);
 	      return;
 	    }
@@ -2527,6 +2527,9 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 	      if (locfile_read (copy_locale, charmap) != 0)
 		goto skip_category;
 	    }
+
+	  if (copy_locale->categories[LC_COLLATE].collate == NULL)
+	    return;
 	}
 
       lr_ignore_rest (ldfile, 1);
@@ -2921,7 +2924,7 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 		  lr_error (ldfile, _("\
 %s: unknown symbol `%s' in equivalent definition"),
 			    "LC_COLLATE", symname);
-		  goto col_sym_free;
+		  goto sym_equiv_free;
 		}
 
 	      if (insert_entry (&collate->sym_table,
@@ -3386,13 +3389,13 @@ error while adding equivalent collating symbol"));
 	      break;
 	    }
 
+	  struct element_t *seqp;
 	  if (state == 0)
 	    {
 	      /* We are outside an `order_start' region.  This means
                  we must only accept definitions of values for
                  collation symbols since these are purely abstract
                  values and don't need directions associated.  */
-	      struct element_t *seqp;
 	      void *ptr;
 
 	      if (find_entry (&collate->seq_table, symstr, symlen, &ptr) == 0)
@@ -3439,7 +3442,6 @@ error while adding equivalent collating symbol"));
 	    {
 	      /* It is possible that we already have this collation sequence.
 		 In this case we move the entry.  */
-	      struct element_t *seqp = NULL;
 	      void *sym;
 	      void *ptr;
 
