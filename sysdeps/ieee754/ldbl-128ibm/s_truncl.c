@@ -22,7 +22,6 @@
    when it's coded in C.  */
 
 #include <math.h>
-#include <fenv_libc.h>
 #include <math_ldbl_opt.h>
 #include <float.h>
 #include <ieee754.h>
@@ -47,11 +46,9 @@ __truncl (x)
 					     __builtin_inf ()), 1))
     {
       double orig_xh;
-      int save_round = fegetround ();
 
       /* Long double arithmetic, including the canonicalisation below,
 	 only works in round-to-nearest mode.  */
-      fesetround (FE_TONEAREST);
 
       /* Convert the high double to integer.  */
       orig_xh = xh;
@@ -92,8 +89,6 @@ __truncl (x)
       /* Ensure we return -0 rather than +0 when appropriate.  */
       if (orig_xh < 0.0)
 	xh = -__builtin_fabs (xh);
-
-      fesetround (save_round);
     }
 
   return ldbl_pack (xh, xl);

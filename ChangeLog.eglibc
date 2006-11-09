@@ -1,3 +1,26 @@
+2006-11-09  Steven Munroe  <sjmunroe@us.ibm.com>
+	    Joe Kerian  <jkerian@us.us.ibm.com>
+
+	[BZ #2749]
+	* soft-fp/fenv_libc.h: New file.
+	* soft-fp/op-common.h (_FP_OVERFLOW_SEMIRAW): Always set inexact 
+	and overflow for infinity.
+	(_FP_PACK_SEMIRAW): Update comment.  Do not round if NaN.
+	* soft-fp/op-4.h (__FP_FRAC_SUB_3, __FP_FRAC_SUB_4): Correct borrow
+	handling for high words.
+	* sysdeps/ieee754/ldbl-128ibm/s_copysignl.c: 
+	Include <math_ldbl_opt.h>.
+	Remove weak_alias.  Use long_double_symbol macro.
+	(__copysignl): Use signbit() for comparison.
+	* sysdeps/ieee754/ldbl-128ibm/s_fabsl.c:
+
+	[BZ #2423, #2749]
+	* sysdeps/ieee754/ldbl-128ibm/s_ceill.c: Don't include <fenv_libc.h>.
+	(__ceill): Remove calls to fegetround(), fesetround().
+	* sysdeps/ieee754/ldbl-128ibm/s_floorl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_roundl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_truncl.c: Likewise.
+
 2006-09-07  Richard Sandiford  <richard@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/getcwd.c: Include sys/param.h.

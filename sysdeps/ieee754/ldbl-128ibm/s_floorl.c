@@ -19,7 +19,6 @@
    02111-1307 USA.  */
 
 #include <math.h>
-#include <fenv_libc.h>
 #include <math_ldbl_opt.h>
 #include <float.h>
 #include <ieee754.h>
@@ -43,11 +42,8 @@ __floorl (x)
 			&& __builtin_isless (__builtin_fabs (xh),
 					     __builtin_inf ()), 1))
     {
-      int save_round = fegetround ();
-
       /* Long double arithmetic, including the canonicalisation below,
 	 only works in round-to-nearest mode.  */
-      fesetround (FE_TONEAREST);
 
       /* Convert the high double to integer.  */
       hi = ldbl_nearbyint (xh);
@@ -75,8 +71,6 @@ __floorl (x)
       xh = hi;
       xl = lo;
       ldbl_canonicalize (&xh, &xl);
-
-      fesetround (save_round);
     }
 
   return ldbl_pack (xh, xl);

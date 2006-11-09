@@ -99,10 +99,10 @@ do {							\
   else							\
     {							\
       X##_e = _FP_EXPMAX_##fs - 1;			\
-      FP_SET_EXCEPTION(FP_EX_OVERFLOW);			\
-      FP_SET_EXCEPTION(FP_EX_INEXACT);			\
       _FP_FRAC_SET_##wc(X, _FP_MAXFRAC_##wc);		\
     }							\
+    FP_SET_EXCEPTION(FP_EX_INEXACT);			\
+    FP_SET_EXCEPTION(FP_EX_OVERFLOW);			\
 } while (0)
 
 /* Check for a semi-raw value being a signaling NaN and raise the
@@ -131,10 +131,12 @@ do {									\
 
 /* Prepare to pack an fp value in semi-raw mode: the mantissa is
    rounded and shifted right, with the rounding possibly increasing
-   the exponent (including changing a finite value to infinity).  */
+   the exponent (including changing a finite value to infinity).
+   Be sure not to round NaNs.  */
 #define _FP_PACK_SEMIRAW(fs, wc, X)				\
 do {								\
-  _FP_ROUND(wc, X);						\
+  if(X##_e != _FP_EXPMAX_##fs)					\
+    _FP_ROUND(wc, X);						\
   if (_FP_FRAC_HIGH_##fs(X)					\
       & (_FP_OVERFLOW_##fs >> 1))				\
     {								\
