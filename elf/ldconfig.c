@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <libintl.h>
+#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdio_ext.h>
@@ -558,7 +559,7 @@ manual_link (char *library)
   /* Do some sanity checks first.  */
   if (lstat64 (real_library, &stat_buf))
     {
-      error (0, errno, _("Can't lstat %s"), library);
+      error (0, errno, _("Cannot lstat %s"), library);
       free (path);
       return;
     }
@@ -1166,9 +1167,14 @@ set_hwcap (void)
 int
 main (int argc, char **argv)
 {
-  int remaining;
+  /* Set locale via LC_ALL.  */
+  setlocale (LC_ALL, "");
+
+  /* Set the text message domain.  */
+  textdomain (_libc_intl_domainname);
 
   /* Parse and process arguments.  */
+  int remaining;
   argp_parse (&argp, argc, argv, 0, &remaining, NULL);
 
   /* Remaining arguments are additional directories if opt_manual_link

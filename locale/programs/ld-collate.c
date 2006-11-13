@@ -1153,7 +1153,7 @@ handle_ellipsis (struct linereader *ldfile, const char *symstr, size_t symlen,
 	    {
 	      if (ret > 0)
 		lr_error (ldfile, _("%s: byte sequence of first character of \
-sequence is not lower than that of the last character"), "LC_COLLATE");
+range is not lower than that of the last character"), "LC_COLLATE");
 	      return;
 	    }
 
@@ -1172,7 +1172,7 @@ sequence is not lower than that of the last character"), "LC_COLLATE");
 		  size_t namelen;
 		  void *ptr;
 
-		  /* I don't this this can ever happen.  */
+		  /* I don't think this can ever happen.  */
 		  assert (seq->name != NULL);
 		  namelen = strlen (seq->name);
 
