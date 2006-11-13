@@ -1,3 +1,10 @@
+2006-11-13  Joseph S. Myers  <joseph@codesourcery.com>
+
+	* sysdeps/alpha/bits/mathdef.h (float_t): Always define as float.
+	* sysdeps/powerpc/bits/mathdef.h: Likewise.
+	* sysdeps/sh/sh4/bits/mathdef.h: Likewise.
+	* sysdeps/sparc/bits/mathdef.h: Likewise.
+
 2006-11-09  Steven Munroe  <sjmunroe@us.ibm.com>
 	    Joe Kerian  <jkerian@us.us.ibm.com>
 
