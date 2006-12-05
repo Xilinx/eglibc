@@ -1,3 +1,94 @@
+2006-12-03  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/sys/io.h: Removed.
+
+2006-11-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/memcmp.S: Use jump table as the base of
+	jump table entries.
+
+2006-11-30  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/clone.S: Provide CFI for the outermost
+	`clone' function to ensure proper unwinding stop of gdb.
+	* sysdeps/unix/sysv/linux/x86_64/clone.S: Likewise.
+
+2006-12-01  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/nscd.init: Remove obsolete and commented-out -S option
+	handling.
+
+2006-11-23  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3514]
+	* manual/string.texi (strncmp): Fix pastos from wcscmp description.
+
+	[BZ #3515]
+	* manual/string.texi (strtok): Remove duplicate paragraph.
+
+2006-12-01  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/sigaction.c: Fix compatibility with
+	libgcc not supporting `rflags' unwinding (register # >= 17).
+
+2006-11-30  Jakub Jelinek  <jakub@redhat.com>
+
+	* sunrpc/svc_run.c (svc_run): Set my_pollfd to new_pollfd if realloc
+	succeeded.
+
+2006-11-29  Daniel Jacobowitz  <dan@codesourcery.com>
+	    Jakub Jelinek  <jakub@redhat.com>
+	    Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/sigaction.c (restore_rt): Add correct
+	unwind information.
+	* sysdeps/unix/sysv/linux/x86_64/Makefile: Provide symbols for
+	'restore_rt' even in the 'signal' directory.
+	* sysdeps/unix/sysv/linux/x86_64/ucontext_i.sym: Extend the regs list.
+
+2006-11-27  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3559]
+	* sunrpc/svc_run.c (svc_run): Fail instead of segfaulting if
+	malloc crashed.  Don't allocate memory unnecessarily in each
+	loop.
+
+2006-10-21  Jakub Jelinek  <jakub@redhat.com>
+
+	* resolv/mapv4v6addr.h (map_v4v6_address): Fix last change.
+
+2006-11-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/mapv4v6addr.h (map_v4v6_address): Optimize a bit.
+
+2006-11-18  Bruno Haible  <bruno@clisp.org>
+
+	* sysdeps/unix/sysv/linux/i386/getgroups.c (__getgroups): Invoke
+	__sysconf only after having tried to call getgroups32.
+
+2006-11-19  Ulrich Drepper  <drepper@redhat.com>
+
+	* nss/nss_files/files-hosts.c (LINE_PARSER): Support IPv6-style
+	addresses for IPv4 queries if they can be mapped.
+
+2006-11-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/x86_64/fpu/s_copysignf.S (__copysignf): Switch to .text.
+	* sysdeps/x86_64/fpu/s_copysign.S (__copysign): Likewise.
+	(signmask): Add .size directive.
+	(othermask): Add .type directive.
+
+2006-11-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/nl.po: Update from translation team.
+
+	* timezone/zdump.c: Redo fix for BZ #3137.
+
+2006-11-14  Jakub Jelinek  <jakub@redhat.com>
+
+	* nss/nss_files/files-alias.c (get_next_alias): Set line back
+	to first_unused after parsing :include: file.
+
 2006-11-10  Ulrich Drepper  <drepper@redhat.com>
 
 	* timezone/africa: Update from tzdata2006o.
@@ -17,7 +108,7 @@
 	* timezone/checktab.awk: Update from tzcode2006o.
 	* timezone/ialloc.c: Likewise.
 	* timezone/private.h: Likewise.
-	* timezone/scheck.: Likewise.
+	* timezone/scheck.c: Likewise.
 	* timezone/tzfile.h: Likewise.
 	* timezone/tzselect.ksh: Likewise.
 	* timezone/zdump.c: Likewise.
