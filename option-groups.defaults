@@ -1,0 +1,11 @@
+# This file sets default values for all option group variables
+# mentioned in option-groups.def; see that file for a description of
+# each option group.
+#
+# Subdirectory makefiles include this file before including the user's
+# settings from option-groups.config at the top of the build tree;
+# that file need only refer to those options whose default settings
+# are to be changed.
+#
+# By default, all option groups are enabled.
+OPTION_EGLIBC_CATGETS = y

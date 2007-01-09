@@ -1,0 +1,44 @@
+# This file documents the option groups EGLIBC currently supports, in
+# a format akin to the Linux Kconfig system's.  The syntax may change
+# over time.
+#
+# An entry of the form:
+#
+#   config OPTION_GROUP_NAME
+#       bool "one-line explanation of what this option group controls"
+#       help
+#           Multi-line help explaining the option group's meaning in
+#           some detail, terminated by indentation level.
+#
+# defines an option group whose variable is OPTION_GROUP_NAME, with
+# meaningful values 'y' (enabled) and 'n' (disabled).  The
+# documentation is formatted to be consumed by some sort of
+# interactive configuration interface, but EGLIBC doesn't have such an
+# interface yet.
+# 
+# Option group variables get their default values from the file
+# 'option-groups.defaults', in the top directory of the EGLIBC source
+# tree.  By default, all EGLIBC option groups are enabled --- their
+# variables are set to 'y'.
+#
+# After including 'option-groups.defaults', the EGLIBC make machinery
+# includes the file 'option-groups.config' from the top of the build
+# tree, if it is present.  Developers can place assignments to option
+# group variables in that file to override the defaults.  For example,
+# to disable an option group, place a line of the form:
+#
+#    OPTION_GROUP_NAME = n
+#
+# in 'option-groups.config' at the top of your build tree.  To
+# explicitly enable an option group, you may also write:
+#
+#    OPTION_GROUP_NAME = y
+# 
+# although this simply reestablishes the value already set by
+# 'option-groups.defaults'.
+
+config OPTION_EGLIBC_CATGETS
+   bool "Functions for accessing message catalogs"
+   help
+       This option group includes functions for accessing message
+       catalogs: catopen, catclose, and catgets.
