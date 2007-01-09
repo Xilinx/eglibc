@@ -1,3 +1,13 @@
+2006-12-26  Jim Blandy  <jimb@codesourcery.com>
+
+        * option-groups.def, option-groups.defaults (OPTION_EGLIBC_LOCALES):
+        New option group.
+        * localedata/Makefile: Trim locale lists if
+        OPTION_EGLIBC_LOCALES is not enabled.
+
+        * option-groups.mak: Allow includer to override the option
+        group config file name.
+
 2006-12-08  Jim Blandy  <jimb@codesourcery.com>
 
 	Add rudimentary option group support.

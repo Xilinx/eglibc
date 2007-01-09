@@ -22,15 +22,26 @@ subdir := localedata
 
 all: # Make this the default target; it will be defined in Rules.
 
-# List with all available character set descriptions.
-charmaps := $(filter-out $(addprefix charmaps/, CVS RCS SCCS %~), \
-				     $(wildcard charmaps/[A-I]*) \
-				     $(wildcard charmaps/[J-Z]*))
+include ../option-groups.mak
 
 # List with all available character set descriptions.
-locales := $(filter-out $(addprefix locales/, CVS RCS SCCS %~), \
-				    $(wildcard locales/*))
+all-charmaps := $(filter-out $(addprefix charmaps/, CVS RCS SCCS %~), \
+					 $(wildcard charmaps/[A-I]*) \
+					 $(wildcard charmaps/[J-Z]*))
 
+# List with all available character set descriptions.
+all-locales := $(filter-out $(addprefix locales/, CVS RCS SCCS %~), \
+			    $(wildcard locales/*))
+
+# If the EGLIBC_LOCALES option group is not enabled, trim the
+# list of charmap and locale source files.
+ifeq ($(OPTION_EGLIBC_LOCALES),y)
+charmaps := $(all-charmaps)
+locales  := $(all-locales)
+else
+charmaps := 
+locales  := locales/POSIX
+endif
 
 subdir-dirs = tests-mbwc
 vpath %.c tests-mbwc
@@ -60,7 +71,7 @@ generated-dirs := $(ld-test-names) tt_TT de_DE.437			\
 		  $(addprefix tstfmon_,$(fmon-tests))			\
 
 distribute := CHECKSUMS README SUPPORTED ChangeLog			\
-	      $(charmaps) $(locales)					\
+	      $(all-charmaps) $(all-locales)				\
 	      tst-rpmatch.sh tst-locale.sh tst-fmon.sh sort-test.sh	\
 	      tst-fmon.data $(test-input-data) $(ld-test-srcs)		\
 	      th_TH.in cs_CZ.in tst-mbswcs.sh tst-trans.sh tst-ctype.sh \
@@ -202,6 +213,11 @@ $(objpfx)tst-mbswcs6.out: $(addprefix $(objpfx),$(CTYPE_FILES))
 endif
 
 include SUPPORTED
+
+# Only install locale data if OPTION_EGLIBC_LOCALES is selected.
+ifneq ($(OPTION_EGLIBC_LOCALES),y)
+SUPPORTED-LOCALES :=
+endif
 
 INSTALL-SUPPORTED-LOCALES=$(addprefix install-, $(SUPPORTED-LOCALES))
 

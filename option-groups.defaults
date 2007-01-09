@@ -9,3 +9,4 @@
 #
 # By default, all option groups are enabled.
 OPTION_EGLIBC_CATGETS = y
+OPTION_EGLIBC_LOCALES = y

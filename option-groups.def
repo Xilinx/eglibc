@@ -42,3 +42,10 @@ config OPTION_EGLIBC_CATGETS
    help
        This option group includes functions for accessing message
        catalogs: catopen, catclose, and catgets.
+
+config OPTION_EGLIBC_LOCALES
+   bool "Locale definitions"
+   help
+       This option group includes all locale definitions other than
+       that for the "C" locale.  If this option group is omitted, then
+       only the "C" locale is supported.
