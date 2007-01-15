@@ -1,3 +1,28 @@
+2007-01-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-rwlock7.c: Show some more information in case of correct
+	behavior.
+
+2007-01-11  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h
+	(lll_futex_timed_wait): Undo part of last change, don't negate
+	return value.
+
+2007-01-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h: Cleanups.  Define
+	FUTEX_CMP_REQUEUE and lll_futex_requeue.
+
+2006-12-28  David S. Miller  <davem@davemloft.net>
+
+	* shlib-versions: Fix sparc64 linux target specification.
+
+2007-01-10  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sparcv9/pthread_barrier_wait.c:
+	Adjust include path for pthread_barrier_wait.c move.
+
 2006-12-21  Jakub Jelinek  <jakub@redhat.com>
 
 	* sysdeps/unix/sysv/linux/pthread_kill.c (pthread_kill): Make sure
@@ -71,7 +96,7 @@
 	* sysdeps/pthread/pthread_getcpuclockid.c: Move to...
 	* pthread_getcpuclockid.c: ...here.
 
-	* init.c: USE_TLS support is now default.
+	* init.c: USE_TLS support is now always enabled.
 	* tst-tls5.h: Likewise.
 	* sysdeps/alpha/tls.h: Likewise.
 	* sysdeps/i386/tls.h: Likewise.
