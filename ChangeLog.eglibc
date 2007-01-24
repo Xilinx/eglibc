@@ -254,3 +254,7 @@
 	* manual/errno.texi (error_print_progname): Remove space between
 	"error_print_progname" and ")".
 
+
+Local Variables:
+change-log-default-name: "ChangeLog.eglibc"
+End:
