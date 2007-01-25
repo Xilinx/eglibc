@@ -1,6 +1,7 @@
 2007-01-25  Jim Blandy  <jimb@codesourcery.com>
 
 	* Makerules: Allow option groups to control xtests as well.
+	* option-groups.mak: Initialize xtests-y.
 
 2006-12-26  Jim Blandy  <jimb@codesourcery.com>
 

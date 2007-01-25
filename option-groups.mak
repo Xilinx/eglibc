@@ -21,4 +21,5 @@ install-bin-y  :=
 install-sbin-y :=
 extra-objs-y   :=
 tests-y        :=
+xtests-y       :=
 test-srcs-y    :=
