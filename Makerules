@@ -412,6 +412,7 @@ install-bin  += $(install-bin-y)
 install-sbin += $(install-sbin-y)
 extra-objs   += $(extra-objs-y)
 tests        += $(tests-y)
+xtests       += $(xtests-y)
 test-srcs    += $(test-srcs-y)
 
 
