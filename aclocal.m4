@@ -97,6 +97,8 @@ AS=`$CC -print-prog-name=as`
 LD=`$CC -print-prog-name=ld`
 AR=`$CC -print-prog-name=ar`
 AC_SUBST(AR)
+NM=`$CC -print-prog-name=nm`
+AC_SUBST(NM)
 OBJDUMP=`$CC -print-prog-name=objdump`
 AC_SUBST(OBJDUMP)
 

@@ -19,8 +19,9 @@
 # Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 # 02111-1307 USA.
 
+nm="$1"; shift
 while [ $# -gt 0 ]; do
-  ( nm -P $1; echo 'end[end]:' ) | gawk ' BEGIN {
+  ( $nm -P $1; echo 'end[end]:' ) | gawk ' BEGIN {
 C["accept"]=1
 C["close"]=1
 C["connect"]=1

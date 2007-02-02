@@ -592,16 +592,17 @@ generated += banner.h
 LDFLAGS-pthread.so += -e __nptl_main
 endif
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 ifeq (yes,$(build-shared))
 tests: $(objpfx)tst-cancel-wrappers.out
 $(objpfx)tst-cancel-wrappers.out: tst-cancel-wrappers.sh
-	$(SHELL) $< $(common-objpfx)libc_pic.a \
+	$(SHELL) $< '$(NM)' \
+		    $(common-objpfx)libc_pic.a \
 		    $(common-objpfx)libc.a \
 		    $(objpfx)libpthread_pic.a \
 		    $(objpfx)libpthread.a > $@
 endif
-endif
+# eglibc: endif
 
 tst-exec4-ARGS = $(built-program-cmd)
 

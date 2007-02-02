@@ -1,3 +1,13 @@
+2007-02-02  Jim Blandy  <jimb@codesourcery.com>
+
+	Use the host nm in NPTL tests.
+	* aclocal.m4 (LIBC_PROG_BINUTILS): Find path to 'nm', too.
+        * configure: Regenerated.
+	* config.make.in: Accept 'nm' path from configure script.
+	* nptl/Makefile (tst-cancel-wrappers.out): Pass 'nm' path to test
+	script.
+	* nptl/tst-cancel-wrappers.sh: Use the 'nm' given in arguments.
+
 2007-01-25  Jim Blandy  <jimb@codesourcery.com>
 
 	* Makerules: Allow option groups to control xtests as well.
