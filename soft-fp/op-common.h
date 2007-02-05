@@ -1,5 +1,5 @@
 /* Software floating-point emulation. Common operations.
-   Copyright (C) 1997,1998,1999,2006 Free Software Foundation, Inc.
+   Copyright (C) 1997,1998,1999,2006,2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com),
 		  Jakub Jelinek (jj@ultra.linux.cz),
@@ -131,12 +131,10 @@ do {									\
 
 /* Prepare to pack an fp value in semi-raw mode: the mantissa is
    rounded and shifted right, with the rounding possibly increasing
-   the exponent (including changing a finite value to infinity).
-   Be sure not to round NaNs.  */
+   the exponent (including changing a finite value to infinity).  */
 #define _FP_PACK_SEMIRAW(fs, wc, X)				\
 do {								\
-  if(X##_e != _FP_EXPMAX_##fs)					\
-    _FP_ROUND(wc, X);						\
+  _FP_ROUND(wc, X);						\
   if (_FP_FRAC_HIGH_##fs(X)					\
       & (_FP_OVERFLOW_##fs >> 1))				\
     {								\
@@ -1254,6 +1252,9 @@ do {									     \
 	      _FP_FRAC_SRL_##swc(S, (_FP_WFRACBITS_##sfs		     \
 				     - _FP_WFRACBITS_##dfs));		     \
 	      _FP_FRAC_COPY_##dwc##_##swc(D, S);			     \
+	      /* Semi-raw NaN must have all workbits cleared.  */	     \
+	      _FP_FRAC_LOW_##dwc(D)					     \
+		&= ~(_FP_W_TYPE) ((1 << _FP_WORKBITS) - 1);		     \
 	      _FP_FRAC_HIGH_##dfs(D) |= _FP_QNANBIT_SH_##dfs;		     \
 	    }								     \
 	}								     \

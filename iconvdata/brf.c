@@ -1,6 +1,7 @@
-/* Internal libc stuff for floating point environment routines.
+/* Conversion from and to BRF.
    Copyright (C) 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by Samuel Thibault <samuel.thibault@ens-lyon.org>, 2006.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +18,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _FENV_LIBC_H
-#define _FENV_LIBC_H	1
+#include <stdint.h>
 
-/* fenv_libc.h is used in libm implementations of ldbl-128ibm.  So we
-   need this version in the soft-fp to at minimum include fenv.h to
-   get the fegetround definition.  */
+/* Get the conversion table.  */
+#define TABLES <brf.h>
 
-#include <fenv.h>
- 
-#endif /* fenv_libc.h */
+#define CHARSET_NAME	"BRF//"
+#define HAS_HOLES	1	/* Not all 256 character are defined.  */
+
+#include <8bit-gap.c>

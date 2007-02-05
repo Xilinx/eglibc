@@ -181,24 +181,31 @@ struct database_dyn dbs[lastdb] =
 
 
 /* Mapping of request type to database.  */
-static struct database_dyn *const serv2db[LASTREQ] =
+static struct
 {
-  [GETPWBYNAME] = &dbs[pwddb],
-  [GETPWBYUID] = &dbs[pwddb],
-  [GETGRBYNAME] = &dbs[grpdb],
-  [GETGRBYGID] = &dbs[grpdb],
-  [GETHOSTBYNAME] = &dbs[hstdb],
-  [GETHOSTBYNAMEv6] = &dbs[hstdb],
-  [GETHOSTBYADDR] = &dbs[hstdb],
-  [GETHOSTBYADDRv6] = &dbs[hstdb],
-  [GETFDPW] = &dbs[pwddb],
-  [GETFDGR] = &dbs[grpdb],
-  [GETFDHST] = &dbs[hstdb],
-  [GETAI] = &dbs[hstdb],
-  [INITGROUPS] = &dbs[grpdb],
-  [GETSERVBYNAME] = &dbs[servdb],
-  [GETSERVBYPORT] = &dbs[servdb],
-  [GETFDSERV] = &dbs[servdb]
+  bool data_request;
+  struct database_dyn *db;
+} const reqinfo[LASTREQ] =
+{
+  [GETPWBYNAME] = { true, &dbs[pwddb] },
+  [GETPWBYUID] = { true, &dbs[pwddb] },
+  [GETGRBYNAME] = { true, &dbs[grpdb] },
+  [GETGRBYGID] = { true, &dbs[grpdb] },
+  [GETHOSTBYNAME] = { true, &dbs[hstdb] },
+  [GETHOSTBYNAMEv6] = { true, &dbs[hstdb] },
+  [GETHOSTBYADDR] = { true, &dbs[hstdb] },
+  [GETHOSTBYADDRv6] = { true, &dbs[hstdb] },
+  [SHUTDOWN] = { false, NULL },
+  [GETSTAT] = { false, NULL },
+  [SHUTDOWN] = { false, NULL },
+  [GETFDPW] = { false, &dbs[pwddb] },
+  [GETFDGR] = { false, &dbs[grpdb] },
+  [GETFDHST] = { false, &dbs[hstdb] },
+  [GETAI] = { true, &dbs[hstdb] },
+  [INITGROUPS] = { true, &dbs[grpdb] },
+  [GETSERVBYNAME] = { true, &dbs[servdb] },
+  [GETSERVBYPORT] = { true, &dbs[servdb] },
+  [GETFDSERV] = { false, &dbs[servdb] }
 };
 
 
@@ -385,7 +392,7 @@ verify_persistent_db (void *mem, struct database_pers_head *readhead, int dbnr)
 
 	  /* Make sure the record is for this type of service.  */
 	  if (here->type >= LASTREQ
-	      || serv2db[here->type] != &dbs[dbnr])
+	      || reqinfo[here->type].db != &dbs[dbnr])
 	    goto fail;
 
 	  /* Validate boolean field value.  */
@@ -933,24 +940,14 @@ cannot handle old request version %d; current version is %d"),
       return;
     }
 
-  /* Make the SELinux check before we go on to the standard checks.  We
-     need to verify that the request type is valid, since it has not
-     yet been checked at this point.  */
-  if (selinux_enabled
-      && __builtin_expect (req->type >= GETPWBYNAME, 1)
-      && __builtin_expect (req->type < LASTREQ, 1)
-      && __builtin_expect (req->type < SHUTDOWN || req->type > INVALIDATE, 1)
-      && nscd_request_avc_has_perm (fd, req->type) != 0)
+  /* Make the SELinux check before we go on to the standard checks.  */
+  if (selinux_enabled && nscd_request_avc_has_perm (fd, req->type) != 0)
     return;
 
-  struct database_dyn *db = serv2db[req->type];
+  struct database_dyn *db = reqinfo[req->type].db;
 
-  // XXX Clean up so that each new command need not introduce a
-  // XXX new conditional.
-  if ((__builtin_expect (req->type, GETPWBYNAME) >= GETPWBYNAME
-       && __builtin_expect (req->type, GETHOSTBYADDRv6) <= GETHOSTBYADDRv6)
-      || req->type == GETAI || req->type == INITGROUPS
-      || req->type == GETSERVBYNAME || req->type == GETSERVBYPORT)
+  /* See whether we can service the request from the cache.  */
+  if (__builtin_expect (reqinfo[req->type].data_request, true))
     {
       if (__builtin_expect (debug_level, 0) > 0)
 	{
@@ -968,7 +965,7 @@ cannot handle old request version %d; current version is %d"),
 	}
 
       /* Is this service enabled?  */
-      if (!db->enabled)
+      if (__builtin_expect (!db->enabled, 0))
 	{
 	  /* No, sent the prepared record.  */
 	  if (TEMP_FAILURE_RETRY (send (fd, db->disabled_iov->iov_base,
@@ -1149,7 +1146,7 @@ cannot handle old request version %d; current version is %d"),
     case GETFDHST:
     case GETFDSERV:
 #ifdef SCM_RIGHTS
-      send_ro_fd (serv2db[req->type], key, fd);
+      send_ro_fd (reqinfo[req->type].db, key, fd);
 #endif
       break;
 
@@ -1433,7 +1430,6 @@ nscd_run (void *p)
 
       /* It should not be possible to crash the nscd with a silly
 	 request (i.e., a terribly large key).  We limit the size to 1kb.  */
-#define MAXKEYLEN 1024
       if (__builtin_expect (req.key_len, 1) < 0
 	  || __builtin_expect (req.key_len, 1) > MAXKEYLEN)
 	{

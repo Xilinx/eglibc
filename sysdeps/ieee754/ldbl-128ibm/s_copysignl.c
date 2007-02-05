@@ -34,7 +34,7 @@ static char rcsid[] = "$NetBSD: $";
 	long double x,y;
 #endif
 {
-  if( signbit(x) != signbit(y) )
+  if (signbit (x) != signbit (y))
     x = -x;
   return x;
 }
