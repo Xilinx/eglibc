@@ -20,7 +20,7 @@
 # 02111-1307 USA.
 
 common_objpfx=$1
-run_program_prefix=$2
+cross_test_wrapper="$2"
 
 test -e ${common_objpfx}elf/will-be-empty &&
   rm -fr ${common_objpfx}elf/will-be-empty
@@ -31,7 +31,8 @@ cp ${common_objpfx}elf/pathoptobj.so ${common_objpfx}elf/for-renamed/renamed.so
 
 LOCPATH=${common_objpfx}localedata GCONV_PATH=${common_objpfx}iconvdata \
 LC_ALL=C LD_LIBRARY_PATH=${common_objpfx}elf/will-be-empty:${common_objpfx}elf/for-renamed:${common_objpfx}.:${common_objpfx}dlfcn \
-  ${common_objpfx}elf/ld.so ${common_objpfx}elf/tst-pathopt \
+  ${cross_test_wrapper} ${common_objpfx}elf/ld.so \
+    ${common_objpfx}elf/tst-pathopt \
     > ${common_objpfx}elf/tst-pathopt.out
 
 exit $?

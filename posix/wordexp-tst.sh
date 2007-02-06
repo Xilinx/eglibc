@@ -7,6 +7,11 @@
 common_objpfx=$1; shift
 elf_objpfx=$1; shift
 rtld_installed_name=$1; shift
+cross_test_wrapper=$1; shift
+
+run_program_prefix="${cross_test_wrapper} \
+${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx}"
+
 logfile=${common_objpfx}posix/wordexp-tst.out
 testout=${common_objpfx}posix/wordexp-test-result
 
@@ -20,7 +25,7 @@ IFS=" 	\
 export IFS
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '$*' > ${testout}1
 cat <<"EOF" | cmp - ${testout}1 >> $logfile || failed=1
 wordexp returned 0
@@ -32,7 +37,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '${*}' unquoted > ${testout}2
 cat <<"EOF" | cmp - ${testout}2 >> $logfile || failed=1
 wordexp returned 0
@@ -45,7 +50,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '$@' unquoted > ${testout}3
 cat <<"EOF" | cmp - ${testout}3 >> $logfile || failed=1
 wordexp returned 0
@@ -58,7 +63,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '"$* quoted"' param > ${testout}4
 cat <<"EOF" | cmp - ${testout}4 >> $logfile || failed=1
 wordexp returned 0
@@ -70,7 +75,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '"$@ quoted"' param > ${testout}5
 cat <<"EOF" | cmp - ${testout}5 >> $logfile || failed=1
 wordexp returned 0
@@ -84,7 +89,7 @@ fi
 # Why?  Because bash does it that way..
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '$#' 2 3 4 5 > ${testout}6
 cat <<"EOF" | cmp - ${testout}6 >> $logfile || failed=1
 wordexp returned 0
@@ -96,7 +101,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '$2 ${3} $4' 2nd 3rd "4 th" > ${testout}7
 cat <<"EOF" | cmp - ${testout}7 >> $logfile || failed=1
 wordexp returned 0
@@ -111,7 +116,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '${11}' 2 3 4 5 6 7 8 9 10 11 > ${testout}8
 cat <<"EOF" | cmp - ${testout}8 >> $logfile || failed=1
 wordexp returned 0
@@ -123,7 +128,7 @@ if test $failed -ne 0; then
 fi
 
 failed=0
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '"a $@ b"' c d > ${testout}9
 cat <<"EOF" | cmp - ${testout}9 >> $logfile || failed=1
 wordexp returned 0
@@ -136,7 +141,7 @@ if test $failed -ne 0; then
   status=1
 fi
 
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} \
+${run_program_prefix} \
 ${common_objpfx}posix/wordexp-test '${#@} ${#2} *$**' two 3 4 > ${testout}10
 cat <<"EOF" | cmp - ${testout}10 || failed=1
 wordexp returned 0

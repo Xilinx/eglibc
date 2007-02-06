@@ -79,9 +79,9 @@ $(inst_bindir)/iconv: $(objpfx)iconv_prog $(+force)
 $(objpfx)iconv_prog: $(iconv_prog-modules:%=$(objpfx)%.o)
 $(objpfx)iconvconfig: $(iconvconfig-modules:%=$(objpfx)%.o)
 
-ifneq ($(cross-compiling),yes)
+# eglibc: ifneq ($(cross-compiling),yes)
 xtests: test-iconvconfig
-endif
+# eglibc: endif
 
 .PHONY: test-iconvconfig
 test-iconvconfig: /dev/null $(objpfx)iconvconfig

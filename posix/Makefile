@@ -121,18 +121,18 @@ otherlibs += $(wildcard $(nssobjdir)/libnss_files.a \
 			$(resolvobjdir)/libresolv.a)
 endif
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 # globtest and wordexp-test currently only works with shared libraries
 ifeq (yes,$(build-shared))
 tests: $(objpfx)globtest.out $(objpfx)wordexp-tst.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
 	$(SHELL) -e globtest.sh $(common-objpfx) $(elf-objpfx) \
-		 $(rtld-installed-name)
+		 $(rtld-installed-name) '$(cross-test-wrapper)'
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
 	$(SHELL) -e wordexp-tst.sh $(common-objpfx) $(elf-objpfx) \
-		 $(rtld-installed-name)
+		 $(rtld-installed-name) '$(cross-test-wrapper)'
 endif
-endif
+# eglibc: endif
 
 CFLAGS-regex.c = -Wno-strict-prototypes
 CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions -DUSE_NSCD
@@ -171,8 +171,8 @@ CFLAGS-execlp.os = -fomit-frame-pointer
 tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 		--none random --col --color --colour
 
-tst-exec-ARGS = -- $(built-program-cmd)
-tst-spawn-ARGS = -- $(built-program-cmd)
+tst-exec-ARGS = -- $(local-built-program-cmd)
+tst-spawn-ARGS = -- $(local-built-program-cmd)
 tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); pwd` $(objpfx)tst-dir
 tst-chmod-ARGS = `pwd`
 tst-vfork3-ARGS = --test-dir=$(objpfx)
@@ -216,13 +216,13 @@ endif
 # Run a test on the header files we use.
 # XXX Please note that for now we ignore the result of this test.
 tests: $(objpfx)annexc.out
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 tests: $(objpfx)bug-regex2-mem $(objpfx)bug-regex14-mem \
   $(objpfx)bug-regex21-mem $(objpfx)tst-rxspencer-mem \
   $(objpfx)tst-pcre-mem $(objpfx)tst-boost-mem $(objpfx)tst-getconf.out \
   $(objpfx)bug-glob2-mem $(objpfx)tst-vfork3-mem
 xtests: $(objpfx)bug-ga2-mem
-endif
+# eglibc: endif
 
 $(objpfx)annexc.out: $(objpfx)annexc
 	-$(dir $<)$(notdir $<) '$(CC)' \
@@ -270,7 +270,8 @@ $(objpfx)tst-boost-mem: $(objpfx)tst-boost.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-boost.mtrace > $@
 
 $(objpfx)tst-getconf.out: tst-getconf.sh $(objpfx)getconf
-	$(SHELL) -e $< $(common-objpfx) $(elf-objpfx) $(rtld-installed-name)
+	$(SHELL) -e $< $(common-objpfx) $(elf-objpfx) \
+		'$(cross-test-wrapper)' $(rtld-installed-name)
 
 ifeq (yes,$(build-shared))
 $(objpfx)tst-regex: $(common-objpfx)rt/librt.so

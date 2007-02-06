@@ -24,8 +24,9 @@
 
 common_objpfx=$1
 objpfx=$2
-charset=$3
-charmap=$4
+cross_test_wrapper="$3"
+charset=$4
+charmap=$5
 
 GCONV_PATH=${common_objpfx}iconvdata
 export GCONV_PATH
@@ -60,12 +61,12 @@ else
 fi
 
 # iconv in one direction.
-${common_objpfx}elf/ld.so --library-path $common_objpfx \
+${cross_test_wrapper} ${common_objpfx}elf/ld.so --library-path $common_objpfx \
 ${objpfx}tst-table-from ${charset} \
   > ${objpfx}tst-${charset}.table
 
 # iconv in the other direction.
-${common_objpfx}elf/ld.so --library-path $common_objpfx \
+${cross_test_wrapper} ${common_objpfx}elf/ld.so --library-path $common_objpfx \
 ${objpfx}tst-table-to ${charset} | sort \
   > ${objpfx}tst-${charset}.inverse.table
 

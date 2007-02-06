@@ -32,10 +32,13 @@ lang=`sed -e '/^#/d' -e '/^$/d' -e '/^C	/d' -e '/^tstfmon/d' -e 's/^\([^	]*\).*/
 for cns in `cd ./tst-fmon-locales && ls tstfmon_*`; do
     cn=tst-fmon-locales/$cns
     fn=charmaps/ISO-8859-1
+    # If run_program_prefix includes a cross-testing wrapper based on a
+    # program like ssh, it may steal input from the while loop, so
+    # redirect its stdin from /dev/null.
     I18NPATH=. GCONV_PATH=${common_objpfx}iconvdata \
     LOCPATH=${common_objpfx}localedata LC_ALL=C LANGUAGE=C \
     ${run_program_prefix} ${common_objpfx}locale/localedef \
-    --quiet -i $cn -f $fn ${common_objpfx}localedata/$cns
+    --quiet -i $cn -f $fn ${common_objpfx}localedata/$cns < /dev/null
 done
 
 # Run the tests.
@@ -45,10 +48,13 @@ while IFS="	" read locale format value expect; do
     case "$locale" in '#'*) continue ;; esac
     if [ -n "$format" ]; then
 	expect=`echo "$expect" | sed 's/^\"\(.*\)\"$/\1/'`
+        # If run_program_prefix includes a cross-testing wrapper based on a
+        # program like ssh, it may steal input from the while loop, so
+        # redirect its stdin from /dev/null.
 	LOCPATH=${common_objpfx}localedata \
 	GCONV_PATH=${common_objpfx}/iconvdata \
 	${run_program_prefix} ${common_objpfx}localedata/tst-fmon \
-	"$locale" "$format" "$value" "$expect" ||
+	"$locale" "$format" "$value" "$expect" < /dev/null ||
 	errcode=$?
     fi
 done < $datafile

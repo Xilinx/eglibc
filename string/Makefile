@@ -73,10 +73,10 @@ CFLAGS-stratcliff.c = -fno-builtin
 CFLAGS-test-ffs.c = -fno-builtin
 CFLAGS-tst-inlcall.c = -fno-builtin
 
-ifeq ($(cross-compiling),no)
+# eglibc: ifeq ($(cross-compiling),no)
 tests: $(objpfx)tst-svc.out
 $(objpfx)tst-svc.out: tst-svc.input $(objpfx)tst-svc
 	GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
 	  $(built-program-cmd) < $(word 1,$^) > $@
 	-cmp tst-svc.expect $(objpfx)tst-svc.out
-endif
+# eglibc: endif

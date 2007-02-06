@@ -30,10 +30,13 @@ errcode=0
 while IFS="	" read locale format value expect; do
     case "$locale" in '#'*) continue ;; esac
     if [ -n "$format" ]; then
+        # If run_program_prefix includes a cross-testing wrapper based
+        # on a program like ssh, it may steal input from the while
+        # loop, so redirect its stdin from /dev/null.
 	if LOCPATH=${common_objpfx}localedata \
 	    GCONV_PATH=${common_objpfx}/iconvdata \
 	    ${run_program_prefix} ${common_objpfx}localedata/tst-numeric \
-	    "$locale" "$format" "$value" "$expect"
+	    "$locale" "$format" "$value" "$expect" < /dev/null
 	then
 	    echo "Locale: \"${locale}\" Format: \"${format}\"" \
 		 "Value: \"${value}\" Expect: \"${expect}\"  passed"

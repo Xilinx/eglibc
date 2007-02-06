@@ -1,3 +1,83 @@
+2007-02-05  Jim Blandy  <jimb@codesourcery.com>
+
+	Add support for cross-testing.
+
+	Remove Make conditionals that disable running tests or generating
+	test input files when cross-compiling.
+	* Rules: Disable conditionals.
+	* stdlib/Makefile: Same.
+	* libio/Makefile: Same.
+	* intl/Makefile: Same.
+	* iconvdata/Makefile: Same.
+	* localedata/Makefile: Same.
+	* catgets/Makefile: Same.
+	* misc/Makefile: Same.
+	* posix/Makefile: Same.
+	* string/Makefile: Same.
+	* stdio-common/Makefile: Same.
+	* resolv/Makefile: Same.
+	* iconv/Makefile: Same.
+	* grp/Makefile: Same.
+	* elf/Makefile: Same.
+	* malloc/Makefile: Same.
+	* io/Makefile: Same.
+
+	Where tests run binaries, have them use cross-test-wrapper, if
+	set.
+	* Makeconfig (run-program-prefix): Split this into two pieces:
+	(run-via-rtld-prefix): Prefix to run something via the dynamic linker.
+	(run-program-prefix): Prefix to run something via the
+	cross-testing wrapper and the dynamic linker.
+	(built-program-command): Run the rule's second dependency, using the
+	cross-test-wrapper and dynamic linker.
+	(local-built-program-cmd): Like built-program-command, but don't
+	use cross-test-wrapper.
+	* intl/Makefile: Pass cross-test-wrapper to scripts.
+	* intl/tst-codeset.sh, intl/tst-gettext.sh, intl/tst-gettext2.sh:
+	* intl/tst-gettext3.sh, intl/tst-translit.sh: Expect and use wrapper.
+	* iconvdata/Makefile: Pass cross-test-wrapper to scripts.
+	* iconvdata/run-iconv-test.sh, iconvdata/tst-table.sh:
+	* iconvdata/tst-tables.sh: Expect and use wrapper.
+	* posix/Makefile: Pass cross-test-wrapper to scripts.  Pass
+	local-built-program-command to tests which run subprograms.
+	* posix/tst-getconf.sh, posix/globtest.sh:
+	* posix/workexp-tst.sh: Expect and use wrapper.
+	* grp/Makefile: Pass cross-test-wrapper to scripts.
+	* grp/tst-fgetgrent.sh: Expect and use wrapper.
+	* elf/Makefile: Pass cross-test-wrapper to scripts.  Use
+	cross-test-wrapper to run binaries.  Pass
+	local-built-program-command to tests which run subprograms.
+	* elf/tst-pathopt.sh: Expect and use wrapper.
+	* malloc/Makefile: Pass cross-test-wrapper to scripts.
+	* malloc/tst-mtrace.sh: Expect and use wrapper.
+	* io/Makefile: Pass cross-test-wrapper to scripts.
+	* io/ftwtest-sh: Expect and use wrapper.
+	* nptl/Makefile: Pass cross-test-wrapper to scripts.  Pass
+	local-built-program-command to tests which run subprograms.
+	* nptl/tst-tls6.sh: Expect and use wrapper.
+	* rt/makefile (tst-mqueue7-ARGS): Pass local-built-program-command.
+
+	Make sure cross-testing wrappers don't steal input from test
+	script loops.
+
+	* iconvdata/run-iconv-test.sh: Use non-stdin file descriptor for
+	while loop input.
+	* iconvdata/tst-tables.sh: Redirect loop body input from /dev/null.
+	* localedata/tst-rpmatch.sh, localedata/tst-fmon.sh: Same.
+	* localedata/tst-numeric.sh: Same.
+	* posix/tst-getconf.sh: Same.
+
+	* localedata/tst-wctype.sh: Take the command to run as an
+	argument, as passed by the Makefile, not run_program_prefix.
+
+	* io/Makefile ($(objpfx)/ftwtest.out): If cross-testing, use build
+	tree for temporary directory.
+
+	* localedata/Makefile ($(addprefix $(objpfx),$(CTYPE_FILES))): Use
+	cross-localedef program, if specified.
+
+	* scripts/cross-test-ssh.sh: New file: sample cross-test wrapper.
+
 2007-02-02  Jim Blandy  <jimb@codesourcery.com>
 
 	Use the host nm in NPTL tests.

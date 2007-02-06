@@ -3,6 +3,9 @@
 # The common objpfx, used to find libraries and the dynamic loader.
 objpfx=$1
 
+# The cross-testing wrapper.
+cross_test_wrapper="$2"
+
 # We expect one parameter which is the test program.  This must understand
 # a number options:
 #   --phys		use the FTW_PHYS flag
@@ -11,7 +14,7 @@ objpfx=$1
 #   --depth		use the FTW_DEPTH flag
 #   --early-exit 	print file@2 item only and return non-zero from the
 #			callback when it is seen
-testprogram=$2
+testprogram=$3
 
 # We cannot test this as root.
 if test `id | sed "s/uid=\([0-9]*\).*/\1/"` = 0; then
@@ -29,6 +32,7 @@ tmp=`echo ${TMPDIR:-/tmp} | sed 's|\(.\)/*$|\1|'`
 tmpdir=$tmp/ftwtest.d
 
 [ -f ${objpfx}elf/ld.so ] && ldso=${objpfx}elf/ld.so
+ldso="${cross_test_wrapper:+$cross_test_wrapper }$ldso"
 
 trap 'chmod -fR a+x $tmpdir; rm -fr $tmpdir $testout' 1 2 3 15
 

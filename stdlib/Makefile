@@ -120,9 +120,9 @@ testmb2-ENV = LOCPATH=$(common-objpfx)localedata
 # Run a test on the header files we use.
 tests: $(objpfx)isomac.out
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 tests: $(objpfx)tst-fmtmsg.out
-endif
+# eglibc: endif
 
 $(objpfx)isomac.out: $(objpfx)isomac
 	$(dir $<)$(notdir $<) '$(CC)'  \

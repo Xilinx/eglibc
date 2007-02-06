@@ -94,10 +94,20 @@ test-stat2-ARGS = Makefile . $(objpfx)test-stat2
 
 tst-statvfs-ARGS = $(objpfx)tst-statvfs tst-statvfs.c /tmp
 
-ifeq ($(cross-compiling),no)
+# eglibc: ifeq ($(cross-compiling),no)
 tests: $(objpfx)ftwtest.out
 
-$(objpfx)ftwtest.out: $(objpfx)ftwtest
-	$(SHELL) -e ftwtest-sh $(shell cd $(common-objpfx). && pwd)/ \
-		 $(shell cd $(<D) && pwd)/$(<F) > $@
+ifeq ($(cross-compiling),yes)
+# EGLIBC's cross-testing support does not require the build and host
+# machines to share a /tmp directory, so when cross-testing, construct
+# the sample directory tree for these tests in the build tree.
+ftwtest-tmpdir = TMPDIR=$(common-objpfx)
 endif
+
+$(objpfx)ftwtest.out: $(objpfx)ftwtest
+	$(ftwtest-tmpdir) \
+	$(SHELL) -e ftwtest-sh $(shell cd $(common-objpfx). && pwd)/ \
+		 '$(cross-test-wrapper)' \
+		 $(shell cd $(<D) && pwd)/$(<F) > $@
+
+# eglibc: endif

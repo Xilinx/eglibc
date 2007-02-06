@@ -21,6 +21,7 @@
 
 common_objpfx=$1
 objpfx=$2
+cross_test_wrapper=$3
 
 LC_ALL=C
 export LC_ALL
@@ -66,6 +67,7 @@ LOCPATH=${objpfx}domaindir
 export LOCPATH
 
 # Now run the test.
+${cross_test_wrapper} \
 ${common_objpfx}elf/ld.so --library-path $common_objpfx \
 ${objpfx}tst-gettext2 > ${objpfx}tst-gettext2.out ${objpfx}domaindir &&
 cmp ${objpfx}tst-gettext2.out - <<EOF

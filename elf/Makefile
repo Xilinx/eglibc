@@ -395,9 +395,9 @@ test-modules = $(addprefix $(objpfx),$(addsuffix .so,$(strip $(modules-names))))
 generated += $(addsuffix .so,$(strip $(modules-names)))
 
 ifeq (yes,$(build-shared))
-ifeq ($(cross-compiling),no)
+# eglibc: ifeq ($(cross-compiling),no)
 tests: $(objpfx)tst-pathopt.out
-endif
+# eglibc: endif
 endif
 
 $(objpfx)testobj1.so: $(libdl)
@@ -575,6 +575,7 @@ $(objpfx)circlemod2a.so: $(objpfx)circlemod3a.so
 $(objpfx)order: $(addprefix $(objpfx),dep4.so dep3.so dep2.so dep1.so)
 
 $(objpfx)order.out: $(objpfx)order
+	$(cross-test-wrapper) \
 	$(elf-objpfx)$(rtld-installed-name) \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $(objpfx)order > $@
@@ -636,7 +637,7 @@ $(objpfx)lateglobal.out: $(objpfx)ltglobmod1.so $(objpfx)ltglobmod2.so
 $(objpfx)tst-pathopt: $(libdl)
 $(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
 			  $(objpfx)pathoptobj.so
-	$(SHELL) -e $< $(common-objpfx)
+	$(SHELL) -e $< $(common-objpfx) "$(cross-test-wrapper)"
 
 $(objpfx)initfirst: $(libdl)
 $(objpfx)initfirst.out: $(objpfx)firstobj.so
@@ -798,6 +799,7 @@ ifeq (yesyes,$(have-fpie)$(build-shared))
 CFLAGS-tst-pie1.c += -fpie
 
 $(objpfx)tst-pie1.out: $(objpfx)tst-pie1
+	$(cross-test-wrapper) \
 	$(elf-objpfx)$(rtld-installed-name) \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@
@@ -893,6 +895,7 @@ $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
 $(objpfx)order2: $(libdl)
 $(objpfx)order2.out: $(objpfx)order2 $(objpfx)order2mod1.so \
 		     $(objpfx)order2mod2.so
+	$(cross-test-wrapper) \
 	$(elf-objpfx)$(rtld-installed-name) \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $(objpfx)order2 > $@
@@ -902,7 +905,7 @@ $(objpfx)order2mod4.so: $(objpfx)order2mod3.so
 $(objpfx)order2mod2.so: $(objpfx)order2mod3.so
 order2mod2.so-no-z-defs = yes
 
-tst-stackguard1-ARGS = --command "$(built-program-cmd) --child"
+tst-stackguard1-ARGS = --command "$(local-built-program-cmd) --child"
 tst-stackguard1-static-ARGS = --command "$(objpfx)tst-stackguard1-static --child"
 
 $(objpfx)tst-leaks1: $(libdl)

@@ -112,15 +112,15 @@ $(objpfx)libmcheck.a: $(objpfx)mcheck-init.o
 
 lib: $(objpfx)libmcheck.a
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 ifeq (yes,$(build-shared))
 ifneq ($(PERL),no)
 tests: $(objpfx)tst-mtrace.out
 $(objpfx)tst-mtrace.out: tst-mtrace.sh $(objpfx)tst-mtrace
-	$(SHELL) -e $< $(common-objpfx)
+	$(SHELL) -e $< $(common-objpfx) '$(cross-test-wrapper)'
 endif
 endif
-endif
+# eglibc: endif
 
 tst-mcheck-ENV = MALLOC_CHECK_=3
 

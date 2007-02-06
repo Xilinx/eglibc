@@ -91,17 +91,17 @@ others: $(addprefix $(objpfx),$(others) $(sysdep-others) $(extra-objs))
 else
 others: $(addprefix $(objpfx),$(extra-objs))
 endif
-ifeq ($(cross-compiling),yes)
-tests: $(addprefix $(objpfx),$(tests) $(test-srcs))
-xtests: tests
-else
+# eglibc: ifeq ($(cross-compiling),yes)
+# eglibc: tests: $(addprefix $(objpfx),$(tests) $(test-srcs))
+# eglibc: xtests: tests
+# eglibc: else
 ifeq ($(build-bounded),yes)
 tests-bp.out = $(tests:%=$(objpfx)%-bp.out)
 xtests-bp.out = $(xtests:%=$(objpfx)%-bp.out)
 endif
 tests: $(tests:%=$(objpfx)%.out) $(tests-bp.out)
 xtests: tests $(xtests:%=$(objpfx)%.out) $(xtests-bp.out)
-endif
+# eglibc: endif
 
 ifeq ($(build-programs),yes)
 binaries-all = $(others) $(sysdep-others) $(tests) $(xtests) $(test-srcs)

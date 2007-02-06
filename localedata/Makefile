@@ -86,7 +86,7 @@ distribute := CHECKSUMS README SUPPORTED ChangeLog			\
 # Get $(inst_i18ndir) defined.
 include ../Makeconfig
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 locale_test_suite := tst_iswalnum tst_iswalpha tst_iswcntrl            \
 		     tst_iswctype tst_iswdigit tst_iswgraph            \
 		     tst_iswlower tst_iswprint tst_iswpunct            \
@@ -110,7 +110,7 @@ ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-leaks
 endif
 endif
-endif
+# eglibc: endif
 
 # Files to install.
 install-others := $(addprefix $(inst_i18ndir)/, \
@@ -138,7 +138,7 @@ CFLAGS-tst-mbswcs5.c = -Wno-format
 CFLAGS-tst-trans.c = -Wno-format
 
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 # We have to generate locales
 LOCALES := de_DE.ISO-8859-1 de_DE.UTF-8 en_US.ANSI_X3.4-1968 \
 	   en_US.ISO-8859-1 ja_JP.EUC-JP da_DK.ISO-8859-1 \
@@ -157,7 +157,11 @@ generated-dirs += $(LOCALES)
 $(addprefix $(objpfx),$(CTYPE_FILES)): %: \
   gen-locale.sh $(common-objpfx)locale/localedef Makefile \
   $(addprefix charmaps/,$(CHARMAPS)) $(addprefix locales/,$(LOCALE_SRCS))
-	@$(SHELL) -e gen-locale.sh $(common-objpfx) '$(built-program-cmd)' $@
+	@$(SHELL) -e gen-locale.sh $(common-objpfx)	\
+		 '$(if $(cross-localedef), 		\
+		       $(cross-localedef),		\
+		       $(built-program-cmd))'		\
+		 $@
 
 $(addsuffix .out,$(addprefix $(objpfx),$(tests))): %: \
   $(addprefix $(objpfx),$(CTYPE_FILES))
@@ -210,7 +214,7 @@ $(objpfx)tst-langinfo.out: tst-langinfo.sh $(objpfx)tst-langinfo \
 	$(SHELL) -e $< $(common-objpfx) '$(built-program-cmd)'
 $(objpfx)tst-digits.out: $(objpfx)tst-locale.out
 $(objpfx)tst-mbswcs6.out: $(addprefix $(objpfx),$(CTYPE_FILES))
-endif
+# eglibc: endif
 
 include SUPPORTED
 

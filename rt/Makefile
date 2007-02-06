@@ -80,7 +80,7 @@ ifeq (yes,$(build-bounded))
 $(tests:%=$(objpfx)%-bp): $(objpfx)librt_b.a $(bounded-thread-library)
 endif
 
-tst-mqueue7-ARGS = -- $(built-program-cmd)
+tst-mqueue7-ARGS = -- $(local-built-program-cmd)
 
 ifeq (yes,$(build-static-nss))
 otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \

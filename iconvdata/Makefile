@@ -317,7 +317,7 @@ $(addprefix $(inst_gconvdir)/, $(modules.so)): \
 	$(do-install-program)
 $(inst_gconvdir)/gconv-modules: gconv-modules $(+force)
 	$(do-install)
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 # Update the $(prefix)/lib/gconv/gconv-modules.cache file. This is necessary
 # if this libc has more gconv modules than the previously installed one.
 	if test -f "$(inst_gconvdir)/gconv-modules.cache"; then \
@@ -326,22 +326,22 @@ ifeq (no,$(cross-compiling))
 	   $(common-objpfx)iconv/iconvconfig \
 	     $(addprefix --prefix=,$(install_root)); \
 	fi
-else
-	@echo '*@*@*@ You should recreate $(inst_gconvdir)/gconv-modules.cache'
-endif
+# eglibc: else
+# eglibc:	@echo '*@*@*@ You should recreate $(inst_gconvdir)/gconv-modules.cache'
+# eglibc: endif
 
 endif # build-shared = yes
 
 include ../Rules
 
-ifeq (no,$(cross-compiling))
+# eglibc: ifeq (no,$(cross-compiling))
 ifeq (yes,$(build-shared))
 tests: $(objpfx)iconv-test.out $(objpfx)tst-tables.out
 ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-loading
 endif
 endif
-endif
+# eglibc: endif
 
 tst-loading-ENV = MALLOC_TRACE=$(objpfx)tst-loading.mtrace
 $(objpfx)mtrace-tst-loading: $(objpfx)tst-loading.out
@@ -362,12 +362,13 @@ $(objpfx)tst-iconv4.out: $(objpfx)gconv-modules \
 $(objpfx)iconv-test.out: run-iconv-test.sh $(objpfx)gconv-modules \
 			 $(addprefix $(objpfx),$(modules.so)) \
 			 $(common-objdir)/iconv/iconv_prog TESTS
-	$(SHELL) -e $< $(common-objdir) > $@
+	$(SHELL) -e $< $(common-objdir) '$(cross-test-wrapper)' > $@
 
 $(objpfx)tst-tables.out: tst-tables.sh $(objpfx)gconv-modules \
 			 $(addprefix $(objpfx),$(modules.so)) \
 			 $(objpfx)tst-table-from $(objpfx)tst-table-to
-	$(SHELL) $< $(common-objpfx) $(common-objpfx)iconvdata/ > $@
+	$(SHELL) $< $(common-objpfx) $(common-objpfx)iconvdata/ \
+		    '$(cross-test-wrapper)' > $@
 
 do-tests-clean common-mostlyclean: tst-tables-clean
 

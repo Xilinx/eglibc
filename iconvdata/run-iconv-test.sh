@@ -21,6 +21,7 @@
 # 02111-1307 USA.
 
 codir=$1
+cross_test_wrapper="$2"
 
 # We use always the same temporary file.
 temp1=$codir/iconvdata/iconv-test.xxx
@@ -39,6 +40,7 @@ LIBPATH=$codir:$codir/iconvdata
 # How the start the iconv(1) program.
 ICONV='$codir/elf/ld.so --library-path $LIBPATH --inhibit-rpath ${from}.so \
        $codir/iconv/iconv_prog'
+ICONV="$cross_test_wrapper $ICONV"
 
 # Which echo?
 if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
@@ -49,8 +51,13 @@ fi
 
 # We read the file named TESTS.  All non-empty lines not starting with
 # `#' are interpreted as commands.
+# Avoid reading from stdin, since the while loop's body inherits that;
+# if cross_test_wrapper is a program like ssh that reads its input
+# even if the program running on the remote side doesn't, it will
+# steal input from the loop.
 failed=0
-while read from to subset targets; do
+exec 5< TESTS
+while read from to subset targets <&5; do
   # Ignore empty and comment lines.
   if test -z "$subset" || test "$from" = '#'; then continue; fi
 
@@ -141,11 +148,18 @@ while read from to subset targets; do
       { echo "/FAILED"; failed=1; continue; }
     echo "/OK"
   fi
-done < TESTS
+done
+# Close TESTS.
+exec 5<&-
 
 # We read the file named TESTS2.  All non-empty lines not starting with
 # `#' are interpreted as commands.
-while read utf8 from filename; do
+# Avoid reading from stdin, since the while loop's body inherits that;
+# if cross_test_wrapper is a program like ssh that reads its input
+# even if the program running on the remote side doesn't, it will
+# steal input from the loop.
+exec 5< TESTS2
+while read utf8 from filename <&5; do
   # Ignore empty and comment lines.
   if test -z "$filename" || test "$utf8" = '#'; then continue; fi
 
@@ -184,7 +198,8 @@ while read utf8 from filename; do
     { echo "/FAILED"; failed=1; continue; }
   echo "OK"
 
-done < TESTS2
+done
+exec 5<&-
 
 exit $failed
 # Local Variables:
