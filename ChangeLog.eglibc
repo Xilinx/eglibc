@@ -1,5 +1,12 @@
 2007-02-16  Jim Blandy  <jimb@codesourcery.com>
 
+	Make configuration script more friendly to cross-compilation.
+	* configure.in: Require at least binutils 2.17 and GCC 4.1.
+	* configure: Regenerated.
+	* nptl/sysdeps/pthread/configure.in: Disable link tests for forced
+	unwinding and C cleanup handling; always #define
+	HAVE_FORCED_UNWIND and set libc_cv_c_cleanup.
+	
 	* Makefile: Amend make install-headers to install everything
 	necessary for building a cross-compiler.  Install gnu/stubs.h as
 	part of 'install-headers', not 'install-others'.
