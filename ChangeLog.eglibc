@@ -1,3 +1,17 @@
+2007-02-16  Jim Blandy  <jimb@codesourcery.com>
+
+	* Makefile: Amend make install-headers to install everything
+	necessary for building a cross-compiler.  Install gnu/stubs.h as
+	part of 'install-headers', not 'install-others'.
+	If install-bootstrap-headers is 'yes', install a dummy copy of
+	gnu/stubs.h, instead of computing the real thing.
+	* include/stubs-bootstrap.h: New file.
+	* sysdeps/unix/sysv/linux/Makefile: Install bits/syscall.h as part
+	of 'install-headers' not 'install-others'.
+	* stdio-common/Makefile: Similarly for bits/stdio_lim.h.
+	* sunrpc/Makefile: Don't install generated headers if
+	install-bootstrap-headers is 'yes'.
+
 2007-02-15  Khem Raj  <kraj@mvista.com>
 
 	* sysdeps/unix/sysv/linux/i386/sysdep.h: Re-define __i686.
