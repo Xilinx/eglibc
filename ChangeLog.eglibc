@@ -1,3 +1,8 @@
+2007-02-15  Khem Raj  <kraj@mvista.com>
+
+	* sysdeps/unix/sysv/linux/i386/sysdep.h: Re-define __i686.
+	* nptl/sysdeps/pthread/pt-initfini.c: Ditto.
+
 2007-02-05  Jim Blandy  <jimb@codesourcery.com>
 
 	Add support for cross-testing.
@@ -82,7 +87,7 @@
 
 	Use the host nm in NPTL tests.
 	* aclocal.m4 (LIBC_PROG_BINUTILS): Find path to 'nm', too.
-        * configure: Regenerated.
+	* configure: Regenerated.
 	* config.make.in: Accept 'nm' path from configure script.
 	* nptl/Makefile (tst-cancel-wrappers.out): Pass 'nm' path to test
 	script.
@@ -95,19 +100,19 @@
 
 2006-12-26  Jim Blandy  <jimb@codesourcery.com>
 
-        * option-groups.def, option-groups.defaults (OPTION_EGLIBC_LOCALES):
-        New option group.
-        * localedata/Makefile: Trim locale lists if
-        OPTION_EGLIBC_LOCALES is not enabled.
+	* option-groups.def, option-groups.defaults (OPTION_EGLIBC_LOCALES):
+	New option group.
+	* localedata/Makefile: Trim locale lists if
+	OPTION_EGLIBC_LOCALES is not enabled.
 
-        * option-groups.mak: Allow includer to override the option
-        group config file name.
+	* option-groups.mak: Allow includer to override the option
+	group config file name.
 
 2006-12-08  Jim Blandy  <jimb@codesourcery.com>
 
 	Add rudimentary option group support.
 	* option-groups.mak, option-groups.def, option-groups.defaults:
-        New files.
+	New files.
 	* Makerules: Add contents of enabled option groups to the values
 	of the variables 'routines', 'others', 'install-bin',
 	'install-sbin', 'extra-objs', 'tests', and 'test-srcs'.
@@ -282,7 +287,7 @@
 	(write_locale_data): Adjust prototype as for locfile.c change.
 
 2006-08-31  Mark Mitchell  <mark@codesourcery.com>
-            Julian Brown  <julian@codesourcery.com>
+	    Julian Brown  <julian@codesourcery.com>
 
 	* Makefile (headers): Add bits/predefs.h.
 	* include/features.h (__STDC_IEC_559__): Do not define.
