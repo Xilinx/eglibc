@@ -78,7 +78,7 @@ subdir-dirs = include
 vpath %.h $(subdir-dirs)
 
 # What to install.
-install-others = $(inst_includedir)/gnu/stubs.h
+install-headers: $(inst_includedir)/gnu/stubs.h
 install-bin-script =
 
 ifeq (yes,$(build-shared))
@@ -158,6 +158,16 @@ others: $(common-objpfx)testrun.sh
 
 subdir-stubs := $(foreach dir,$(subdirs),$(common-objpfx)$(dir)/stubs)
 
+# gnu/stubs.h depends (via the subdir 'stubs' targets) on all the .o
+# files in EGLIBC.  For bootstrapping a GCC/EGLIBC pair, an empty
+# gnu/stubs.h is good enough.
+ifeq ($(install-bootstrap-headers),yes)
+$(inst_includedir)/gnu/stubs.h: include/stubs-bootstrap.h $(+force)
+	$(make-target-directory)
+	$(INSTALL_DATA) $< $@
+
+installed-stubs = 
+else 
 ifeq ($(biarch),no)
 installed-stubs = $(inst_includedir)/gnu/stubs.h
 else
@@ -168,6 +178,7 @@ $(inst_includedir)/gnu/stubs.h: include/stubs-biarch.h $(+force)
 	$(INSTALL_DATA) $< $@
 
 install-others-nosubdir: $(installed-stubs)
+endif
 endif
 
 

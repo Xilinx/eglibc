@@ -99,6 +99,7 @@ otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \
 endif
 
 ifeq (no,$(cross-compiling))
+ifneq (yes,$(install-bootstrap-headers))
 # We can only build this library if we can run the rpcgen we build.
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
 extra-libs := librpcsvc
@@ -106,6 +107,7 @@ extra-libs-others := librpcsvc # Make it in `others' pass, not `lib' pass.
 librpcsvc-routines = $(rpcsvc:%.x=x%)
 librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
 omit-deps = $(librpcsvc-routines)
+endif
 endif
 
 CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)

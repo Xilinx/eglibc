@@ -36,9 +36,9 @@ routines	:=							      \
 	remove rename renameat						      \
 	flockfile ftrylockfile funlockfile
 
-install-others = $(inst_includedir)/bits/stdio_lim.h
-
 include ../Makeconfig
+
+install-headers-nosubdir: $(inst_includedir)/bits/stdio_lim.h
 
 aux	:= errlist siglist printf-parsemb printf-parsewc fxprintf
 distribute := _itoa.h _itowa.h _i18n_number.h \
