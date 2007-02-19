@@ -1,3 +1,31 @@
+This directory contains the Embedded GNU C Library (EGLIBC).
+
+EGLIBC is a variant of the GNU C Library (GLIBC) that is designed to
+work well on embedded systems. EGLIBC strives to be source and binary
+compatible with GLIBC. EGLIBC's goals include reduced footprint,
+configurable components, better support for cross-compilation and
+cross-testing.  More information is available at
+http://www.eglibc.org.
+
+Files in this directory describe EGLIBC's features for embedded
+developers:
+
+- EGLIBC.cross-building provides general instructions for building
+  EGLIBC and an accompanying compiler for cross-development.  (And
+  explains why this isn't as simple as 'configure; make'.)
+
+- EGLIBC.option-groups explains EGLIBC's facilities for paring down
+  the library functionality to the features you really need, to reduce
+  disk and memory consumption.  (A one-line file disabling the
+  OPTION_EGLIBC_LOCALES option reduces the on-disk footprint of EGLIBC
+  by 92%.)
+
+- EGLIBC.cross-testing explains how to test a cross-compiled EGLIBC.
+
+Here is the original GLIBC README:
+
+---
+
 This directory contains the version 2.5 release of the GNU C Library.
 
 The GNU C Library is the standard system C library for all GNU systems,

@@ -1,3 +1,15 @@
+Installing EGLIBC
+*****************
+
+This is EGLIBC, a variant of the GNU C Library (GLIBC) that is
+designed to work well on embedded systems.  This file contains the
+original GLIBC installation instructions, which mostly deal with
+native develelopment.  'EGLIBC.cross-building' provides general
+instructions for building EGLIBC and an accompanying compiler for
+cross-development.
+
+Here are the original GLIBC installation instructions:
+
 Installing the GNU C Library
 ****************************
 

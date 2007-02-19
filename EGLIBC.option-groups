@@ -1,0 +1,131 @@
+                                                        -*- mode: text -*-
+
+              The EGLIBC Component Configuration System
+                  Jim Blandy <jimb@codesourcery.com>
+
+Introduction
+
+The GNU C library (GLIBC) provides a broad range of functionality,
+ranging from internationalization support to transcendental
+mathematical functions.  Its website boasts that "nearly all known and
+useful functions from any other C library are available."  This
+exhaustive approach has been one of GLIBC's strengths on desktop and
+server systems, but it has also given GLIBC a large footprint, both in
+memory and on disk, making it a challenge to use in embedded systems
+with limited resources.
+
+The Embedded GNU C library (EGLIBC) is a variant of the GNU C library
+designed to work well on embedded systems.  In particular, EGLIBC's
+component configuration system allows embedded developers to build
+customized versions of the library that include only the features
+their application uses, reducing its space requirements.
+
+EGLIBC's component configuration system categorizes the library's
+functions into "option groups", and allows you to include or exclude
+option groups individually.  Some option groups depend on others;
+EGLIBC tracks these relationships, and ensures that the selected
+configuration yields a functioning library.
+
+
+Consistent and Predictable Behavior
+
+A flexible configuration system is a mixed blessing: if the options
+offered are poorly designed, it can be hard to see which choices will
+have the desired effects, and choices with obscure consequences can
+make debugging difficult.  EGLIBC's configuration follows some general
+principles to reduce these risks:
+
+- EGLIBC has a single default configuration for each target
+  architecture.
+
+- In the default configuration, all option groups are enabled, and
+  EGLIBC is upwardly API- and ABI-compatible with GLIBC.
+
+- As much as possible, configurations only affect what functions are
+  present, not how they behave.  If the system works with an option
+  group disabled, it will still work with it enabled.
+
+- As much as possible, configurations only select option groups ---
+  they do not describe characteristics of the target architecture.
+
+These rules mean that you have a simple debugging strategy available
+if you suspect that your EGLIBC configuration might be the source of a
+problem: fall back to the default configuration, re-test, and then
+disable option groups one by one, until the problem reappears.
+
+
+The Option Groups
+
+The POSIX.1-2001 specification includes a suggested partition of all
+the functions in the POSIX C API into option groups: math functions
+like 'sin' and 'cos'; networking functions like 'socket' and
+'connect'; and so on.  EGLIBC uses this partitioning as the basis for
+its own option groups, and follows the POSIX naming scheme.
+
+
+Implementation
+
+The EGLIBC component configuration system resembles the approach used
+by the Linux kernel to select device drivers, network protocols, and
+other features.  A file named 'option-groups.config' in the top-level
+build directory contains assignments to Make variables, each of which
+enables or disables a particular option group.  If the variable's
+value is set to 'y', then the option group is enabled; if it set to
+anything else, the option group is omitted.  The file
+'option-groups.defaults', at the top of the source tree, establishes
+default values for all variables; all option groups are enabled by
+default.
+
+For example, the following 'option-groups.config' would omit
+mathematical functions, but include networking functions, and
+everything else:
+
+   OPTION_POSIX_C_LANG_MATH = n
+   OPTION_POSIX_NETWORKING = y
+
+In general, each option group variable controls whether a given set of
+object files in EGLIBC is compiled and included in the final
+libraries, or omitted from the build.
+
+Each subdirectory's Makefile categorizes its routines by option group.
+For example, EGLIBC's 'inet/Makefile' places its functions in the
+POSIX_NETWORKING group as follows:
+
+   routines-$(OPTION_POSIX_NETWORKING) += \
+               htonl htons		\
+               inet_lnaof inet_mkadr	\
+               inet_netof inet_ntoa inet_net herrno herrno-loc \
+               gethstbyad gethstbyad_r gethstbynm gethstbynm2 gethstbynm2_r \
+   ...
+
+Finally, common code in 'Makerules' cites the value of the variable
+'routines-y', selecting only those object files that belong to enabled
+option groups for inclusion in the resulting libraries.
+
+
+Current Status and Future Directions
+
+The EGLIBC component configuration system described here is still
+under development.
+
+We have used the system to subset some portions of EGLIBC's
+functionality.  It needs to be extended to cover more of the library.
+
+At the moment, EGLIBC performs no sanity checks on the contents of
+'option-groups.config'; if an option group's name is mistyped, the
+option group is silently included in the build.  EGLIBC should check
+that all variables set in 'option-groups.config' are proper option
+group names, and that their values are appropriate.
+
+Some portions of EGLIBC depend on others; for example, the Sun Remote
+Procedure Call functions in 'sunrpc' depend on the networking
+functions in 'inet'.  The sanity checking described above should check
+that the selection configuration satisfies dependencies within EGLIBC,
+and produce a legible error message if it does not.  At the moment,
+inconsistent configurations produce link errors late in the build
+process.
+
+The Linux kernel's configuration system provides interactive
+interfaces for creating and modifying configuration files (which also
+perform the sanity checking and dependency tracking described above).
+EGLIBC should provide similar interfaces.
