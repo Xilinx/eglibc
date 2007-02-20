@@ -1,5 +1,9 @@
 2007-02-20  Jim Blandy  <jimb@codesourcery.com>
 
+	* Makefile (install-headers): Preserve old behavior: depend on
+	$(inst_includedir)/gnu/stubs.h only if install-bootstrap-headers
+	is set; otherwise, place gnu/stubs.h on the 'install-others' list.
+
 	* nptl/sysdeps/pthread/configure: Regenerate.
 
 2007-02-19  Jim Blandy  <jimb@codesourcery.com>

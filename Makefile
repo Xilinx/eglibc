@@ -78,8 +78,17 @@ subdir-dirs = include
 vpath %.h $(subdir-dirs)
 
 # What to install.
-install-headers: $(inst_includedir)/gnu/stubs.h
 install-bin-script =
+
+# If we're bootstrapping, install a dummy gnu/stubs.h along with the
+# other headers, so 'make install-headers' produces a useable include
+# tree.  Otherwise, install gnu/stubs.h later, after the rest of the
+# build is done.
+ifeq ($(install-bootstrap-headers),yes)
+install-headers: $(inst_includedir)/gnu/stubs.h
+else
+install-others = $(inst_includedir)/gnu/stubs.h
+endif
 
 ifeq (yes,$(build-shared))
 headers += gnu/lib-names.h
