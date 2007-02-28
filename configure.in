@@ -915,7 +915,7 @@ test -n "$aux_missing" && AC_MSG_WARN([
 # thing on a system that doesn't need fixincludes.  (Not presently a problem.)
 if test -n "$sysheaders"; then
   ccheaders=`$CC -print-file-name=include`
-  SYSINCLUDES="-nostdinc -isystem $ccheaders \
+  SYSINCLUDES="-nostdinc -isystem $ccheaders -isystem $ccheaders-fixed \
 -isystem `echo $sysheaders | sed 's/:/ -isystem /g'`"
   if test -n "$CXX"; then
     cxxversion=`$CXX -dumpversion 2>&AS_MESSAGE_LOG_FD` &&

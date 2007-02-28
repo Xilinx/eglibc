@@ -4566,7 +4566,7 @@ echo "$as_me: WARNING:
 # thing on a system that doesn't need fixincludes.  (Not presently a problem.)
 if test -n "$sysheaders"; then
   ccheaders=`$CC -print-file-name=include`
-  SYSINCLUDES="-nostdinc -isystem $ccheaders \
+  SYSINCLUDES="-nostdinc -isystem $ccheaders -isystem $ccheaders-fixed \
 -isystem `echo $sysheaders | sed 's/:/ -isystem /g'`"
   if test -n "$CXX"; then
     cxxversion=`$CXX -dumpversion 2>&5` &&
