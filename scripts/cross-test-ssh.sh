@@ -20,6 +20,15 @@ To use this to run EGLIBC tests, invoke the tests as follows:
 where ABSPATH is the absolute path to this script, and HOST is the
 name of the machine to connect to via ssh.
 
+If you need to connect to the test machine as a different user, you
+may specify that just as you would to SSH:
+
+  $ make cross-test-wrapper='ABSPATH/cross-test-ssh.sh USER@HOST' tests
+
+Naturally, the remote user must have an appropriate public key, and
+you will want to ensure that SSH does not prompt interactively for a
+password on each connection.
+
 HOST and the build machines (on which 'make check' is being run) must
 share a filesystem; all files needed by the tests must be visible at
 the same paths on both machines.

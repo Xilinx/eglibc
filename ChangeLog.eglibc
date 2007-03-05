@@ -1,5 +1,8 @@
 2007-03-05  Jim Blandy  <jimb@codesourcery.com>
 
+	* EGLIBC.cross-testing: Note inter-machine user issues.
+	* scripts/cross-test-ssh.sh: Doc fix.
+
 	* scripts/cross-test-ssh.sh: Make executable.
 
 2007-02-27  Joseph Myers  <joseph@codesourcery.com>
