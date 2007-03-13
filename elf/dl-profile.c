@@ -131,7 +131,7 @@ struct here_cg_arc_record
   {
     uintptr_t from_pc;
     uintptr_t self_pc;
-    uint32_t count;
+    uint32_t count __attribute__((aligned(__alignof__(uint32_t))));
   } __attribute__ ((packed));
 
 static struct here_cg_arc_record *data;
