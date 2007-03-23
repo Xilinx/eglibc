@@ -1,3 +1,19 @@
+2007-03-22  Jim Blandy  <jimb@codesourcery.com>
+
+	Run tests that set LD_PRELOAD properly, even when
+	cross-test-wrapper is set.
+	* scripts/run-with-preload.sh: New script.
+	* Makeconfig (run-program-prefix, built-program-cmd): If
+	$*-WRAPPER is set, include it in the command.
+	* nptl/Makefile: Pass path to run-with-preload.sh script to
+	tst-tls6.sh.
+	* nptl/tst-tls6.sh: Pass LD_PRELOAD to test programs in a
+	cross-test-wrapper-friendly way.
+	* elf/Makefile (preloadtest-ENV, vismain-ENV): Set
+	EGLIBC_TEST_LD_PRELOAD, not LD_PRELOAD.
+	(preloadtest-WRAPPER, vismain-WRAPPER): Set to
+	run-with-preload.sh.
+
 2007-03-12  Nathan Froyd  <froydnj@codesourcery.com>
 
 	* elf/dl-profile.c (struct here_cg_arc_record): Declare 'count'

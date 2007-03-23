@@ -562,8 +562,10 @@ run-via-rtld-prefix =							      \
 else
 run-via-rtld-prefix =
 endif
-run-program-prefix = $(cross-test-wrapper) $(run-via-rtld-prefix)
-built-program-cmd = $(cross-test-wrapper) $(run-via-rtld-prefix) $(built-program-file)
+run-program-prefix = $(cross-test-wrapper) $($*-WRAPPER) \
+	             $(run-via-rtld-prefix)
+built-program-cmd = $(cross-test-wrapper) $($*-WRAPPER) \
+		    $(run-via-rtld-prefix) $(built-program-file)
 
 # Same as built-program-cmd, but without the cross-test-wrapper.  Used 
 # to run programs from the test machine, as in nptl/tst-cancel7.

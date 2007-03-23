@@ -470,7 +470,8 @@ $(objpfx)tst-tls6.out: tst-tls6.sh $(objpfx)tst-tls5 \
 		       $(objpfx)tst-tls5modc.so $(objpfx)tst-tls5modd.so \
 		       $(objpfx)tst-tls5mode.so $(objpfx)tst-tls5modf.so
 	$(SHELL) -e tst-tls6.sh $(common-objpfx) $(elf-objpfx) \
-		    $(rtld-installed-name) '$(cross-test-wrapper)'
+		    $(rtld-installed-name) '$(cross-test-wrapper)' \
+		    $(..)scripts/run-with-preload.sh
 endif
 
 $(objpfx)tst-dlsym1: $(libdl) $(shared-thread-library)

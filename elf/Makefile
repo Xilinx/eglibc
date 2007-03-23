@@ -538,7 +538,8 @@ $(objpfx)preloadtest: $(objpfx)testobj6.so
 LDFLAGS-preloadtest = -rdynamic
 $(objpfx)preloadtest.out: $(preloadtest-preloads:%=$(objpfx)%.so)
 preloadtest-ENV = \
-  LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
+  EGLIBC_TEST_LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
+preloadtest-WRAPPER = $(..)scripts/run-with-preload.sh
 
 $(objpfx)loadfail: $(libdl)
 LDFLAGS-loadfail = -rdynamic
@@ -584,7 +585,8 @@ $(objpfx)order.out: $(objpfx)order
 
 $(objpfx)vismain: $(addprefix $(objpfx),vismod1.so vismod2.so)
 $(objpfx)vismain.out: $(addprefix $(objpfx),vismod3.so)
-vismain-ENV = LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
+vismain-ENV = EGLIBC_TEST_LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
+vismain-WRAPPER = $(..)scripts/run-with-preload.sh
 
 $(objpfx)noload: $(objpfx)testobj1.so
 LDFLAGS-noload = -rdynamic
