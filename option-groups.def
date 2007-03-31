@@ -49,3 +49,21 @@ config OPTION_EGLIBC_LOCALES
        This option group includes all locale definitions other than
        that for the "C" locale.  If this option group is omitted, then
        only the "C" locale is supported.
+
+config OPTION_EGLIBC_LIBM
+   bool "libm (math library)"
+   help
+       This option group includes the 'libm' library, containing
+       mathematical functions.  If this option group is omitted, then
+       an EGLIBC installation does not include shared or unshared versions
+       of the math library.
+
+       Note that this does not remove all floating-point related
+       functionality from EGLIBC; for example, 'printf' and 'scanf'
+       can still print and read floating-point values with this option
+       group disabled.
+
+       Note that the ISO Standard C++ library 'libstdc++' depends on
+       EGLIBC's math library 'libm'.  If you disable this option
+       group, you will not be able to build 'libstdc++' against the
+       resulting EGLIBC installation.

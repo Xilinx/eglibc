@@ -1,3 +1,13 @@
+2007-03-31  Jim Blandy  <jimb@codesourcery.com>
+
+	Add the OPTION_EGLIBC_LIBM option group.
+	* option-groups.def (OPTION_EGLIBC_LIBM): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_LIBM): Set default value.
+	* math/Makefile: include ../option-groups.mak.
+	Add libm to OPTION_EGLIBC_LIBM option group.
+	* Makerules (extra-libs, extra-libs-others): Let option groups
+	control these values, too.
+
 2007-03-22  Jim Blandy  <jimb@codesourcery.com>
 
 	Run tests that set LD_PRELOAD properly, even when
