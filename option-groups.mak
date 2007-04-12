@@ -8,7 +8,8 @@
 option_group_config_file ?= $(objdir)/option-groups.config
 
 # Read the default settings for all options.
-include $(..)option-groups.defaults
+# We're included before ../Rules, so we can't assume $(..) is set.
+include $(firstword $(..) ../)option-groups.defaults
 
 # Read the developer's option group selections, overriding the
 # defaults from option-groups.defaults.

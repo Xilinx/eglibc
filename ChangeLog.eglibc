@@ -1,3 +1,7 @@
+2007-04-11  Jim Blandy  <jimb@codesourcery.com>
+
+	* option-groups.mak: Use '../' if $(..) is unset.
+
 2007-03-31  Jim Blandy  <jimb@codesourcery.com>
 
 	Add the OPTION_EGLIBC_LIBM option group.
