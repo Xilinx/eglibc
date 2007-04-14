@@ -56,11 +56,39 @@ disable option groups one by one, until the problem reappears.
 
 The Option Groups
 
+EGLIBC currently implements the following option groups, also
+documented in the file 'option-groups.def':
+
+OPTION_EGLIBC_CATGETS
+       This option group includes functions for accessing message
+       catalogs: catopen, catclose, and catgets.
+
+OPTION_EGLIBC_LOCALES
+       This option group includes all locale definitions other than
+       those for the "C" locale.  If this option group is omitted, then
+       only the "C" locale is supported.
+
+OPTION_EGLIBC_LIBM
+       This option group includes the 'libm' library, containing
+       mathematical functions.  If this option group is omitted, then
+       an EGLIBC installation does not include shared or unshared versions
+       of the math library.
+
+       Note that this does not remove all floating-point related
+       functionality from EGLIBC; for example, 'printf' and 'scanf'
+       can still print and read floating-point values with this option
+       group disabled.
+
+       Note that the ISO Standard C++ library 'libstdc++' depends on
+       EGLIBC's math library 'libm'.  If you disable this option
+       group, you will not be able to build 'libstdc++' against the
+       resulting EGLIBC installation.
+
 The POSIX.1-2001 specification includes a suggested partition of all
 the functions in the POSIX C API into option groups: math functions
 like 'sin' and 'cos'; networking functions like 'socket' and
-'connect'; and so on.  EGLIBC uses this partitioning as the basis for
-its own option groups, and follows the POSIX naming scheme.
+'connect'; and so on.  EGLIBC could use this partitioning as the basis
+for future option groups.
 
 
 Implementation
@@ -76,31 +104,25 @@ anything else, the option group is omitted.  The file
 default values for all variables; all option groups are enabled by
 default.
 
-For example, the following 'option-groups.config' would omit
-mathematical functions, but include networking functions, and
-everything else:
+For example, the following 'option-groups.config' would omit locale
+data, but include mathematical functions, and everything else:
 
-   OPTION_POSIX_C_LANG_MATH = n
-   OPTION_POSIX_NETWORKING = y
+   OPTION_EGLIBC_LOCALES = n
+   OPTION_EGLIBC_LIBM = y
 
 In general, each option group variable controls whether a given set of
 object files in EGLIBC is compiled and included in the final
 libraries, or omitted from the build.
 
-Each subdirectory's Makefile categorizes its routines by option group.
-For example, EGLIBC's 'inet/Makefile' places its functions in the
-POSIX_NETWORKING group as follows:
+Each subdirectory's Makefile categorizes its routines, libraries, and
+executables by option group.  For example, EGLIBC's 'math/Makefile'
+places the 'libm' library in the OPTION_EGLIBC_LIBM group as follows:
 
-   routines-$(OPTION_POSIX_NETWORKING) += \
-               htonl htons		\
-               inet_lnaof inet_mkadr	\
-               inet_netof inet_ntoa inet_net herrno herrno-loc \
-               gethstbyad gethstbyad_r gethstbynm gethstbynm2 gethstbynm2_r \
-   ...
+   extra-libs-$(OPTION_EGLIBC_LIBM) := libm
 
 Finally, common code in 'Makerules' cites the value of the variable
-'routines-y', selecting only those object files that belong to enabled
-option groups for inclusion in the resulting libraries.
+'extra-libs-y', selecting only those libraries that belong to enabled
+option groups to be built.
 
 
 Current Status and Future Directions

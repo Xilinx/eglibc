@@ -1,5 +1,7 @@
 2007-04-13  Jim Blandy  <jimb@codesourcery.com>
 
+	* EGLIBC.option-groups: Doc fixes.
+
 	* scripts/run-with-env.sh: New script.
 	* elf/Makefile: Use run-with-env.sh instead of
 	run-with-preload.sh.
