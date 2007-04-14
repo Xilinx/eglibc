@@ -1,3 +1,13 @@
+2007-04-13  Jim Blandy  <jimb@codesourcery.com>
+
+	* scripts/run-with-env.sh: New script.
+	* elf/Makefile: Use run-with-env.sh instead of
+	run-with-preload.sh.
+	* nptl/Makefile: Same.
+	(tst-audit1.out, tst-audit2.out): Use run-with-env.sh, and set
+	EGLIBC_TEST_LD_AUDIT instead of LD_AUDIT.
+	* scripts/run-with-preload.sh: Delete.
+
 2007-04-11  Jim Blandy  <jimb@codesourcery.com>
 
 	* option-groups.mak: Use '../' if $(..) is unset.

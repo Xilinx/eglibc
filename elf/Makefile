@@ -539,7 +539,7 @@ LDFLAGS-preloadtest = -rdynamic
 $(objpfx)preloadtest.out: $(preloadtest-preloads:%=$(objpfx)%.so)
 preloadtest-ENV = \
   EGLIBC_TEST_LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
-preloadtest-WRAPPER = $(..)scripts/run-with-preload.sh
+preloadtest-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)loadfail: $(libdl)
 LDFLAGS-loadfail = -rdynamic
@@ -586,7 +586,7 @@ $(objpfx)order.out: $(objpfx)order
 $(objpfx)vismain: $(addprefix $(objpfx),vismod1.so vismod2.so)
 $(objpfx)vismain.out: $(addprefix $(objpfx),vismod3.so)
 vismain-ENV = EGLIBC_TEST_LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
-vismain-WRAPPER = $(..)scripts/run-with-preload.sh
+vismain-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)noload: $(objpfx)testobj1.so
 LDFLAGS-noload = -rdynamic
@@ -887,10 +887,12 @@ $(objpfx)tst-dlmopen3: $(libdl)
 $(objpfx)tst-dlmopen3.out: $(objpfx)tst-dlmopen1mod.so
 
 $(objpfx)tst-audit1.out: $(objpfx)tst-auditmod1.so
-tst-audit1-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
+tst-audit1-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod1.so
+tst-audit1-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit2.out: $(objpfx)tst-auditmod1.so
-tst-audit2-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
+tst-audit2-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod1.so
+tst-audit2-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-global1: $(libdl)
 $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
