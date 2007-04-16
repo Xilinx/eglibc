@@ -1,3 +1,16 @@
+2007-04-16  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/powerpc/fpu/bits/fenvinline.h: Test _SOFT_FLOAT together
+	with __NO_FPRS__.
+	* sysdeps/powerpc/fpu/bits/mathinline.h: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/getcontext-common.S:
+	Use __GETCONTEXT_EXTRA instead of __CONTEXT_EXTRA.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/setcontext-common.S:
+	Use __SETCONTEXT_EXTRA instead of __CONTEXT_EXTRA.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/swapcontext-common.S:
+	Use __GETCONTEXT_EXTRA and __SETCONTEXT_EXTRA instead of
+	__CONTEXT_EXTRA.
+
 2007-04-13  Jim Blandy  <jimb@codesourcery.com>
 
 	* EGLIBC.option-groups: Doc fixes.

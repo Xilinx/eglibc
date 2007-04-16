@@ -268,8 +268,8 @@ ENTRY(__CONTEXT_FUNC_NAME)
 # endif
 #endif
 
-#ifdef __CONTEXT_EXTRA
-#include <getcontext-extra.S>
+#ifdef __GETCONTEXT_EXTRA
+	__GETCONTEXT_EXTRA
 #endif
 
 /* We need to set up parms and call sigprocmask which will clobber

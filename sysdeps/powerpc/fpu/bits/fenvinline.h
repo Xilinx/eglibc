@@ -18,7 +18,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#if defined __GNUC__ && !defined __NO_FPRS__ && !defined __NO_MATH_INLINES
+#if defined __GNUC__ && !defined _SOFT_FLOAT && !defined __NO_FPRS__ \
+  && !defined __NO_MATH_INLINES
 
 /* Inline definition for fegetround.  */
 # define fegetround() \

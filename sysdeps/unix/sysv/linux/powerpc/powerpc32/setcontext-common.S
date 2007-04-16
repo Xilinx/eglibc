@@ -233,8 +233,8 @@ ENTRY(__CONTEXT_FUNC_NAME)
 	lfd	fp31,_UC_FREGS+(31*8)(r31)
 #endif /* __CONTEXT_ENABLE_FPRS */
 
-#ifdef __CONTEXT_EXTRA
-#include <setcontext-extra.S>
+#ifdef __SETCONTEXT_EXTRA
+	__SETCONTEXT_EXTRA
 #endif
 
 	/* Restore LR and CCR, and set CTR to the NIP value */

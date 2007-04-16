@@ -28,7 +28,7 @@
 # define __MATH_INLINE __extern_inline
 #endif  /* __cplusplus */
 
-#if defined __GNUC__ && !defined __NO_FPRS__
+#if defined __GNUC__ && !defined _SOFT_FLOAT && !defined __NO_FPRS__
 
 #ifdef __USE_ISOC99
 # if !__GNUC_PREREQ (2,97)
