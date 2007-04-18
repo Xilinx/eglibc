@@ -1,3 +1,7 @@
+2007-04-18  Joseph Myers  <joseph@codesourcery.com>
+
+	* scripts/cross-test-ssh.sh: Use printf in place of echo.
+
 2007-04-16  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/powerpc/fpu/bits/fenvinline.h: Test _SOFT_FLOAT together

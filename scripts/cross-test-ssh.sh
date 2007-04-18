@@ -76,7 +76,7 @@ host="$1"; shift
 
 # Return all input as a properly quoted Bourne shell string.
 bourne_quote () {
-    echo -n '"'
+    printf '%s' '"'
     sed -n \
         -e '1h' \
         -e '2,$H' \
@@ -84,7 +84,7 @@ bourne_quote () {
               s/["$\`]/\\&/g
               p
              }'
-    echo -n '"'
+    printf '%s' '"'
 }
 
 # Echo all lines of input except those starting with 'export VAR=',
@@ -109,8 +109,8 @@ exports="$(export -p | blacklist_exports)"
 # Transform the current argument list into a properly quoted Bourne shell
 # command string.
 command="$(for word in "$@"; do
-               echo -n "$word" | bourne_quote
-               echo -n ' '
+               printf '%s' "$word" | bourne_quote
+               printf '%s' ' '
            done)"
 
 # Add commands to set environment variables and the current directory.
@@ -122,4 +122,4 @@ ${command}"
 # passes them to some shell.  We want to force the use of /bin/sh,
 # so we need to re-quote the whole command to ensure it appears as
 # the sole argument of the '-c' option.
-$ssh "$host" /bin/sh -c "$(echo "${command}" | bourne_quote)"
+$ssh "$host" /bin/sh -c "$(printf '%s\n' "${command}" | bourne_quote)"
