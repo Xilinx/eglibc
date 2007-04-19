@@ -1,3 +1,22 @@
+2007-04-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* scripts/run-with-env.sh: Also handle
+	EGLIBC_TEST_LD_LIBRARY_PATH.
+	* dlfcn/Makefile (tststatic-ENV, tststatic2-ENV): Use
+	EGLIBC_TEST_LD_LIBRARY_PATH.
+	(tststatic-WRAPPER, tststatic2-WRAPPER): Define.
+	* elf/Makefile (tst-tls9-static-ENV): Use
+	EGLIBC_TEST_LD_LIBRARY_PATH.
+	(tst-tls9-static-WRAPPER): Define.
+	($(objpfx)tst-pathopt.out): Pass run-with-env.sh to
+	tst-pathopt.sh.
+	* elf/tst-pathopt.sh: Take run_with_env argument.  Use
+	EGLIBC_TEST_LD_LIBRARY_PATH.
+	* io/Makefile ($(objpfx)ftwtest.out): Pass run-with-env.sh to
+	ftwtest-sh.
+	* io/ftwtest-sh: Take run_with_env argument.  Use
+	EGLIBC_TEST_LD_LIBRARY_PATH.
+
 2007-04-18  Joseph Myers  <joseph@codesourcery.com>
 
 	* scripts/cross-test-ssh.sh: Use printf in place of echo.

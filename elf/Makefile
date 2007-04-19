@@ -149,7 +149,8 @@ tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static
 ifeq (yesyesyes,$(build-static)$(build-shared)$(elf))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
-       LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
+  EGLIBC_TEST_LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
+tst-tls9-static-WRAPPER = $(..)scripts/run-with-env.sh
 endif
 ifeq (yes,$(have-initfini-array))
 tests-static += tst-array1-static tst-array5-static
@@ -640,7 +641,8 @@ $(objpfx)lateglobal.out: $(objpfx)ltglobmod1.so $(objpfx)ltglobmod2.so
 $(objpfx)tst-pathopt: $(libdl)
 $(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
 			  $(objpfx)pathoptobj.so
-	$(SHELL) -e $< $(common-objpfx) "$(cross-test-wrapper)"
+	$(SHELL) -e $< $(common-objpfx) "$(cross-test-wrapper)" \
+		$(..)scripts/run-with-env.sh
 
 $(objpfx)initfirst: $(libdl)
 $(objpfx)initfirst.out: $(objpfx)firstobj.so

@@ -17,4 +17,8 @@ if [ "${EGLIBC_TEST_LD_AUDIT+set}" ]; then
     export LD_AUDIT="${EGLIBC_TEST_LD_AUDIT}"
 fi
 
+if [ "${EGLIBC_TEST_LD_LIBRARY_PATH+set}" ]; then
+    export LD_LIBRARY_PATH="${EGLIBC_TEST_LD_LIBRARY_PATH}"
+fi
+
 exec "$@"

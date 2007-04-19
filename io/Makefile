@@ -108,6 +108,7 @@ $(objpfx)ftwtest.out: $(objpfx)ftwtest
 	$(ftwtest-tmpdir) \
 	$(SHELL) -e ftwtest-sh $(shell cd $(common-objpfx). && pwd)/ \
 		 '$(cross-test-wrapper)' \
+		 $(shell cd $(..)scripts && pwd)/run-with-env.sh \
 		 $(shell cd $(<D) && pwd)/$(<F) > $@
 
 # eglibc: endif
