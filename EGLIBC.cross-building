@@ -265,10 +265,15 @@ whatever languages and libraries we would like to use:
     >     --target=$target \
     >     --prefix=$tools \
     >     --with-sysroot=$sysroot \
+    >     --enable-__cxa_atexit \
     >     --disable-libssp --disable-libgomp --disable-libmudflap \
     >     --enable-languages=c,c++
     $ PATH=$tools/bin:$PATH make
     $ PATH=$tools/bin:$PATH make install
+
+The '--enable-__cxa_atexit' option tells GCC what sort of C++
+destructor support to expect from the C library; it's required with
+EGLIBC.
 
 And since GCC's installation process isn't designed to help construct
 sysroot trees, we must manually copy certain libraries into place in
