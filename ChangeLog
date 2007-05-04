@@ -1,3 +1,94 @@
+2007-05-03  Jakub Jelinek  <jakub@redhat.com>
+
+	* soft-fp/op-common.h (FP_TRUNC): Replace raising of FP_EX_INEXACT
+	with setting the sticky bit.
+	* math/test-misc.c (main): Add more truncation tests.
+
+2007-04-14  Uros Bizjak  <ubizjak@gmail.com>
+
+	* soft-fp/floatunsidf.c (__floatunsidf): Use DFtype instead of
+	double in the function declaration.
+	* soft-fp/floatundidf.c (__floatundidf): Use DFtype instead of
+	double in the function declaration.
+	* soft-fp/floatunsisf.c (__floatunsisf): Use SFtype instead of
+	float in the function declaration.
+	* soft-fp/floatunsisf.c (__floatunsisf): Use SFtype instead of
+	float in the function declaration.
+
+	* soft-fp/extended.h (FP_UNPACK_RAW_E): Do not increase X##_e for
+	denormal operands.  Do not generate FP_EX_DENORM exception.
+	(FP_UNPACK_RAW_EP): Ditto.
+	(FP_UNPACK_SEMIRAW_E): Use FP_UNPACK_RAW_E instead of
+	undefined _FP_UNPACK_RAW_E.
+	(FP_UNPACK_SEMIRAW_EP): Use FP_UNPACK_RAW_EP instead of
+	undefined _FP_UNPACK_RAW_EP.
+	(FP_PACK_SEMIRAW_E): Use FP_PACK_RAW_E instead of
+	undefined _FP_PACK_RAW_E.
+	(FP_PACK_SEMIRAW_EP): Use FP_PACK_RAW_EP instead of
+	undefined _FP_PACK_RAW_EP.
+
+	* op-2.h (_FP_FRAC_COPY_2_2): Define as alias to _FP_FRAC_COPY_2.
+	* op-4.h (_FP_FRAC_COPY_2_2): Define as alias to _FP_FRAC_COPY_4.
+
+2007-04-16  Uros Bizjak  <ubizjak@gmail.com>
+	    Jakub Jelinek  <jakub@redhat.com>
+
+	* soft-fp/op-common.h (FP_EXTEND): Do not abort when
+	_FP_EXPBIAS_##dfs == _FP_EXPBIAS_##sfs.  Handle denormals for
+	this case.
+	* soft-fp/op-common.h (FP_TRUNC): Ditto.
+
+2007-05-03  Jakub Jelinek  <jakub@redhat.com>
+
+	* math/test-misc.c (main): Add tests for rounding long double
+	values close to smallest double denormalized value to double.
+
+2007-04-30  Joseph Myers  <joseph@codesourcery.com>
+
+	* soft-fp/op-common.h (FP_TRUNC): Correct off-by-one error in
+	condition for truncating to 0.  Set sticky bit for such
+	truncation.
+
+2007-05-02  Jakub Jelinek  <jakub@redhat.com>
+
+	* stdio-common/vfprintf.c (process_string_arg): Use a VLA rather than
+	fixed length array for ignore.
+
+2007-04-30  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #4438]
+	* stdio-common/vfprintf.c (process_string_arg): Don't overflow the
+	stack for large precisions.
+	* stdio-common/test-vfprintf.c (main): Add test for large
+	precision.
+
+2007-04-30  Jakub Jelinek  <jakub@redhat.com>
+
+	* stdio-common/printf_fp.c (___printf_fp): Don't print negative sign
+	for exponent 0.
+	* stdio-common/tfformat.c (sprint_doubles): Add a new test.
+
+	[BZ #4439]
+	* resolv/inet_ntop.c (inet_ntop4): Take terminating '\0' into
+	account in the size check.
+	* resolv/tst-inet_ntop.c: New test.
+	* resolv/Makefile (tests): Add tst-inet_ntop.
+
+2007-04-30  Ulrich Drepper  <drepper@redhat.com>
+	    Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #4349]
+	* malloc/malloc.c: Keep separate list for first blocks on the bin
+	lists with a given size.  This helps skipping over list elements
+	we know won't fit in two places.
+	Inspired by a patch by Tomash Brechko <tomash.brechko@gmail.com>.
+
+2007-04-28  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #4102]
+	* sysdeps/posix/getaddrinfo.c (default_labels): Assign separate
+	label to Teredo tunnel addresses 2001://32.
+
 2007-04-27  Ulrich Drepper  <drepper@redhat.com>
 
 	* locale/programs/ld-collate.c (collate_read): Allow order_start
