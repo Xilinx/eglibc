@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for NPTL portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= nptl
 
 headers := pthread.h semaphore.h bits/semaphore.h
@@ -112,7 +114,7 @@ libpthread-routines = init vars events version \
 		      pt-raise pt-system \
 		      flockfile ftrylockfile funlockfile \
 		      sigaction \
-		      herrno res pt-allocrtsig \
+		      pt-allocrtsig \
 		      pthread_kill_other_threads \
 		      pthread_getaffinity pthread_setaffinity \
 		      pthread_attr_getaffinity pthread_attr_setaffinity \
@@ -128,6 +130,8 @@ libpthread-routines = init vars events version \
 #		      pthread_setresuid \
 #		      pthread_setgid pthread_setegid pthread_setregid \
 #		      pthread_setresgid
+
+libpthread-routines-$(OPTION_EGLIBC_INET) := herrno res 
 
 libpthread-shared-only-routines = version pt-allocrtsig unwind-forcedunwind
 libpthread-static-only-routines = pthread_atfork
@@ -153,6 +157,9 @@ CFLAGS-pthread_setcanceltype.c = -fexceptions -fasynchronous-unwind-tables
 # and setcanceltype.
 CFLAGS-cancellation.c = -fasynchronous-unwind-tables
 CFLAGS-libc-cancellation.c = -fasynchronous-unwind-tables
+
+OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) := -DOPTION_EGLIBC_INET
+CFLAGS-pthread_create.c := $(OPTION_EGLIBC_INET-CFLAGS-y)
 
 # Calling pthread_exit() must cause the registered cancel handlers to
 # be executed.  Therefore exceptions have to be thrown through this

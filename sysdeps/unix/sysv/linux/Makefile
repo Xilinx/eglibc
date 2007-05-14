@@ -15,7 +15,10 @@ ifeq ($(subdir),misc)
 sysdep_routines += sysctl clone llseek umount umount2 readahead \
 		   setfsuid setfsgid makedev
 
-CFLAGS-gethostid.c = -fexceptions
+
+inet-CFLAGS-$(OPTION_EGLIBC_INET) = -DOPTION_EGLIBC_INET
+
+CFLAGS-gethostid.c = -fexceptions $(inet-CFLAGS-y)
 
 sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
 		  sys/klog.h sys/kdaemon.h \

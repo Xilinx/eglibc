@@ -699,6 +699,7 @@ nss_new_service (name_database *database, const char *name)
 }
 
 
+#ifdef OPTION_EGLIBC_INET
 /* Called by nscd and nscd alone.  */
 void
 __nss_disable_nscd (void)
@@ -709,6 +710,7 @@ __nss_disable_nscd (void)
   __nss_not_use_nscd_hosts = -1;
   __nss_not_use_nscd_services = -1;
 }
+#endif /* OPTION_EGLIBC_INET */
 
 
 /* Free all resources if necessary.  */

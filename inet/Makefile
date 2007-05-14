@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for inet portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= inet
 
 headers	:= netinet/ether.h netinet/in.h netinet/in_systm.h \
@@ -28,7 +30,8 @@ headers	:= netinet/ether.h netinet/in.h netinet/in_systm.h \
 
 distribute := netgroup.h
 
-routines := htonl htons		\
+routines-$(OPTION_EGLIBC_INET) \
+	 += htonl htons \
 	    inet_lnaof inet_mkadr	\
 	    inet_netof inet_ntoa inet_net herrno herrno-loc \
 	    gethstbyad gethstbyad_r gethstbynm gethstbynm2 gethstbynm2_r \
@@ -49,7 +52,7 @@ routines := htonl htons		\
 	    getipv4sourcefilter setipv4sourcefilter \
 	    getsourcefilter setsourcefilter inet6_opt inet6_rth
 
-aux := check_pf ifreq
+aux-$(OPTION_EGLIBC_INET) += check_pf ifreq
 
 tests := htontest test_ifindex tst-ntoa tst-ether_aton tst-network \
 	 tst-gethnm test-ifaddrs bug-if1 test-inet6_opt

@@ -19,6 +19,8 @@
 #
 #	Makefile for NIS/NIS+ part.
 #
+include ../option-groups.mak
+
 subdir	:= nis
 
 aux			:= nis_hash
@@ -33,15 +35,21 @@ databases		= proto service hosts network grp pwd rpc ethers \
 			  spwd netgrp alias publickey
 
 # Specify rules for the nss_* modules.
-services		:= nis nisplus compat
+# The 'compat' module includes nis support, and the 'nss' directory
+# includes a bare-bones "files" library, so we'll include 'compat' in
+# OPTION_EGLIBC_INET.
+services-y		:=
+services-$(OPTION_EGLIBC_INET) += nis nisplus compat
 
-extra-libs		= libnsl $(services:%=libnss_%)
+extra-libs-$(OPTION_EGLIBC_INET) += libnsl
+extra-libs-y		+= $(services-y:%=libnss_%)
+
 # These libraries will be built in the `others' pass rather than
 # the `lib' pass, because they depend on libc.so being built already.
-extra-libs-others	= $(extra-libs)
+extra-libs-others-y	+= $(extra-libs-y)
 
 # The sources are found in the appropriate subdir.
-subdir-dirs = $(services:%=nss_%)
+subdir-dirs = $(services-y:%=nss_%)
 vpath %.c $(subdir-dirs)
 
 libnsl-routines = yp_xdr ypclnt ypupdate_xdr \
@@ -78,12 +86,12 @@ $(objpfx)libnss_nisplus.so: $(objpfx)libnsl.so$(libnsl.so-version)
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
 # This ensures they will load libc.so for needed symbols if loaded by
 # a statically-linked program that hasn't already loaded it.
-$(services:%=$(objpfx)libnss_%.so) $(objpfx)libnsl.so: $(common-objpfx)libc.so\
-					       $(common-objpfx)libc_nonshared.a
+$(services-y:%=$(objpfx)libnss_%.so) $(objpfx)libnsl.so: \
+	$(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a
 
 
 ifeq ($(build-shared),yes)
-$(others:%=$(objpfx)%): $(objpfx)libnsl.so$(libnsl.so-version)
+$(others-y:%=$(objpfx)%): $(objpfx)libnsl.so$(libnsl.so-version)
 else
-$(others:%=$(objpfx)%): $(objpfx)libnsl.a
+$(others-y:%=$(objpfx)%): $(objpfx)libnsl.a
 endif

@@ -1,3 +1,93 @@
+2007-05-13  Jim Blandy  <jimb@codesourcery.com>
+
+	Add the OPTION_EGLIBC_INET option group.
+
+	* option-groups.def (OPTION_EGLIBC_INET): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_INET): Initialize.
+	* option-groups.mak: Add initializer for aux-y.
+	* Makerules (aux): Add in contents of aux-y.
+	* extra-lib.mk (all-$(lib)-routines): Include $($(lib)-routines-y)
+	in the list.
+	(cpp-srcs-left): Refer $(all-$(lib)-routines) instead of spelling
+	its value out. 
+	* nscd/Makefile: include option-groups.mak.
+	(routines, aux, others, install-sbin, extra-objs): Place
+	everything here in the option group.
+	* pwd/Makefile: include option-groups.mak.
+	(CFLAGS-getpwuid_r.c, CFLAGS-getpwnam_r.c): Define USE_NSCD only
+	if OPTION_EGLIBC_INET is enabled.
+	* misc/Makefile: include option-groups.mak.
+	* sysdeps/unix/sysv/linux/gethostid.c [!OPTION_EGLIBC_INET]: Don't
+	try to look up our IP address; just return a dummy value.
+	* sysdeps/unix/sysv/linux/Makefile: #define OPTION_EGLIBC_INET
+	appropriately when compiling gethostid.c.
+	* inet/Makefile: include option-groups.mak.
+	(routines, aux): Place all routines in the option group.
+	* nss/Makefile: include option-groups.mak.
+	(databases): Put proto, service, hosts, network, rpc, ethers,
+	netgrp, key, and aliases database in option group.  Move
+	assignment to 'databases' above assignment to 'routines', since we
+	generate some of the latter from the former.
+	(routines): Put digits_dots in option group.
+	(tests): Put test-netdb in option group.
+	(xtests): Put bug-erange in option group.
+	(CFLAGS-nsswitch.c, CFLAGS-getnssent_r.c, CFLAGS-getent.c): #define
+	OPTION_EGLIBC_INET as appropriate.
+	* nss/getnssent_r.c (__nss_setent, __nss_endent, __nss_getent_r): 
+	Don't try to initialize resolver state unless the option group is
+	enabled.
+	* nss/nssswitch.c (__nss_disable_nscd): Define this only if
+	the option group is enabled.
+	* nss/getent.c (print_aliases, aliases_keys, ethers_keys,
+	print_hosts, hosts_keys, ahosts_keys_int, ahosts_keys,
+	ahostsv4_keys, ahostsv6_keys, netgroup_keys, print_networks,
+	networks_keys, print_protocols, protocols_keys, print_rpc,
+	rpc_keys, print_services, services_keys): Define only #if
+	OPTION_EGLIBC_INET.
+	(DN): New macro.
+	(databases): Make entries for ahosts, ahostsv4, ahostsv6, aliases,
+	ethers, hosts, netgroup, networks, protocols, rpc, and services
+	present only if option group is enabled.
+	* hesiod/Makefile (extra-libs, extra-libs-others): Place all
+	libraries in option group.
+	* grp/Makefile: include option-groups.mak.
+	(CFLAGS-getgruid_r.c, CFLAGS-getgrnam_r.c, CFLAGS-initgroups.c):
+	Define USE_NSCD only if OPTION_EGLIBC_INET is enabled.
+	* nptl/Makefile: include option-groups.mak.
+	(libpthread-routines): Move 'herrno' and 'res' into the option
+	group.
+	(CFLAGS-pthread_create.c): Define OPTION_EGLIBC_INET as
+	appropriate.
+	* nptl/pthread_create.c (start_thread): Initialize and free
+	__resp only when OPTION_EGLIBC_INET is #defined.
+	* posix/Makefile: include option-groups.mak.
+	(routines): Put getaddrinfo and gai_strerror in the option group.
+	(tests, xtests): Move tst-getaddrinfo, bug-ga1, tst-getaddrinfo2,
+	tst-rfc3484, tst-rfc3484-2, tst-getaddrinfo3, and bug-ga2 into the
+	option group.
+	(CFLAGS-getaddrinfo.c): #define USE_NSCD only if the option group
+	is enabled.
+	* resolv/Makefile: include option-groups.mak.
+	(routines, tests, xtests, extra-libs, extra-libs-others): Move
+	everything into the option group.
+	(tests): Only add ga_test as a dependency if the option group is
+	enabled.
+	* sunrpc/Makefile: include option-groups.mak.
+	(install-others, routines, others, install-bin, install-sbin)
+	(extra-objs, tests, xtests, extra-libs, extra-libs-others): Move
+	everything into the option group.
+	* nis/Makefile: include option-groups.mak.
+	(services, extra-libs, extra-libs-others): Move everything into
+	the option group.
+	
+	* option-groups.mak (extra-libs-y, extra-libs-others-y): Add
+	missing initializers.
+	
+	* nss/getnssent_r.c (__nss_getent_r): Pass h_errnop through to the
+	getent function, not &h_errno.
+
+	* EGLIBC.cross-building: doc fix.
+
 2007-05-01  Daniel Jacobowitz  <dan@debian.org>
 
 	* sysdeps/unix/sysv/linux/dl-osinfo.h (_dl_discover_osversion):

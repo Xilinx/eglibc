@@ -235,8 +235,10 @@ start_thread (void *arg)
   THREAD_SETMEM (pd, cpuclock_offset, now);
 #endif
 
+#ifdef OPTION_EGLIBC_INET
   /* Initialize resolver state pointer.  */
   __resp = &pd->res;
+#endif
 
 #ifdef __NR_set_robust_list
 # ifndef __ASSUME_SET_ROBUST_LIST
@@ -302,8 +304,10 @@ start_thread (void *arg)
   /* Run the destructor for the thread-local data.  */
   __nptl_deallocate_tsd ();
 
+#ifdef OPTION_EGLIBC_INET
   /* Clean up any state libc stored in thread-local variables.  */
   __libc_thread_freeres ();
+#endif
 
   /* If this is the last thread we terminate the process now.  We
      do not notify the debugger, it might just irritate it if there

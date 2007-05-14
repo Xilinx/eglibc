@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for pwd portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= pwd
 headers := pwd.h
 
@@ -32,8 +34,10 @@ include ../Rules
 
 ifeq ($(have-thread-library),yes)
 
-CFLAGS-getpwuid_r.c = -DUSE_NSCD=1
-CFLAGS-getpwnam_r.c = -DUSE_NSCD=1
+OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
+
+CFLAGS-getpwuid_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y)
+CFLAGS-getpwnam_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y)
 CFLAGS-getpwent_r.c = -fexceptions
 CFLAGS-getpwent.c = -fexceptions
 CFLAGS-getpw.c = -fexceptions

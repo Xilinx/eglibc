@@ -67,3 +67,128 @@ config OPTION_EGLIBC_LIBM
        EGLIBC's math library 'libm'.  If you disable this option
        group, you will not be able to build 'libstdc++' against the
        resulting EGLIBC installation.
+
+config OPTION_EGLIBC_INET
+   bool "Networking support"
+   help
+       This option group includes networking-specific functions and
+       data.  With OPTION_EGLIBC_INET disabled, the EGLIBC
+       installation and API changes as follows:
+
+       - The following libraries are not installed:
+
+         libanl
+         libnsl
+         libnss_compat
+         libnss_dns
+         libnss_hesiod
+         libnss_nis
+         libnss_nisplus
+         libresolv
+         
+       - The following functions and variables are omitted from libc:
+
+         authdes_create           hstrerror              svc_fdset
+         authdes_getucred         htonl                  svc_getreq
+         authdes_pk_create        htons                  svc_getreq_common
+         authnone_create          if_freenameindex       svc_getreq_poll
+         authunix_create          if_indextoname         svc_getreqset
+         authunix_create_default  if_nameindex           svc_max_pollfd
+         bindresvport             if_nametoindex         svc_pollfd
+         callrpc                  in6addr_any            svcraw_create
+         cbc_crypt                in6addr_loopback       svc_register
+         clnt_broadcast           inet6_opt_append       svc_run
+         clnt_create              inet6_opt_find         svc_sendreply
+         clnt_pcreateerror        inet6_opt_finish       svctcp_create
+         clnt_perrno              inet6_opt_get_val      svcudp_bufcreate
+         clnt_perror              inet6_opt_init         svcudp_create
+         clntraw_create           inet6_option_alloc     svcudp_enablecache
+         clnt_spcreateerror       inet6_option_append    svcunix_create
+         clnt_sperrno             inet6_option_find      svcunixfd_create
+         clnt_sperror             inet6_option_init      svc_unregister
+         clnttcp_create           inet6_option_next      user2netname
+         clntudp_bufcreate        inet6_option_space     xdecrypt
+         clntudp_create           inet6_opt_next         xdr_accepted_reply
+         clntunix_create          inet6_opt_set_val      xdr_array
+         des_setparity            inet6_rth_add          xdr_authdes_cred
+         ecb_crypt                inet6_rth_getaddr      xdr_authdes_verf
+         endaliasent              inet6_rth_init         xdr_authunix_parms
+         endhostent               inet6_rth_reverse      xdr_bool
+         endnetent                inet6_rth_segments     xdr_bytes
+         endnetgrent              inet6_rth_space        xdr_callhdr
+         endprotoent              inet_addr              xdr_callmsg
+         endrpcent                inet_aton              xdr_char
+         endservent               inet_lnaof             xdr_cryptkeyarg
+         ether_aton               inet_makeaddr          xdr_cryptkeyarg2
+         ether_aton_r             inet_netof             xdr_cryptkeyres
+         ether_hostton            inet_network           xdr_des_block
+         ether_line               inet_nsap_addr         xdr_double
+         ether_ntoa               inet_nsap_ntoa         xdr_enum
+         ether_ntoa_r             inet_ntoa              xdr_float
+         ether_ntohost            inet_ntop              xdr_free
+         freeaddrinfo             inet_pton              xdr_getcredres
+         freeifaddrs              innetgr                xdr_hyper
+         gai_strerror             iruserok               xdr_int
+         getaddrinfo              iruserok_af            xdr_int16_t
+         getaliasbyname           key_decryptsession     xdr_int32_t
+         getaliasbyname_r         key_decryptsession_pk  xdr_int64_t
+         getaliasent              key_encryptsession     xdr_int8_t
+         getaliasent_r            key_encryptsession_pk  xdr_keybuf
+         gethostbyaddr            key_gendes             xdr_key_netstarg
+         gethostbyaddr_r          key_get_conv           xdr_key_netstres
+         gethostbyname            key_secretkey_is_set   xdr_keystatus
+         gethostbyname2           key_setnet             xdr_long
+         gethostbyname2_r         key_setsecret          xdr_longlong_t
+         gethostbyname_r          netname2host           xdrmem_create
+         gethostent               netname2user           xdr_netnamestr
+         gethostent_r             ntohl                  xdr_netobj
+         getifaddrs               ntohs                  xdr_opaque
+         getipv4sourcefilter      passwd2des             xdr_opaque_auth
+         get_myaddress            pmap_getmaps           xdr_pmap
+         getnameinfo              pmap_getport           xdr_pmaplist
+         getnetbyaddr             pmap_rmtcall           xdr_pointer
+         getnetbyaddr_r           pmap_set               xdr_quad_t
+         getnetbyname             pmap_unset             xdrrec_create
+         getnetbyname_r           rcmd                   xdrrec_endofrecord
+         getnetent                rcmd_af                xdrrec_eof
+         getnetent_r              registerrpc            xdrrec_skiprecord
+         getnetgrent              res_init               xdr_reference
+         getnetgrent_r            rexec                  xdr_rejected_reply
+         getnetname               rexec_af               xdr_replymsg
+         getprotobyname           rexecoptions           xdr_rmtcall_args
+         getprotobyname_r         rpc_createerr          xdr_rmtcallres
+         getprotobynumber         rresvport              xdr_short
+         getprotobynumber_r       rresvport_af           xdr_sizeof
+         getprotoent              rtime                  xdrstdio_create
+         getprotoent_r            ruserok                xdr_string
+         getpublickey             ruserok_af             xdr_u_char
+         getrpcbyname             ruserpass              xdr_u_hyper
+         getrpcbyname_r           setaliasent            xdr_u_int
+         getrpcbynumber           sethostent             xdr_uint16_t
+         getrpcbynumber_r         setipv4sourcefilter    xdr_uint32_t
+         getrpcent                setnetent              xdr_uint64_t
+         getrpcent_r              setnetgrent            xdr_uint8_t
+         getrpcport               setprotoent            xdr_u_long
+         getsecretkey             setrpcent              xdr_u_longlong_t
+         getservbyname            setservent             xdr_union
+         getservbyname_r          setsourcefilter        xdr_unixcred
+         getservbyport            svcauthdes_stats       xdr_u_quad_t
+         getservbyport_r          svcerr_auth            xdr_u_short
+         getservent               svcerr_decode          xdr_vector
+         getservent_r             svcerr_noproc          xdr_void
+         getsourcefilter          svcerr_noprog          xdr_wrapstring
+         h_errlist                svcerr_progvers        xencrypt
+         h_errno                  svcerr_systemerr       xprt_register
+         herror                   svcerr_weakauth        xprt_unregister
+         h_nerr                   svc_exit
+         host2netname             svcfd_create
+
+       - The rpcgen, nscd, and rpcinfo commands are not installed.
+
+       - The 'rpc' file (a text file listing RPC services) is not installed.
+
+       Socket-related system calls do not fall in this option group,
+       because many are also used for other inter-process
+       communication mechanisms.  For example, the 'syslog' routines
+       use Unix-domain sockets to communicate with the syslog daemon;
+       syslog is valuable in non-networked contexts.

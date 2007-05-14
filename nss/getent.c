@@ -88,6 +88,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
   fprintf (stream, gettext ("Written by %s.\n"), "Thorsten Kukuk");
 }
 
+#ifdef OPTION_EGLIBC_INET
 /* This is for aliases */
 static inline void
 print_aliases (struct aliasent *alias)
@@ -176,6 +177,7 @@ ethers_keys (int number, char *key[])
 
   return result;
 }
+#endif /* OPTION_EGLIBC_INET */
 
 /* This is for group */
 static inline void
@@ -234,6 +236,7 @@ group_keys (int number, char *key[])
   return result;
 }
 
+#ifdef OPTION_EGLIBC_INET
 /* This is for hosts */
 static void
 print_hosts (struct hostent *host)
@@ -469,6 +472,7 @@ networks_keys (int number, char *key[])
 
   return result;
 }
+#endif /* OPTION_EGLIBC_INET */
 
 /* Now is all for passwd */
 static inline void
@@ -521,6 +525,7 @@ passwd_keys (int number, char *key[])
   return result;
 }
 
+#ifdef OPTION_EGLIBC_INET
 /* This is for protocols */
 static inline void
 print_protocols (struct protoent *proto)
@@ -672,6 +677,7 @@ services_keys (int number, char *key[])
 
   return result;
 }
+#endif /* OPTION_EGLIBC_INET */
 
 /* This is for shadow */
 static void
@@ -738,19 +744,24 @@ struct
   } databases[] =
   {
 #define D(name) { #name, name ## _keys },
-D(ahosts)
-D(ahostsv4)
-D(ahostsv6)
-D(aliases)
-D(ethers)
+#ifdef OPTION_EGLIBC_INET
+#define DN(name) D(name)
+#else
+#define DN(name)
+#endif
+DN(ahosts)
+DN(ahostsv4)
+DN(ahostsv6)
+DN(aliases)
+DN(ethers)
 D(group)
-D(hosts)
-D(netgroup)
-D(networks)
+DN(hosts)
+DN(netgroup)
+DN(networks)
 D(passwd)
-D(protocols)
-D(rpc)
-D(services)
+DN(protocols)
+DN(rpc)
+DN(services)
 D(shadow)
 #undef D
     { NULL, NULL }

@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for sunrpc portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= sunrpc
 
 # The code in this subdirectory is taken from Sun's RPCSRC-4.0
@@ -52,12 +54,12 @@ headers = $(addprefix rpc/,auth.h auth_unix.h clnt.h netdb.h pmap_clnt.h \
 			   svc_auth.h types.h xdr.h auth_des.h \
 			   des_crypt.h key_prot.h rpc_des.h) \
 	  $(rpcsvc:%=rpcsvc/%) rpcsvc/bootparam.h
-install-others = $(inst_sysconfdir)/rpc
 generated = $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
 	    $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen
 generated-dirs := rpcsvc
 
-routines := auth_none auth_unix authuxprot bindrsvprt \
+routines-$(OPTION_EGLIBC_INET) \
+         += auth_none auth_unix authuxprot bindrsvprt \
 	    clnt_gen clnt_perr clnt_raw clnt_simp clnt_tcp \
 	    clnt_udp rpc_dtable get_myaddr getrpcport \
 	    pmap_clnt pm_getmaps pm_getport pmap_prot \
@@ -69,9 +71,9 @@ routines := auth_none auth_unix authuxprot bindrsvprt \
 	    key_call key_prot netname openchild rtime svcauth_des xcrypt\
 	    clnt_unix svc_unix create_xid xdr_intXX_t
 
-others := rpcinfo
-install-bin := rpcgen
-install-sbin := rpcinfo
+others-$(OPTION_EGLIBC_INET) += rpcinfo
+install-bin-$(OPTION_EGLIBC_INET) += rpcgen
+install-sbin-$(OPTION_EGLIBC_INET) += rpcinfo
 rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 	      rpc_scan.o rpc_util.o rpc_svcout.o rpc_clntout.o \
 	      rpc_tblout.o rpc_sample.o
@@ -79,17 +81,19 @@ rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 distribute := proto.h rpc_util.h rpc_parse.h rpc_scan.h \
 	      $(rpcgen-objs:.o=.c) etc.rpc \
 	      errqueue.h
-extra-objs = $(rpcgen-objs)
+extra-objs-$(OPTION_EGLIBC_INET) += $(rpcgen-objs)
 
 all: # Make this the default target; it will be defined in Rules.
 
 include ../Makeconfig
 
-tests = tst-xdrmem tst-xdrmem2
-xtests := tst-getmyaddr
+install-others-$(OPTION_EGLIBC_INET) += $(inst_sysconfdir)/rpc
+
+tests-$(OPTION_EGLIBC_INET) = tst-xdrmem tst-xdrmem2
+xtests-$(OPTION_EGLIBC_INET) := tst-getmyaddr
 
 ifeq ($(have-thread-library),yes)
-xtests += thrsvc
+xtests-$(OPTION_EGLIBC_INET) += thrsvc
 endif
 distribute += thrsvc.c
 
@@ -102,8 +106,9 @@ ifeq (no,$(cross-compiling))
 ifneq (yes,$(install-bootstrap-headers))
 # We can only build this library if we can run the rpcgen we build.
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
-extra-libs := librpcsvc
-extra-libs-others := librpcsvc # Make it in `others' pass, not `lib' pass.
+extra-libs-$(OPTION_EGLIBC_INET) += librpcsvc
+# Make it in `others' pass, not `lib' pass.
+extra-libs-others-y += $(extra-libs-y)
 librpcsvc-routines = $(rpcsvc:%.x=x%)
 librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
 omit-deps = $(librpcsvc-routines)

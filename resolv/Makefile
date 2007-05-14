@@ -20,6 +20,8 @@
 #
 #	Sub-makefile for resolv portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= resolv
 
 headers	:= resolv.h \
@@ -29,22 +31,23 @@ headers	:= resolv.h \
 distribute := ../conf/portability.h mapv4v6addr.h mapv4v6hostent.h \
 	      Banner res_hconf.h res_debug.h README gai_misc.h ga_test.c
 
-routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init \
+routines-$(OPTION_EGLIBC_INET) \
+	 += herror inet_addr inet_ntop inet_pton nsap_addr res_init \
 	    res_hconf res_libc res-state
 
-tests = tst-aton tst-leaks tst-inet_ntop
-xtests = tst-leaks2
+tests-$(OPTION_EGLIBC_INET) += tst-aton tst-leaks tst-inet_ntop
+xtests-$(OPTION_EGLIBC_INET) += tst-leaks2
 
 generate := mtrace-tst-leaks tst-leaks.mtrace tst-leaks2.mtrace
 
 include ../Makeconfig
 
-extra-libs := libresolv libnss_dns
+extra-libs-$(OPTION_EGLIBC_INET) += libresolv libnss_dns
 ifeq ($(have-thread-library),yes)
-extra-libs += libanl
-routines += gai_sigqueue
+extra-libs-$(OPTION_EGLIBC_INET) += libanl
+routines-$(OPTION_EGLIBC_INET) += gai_sigqueue
 endif
-extra-libs-others = $(extra-libs)
+extra-libs-others-y += $(extra-libs-y)
 libresolv-routines := gethnamaddr res_comp res_debug	\
 		      res_data res_mkquery res_query res_send		\
 		      inet_net_ntop inet_net_pton inet_neta base64	\
@@ -62,7 +65,7 @@ ifneq ($(build-static-nss),yes)
 libnss_dns-inhibit-o	= $(filter-out .os,$(object-suffixes))
 endif
 
-ifeq (yesyes,$(build-shared)$(have-thread-library))
+ifeq (yesyesy,$(build-shared)$(have-thread-library)$(OPTION_EGLIBC_INET))
 tests: $(objpfx)ga_test
 endif
 

@@ -15,12 +15,16 @@ include $(firstword $(..) ../)option-groups.defaults
 # defaults from option-groups.defaults.
 -include $(option_group_config_file)
 
-# Establish 'routines-y', etc. as simply expanded variables.
-routines-y     :=
-others-y       :=
-install-bin-y  :=
-install-sbin-y :=
-extra-objs-y   :=
-tests-y        :=
-xtests-y       :=
-test-srcs-y    :=
+# Establish 'routines-y', etc. as simply-expanded variables.
+aux-y	       	    :=
+extra-libs-others-y :=
+extra-libs-y   	    :=
+extra-objs-y   	    :=
+install-bin-y  	    :=
+install-others-y    :=
+install-sbin-y 	    :=
+others-y       	    :=
+routines-y     	    :=
+test-srcs-y    	    :=   
+tests-y        	    :=
+xtests-y       	    :=

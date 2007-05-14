@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for grp portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= grp
 headers := grp.h
 
@@ -47,14 +49,16 @@ endif
 
 ifeq ($(have-thread-library),yes)
 
-CFLAGS-getgrgid_r.c = -DUSE_NSCD=1 -fexceptions
-CFLAGS-getgrnam_r.c = -DUSE_NSCD=1 -fexceptions
+OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
+
+CFLAGS-getgrgid_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
+CFLAGS-getgrnam_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
 CFLAGS-getgrent_r.c = -fexceptions
 CFLAGS-getgrent.c = -fexceptions
 CFLAGS-fgetgrent.c = -fexceptions
 CFLAGS-fgetgrent_r.c = -fexceptions -D_IO_MTSAFE_IO
 CFLAGS-putgrent.c = -fexceptions -D_IO_MTSAFE_IO
-CFLAGS-initgroups.c = -DUSE_NSCD=1 -fexceptions
+CFLAGS-initgroups.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
 CFLAGS-getgrgid.c = -fexceptions
 
 endif

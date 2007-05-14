@@ -60,11 +60,13 @@ __nss_setent (const char *func_name, db_lookup_function lookup_fct,
   } fct;
   int no_more;
 
+#if OPTION_EGLIBC_INET
   if (res && __res_maybe_init (&_res, 0) == -1)
     {
       __set_h_errno (NETDB_INTERNAL);
       return;
     }
+#endif /* OPTION_EGLIBC_INET */
 
   /* Cycle through the services and run their `setXXent' functions until
      we find an available service.  */
@@ -103,11 +105,13 @@ __nss_endent (const char *func_name, db_lookup_function lookup_fct,
   } fct;
   int no_more;
 
+#ifdef OPTION_EGLIBC_INET
   if (res && __res_maybe_init (&_res, 0) == -1)
     {
       __set_h_errno (NETDB_INTERNAL);
       return;
     }
+#endif /* OPTION_EGLIBC_INET */
 
   /* Cycle through all the services and run their endXXent functions.  */
   no_more = setup (func_name, lookup_fct, &fct.ptr, nip, startp, 1);
@@ -143,12 +147,14 @@ __nss_getent_r (const char *getent_func_name,
   int no_more;
   enum nss_status status;
 
+#ifdef OPTION_EGLIBC_INET
   if (res && __res_maybe_init (&_res, 0) == -1)
     {
       *h_errnop = NETDB_INTERNAL;
       *result = NULL;
       return errno;
     }
+#endif /* OPTION_EGLIBC_INET */
 
   /* Initialize status to return if no more functions are found.  */
   status = NSS_STATUS_NOTFOUND;
@@ -163,7 +169,7 @@ __nss_getent_r (const char *getent_func_name,
       int is_last_nip = *nip == *last_nip;
 
       status = DL_CALL_FCT (fct.f,
-			    (resbuf, buffer, buflen, &errno, &h_errno));
+			    (resbuf, buffer, buflen, &errno, h_errnop));
 
       /* The the status is NSS_STATUS_TRYAGAIN and errno is ERANGE the
 	 provided buffer is too small.  In this case we should give

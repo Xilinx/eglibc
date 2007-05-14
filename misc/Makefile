@@ -20,6 +20,10 @@
 #	Sub-makefile for misc portion of the library.
 #
 
+# Some system-dependent implementations of these functions use option
+# groups (see sysdeps/unix/sysv/linux/Makefile, for example).
+include ../option-groups.mak
+
 subdir	:= misc
 
 headers	:= sys/uio.h bits/uio.h sys/ioctl.h bits/ioctls.h bits/ioctl-types.h \

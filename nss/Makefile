@@ -19,6 +19,8 @@
 #
 #	Makefile for name service switch.
 #
+include ../option-groups.mak
+
 subdir	:= nss
 
 headers			:= nss.h
@@ -26,21 +28,24 @@ distribute		:= nsswitch.h XXX-lookup.c getXXbyYY.c getXXbyYY_r.c \
 			   getXXent.c getXXent_r.c databases.def \
 			   nsswitch.conf digits_dots.c function.def
 
-# This is the trivial part which goes into libc itself.
-routines		= nsswitch getnssent getnssent_r digits_dots \
-			  $(addsuffix -lookup,$(databases))
-
 # These are the databases that go through nss dispatch.
 # Caution: if you add a database here, you must add its real name
 # in databases.def, too.
-databases		= proto service hosts network grp pwd rpc ethers \
-			  spwd netgrp key alias
+databases-y		= grp pwd spwd 
+databases-$(OPTION_EGLIBC_INET) \
+			+= proto service hosts network rpc ethers \
+			   netgrp key alias
+
+# This is the trivial part which goes into libc itself.
+routines-y		+= nsswitch getnssent getnssent_r \
+			  $(addsuffix -lookup,$(databases-y))
+routines-$(OPTION_EGLIBC_INET) += digits_dots
 
 others                  := getent
 install-bin             := getent
 
-tests			= test-netdb
-xtests			= bug-erange
+tests-$(OPTION_EGLIBC_INET) += test-netdb
+xtests-$(OPTION_EGLIBC_INET) += bug-erange
 
 include ../Makeconfig
 
@@ -62,7 +67,7 @@ subdir-dirs = $(services:%=nss_%)
 vpath %.c $(subdir-dirs)
 
 
-libnss_files-routines	:= $(addprefix files-,$(databases))
+libnss_files-routines	:= $(addprefix files-,$(databases-y))
 distribute		+= files-XXX.c files-parse.c
 
 
@@ -83,3 +88,9 @@ endif
 # a statically-linked program that hasn't already loaded it.
 $(services:%=$(objpfx)libnss_%.so): $(common-objpfx)libc.so \
 				    $(common-objpfx)libc_nonshared.a
+
+OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DOPTION_EGLIBC_INET=1
+
+CFLAGS-nsswitch.c    = $(OPTION_EGLIBC_INET-CFLAGS-y)
+CFLAGS-getnssent_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y)
+CFLAGS-getent.c      = $(OPTION_EGLIBC_INET-CFLAGS-y)
