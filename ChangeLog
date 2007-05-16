@@ -1,3 +1,177 @@
+2007-05-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* version.h (VERSION): Define to 6.
+	* include/features.h (__GLIBC_MINOR__): Likewise.
+
+	* malloc/malloc.c: Use all small bin slots on 64-bit archs.
+
+	* malloc/malloc.c (largebin_index): Really have 32 buckets with 64
+	sizes.
+
+2007-05-13  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c [MALLOC_DEBUG]: Keep track of current maximum
+	number of mmaps.  n_mmaps_max is the target.
+	* malloc/hooks.c: Likewise.
+	* malloc/arena.c: Likewise.
+
+2007-05-12  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/tst-getcpu.c: Include <unistd.h> for
+	getpid.
+
+2007-05-11  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-close.c (_dl_close_worker): Help gcc to optimize by
+	adding new variables.
+
+	* elf/dl-open.c (add_to_global): Introduce variable ns to help gcc
+	optimize.  Completely extend global scope array before making the
+	new entries visible.
+
+2007-05-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/tst-getcpu.c: New file.
+	* sysdeps/unix/sysv/linux/Makefile [subdir=posix] (tests): Add
+	tst-getcpu.
+
+	* include/link.h: Move l_version and l_nversion members around to
+	fill gaps.
+
+	* scripts/check-c++-types.sh: Don't use -fnu89-inline option.
+
+	* sysdeps/unix/sysv/linux/sched_setaffinity.c
+	(__sched_setaffinity_new): If syscall was successful and
+	RESET_VGETCPU_CACHE is defined, use it before returning.
+	* sysdeps/unix/sysv/linux/x86_64/sched_setaffinity.c: New file.
+
+	* io/sys/stat.h: Make sure struct timespec is defined for
+	__USE_ATFILE.
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/stat.h: Define UTIME_NOW and
+	UTIME_OMIT.
+	* sysdeps/unix/sysv/linux/x86_64/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/alpha/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/kernel-features.h: Define __ASSUME_UTIMENSAT.
+	* io/sys/stat.h: Declare utimensat, futimens.
+	* io/utimensat.c: New file.
+	* io/futimens.c: New file.
+	* sysdeps/unix/sysv/linux/utimensat.c: New file.
+	* sysdeps/unix/sysv/linux/futimens.c: New file.
+	* io/Makefile (routines): Add utimensat, futimens.
+	* io/Versions: Add utimensat, futimens to GLIBC_2.6.
+	* sysdeps/unix/sysv/linux/lutimes.c: New file.
+	* sysdeps/unix/sysv/linux/futimes.c: Use utimensat syscall if
+	available.
+
+	* include/sys/cdefs.h: Redefine __nonnull so that test for
+	incorrect parameters in the libc code itself are not omitted.
+
+2007-05-09  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/ia64/fpu/fraiseexcpt.c (feraiseexcept): Don't raise overflow
+	exception in addition to inexact when asked to raise only FE_INEXACT.
+
+	[BZ #3427]
+	* sysdeps/s390/fpu/feholdexcpt.c (feholdexcept): Don't clear exceptions
+	in *envp.
+
+2007-05-07  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #4403]
+	* string/strfry.c (strfry): Make result more random.
+
+2007-05-07  Richard Henderson  <rth@redhat.com>
+
+	* sysdeps/alpha/fpu/bits/mathinline.h (__isnanl): Don't define
+	if __NO_LONG_DOUBLE_MATH.
+	* sysdeps/unix/sysv/linux/alpha/ioperm.c: If BWX insns not
+	available in the compiler, add .arch directive to the assembly.
+
+2007-05-07  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/alpha/fpu/s_nearbyint.c (nearbyintl): Fix version on
+	compat_symbol to GLIBC_2_1.
+	* sysdeps/alpha/fpu/s_fmin.S (fminl): Likewise.
+	* sysdeps/alpha/fpu/s_trunc.c (truncl): Likewise.
+	* sysdeps/alpha/fpu/s_fmax.S (fmaxl): Likewise.
+	* sysdeps/alpha/fpu/s_lrint.c (lrintl, llrintl): Likewise.
+	* sysdeps/alpha/fpu/s_lround.c (lroundl, llroundl): Likewise.
+	* sysdeps/alpha/fpu/s_round.c (roundl): Likewise.
+	* sysdeps/alpha/fpu/s_isnan.c (isnanl): Provide compat_symbol in
+	libc, not libm.
+	(__isnanl): New compat_symbol.
+
+2007-05-07  Ulrich Drepper  <drepper@redhat.com>
+	    Jakub Jelinek  <jakub@redhat.com>
+
+	* malloc/arena.c (heap_info): Add mprotect_size field, adjust pad.
+	(new_heap): Initialize mprotect_size.
+	(grow_heap): When growing, only mprotect from mprotect_size till
+	new_size if mprotect_size is smaller.  When shrinking, use PROT_NONE
+	MMAP for __libc_enable_secure only, otherwise use MADV_DONTNEED.
+
+2007-04-30  Steven Munroe  <sjmunroe@us.ibm.com>
+	    Peter Bergner  <bergner@us.ibm.com>
+
+	* sysdeps/powerpc/bits/fenv.h: Declare __fe_mask_env extern.
+	Define FE_NOMASK_ENV as FE_EANBLED_ENV.  Define FE_MASK_ENV.
+	* sysdeps/powerpc/fpu/Makefile: Add fe_mask to libm-support.
+	* sysdeps/powerpc/fpu/fe_mask.c: New file.
+	* sysdeps/powerpc/fpu/fe_nomask.c: Correct comment.
+	* sysdeps/powerpc/fpu/fedisblxcpt.c (fedisableexcept):
+	Call __fe_mask_env() if all FP exceptions disabled.
+	* sysdeps/powerpc/fpu/feholdexcpt.c (feholdexcept): Copy high 32-bits
+	from old FPSCR to new fenv to propagate DFP rounding modes.
+	Call __fe_mask_env() if FP exceptions previously enabled.
+	* sysdeps/powerpc/fpu/fesetenv.c (fesetenv): Change mask to merge
+	exceptions from env.  Use __fe_nomask_env() or __fe_mask_env() when
+	transitioning from all exceptions disabled to any exception enabled
+	or visa versa.
+	* sysdeps/powerpc/fpu/feupdateenv.c (__feupdateenv): Change mask to
+	merge exceptions from env.  Call __fe_nomask_env or __fe_mask_env
+	when transitioning from all exceptions disabled to any exception
+	enabled or visa versa.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fe_nomask.c: Moved to...
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/fe_nomask.c: ...here.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/fe_nomask.c: Moved to...
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/fpu/fe_nomask.c: ...here.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/fe_mask.c: New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/fpu/fe_mask.c: New file.
+
+2007-05-06  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #4465]
+	* posix/unistd.h: Remove __THROW from fdatasync.
+
+2007-05-06  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #4465]
+	* sysdeps/unix/sysv/linux/syscalls.list (fdatasync): Add "C" to args.
+
+2007-05-06  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdio-common/vfprintf.c (process_string_arg): Optimize
+	ridiculous precision in wide char code printing multi-byte string.
+	Reported by Jim Meyering <jim@meyering.net>.
+
+	[BZ #4131]
+	* elf/dl-addr.c (_dl_addr): Compare address with actual segment
+	boundaries to work around systems with overlapping binary loading.
+	Based on a patch by Suzuki <suzuki@in.ibm.com>.
+
+2007-05-04  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdio-common/vfprintf.c (process_string_arg): Adjust call to
+	__mbsnrtowcs after last change.
+
+	* locale/programs/linereader.c (get_symname): Fix adding final NUL.
+	(get_ident): Likewise.
+
 2007-05-03  Jakub Jelinek  <jakub@redhat.com>
 
 	* soft-fp/op-common.h (FP_TRUNC): Replace raising of FP_EX_INEXACT
@@ -27,8 +201,10 @@
 	(FP_PACK_SEMIRAW_EP): Use FP_PACK_RAW_EP instead of
 	undefined _FP_PACK_RAW_EP.
 
-	* op-2.h (_FP_FRAC_COPY_2_2): Define as alias to _FP_FRAC_COPY_2.
-	* op-4.h (_FP_FRAC_COPY_2_2): Define as alias to _FP_FRAC_COPY_4.
+	* soft-fp/op-2.h (_FP_FRAC_COPY_2_2): Define as alias to
+	_FP_FRAC_COPY_2.
+	* soft-fp/op-4.h (_FP_FRAC_COPY_2_2): Define as alias to
+	_FP_FRAC_COPY_4.
 
 2007-04-16  Uros Bizjak  <ubizjak@gmail.com>
 	    Jakub Jelinek  <jakub@redhat.com>
@@ -698,7 +874,7 @@
 
 2007-03-13  Richard Henderson  <rth@redhat.com>
 
-        * elf/dl-support.c (_dl_aux_init): Honor DL_PLATFORM_AUXV.
+	* elf/dl-support.c (_dl_aux_init): Honor DL_PLATFORM_AUXV.
 	* sysdeps/unix/sysv/linux/alpha/dl-auxv.h: New file.
 	* sysdeps/unix/sysv/linux/alpha/dl-support.c: New file.
 	* sysdeps/unix/sysv/linux/alpha/dl-sysdep.c (__libc_alpha_cache_shape):

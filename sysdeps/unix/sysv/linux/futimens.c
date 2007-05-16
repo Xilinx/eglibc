@@ -1,4 +1,5 @@
-/* Copyright (C) 2007 Free Software Foundation, Inc.
+/* Change access and modification times of open file.  Linux version.
+   Copyright (C) 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,33 +17,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define __llround	not___llround
-#define llround		not_llround
-#include <math.h>
-#include <math_ldbl_opt.h>
-#undef __llround
-#undef llround
+#include <errno.h>
+#include <fcntl.h>
+#include <string.h>
+#include <time.h>
+#include <sysdep.h>
 
-long int
-__lround (double x)
+
+/* Change the access time of the file associated with FD to TSP[0] and
+   the modification time of FILE to TSP[1].
+
+   Starting with 2.6.22 the Linux kernel has the utimensat syscall which
+   can be used to implement futimens.  */
+int
+futimens (int fd, const struct timespec tsp[2])
 {
-  double adj;
-
-  adj = 0x1.fffffffffffffp-2;	/* nextafter (0.5, 0.0) */
-  adj = copysign (adj, x);
-  return x + adj;
-}
-
-strong_alias (__lround, __llround)
-weak_alias (__lround, lround)
-weak_alias (__llround, llround)
-#ifdef NO_LONG_DOUBLE
-strong_alias (__lround, __lroundl)
-strong_alias (__lround, __llroundl)
-weak_alias (__lroundl, lroundl)
-weak_alias (__llroundl, llroundl)
+#ifdef __NR_utimensat
+  return INLINE_SYSCALL (utimensat, 4, fd, NULL, tsp, 0);
+#else
+  __set_errno (ENOSYS);
+  return -1;
 #endif
-#if LONG_DOUBLE_COMPAT(libm, GLIBC_2_1)
-compat_symbol (libm, __lround, lroundl, GLIBC_2_1);
-compat_symbol (libm, __llround, llroundl, GLIBC_2_1);
+}
+#ifndef __NR_utimensat
+stub_warning (futimens)
+# include <stub-tag.h>
 #endif

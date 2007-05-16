@@ -1026,10 +1026,11 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	    const char *mbs = (const char *) string;			      \
 	    mbstate_t mbstate;						      \
 									      \
-	    len = prec != -1 ? (size_t) prec : strlen (mbs);		      \
+	    len = prec != -1 ? __strnlen (mbs, (size_t) prec) : strlen (mbs); \
 									      \
 	    /* Allocate dynamically an array which definitely is long	      \
-	       enough for the wide character version.  */		      \
+	       enough for the wide character version.  Each byte in the	      \
+	       multi-byte string can produce at most one wide character.  */  \
 	    if (__libc_use_alloca (len * sizeof (wchar_t)))		      \
 	      string = (CHAR_T *) alloca (len * sizeof (wchar_t));	      \
 	    else if ((string = (CHAR_T *) malloc (len * sizeof (wchar_t)))    \
@@ -1173,8 +1174,8 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 		    memset (&ps, '\0', sizeof (ps));			      \
 									      \
 		    while (str2 != NULL && str2 < strend)		      \
-		      if (__mbsnrtowcs (ignore, &str2, strend - str2, 1024,   \
-					&ps) == (size_t) -1)		      \
+		      if (__mbsnrtowcs (ignore, &str2, strend - str2,	      \
+					ignore_size, &ps) == (size_t) -1)     \
 			{						      \
 			  done = -1;					      \
 			  goto all_done;				      \
