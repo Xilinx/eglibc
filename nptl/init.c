@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -33,27 +33,6 @@
 #include <shlib-compat.h>
 #include <smp.h>
 #include <lowlevellock.h>
-
-
-#ifndef __NR_set_tid_address
-/* XXX For the time being...  Once we can rely on the kernel headers
-   having the definition remove these lines.  */
-#if defined __s390__
-# define __NR_set_tid_address	252
-#elif defined __ia64__
-# define __NR_set_tid_address	1233
-#elif defined __i386__
-# define __NR_set_tid_address	258
-#elif defined __x86_64__
-# define __NR_set_tid_address	218
-#elif defined __powerpc__
-# define __NR_set_tid_address	232
-#elif defined __sparc__
-# define __NR_set_tid_address	166
-#else
-# error "define __NR_set_tid_address"
-#endif
-#endif
 
 
 /* Size and alignment of static TLS block.  */
@@ -297,6 +276,18 @@ __pthread_initialize_minimal_internal (void)
 #endif
     set_robust_list_not_avail ();
 
+#ifndef __ASSUME_PRIVATE_FUTEX
+  /* Private futexes are always used (at least internally) so that
+     doing the test once this early is beneficial.  */
+  {
+    int word;
+    res = INTERNAL_SYSCALL (futex, err, 3, &word,
+			    FUTEX_WAKE | FUTEX_PRIVATE_FLAG, 1);
+    if (!INTERNAL_SYSCALL_ERROR_P (res, err))
+      THREAD_SETMEM (pd, header.private_futex, FUTEX_PRIVATE_FLAG);
+  }
+#endif
+
   /* Set initial thread's stack block from 0 up to __libc_stack_end.
      It will be bigger than it actually is, but for unwind.c/pt-longjmp.c
      purposes this is good enough.  */
@@ -385,6 +376,8 @@ __pthread_initialize_minimal_internal (void)
 #endif
 
   GL(dl_init_static_tls) = &__pthread_init_static_tls;
+
+  GL(dl_wait_lookup_done) = &__wait_lookup_done;
 
   /* Register the fork generation counter with the libc.  */
 #ifndef TLS_MULTIPLE_THREADS_IN_TCB

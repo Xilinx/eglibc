@@ -26,6 +26,8 @@
 # include <stddef.h>
 # include <stdint.h>
 # include <stdlib.h>
+# include <sysdep.h>
+# include <kernel-features.h>
 
 
 /* Type for the dtv.  */
@@ -47,10 +49,14 @@ typedef struct
   dtv_t *dtv;
   void *self;		/* Pointer to the thread descriptor.  */
   int multiple_threads;
+  int gscope_flag;
   uintptr_t sysinfo;
   uintptr_t stack_guard;
   uintptr_t pointer_guard;
   unsigned long int vgetcpu_cache[2];
+#ifndef __ASSUME_PRIVATE_FUTEX
+  int private_futex;
+#endif
 } tcbhead_t;
 
 #else /* __ASSEMBLER__ */
@@ -335,6 +341,27 @@ typedef struct
 #define THREAD_COPY_POINTER_GUARD(descr) \
   ((descr)->header.pointer_guard					      \
    = THREAD_GETMEM (THREAD_SELF, header.pointer_guard))
+
+
+/* Get and set the global scope generation counter in the TCB head.  */
+#define THREAD_GSCOPE_FLAG_UNUSED 0
+#define THREAD_GSCOPE_FLAG_USED   1
+#define THREAD_GSCOPE_FLAG_WAIT   2
+#define THREAD_GSCOPE_RESET_FLAG() \
+  do									      \
+    { int __res;							      \
+      asm volatile ("xchgl %0, %%fs:%P1"				      \
+		    : "=r" (__res)					      \
+		    : "i" (offsetof (struct pthread, header.gscope_flag)),    \
+		      "0" (THREAD_GSCOPE_FLAG_UNUSED));			      \
+      if (__res == THREAD_GSCOPE_FLAG_WAIT)				      \
+	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1);		      \
+    }									      \
+  while (0)
+#define THREAD_GSCOPE_SET_FLAG() \
+  THREAD_SETMEM (THREAD_SELF, header.gscope_flag, THREAD_GSCOPE_FLAG_USED)
+#define THREAD_GSCOPE_WAIT() \
+  GL(dl_wait_lookup_done) ()
 
 
 #endif /* __ASSEMBLER__ */
