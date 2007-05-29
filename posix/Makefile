@@ -78,14 +78,14 @@ aux		:= init-posix environ
 tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-preadwrite tst-preadwrite64 test-vfork regexbug1 \
 		   tst-getlogin tst-mmap tst-truncate \
-		   tst-truncate64 tst-fork tst-fnmatch tst-regexloc tst-dir \
-		   tst-chmod bug-regex1 bug-regex2 bug-regex3 bug-regex4 \
-		   tst-gnuglob tst-regex bug-regex5 bug-regex6 bug-regex7 \
+		   tst-truncate64 tst-fork tst-dir \
+		   tst-chmod bug-regex2 bug-regex3 bug-regex4 \
+		   tst-gnuglob bug-regex6 bug-regex7 \
 		   bug-regex8 bug-regex9 bug-regex10 bug-regex11 bug-regex12 \
 		   bug-regex13 bug-regex14 bug-regex15 bug-regex16 \
-		   bug-regex17 bug-regex18 bug-regex19 bug-regex20 \
-		   bug-regex21 bug-regex22 bug-regex23 bug-regex24 \
-		   bug-regex25 bug-regex26 bug-regex27 bug-regex28 \
+		   bug-regex17 bug-regex18 bug-regex20 \
+		   bug-regex21 bug-regex23 bug-regex24 \
+		   bug-regex26 bug-regex27 bug-regex28 \
 		   tst-nice tst-nanosleep tst-regex2 \
 		   transbug tst-rxspencer tst-pcre tst-boost \
 		   tst-vfork1 tst-vfork2 tst-vfork3 tst-waitid \
@@ -95,6 +95,9 @@ tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-execve1 tst-execve2 tst-execle1 tst-execle2 \
 		   tst-execvp3 tst-execvp4 \
 		   tst-fnmatch2 tst-cpucount
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+		+= tst-fnmatch tst-regex tst-regexloc bug-regex1 bug-regex5 \
+		   bug-regex19 bug-regex22 bug-regex25
 tests-$(OPTION_EGLIBC_INET) \
 	        += tst-getaddrinfo bug-ga1 tst-getaddrinfo2 \
 		   tst-rfc3484 tst-rfc3484-2 tst-getaddrinfo3

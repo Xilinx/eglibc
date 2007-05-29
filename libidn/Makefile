@@ -17,6 +17,7 @@
 # 02111-1307 USA.
 
 # Makefile for libidn subdirectory of GNU C Library.
+include ../option-groups.mak
 
 subdir	:= libidn
 
@@ -38,3 +39,8 @@ libcidn-inhibit-o = $(filter-out .os,$(object-suffixes))
 include $(..)Rules
 
 $(objpfx)libcidn.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a
+
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+
+CFLAGS-toutf8.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)

@@ -19,6 +19,8 @@
 #
 #	Specific makefile for stdio-common.
 #
+include ../option-groups.mak
+
 subdir	:= stdio-common
 
 headers	:= stdio_ext.h printf.h bits/printf-ldbl.h
@@ -50,11 +52,13 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 bug1 bug2 bug3 bug4 bug5 bug6 bug7 bug8 bug9 bug10 bug11 bug12 bug13 \
 	 tfformat tiformat tllformat tstdiomisc tst-printfsz tst-wc-printf \
 	 scanf1 scanf2 scanf3 scanf4 scanf5 scanf7 scanf8 scanf9 scanf10 \
-	 scanf11 scanf12 tst-tmpnam tst-cookie tst-obprintf tst-sscanf \
-	 tst-swprintf tst-fseek tst-fmemopen test-vfprintf tst-gets \
-	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 bug15 \
+	 scanf11 scanf12 tst-tmpnam tst-cookie tst-obprintf \
+	 tst-fseek tst-fmemopen tst-gets \
+	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-swscanf
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+      += tst-sscanf tst-swprintf bug15 test-vfprintf
 
 test-srcs = tst-unbputc tst-printf
 
@@ -76,12 +80,17 @@ $(objpfx)tst-printf.out: $(objpfx)tst-printf tst-printf.sh
 	$(SHELL) -e tst-printf.sh $(common-objpfx) '$(run-program-prefix)'
 # eglibc: endif
 
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+
 CFLAGS-vfprintf.c = -Wno-uninitialized
 CFLAGS-tst-printf.c = -Wno-format
 CFLAGS-tstdiomisc.c = -Wno-format
 CFLAGS-scanf4.c = -Wno-format
 CFLAGS-scanf7.c = -Wno-format
 CFLAGS-tst-printfsz.c = -Wno-format
+CFLAGS-printf_fp.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
+CFLAGS-printf_fphex.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 CFLAGS-tmpfile.c = -fexceptions
 CFLAGS-tmpfile64.c = -fexceptions

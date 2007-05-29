@@ -49,7 +49,11 @@
 #endif
 
 #ifdef _LIBC
-# define stringprep_locale_charset() nl_langinfo (CODESET)
+# ifdef OPTION_EGLIBC_LOCALE_CODE
+#  define stringprep_locale_charset() nl_langinfo (CODESET)
+# else
+#  define stringprep_locale_charset() "ANSI_X3.4-1968"
+# endif
 #else
 /**
  * stringprep_locale_charset - return charset used in current locale

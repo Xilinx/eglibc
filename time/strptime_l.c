@@ -93,7 +93,7 @@ localtime_r (t, tp)
     if (val < from || val > to)						      \
       return NULL;							      \
   } while (0)
-#ifdef _NL_CURRENT
+#if defined (OPTION_EGLIBC_LOCALE_CODE) && defined (_NL_CURRENT)
 # define get_alt_number(from, to, n) \
   ({									      \
      __label__ do_normal;						      \
@@ -760,6 +760,7 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 	      want_xday = 1;
 	      break;
 	    case 'C':
+#ifdef OPTION_EGLIBC_LOCALE_CODE
 	      if (*decided != raw)
 		{
 		  if (era_cnt >= 0)
@@ -796,10 +797,12 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 
 		  *decided = raw;
 		}
+#endif
 	      /* The C locale has no era information, so use the
 		 normal representation.  */
 	      goto match_century;
  	    case 'y':
+#ifdef OPTION_EGLIBC_LOCALE_CODE
 	      if (*decided != raw)
 		{
 		  get_number(0, 9999, 4);
@@ -858,9 +861,10 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 
 		  *decided = raw;
 		}
-
+#endif
 	      goto match_year_in_century;
 	    case 'Y':
+#ifdef OPTION_EGLIBC_LOCALE_CODE
 	      if (*decided != raw)
 		{
 		  num_eras = _NL_CURRENT_WORD (LC_TIME,
@@ -889,6 +893,7 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 
 		  *decided = raw;
 		}
+#endif
 	      get_number (0, 9999, 4);
 	      tm->tm_year = val - 1900;
 	      want_century = 0;
@@ -1050,6 +1055,7 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 	tm->tm_year = (century - 19) * 100;
     }
 
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (era_cnt != -1)
     {
       era = _nl_select_era_entry (era_cnt HELPER_LOCALE_ARG);
@@ -1064,6 +1070,7 @@ __strptime_internal (rp, fmt, tm, decided, era_cnt LOCALE_PARAM)
 	tm->tm_year = era->start_date[0];
     }
   else
+#endif
     if (want_era)
       {
 	/* No era found but we have seen an E modifier.  Rectify some

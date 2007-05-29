@@ -17,6 +17,7 @@
 # 02111-1307 USA.
 
 # Makefile for intl subdirectory: message handling code from GNU gettext.
+include ../option-groups.mak
 
 subdir = intl
 headers = libintl.h
@@ -62,7 +63,7 @@ $(objpfx)plural.o: plural.c
 include ../Rules
 
 # eglibc: ifeq (no,$(cross-compiling))
-ifeq (yes,$(build-shared))
+ifeq (yyes,$(OPTION_EGLIBC_LOCALES)$(build-shared))
 ifneq ($(strip $(MSGFMT)),:)
 tests: $(objpfx)tst-translit.out $(objpfx)tst-gettext2.out \
        $(objpfx)tst-codeset.out $(objpfx)tst-gettext3.out
@@ -100,6 +101,11 @@ endif
 $(objpfx)msgs.h: po2test.sed ../po/de.po
 	$(make-target-directory)
 	LC_ALL=C sed -f $^ > $@
+
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+
+CFLAGS-dcigettext.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 CFLAGS-tst-gettext.c = -DTESTSTRS_H=\"$(objpfx)msgs.h\"
 CFLAGS-tst-translit.c = -DOBJPFX=\"$(objpfx)\"

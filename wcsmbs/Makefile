@@ -20,6 +20,8 @@
 #
 #	Sub-makefile for wcsmbs portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= wcsmbs
 
 headers	:= wchar.h bits/wchar.h bits/wchar2.h bits/wchar-ldbl.h
@@ -40,8 +42,10 @@ routines := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
 	    wcscasecmp wcsncase wcscasecmp_l wcsncase_l \
 	    wcsmbsload mbsrtowcs_l
 
-tests := tst-wcstof wcsmbs-tst1 tst-wcsnlen tst-btowc tst-mbrtowc \
-	 tst-wcrtomb tst-wcpncpy tst-mbsrtowcs tst-wchar-h tst-mbrtowc2
+tests := tst-wcstof wcsmbs-tst1 tst-wcsnlen \
+	 tst-wcpncpy tst-mbsrtowcs tst-wchar-h
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+      += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb
 
 include ../Rules
 
@@ -64,6 +68,10 @@ CFLAGS-wcstod_l.c = $(strtox-CFLAGS)
 CFLAGS-wcstold_l.c = $(strtox-CFLAGS)
 CFLAGS-wcstof_l.c = $(strtox-CFLAGS)
 CFLAGS-tst-wchar-h.c = -D_FORTIFY_SOURCE=2
+
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+CFLAGS-wcsmbsload.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 # We need to find the default version of strtold_l in stdlib.
 CPPFLAGS-wcstold_l.c = -I../stdlib

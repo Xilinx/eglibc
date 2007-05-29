@@ -19,6 +19,8 @@
 #
 #	Makefile for time routines
 #
+include ../option-groups.mak
+
 subdir	:= time
 
 headers	:= time.h sys/time.h sys/timeb.h bits/time.h
@@ -30,13 +32,15 @@ routines := offtime asctime clock ctime ctime_r difftime \
 	    stime dysize timegm ftime			 \
 	    getdate strptime strptime_l			 \
 	    strftime wcsftime strftime_l wcsftime_l
-aux :=	    era alt_digit lc-time-cleanup
+aux-$(OPTION_EGLIBC_LOCALE_CODE) += alt_digit era lc-time-cleanup
 distribute := datemsk
 
-tests	:= test_time clocktest tst-posixtz tst-strptime tst_wcsftime \
+tests	:= test_time clocktest tst-posixtz tst_wcsftime \
 	   tst-getdate tst-mktime tst-mktime2 tst-ftime_l tst-strftime \
 	   tst-mktime3 tst-strptime2 bug-asctime bug-asctime_r bug-mktime1 \
 	   tst-strptime3
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+	+= tst-strptime
 
 include ../Rules
 
@@ -47,6 +51,12 @@ tz-cflags = -DTZDIR='"$(zonedir)"' \
 CFLAGS-tzfile.c = $(tz-cflags)
 CFLAGS-tzset.c = $(tz-cflags)
 CFLAGS-getdate.c = -fexceptions
+
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+
+CFLAGS-strftime_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
+CFLAGS-strptime_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 # Don't warn about Y2k problem in strftime format string.
 CFLAGS-test_time.c = -Wno-format

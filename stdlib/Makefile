@@ -19,6 +19,8 @@
 #
 #	Makefile for stdlib routines
 #
+include ../option-groups.mak
+
 subdir	:= stdlib
 
 headers	:= stdlib.h bits/stdlib.h bits/stdlib-ldbl.h			      \
@@ -28,7 +30,7 @@ headers	:= stdlib.h bits/stdlib.h bits/stdlib-ldbl.h			      \
 	   ucontext.h sys/ucontext.h					      \
 	   alloca.h fmtmsg.h
 
-routines	:=							      \
+routines-y	:=							      \
 	atof atoi atol atoll						      \
 	abort								      \
 	bsearch qsort msort						      \
@@ -49,9 +51,11 @@ routines	:=							      \
 	strtof_l strtod_l strtold_l					      \
 	system canonicalize						      \
 	a64l l64a							      \
-	rpmatch strfmon strfmon_l getsubopt xpg_basename fmtmsg		      \
+	getsubopt xpg_basename fmtmsg					      \
 	strtoimax strtoumax wcstoimax wcstoumax				      \
 	getcontext setcontext makecontext swapcontext
+routines-$(OPTION_EGLIBC_LOCALE_CODE) +=				      \
+	rpmatch strfmon strfmon_l
 aux =	grouping groupingwc
 
 # These routines will be omitted from the libc shared object.
@@ -67,9 +71,10 @@ tests		:= tst-strtol tst-strtod testmb testrand testsort testdiv   \
 		   tst-xpg-basename tst-random tst-random2 tst-bsearch	    \
 		   tst-limits tst-rand48 bug-strtod tst-setcontext	    \
 		   test-a64l tst-qsort tst-system testmb2 bug-strtod2	    \
-		   tst-atof1 tst-atof2 tst-strtod2 tst-strtod3 tst-rand48-2 \
+		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
 		   tst-makecontext tst-strtod4
-
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+		+= tst-strtod3
 include ../Makeconfig
 
 ifeq ($(build-shared),yes)

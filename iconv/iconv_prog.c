@@ -229,10 +229,17 @@ main (int argc, char *argv[])
 	      bool to_wrong =
 		(iconv_open (to_code, "UTF-8") == (iconv_t) -1
 		 && errno == EINVAL);
+#ifdef OPTION_EGLIBC_LOCALE_CODE
 	      const char *from_pretty =
 		(from_code[0] ? from_code : nl_langinfo (CODESET));
 	      const char *to_pretty =
 		(orig_to_code[0] ? orig_to_code : nl_langinfo (CODESET));
+#else
+	      const char *from_pretty =
+		(from_code[0] ? from_code : "ANSI_X3.4-1968");
+	      const char *to_pretty =
+                 (orig_to_code[0] ? orig_to_code : "ANSI_X3.4-1968");
+#endif
 
 	      if (from_wrong)
 		{

@@ -102,10 +102,14 @@ locale_test_suite := tst_iswalnum tst_iswalpha tst_iswcntrl            \
 		     tst_wcsxfrm tst_wctob tst_wctomb tst_wctrans      \
 		     tst_wctype tst_wcwidth
 
-tests = $(locale_test_suite) tst-digits tst-setlocale bug-iconv-trans \
+# Since these tests build their own locale files, they're not
+# dependent on the OPTION_EGLIBC_LOCALES option group.  But they do
+# need the locale functions to be present.
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+     += $(locale_test_suite) tst-digits tst-setlocale bug-iconv-trans \
 	tst-leaks tst-mbswcs6 tst-xlocale1 tst-xlocale2 bug-usesetlocale \
 	tst-strfmon1 tst-sscanf
-ifeq (yes,$(build-shared))
+ifeq (yesy,$(build-shared)$(OPTION_EGLIBC_LOCALE_CODE))
 ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-leaks
 endif
@@ -166,10 +170,12 @@ $(addprefix $(objpfx),$(CTYPE_FILES)): %: \
 $(addsuffix .out,$(addprefix $(objpfx),$(tests))): %: \
   $(addprefix $(objpfx),$(CTYPE_FILES))
 
+ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
 tests: $(objpfx)sort-test.out $(objpfx)tst-fmon.out $(objpfx)tst-locale.out \
        $(objpfx)tst-rpmatch.out $(objpfx)tst-trans.out \
        $(objpfx)tst-mbswcs.out $(objpfx)tst-ctype.out $(objpfx)tst-wctype.out \
        $(objpfx)tst-langinfo.out $(objpfx)tst-numeric.out
+endif
 
 $(objpfx)sort-test.out: sort-test.sh $(objpfx)collate-test $(objpfx)xfrm-test \
 		       $(test-input-data) $(addprefix $(objpfx),$(CTYPE_FILES))

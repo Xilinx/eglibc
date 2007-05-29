@@ -148,6 +148,7 @@ __printf_fphex (FILE *fp,
 
 
   /* Figure out the decimal point character.  */
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
       decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);
@@ -161,6 +162,10 @@ __printf_fphex (FILE *fp,
     }
   /* The decimal point character must never be zero.  */
   assert (*decimal != '\0' && decimalwc != L'\0');
+#else
+  decimal = ".";
+  decimalwc = L'.';
+#endif
 
 
   /* Fetch the argument value.	*/

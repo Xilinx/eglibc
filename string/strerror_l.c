@@ -30,10 +30,14 @@ static __thread char *last_value;
 static const char *
 translate (const char *str, locale_t loc)
 {
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   locale_t oldloc = __uselocale (loc);
   const char *res = _(str);
   __uselocale (oldloc);
   return res;
+#else
+  return str;
+#endif
 }
 
 

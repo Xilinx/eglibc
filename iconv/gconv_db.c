@@ -826,9 +826,11 @@ free_modules_db (struct gconv_module *node)
 /* Free all resources if necessary.  */
 libc_freeres_fn (free_mem)
 {
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   /* First free locale memory.  This needs to be done before freeing derivations,
      as ctype cleanup functions dereference steps arrays which we free below.  */
   _nl_locale_subfreeres ();
+#endif
 
   /* finddomain.c has similar problem.  */
   extern void _nl_finddomain_subfreeres (void) attribute_hidden;

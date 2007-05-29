@@ -50,6 +50,25 @@ config OPTION_EGLIBC_LOCALES
        that for the "C" locale.  If this option group is omitted, then
        only the "C" locale is supported.
 
+
+config OPTION_EGLIBC_LOCALE_CODE
+   bool "Locale functions"
+   help
+       This option group includes locale support functions, programs,
+       and libraries.  With OPTION_EGLIBC_LOCALE_FUNCTIONS disabled,
+       EGLIBC supports only the 'C' locale (also known as 'POSIX'),
+       and ignores the settings of the 'LANG' and 'LC_*' environment
+       variables.
+
+       With OPTION_EGLIBC_LOCALE_CODE disabled, the following
+       functions are omitted from libc:
+
+         duplocale   localeconv  nl_langinfo    rpmatch  strfmon_l
+         freelocale  newlocale   nl_langinfo_l  strfmon  uselocale
+
+       Furthermore, only the LC_CTYPE and LC_TIME categories of the
+       standard "C" locale are available.
+
 config OPTION_EGLIBC_LIBM
    bool "libm (math library)"
    help

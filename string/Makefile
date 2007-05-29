@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for string portion of library.
 #
+include ../option-groups.mak
+
 subdir	:= string
 
 headers	:= string.h strings.h memory.h endian.h bits/endian.h \
@@ -52,13 +54,20 @@ strop-tests	:= memchr memcmp memcpy memmove mempcpy memset memccpy	\
 tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 		   tst-strlen stratcliff tst-svc tst-inlcall		\
 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
-		   tst-strtok tst-strxfrm bug-strcoll1 tst-strfry	\
+		   tst-strtok tst-strfry	\
 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
 		   bug-envz1 tst-strxfrm2
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+		+= tst-strxfrm bug-strcoll1
 distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h
 
 
 include ../Rules
+
+OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
+	= -DOPTION_EGLIBC_LOCALE_CODE
+
+CFLAGS-strerror_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 tester-ENV = LANGUAGE=C
 inl-tester-ENV = LANGUAGE=C

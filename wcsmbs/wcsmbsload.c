@@ -144,6 +144,7 @@ __wcsmbs_getfct (const char *to, const char *from, size_t *nstepsp)
   })
 
 
+#ifdef OPTION_EGLIBC_LOCALE_CODE
 /* Some of the functions here must not be used while setlocale is called.  */
 __libc_lock_define (extern, __libc_setlocale_lock attribute_hidden)
 
@@ -213,6 +214,17 @@ __wcsmbs_load_conv (struct locale_data *new_category)
 
   __libc_lock_unlock (__libc_setlocale_lock);
 }
+#else
+void
+internal_function
+__wcsmbs_load_conv (struct locale_data *new_category)
+{
+  /* When OPTION_EGLIBC_LOCALE_CODE is disabled, we should never reach
+     this point: there is no way to change locales, so every locale
+     passed to get_gconv_fcts should be _nl_C_LC_CTYPE.  */
+  abort ();
+}
+#endif
 
 
 /* Clone the current conversion function set.  */

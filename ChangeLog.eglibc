@@ -1,5 +1,91 @@
 2007-05-26  Jim Blandy  <jimb@codesourcery.com>
 
+	Add the OPTION_EGLIBC_LOCALE_CODE option group.
+
+	* option-groups.def (OPTION_EGLIBC_LOCALE_CODE): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_LOCALE_CODE): Initialize.
+	* Makerules (test-srcs): Add in value of test-srcs-y.
+	(static-only-routines): Add in value of static-only-routines-y.
+	* stdlib/Makefile: Include ../option-groups.mak.
+	(routines): Move rpmatch, strfmon, and strfmon_l into the group.
+	(tests): Move tst-strtod3 into the group.
+	* wcsmbs/Makefile: Include ../option-groups.mak.
+	(tests): Move tst-btowc, tst-mbrtowc, tst-mbrtowc2, and
+	tst-wcrtomb into the option group.
+	(CFLAGS-wcsmbsload.c): Define OPTION_EGLIBC_LOCALE_CODE as
+	appropriate.
+	* wcsmbs/wcsmbsload.c (__wcsmbs_load_conv): If the group is not
+	enabled, simply abort.
+	* time/Makefile: Include ../option-groups.mak.
+	(aux): Move alt_digit, era, and lc-time-cleanup into the group.
+	(tests): Move tst-strptime into the group.
+	(CFLAGS-strftime_l.c, CFLAGS-strptime_l.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* time/strftime_l.c, time/strptime_l.c: Support eras and custom
+	digits only when the group is enabled.
+	* libio/Makefile (tests): Move tst-swscanf into the group.
+	* intl/Makefile (CFLAGS-dcigettext.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* intl/dcigettext.c (DCIGETTEXT): If the group is not enabled,
+	assume the "C" locale.
+	* string/Makefile: Include ../option-groups.mak.
+	(tests): Move tst-strxfrm and bug-strcoll1 into the option group.
+	(CFLAGS-strerror_l.c): Define OPTION_EGLIBC_LOCALE_CODE as
+	appropriate.
+	* string/strerror_l.c (translate): Don't translate unless the
+	group is enabled.
+	* iconv/Makefile: Include ../option-groups.mak.
+	(CFLAGS-gconv_db.c, CFLAGS-iconv_prog.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* iconv/gconv_db.c (libc_freeres_fn): If group is disabled, no
+	need to free locale memory first.
+	* iconv/iconv_prog.c (main): If the group is disabled, the default
+	codeset is always ASCII.
+	* locale/Makefile: Include ../option-groups.mak.
+	(distribute): Mention new dummy-setlocale.c.
+	(routines): Include mb_cur_max and the new catnames unconditionally;
+	put setlocale, findlocale, loadlocale, loadarchive, localeconv,
+	nl_langinfo, nl_langinfo_l, newlocale, duplocale, freelocale, and
+	uselocale in the group.  If the group is disabled, use
+	dummy-setlocale.
+	(tests): Put tst-C-locale in the group.
+	(aux): Move all C categories other than C-ctype and C-time into
+	the group, along with all the load-locale routines, and
+	localename.
+	(others, install-bin, extra-objs): Put localedef and locale in the
+	group.
+	(extra-libs, extra-libs-other): Put libBrokenLocale in the group.
+	(CFLAGS-xlocale.c): Define OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* locale/xlocale.c: If the group is disabled, make the references
+	here to the omitted category data weak.  Furthermore, in the
+	NL_CURRENT_INDIRECT case, define the _nl_current_##CATEGORY
+	variables here.
+	* locale/setlocale.c (_nl_category_names, _nl_category_name_idxs)
+	(_nl_category_name_sizes): Move these from here...
+	* locale/catnames.c: ... to here.  New file.
+	* locale/dummy-setlocale.c: New file.
+	* intl/Makefile: Include ../option-groups.mak.
+	(tests): Move tst-translit, tst-gettext2, tst-codeset,
+	tst-gettext3, tst-gettext4, tst-gettext5, and mtrace-tst-gettext
+	into the OPTION_EGLIBC_LOCALES option group.
+	* localedata/Makefile (tests): Move all tests into the
+	OPTION_EGLIBC_LOCALES group.
+	* posix/Makefile (tests): Move tst-fnmatch, tst-regex,
+	tst-regexloc, bug-regex1, bug-regex5, bug-regex19, bug-regex22,
+	and bug-regex25 into the group.
+	* stdio-common/Makefile: Include ../option-groups.mak.
+	(tests): Move tst-sscanf, tst-swprintf, bug15, and test-vfprintf
+	into the option group.
+	(CFLAGS-printf_fp.c, CFLAGS-printf_fphex.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* stdio-common/printf_fp.c (__printf_fp): Hard-code values from
+	the 'C' locale.
+	* stdio-common/printf_fphex.c (__printf_fphex): Same.
+	* libidn/Makefile: Include ../option-groups.mak.
+	(CFLAGS-toutf8.c): Define OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* libidn/toutf8.c (stringprep_locale_charset): If the group is
+	disabled, assume ASCII.
+	
 	* Makefile (TAGS): Avoid backslashes in single-quoted strings.
 
 2007-05-13  Jim Blandy  <jimb@codesourcery.com>

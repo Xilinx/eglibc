@@ -262,6 +262,7 @@ ___printf_fp (FILE *fp,
 
 
   /* Figure out the decimal point character.  */
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
       decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);
@@ -281,7 +282,13 @@ ___printf_fp (FILE *fp,
   /* The decimal point character must not be zero.  */
   assert (*decimal != '\0');
   assert (decimalwc != L'\0');
+#else
+  /* Hard-code values from 'C' locale.  */
+  decimal = ".";
+  decimalwc = L'.';
+#endif
 
+#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->group)
     {
       if (info->extra == 0)
@@ -325,6 +332,9 @@ ___printf_fp (FILE *fp,
     }
   else
     grouping = NULL;
+#else
+  grouping = NULL;
+#endif
 
   /* Fetch the argument value.	*/
 #ifndef __NO_LONG_DOUBLE_MATH

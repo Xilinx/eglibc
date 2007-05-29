@@ -49,7 +49,7 @@ routines	:=							      \
 
 tests = tst_swprintf tst_wprintf tst_swscanf tst_wscanf tst_getwc tst_putwc   \
 	tst_wprintf2 tst-widetext test-fmemopen tst-ext tst-fopenloc	      \
-	tst-fgetws tst-ungetwc1 tst-ungetwc2 tst-swscanf tst-sscanf	      \
+	tst-fgetws tst-ungetwc1 tst-ungetwc2 tst-sscanf	      \
 	tst-mmap-setvbuf bug-ungetwc1 bug-ungetwc2 tst-atime tst-eof          \
 	tst-freopen bug-rewind bug-rewind2 bug-ungetc bug-fseek \
 	tst-mmap-eofsync tst-mmap-fflushsync bug-mmap-fflush \
@@ -59,6 +59,8 @@ tests = tst_swprintf tst_wprintf tst_swscanf tst_wscanf tst_getwc tst_putwc   \
 	tst-wmemstream1 tst-wmemstream2 \
 	bug-memstream1 bug-wmemstream1 \
 	tst-setvbuf1
+tests-$(OPTION_EGLIBC_LOCALE_CODE) \
+     += tst-swscanf
 test-srcs = test-freopen
 
 all: # Make this the default target; it will be defined in Rules.
