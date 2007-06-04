@@ -444,7 +444,7 @@ union user_desc_init
 #define THREAD_GSCOPE_RESET_FLAG() \
   do									      \
     { int __res;							      \
-      asm volatile ("xchg %0, %%gs:%P1"					      \
+      asm volatile ("xchgl %0, %%gs:%P1"				      \
 		    : "=r" (__res)					      \
 		    : "i" (offsetof (struct pthread, header.gscope_flag)),    \
 		      "0" (THREAD_GSCOPE_FLAG_UNUSED));			      \
@@ -454,17 +454,8 @@ union user_desc_init
   while (0)
 #define THREAD_GSCOPE_SET_FLAG() \
   THREAD_SETMEM (THREAD_SELF, header.gscope_flag, THREAD_GSCOPE_FLAG_USED)
-#ifdef PTR_DEMANGLE
-# define THREAD_GSCOPE_WAIT() \
-  do { void (*ptr) (void) = GL(dl_wait_lookup_done);			      \
-       PTR_DEMANGLE (ptr);						      \
-       ptr ();								      \
-  } while (0)
-#else
-# define THREAD_GSCOPE_WAIT() \
+#define THREAD_GSCOPE_WAIT() \
   GL(dl_wait_lookup_done) ()
-#endif
-
 
 #endif /* __ASSEMBLER__ */
 

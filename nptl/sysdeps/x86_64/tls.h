@@ -363,7 +363,6 @@ typedef struct
 #define THREAD_GSCOPE_WAIT() \
   GL(dl_wait_lookup_done) ()
 
-
 #endif /* __ASSEMBLER__ */
 
 #endif	/* tls.h */
