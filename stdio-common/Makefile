@@ -56,7 +56,7 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-fseek tst-fmemopen tst-gets \
 	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
-	 tst-fwrite bug16 bug17 tst-swscanf
+	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf
 
