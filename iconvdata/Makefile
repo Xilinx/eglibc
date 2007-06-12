@@ -19,10 +19,13 @@
 #
 #	Makefile for iconv data and code.
 #
+include ../option-groups.mak
+
 subdir	:= iconvdata
 
 # Names of all the shared objects which implement the transformations.
-modules	:= ISO8859-1 ISO8859-2 ISO8859-3 ISO8859-4 ISO8859-5		 \
+modules-$(OPTION_EGLIBC_CHARSETS)					 \
+	:= ISO8859-1 ISO8859-2 ISO8859-3 ISO8859-4 ISO8859-5		 \
 	   ISO8859-6 ISO8859-7 ISO8859-8 ISO8859-9 ISO8859-10		 \
 	   ISO8859-11 ISO8859-13 ISO8859-14 ISO8859-15 ISO8859-16	 \
 	   T.61 ISO_6937 SJIS KOI-8 HP-ROMAN8 EBCDIC-AT-DE		 \
@@ -60,7 +63,7 @@ modules	:= ISO8859-1 ISO8859-2 ISO8859-3 ISO8859-4 ISO8859-5		 \
 	   IBM5347 IBM9030 IBM9066 IBM9448 IBM12712 IBM16804             \
 	   IBM1364 IBM1371 IBM1388 IBM1390 IBM1399 ISO_11548-1 MIK BRF
 
-modules.so := $(addsuffix .so, $(modules))
+modules.so := $(addsuffix .so, $(modules-y))
 
 include ../Makeconfig
 
@@ -205,13 +208,13 @@ ifeq (yes,$(build-shared))
 # Rule to generate the shared objects.
 charmaps = ../localedata/charmaps
 -include $(objpfx)iconv-rules
-extra-modules-left := $(modules)
+extra-modules-left := $(modules-y)
 include extra-module.mk
 
 
 extra-objs	+= $(modules.so)
-install-others	= $(addprefix $(inst_gconvdir)/, $(modules.so))	\
-		  $(inst_gconvdir)/gconv-modules
+install-others-y += $(addprefix $(inst_gconvdir)/, $(modules.so))
+install-others-$(OPTION_EGLIBC_CHARSETS) += $(inst_gconvdir)/gconv-modules
 
 # We can build the conversion tables for numerous charsets automatically.
 
@@ -275,7 +278,7 @@ before-compile = $(addprefix $(objpfx),$(generated-modules:=.h))
 ifndef avoid-generated
 $(objpfx)iconv-rules: Makefile
 	$(make-target-directory)
-	{ echo $(filter-out lib%, $(modules)); \
+	{ echo $(filter-out lib%, $(modules-y)); \
 	  echo 8bit $(gen-8bit-modules); \
 	  echo 8bit-gap $(gen-8bit-gap-modules); } | \
 	$(AWK) 'NR == 1 { \

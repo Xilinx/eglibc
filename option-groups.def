@@ -43,6 +43,70 @@ config OPTION_EGLIBC_CATGETS
        This option group includes functions for accessing message
        catalogs: catopen, catclose, and catgets.
 
+config OPTION_EGLIBC_CHARSETS
+   bool "iconv/gconv character set conversion libraries"
+   help
+
+       This option group includes support for character sets other
+       than ASCII (ANSI_X3.4-1968) and Unicode and ISO-10646 in their
+       various encodings.  This affects both the character sets
+       supported by the wide and multibyte character functions, and
+       those supported by the 'iconv' functions.
+
+       With this option group disabled, EGLIBC supports only the
+       following character sets:
+
+          ANSI_X3.4         - ASCII
+          ANSI_X3.4-1968
+          ANSI_X3.4-1986
+          ASCII
+          CP367
+          CSASCII
+          IBM367
+          ISO-IR-6
+          ISO646-US
+          ISO_646.IRV:1991
+          OSF00010020
+          US
+          US-ASCII
+
+          10646-1:1993      - ISO 10646, in big-endian UCS4 form
+          10646-1:1993/UCS4
+          CSUCS4
+          ISO-10646
+          ISO-10646/UCS4
+          OSF00010104
+          OSF00010105
+          OSF00010106
+          UCS-4
+          UCS-4BE
+          UCS4
+
+          UCS-4LE           - ISO 10646, in little-endian UCS4 form
+
+          ISO-10646/UTF-8   - ISO 10646, in UTF-8 form
+          ISO-10646/UTF8
+          ISO-IR-193
+          OSF05010001
+          UTF-8
+          UTF8
+
+          ISO-10646/UCS2    - ISO 10646, in target-endian UCS2 form
+          OSF00010100
+          OSF00010101
+          OSF00010102
+          UCS-2
+          UCS2
+
+          UCS-2BE           - ISO 10646, in big-endian UCS2 form
+          UNICODEBIG
+
+          UCS-2LE           - ISO 10646, in little-endian UCS2 form
+          UNICODELITTLE
+
+          WCHAR_T           - EGLIBC's internal form (target-endian,
+                              32-bit ISO 10646)
+         
 config OPTION_EGLIBC_LOCALES
    bool "Locale definitions"
    help

@@ -1,3 +1,17 @@
+2007-06-11  Jim Blandy  <jimb@codesourcery.com>
+
+	Add the OPTION_EGLIBC_CHARSETS option group.
+
+	* option-groups.def (OPTION_EGLIBC_CHARSETS): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_CHARSETS): Initialize.
+	* Makerules (modules): Add in value of modules-y.
+	* iconvdata/Makefile: Include ../option-groups.mak.
+	(modules): Move all these into the option group.
+	(modules.so): Compute from modules-y.
+	(extra-modules-left): Apply extra-module.mk only to modules-y.
+	(install-others-y): Move gconv-modules into the option group.
+	(iconv-rules): Generate rules based on modules-y.
+
 2007-05-26  Jim Blandy  <jimb@codesourcery.com>
 
 	Add the OPTION_EGLIBC_LOCALE_CODE option group.
