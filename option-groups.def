@@ -15,6 +15,10 @@
 # documentation is formatted to be consumed by some sort of
 # interactive configuration interface, but EGLIBC doesn't have such an
 # interface yet.
+#
+# An option may have a 'depends' line, indicating which other options
+# must also be enabled if this option is.  At present, EGLIBC doesn't
+# check that these dependencies are satisfied.
 # 
 # Option group variables get their default values from the file
 # 'option-groups.defaults', in the top directory of the EGLIBC source
@@ -39,9 +43,13 @@
 
 config OPTION_EGLIBC_CATGETS
    bool "Functions for accessing message catalogs"
+   depends OPTION_EGLIBC_LOCALE_CODE
    help
        This option group includes functions for accessing message
        catalogs: catopen, catclose, and catgets.
+
+       This option group depends on the OPTION_EGLIBC_LOCALE_CODE
+       option group; if you disable that, you must also disable this.
 
 config OPTION_EGLIBC_CHARSETS
    bool "iconv/gconv character set conversion libraries"
@@ -107,50 +115,6 @@ config OPTION_EGLIBC_CHARSETS
           WCHAR_T           - EGLIBC's internal form (target-endian,
                               32-bit ISO 10646)
          
-config OPTION_EGLIBC_LOCALES
-   bool "Locale definitions"
-   help
-       This option group includes all locale definitions other than
-       that for the "C" locale.  If this option group is omitted, then
-       only the "C" locale is supported.
-
-
-config OPTION_EGLIBC_LOCALE_CODE
-   bool "Locale functions"
-   help
-       This option group includes locale support functions, programs,
-       and libraries.  With OPTION_EGLIBC_LOCALE_FUNCTIONS disabled,
-       EGLIBC supports only the 'C' locale (also known as 'POSIX'),
-       and ignores the settings of the 'LANG' and 'LC_*' environment
-       variables.
-
-       With OPTION_EGLIBC_LOCALE_CODE disabled, the following
-       functions are omitted from libc:
-
-         duplocale   localeconv  nl_langinfo    rpmatch  strfmon_l
-         freelocale  newlocale   nl_langinfo_l  strfmon  uselocale
-
-       Furthermore, only the LC_CTYPE and LC_TIME categories of the
-       standard "C" locale are available.
-
-config OPTION_EGLIBC_LIBM
-   bool "libm (math library)"
-   help
-       This option group includes the 'libm' library, containing
-       mathematical functions.  If this option group is omitted, then
-       an EGLIBC installation does not include shared or unshared versions
-       of the math library.
-
-       Note that this does not remove all floating-point related
-       functionality from EGLIBC; for example, 'printf' and 'scanf'
-       can still print and read floating-point values with this option
-       group disabled.
-
-       Note that the ISO Standard C++ library 'libstdc++' depends on
-       EGLIBC's math library 'libm'.  If you disable this option
-       group, you will not be able to build 'libstdc++' against the
-       resulting EGLIBC installation.
-
 config OPTION_EGLIBC_INET
    bool "Networking support"
    help
@@ -275,3 +239,52 @@ config OPTION_EGLIBC_INET
        communication mechanisms.  For example, the 'syslog' routines
        use Unix-domain sockets to communicate with the syslog daemon;
        syslog is valuable in non-networked contexts.
+
+config OPTION_EGLIBC_LIBM
+   bool "libm (math library)"
+   help
+       This option group includes the 'libm' library, containing
+       mathematical functions.  If this option group is omitted, then
+       an EGLIBC installation does not include shared or unshared versions
+       of the math library.
+
+       Note that this does not remove all floating-point related
+       functionality from EGLIBC; for example, 'printf' and 'scanf'
+       can still print and read floating-point values with this option
+       group disabled.
+
+       Note that the ISO Standard C++ library 'libstdc++' depends on
+       EGLIBC's math library 'libm'.  If you disable this option
+       group, you will not be able to build 'libstdc++' against the
+       resulting EGLIBC installation.
+
+config OPTION_EGLIBC_LOCALES
+   bool "Locale definitions"
+   help
+       This option group includes all locale definitions other than
+       that for the "C" locale.  If this option group is omitted, then
+       only the "C" locale is supported.
+
+
+config OPTION_EGLIBC_LOCALE_CODE
+   bool "Locale functions"
+   help
+       This option group includes locale support functions, programs,
+       and libraries.  With OPTION_EGLIBC_LOCALE_FUNCTIONS disabled,
+       EGLIBC supports only the 'C' locale (also known as 'POSIX'),
+       and ignores the settings of the 'LANG' and 'LC_*' environment
+       variables.
+
+       With OPTION_EGLIBC_LOCALE_CODE disabled, the following
+       functions are omitted from libc:
+
+         duplocale   localeconv  nl_langinfo    rpmatch  strfmon_l
+         freelocale  newlocale   nl_langinfo_l  strfmon  uselocale
+
+       Furthermore, only the LC_CTYPE and LC_TIME categories of the
+       standard "C" locale are available.
+
+       The OPTION_EGLIBC_CATGETS option group depends on this option
+       group; if you disable OPTION_EGLIBC_LOCALE_CODE, you must also
+       disable OPTION_EGLIBC_CATGETS.
+

@@ -1,3 +1,11 @@
+2007-06-13  Jim Blandy  <jimb@codesourcery.com>
+
+	* option-groups.def, option-groups.defaults: Alphabetize, since
+	the list is getting long.
+
+	* option-groups.def (OPTION_EGLIBC_CATGETS)
+	(OPTION_EGLIBC_LOCALE_CODE): Document interdependency.
+
 2007-06-13  Nathan Sidwell  <nathan@codesourcery.com>
 	    Mark Shinwell  <shinwell@codesourcery.com>
 
