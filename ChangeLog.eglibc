@@ -1,3 +1,7 @@
+2007-06-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* intl/plural.c: Regenerate.
+
 2007-06-13  Jim Blandy  <jimb@codesourcery.com>
 
 	* option-groups.def, option-groups.defaults: Alphabetize, since
