@@ -1,3 +1,12 @@
+2007-06-13  Nathan Sidwell  <nathan@codesourcery.com>
+	    Mark Shinwell  <shinwell@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/libc-start.c
+	(__libc_start_main): Detect 8xx parts and clear
+	__cache_line_size if detected.
+	* sysdeps/unix/sysv/linux/powerpc/dl-sysdep.c
+	(DL_PLATFORM_AUXV): Likewise.
+
 2007-06-11  Jim Blandy  <jimb@codesourcery.com>
 
 	Add the OPTION_EGLIBC_CHARSETS option group.
