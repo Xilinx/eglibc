@@ -55,7 +55,10 @@ routines-y	:=							      \
 	strtoimax strtoumax wcstoimax wcstoumax				      \
 	getcontext setcontext makecontext swapcontext
 routines-$(OPTION_EGLIBC_LOCALE_CODE) +=				      \
-	rpmatch strfmon strfmon_l
+	strfmon strfmon_l
+ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_POSIX_REGEXP))
+routines-y += rpmatch
+endif
 aux =	grouping groupingwc
 
 # These routines will be omitted from the libc shared object.

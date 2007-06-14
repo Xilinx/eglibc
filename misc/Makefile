@@ -63,11 +63,13 @@ routines := brk sbrk sstk ioctl \
 	    efgcvt efgcvt_r qefgcvt qefgcvt_r \
 	    hsearch hsearch_r tsearch lsearch \
 	    err error ustat \
-	    getsysstats dirname regexp \
+	    getsysstats dirname \
 	    getloadavg getclktck \
 	    fgetxattr flistxattr fremovexattr fsetxattr getxattr \
 	    listxattr lgetxattr llistxattr lremovexattr lsetxattr \
 	    removexattr setxattr
+
+routines-$(OPTION_POSIX_REGEXP) += regexp
 
 distribute := device-nrs.h
 

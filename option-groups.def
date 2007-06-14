@@ -288,3 +288,23 @@ config OPTION_EGLIBC_LOCALE_CODE
        group; if you disable OPTION_EGLIBC_LOCALE_CODE, you must also
        disable OPTION_EGLIBC_CATGETS.
 
+config OPTION_POSIX_REGEXP
+    bool "Regular expressions"
+    help
+        This option group includes the POSIX regular expression
+        functions, and the associated non-POSIX extensions and
+        compatibility functions.
+
+        With OPTION_POSIX_REGEXP disabled, the following functions are
+        omitted from libc:
+
+          re_comp                 re_max_failures         regcomp
+          re_compile_fastmap      re_search               regerror
+          re_compile_pattern      re_search_2             regexec
+          re_exec                 re_set_registers        regfree
+          re_match                re_set_syntax           rpmatch
+          re_match_2              re_syntax_options
+
+        Furthermore, the compatibility regexp interface defined in the
+        <regexp.h> header file, 'compile', 'step', and 'advance', is
+        omitted.

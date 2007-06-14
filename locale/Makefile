@@ -116,11 +116,14 @@ locale-CPPFLAGS := -DLOCALE_PATH='$(localepath)' \
 
 OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
 	= -DOPTION_EGLIBC_LOCALE_CODE
+OPTION_POSIX_REGEXP-CFLAGS-$(OPTION_POSIX_REGEXP) \
+	= -DOPTION_POSIX_REGEXP
 
 CFLAGS-xlocale.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 CFLAGS-charmap.c = -Wno-write-strings -Wno-char-subscripts
 CFLAGS-locfile.c = -Wno-write-strings -Wno-char-subscripts
 CFLAGS-charmap-dir.c = -Wno-write-strings
+CFLAGS-ld-messages.c = $(OPTION_POSIX_REGEXP-CFLAGS-y)
 
 # This makes sure -DNOT_IN_libc is passed for all these modules.
 cpp-srcs-left := $(addsuffix .c,$(localedef-modules) $(localedef-aux) \

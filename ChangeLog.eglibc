@@ -1,14 +1,28 @@
-2007-06-13  Joseph Myers  <joseph@codesourcery.com>
-
-	* intl/plural.c: Regenerate.
-
 2007-06-13  Jim Blandy  <jimb@codesourcery.com>
+
+	Add the OPTION_POSIX_REGEXP option group.
+
+	* option-groups.def (OPTION_POSIX_REGEXP): New entry.
+	* option-groups.defaults (OPTION_POSIX_REGEXP): Initialize.
+	* posix/Makefile: Include ../option-groups.mak.
+	(routines): Move 'regex' into the group.
+	* stdlib/Makefile: Put rpmatch in both the OPTION_POSIX_REGEXP and
+	OPTION_EGLIBC_LOCALE_CODE groups.
+	* misc/Makefile: Put regexp in the group.
+	* locale/Makefile (CFLAGS-ld-messages.c): Define
+	OPTION_POSIX_REGEXP as appropriate.
+	* locale/programs/ld-messages.c: Don't check the syntax of 'yes'
+	and 'no' regular expressions if the group isn't enabled.
 
 	* option-groups.def, option-groups.defaults: Alphabetize, since
 	the list is getting long.
 
 	* option-groups.def (OPTION_EGLIBC_CATGETS)
 	(OPTION_EGLIBC_LOCALE_CODE): Document interdependency.
+
+2007-06-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* intl/plural.c: Regenerate.
 
 2007-06-13  Nathan Sidwell  <nathan@codesourcery.com>
 	    Mark Shinwell  <shinwell@codesourcery.com>
