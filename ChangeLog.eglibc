@@ -1,3 +1,8 @@
+2007-06-22  Jim Blandy  <jimb@codesourcery.com>
+
+	* configure.in: Hardware test for have-fpie to 'yes'.
+	* configure: Regenerated.
+
 2007-06-21  Jim Blandy  <jimb@codesourcery.com>
 
 	* locale/C-ctype.c: If OPTION_EGLIBC_LOCALE_CODE is not enabled,
