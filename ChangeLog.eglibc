@@ -1,6 +1,6 @@
 2007-06-22  Jim Blandy  <jimb@codesourcery.com>
 
-	* configure.in: Hardware test for have-fpie to 'yes'.
+	* configure.in: Hardwire test for have-fpie to 'yes'.
 	* configure: Regenerated.
 
 2007-06-21  Jim Blandy  <jimb@codesourcery.com>
