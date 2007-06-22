@@ -1,3 +1,14 @@
+2007-06-21  Jim Blandy  <jimb@codesourcery.com>
+
+	* locale/C-ctype.c: If OPTION_EGLIBC_LOCALE_CODE is not enabled,
+	provide only minimal transliteration.
+	* locale/Makefile (CFLAGS-C-ctype.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	* iconv/gconv_trans.c (__gconv_transliterate): Don't bother trying
+	to look up transliteration table information.
+	* iconv/Makefile (CFLAGS-gconv_trans.c.c): Define
+	OPTION_EGLIBC_LOCALE_CODE as appropriate.
+	
 2007-06-13  Jim Blandy  <jimb@codesourcery.com>
 
 	Add the OPTION_POSIX_REGEXP option group.
