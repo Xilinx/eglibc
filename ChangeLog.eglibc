@@ -1,3 +1,32 @@
+2007-07-09  Daniel Jacobowitz  <dan@codesourcery.com>
+
+	Backport:
+	2007-05-16  Roland McGrath  <roland@redhat.com>
+	* nptl_db/td_thr_get_info.c: Fake the results for TH->th_unique == 0.
+	* nptl_db/td_thr_validate.c: Likewise.
+	* nptl_db/td_thr_setgregs.c: Likewise.
+	* nptl_db/td_thr_setfpregs.c: Likewise.
+	* nptl_db/td_thr_getgregs.c: Likewise.
+	* nptl_db/td_thr_getfpregs.c: Likewise.
+	* nptl_db/td_thr_tlsbase.c: Likewise.
+
+	* nptl_db/structs.def: Add DB_VARIABLE (__nptl_initial_report_events).
+	* nptl_db/db_info.c: Add necessary declaration.
+	* nptl_db/td_thr_event_enable.c: Set __nptl_initial_report_events too.
+
+	* nptl_db/td_ta_thr_iter.c (iterate_thread_list): Make FAKE_EMPTY bool.
+	Use th_unique=0 in fake descriptor before initialization.
+
+	* nptl_db/td_ta_map_lwp2thr.c (__td_ta_lookup_th_unique): New function, broken
+	out of ...
+	(td_ta_map_lwp2thr): ... here, call it.  But don't before __stack_user
+	is initialized, then fake a handle with th_unique=0.
+	* nptl_db/thread_dbP.h: Declare it.
+
+	* nptl/init.c (__nptl_initial_report_events): New variable.
+	(__pthread_initialize_minimal_internal): Initialize pd->report_events
+	to that.
+
 2007-06-22  Jim Blandy  <jimb@codesourcery.com>
 
 	* configure.in: Hardwire test for have-fpie to 'yes'.
