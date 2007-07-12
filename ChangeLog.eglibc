@@ -1,3 +1,8 @@
+2007-07-12  Jim Blandy  <jimb@codesourcery.com>
+
+	* include/netdb.h (DECLARE_NSS_PROTOTYPES): Also declare
+	_nss_SERVICE_gethostbyname3_r.
+
 2007-07-09  Daniel Jacobowitz  <dan@codesourcery.com>
 
 	Backport:
