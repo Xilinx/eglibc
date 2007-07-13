@@ -26,7 +26,8 @@ subdir	:= nss
 headers			:= nss.h
 distribute		:= nsswitch.h XXX-lookup.c getXXbyYY.c getXXbyYY_r.c \
 			   getXXent.c getXXent_r.c databases.def \
-			   nsswitch.conf digits_dots.c function.def
+			   nsswitch.conf digits_dots.c function.def \
+			   gen-fixed-nsswitch.c
 
 # These are the databases that go through nss dispatch.
 # Caution: if you add a database here, you must add its real name
@@ -76,6 +77,45 @@ ifneq ($(build-static-nss),yes)
 libnss_files-inhibit-o	= $(filter-out .os,$(object-suffixes))
 endif
 
+ifneq ($(OPTION_EGLIBC_NSSWITCH),y)
+
+ifndef OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG
+$(error OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG variable left unset)
+endif
+
+ifndef OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS
+$(error OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS variable left unset)
+endif
+
+ifeq (,$(wildcard $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)))
+$(warning OPTION_EGLIBC_NSSWITCH is disabled, but fixed config file)
+$(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG))
+endif
+
+ifeq (,$(wildcard $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)))
+$(warning OPTION_EGLIBC_NSSWITCH is disabled, but fixed functions file)
+oooo$(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS))
+endif
+
+before-compile := $(objpfx)fixed-nsswitch.h
+generated := fixed-nsswitch.h
+$(objpfx)fixed-nsswitch.h $(objfpx)fixed-nsswitch-libs:		\
+    $(objpfx)gen-fixed-nsswitch					\
+    $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
+	$< $(objpfx)fixed-nsswitch.h					\
+	   $(objpfx)fixed-nsswitch-libs					\
+	   $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
+
+$(objpfx)gen-fixed-nsswitch: gen-fixed-nsswitch.c		\
+    $(common-objpfx)option-groups.config			\
+    $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)
+	$(native-compile)
+gen-fixed-nsswitch-CFLAGS = \
+	-g3 -O -Wall \
+	-I $(objpfx) \
+	-DFIXED_FUNCTIONS='"$(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)"'
+endif
+
 include ../Rules
 
 
@@ -90,7 +130,10 @@ $(services:%=$(objpfx)libnss_%.so): $(common-objpfx)libc.so \
 				    $(common-objpfx)libc_nonshared.a
 
 OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DOPTION_EGLIBC_INET=1
+OPTION_EGLIBC_NSSWITCH-CFLAGS-$(OPTION_EGLIBC_NSSWITCH) \
+	= -DOPTION_EGLIBC_NSSWITCH=1
 
-CFLAGS-nsswitch.c    = $(OPTION_EGLIBC_INET-CFLAGS-y)
+CFLAGS-nsswitch.c    = $(OPTION_EGLIBC_INET-CFLAGS-y) \
+		       $(OPTION_EGLIBC_NSSWITCH-CFLAGS-y)
 CFLAGS-getnssent_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y)
 CFLAGS-getent.c      = $(OPTION_EGLIBC_INET-CFLAGS-y)

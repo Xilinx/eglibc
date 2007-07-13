@@ -288,6 +288,78 @@ config OPTION_EGLIBC_LOCALE_CODE
        group; if you disable OPTION_EGLIBC_LOCALE_CODE, you must also
        disable OPTION_EGLIBC_CATGETS.
 
+config OPTION_EGLIBC_NSSWITCH
+   bool "Name service switch (nsswitch) support"
+   help
+
+       This option group includes support for the 'nsswitch' facility.
+       With this option group enabled, all EGLIBC functions for
+       accessing various system databases (passwords and groups;
+       networking; aliases; public keys; and so on) consult the
+       '/etc/nsswitch.conf' configuration file to decide how to handle
+       queries.
+
+       With this option group disabled, EGLIBC uses a fixed list of
+       services to satisfy queries on each database, as requested by
+       configuration files specified when EGLIBC is built.  Your
+       'option-groups.config' file must set the following two
+       variables:
+
+       OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG
+
+          Set this to the name of a file whose contents observe the
+          same syntax as an ordinary '/etc/nsswitch.conf' file.  The
+          EGLIBC build process parses this file just as EGLIBC would
+          at run time if OPTION_EGLIBC_NSSWITCH were enabled, and
+          produces a C library that uses the nsswitch service
+          libraries to search for database entries as this file
+          specifies, instead of consulting '/etc/nsswitch.conf' at run
+          time.
+
+          This should be a relative file name; EGLIBC will look for it
+          in the top build directory, along with the
+          'option-groups.config' file.
+
+          The EGLIBC source tree includes a sample configuration file
+          named 'nss/fixed-nsswitch.conf'; for simple configurations,
+          you will probably want to delete references to databases not
+          needed on your system.
+
+       OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS
+
+          The EGLIBC build process uses this file to decide which
+          functions to make available from which service libraries.
+          The file 'nss/fixed-nsswitch.functions' serves as a sample
+          configuration file for this setting, and explains its syntax
+          and meaning in more detail.
+
+          This should be a relative file name; EGLIBC will look for it
+          in the top build directory, along with the
+          'option-groups.config' file.
+
+          Be sure to mention each function in each service you wish to
+          use.  If you do not mention a service's function here, the
+          EGLIBC database access functions will not find it, even if
+          it is listed in the OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG
+          file.
+
+       In this arrangement, EGLIBC will not use the 'dlopen' and
+       'dlsym' functions to find database access functions.  Instead,
+       libc hard-codes references to the service libraries' database
+       access functions.  You must explicitly link your program
+       against the name service libraries (those whose names start
+       with 'libnss_', in the sysroot's '/lib' directory) whose
+       functions you intend to use.  This arrangement helps
+       system-wide static analysis tools decide which functions a
+       system actually uses.
+
+       Note that some nsswitch service libraries require other option
+       groups to be enabled; for example, the OPTION_EGLIBC_INET
+       option group must be enabled to use the 'libnss_dns.so.2' or
+       'libnss_nis.so.2' service libraries, which use the Domain Name
+       System and Network Information Service network protocols to
+       answer queries.
+
 config OPTION_POSIX_REGEXP
     bool "Regular expressions"
     help

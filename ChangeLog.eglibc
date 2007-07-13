@@ -1,5 +1,32 @@
 2007-07-12  Jim Blandy  <jimb@codesourcery.com>
 
+	Implement the OPTION_EGLIBC_NSSWITCH option group.
+	* option-groups.def (OPTION_EGLIBC_NSSWITCH): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_NSSWITCH): Initialize.
+	* nss/fixed-nsswitch.conf, nss/fixed-nsswitch.functions: Sample
+	configuration files.
+	* nss/nsswitch.h (service_user): Change the known function table
+	to a union, with appropriate types for tsearch and for fixed
+	nsswitch.  Make the name a pointer.
+	(name_database_entry): Make the name a pointer.
+	* nss/nsswitch.c (nss_parse_file, nss_getline)
+	(nss_parse_service_list, nss_new_service, databases, ndatabases)
+	(lock, lock_nsswitch, unlock_nsswitch)
+	(__nss_shlib_revision, service_table):
+	If OPTION_EGLIBC_NSSWITCH is disabled, include statically
+	generated configuration data; remove code for parsing the
+	configuration file and reconfiguring individual databases
+	dynamically; initialize database and service name pointers;
+	simplify functions for looking up databases and query functions;
+	avoid locking and freeing, since no data changes at runtime.
+	* nss/gen-fixed-nsswitch.c: New program.
+	* nss/Makefile (before-compile, generated): Generate
+	fixed-nsswitch.h.
+	($(objfix)fixed-nsswitch.h, $(objpfx)gen-fixed-nsswitch)
+	(gen-fixed-nsswitch-CFLAGS): Rules for generating
+	fixed-nsswitch.h.
+	(CFLAGS-nsswitch.c): Define OPTION_EGLIBC_NSSWITCH as appropriate.
+	
 	* include/netdb.h (DECLARE_NSS_PROTOTYPES): Also declare
 	_nss_SERVICE_gethostbyname3_r.
 
