@@ -288,6 +288,18 @@ config OPTION_EGLIBC_LOCALE_CODE
        group; if you disable OPTION_EGLIBC_LOCALE_CODE, you must also
        disable OPTION_EGLIBC_CATGETS.
 
+config OPTION_EGLIBC_NIS
+   bool "Support for NIS, NIS+, and the special 'compat' services."
+   depends OPTION_EGLIBC_INET
+   help
+       This option group includes the NIS, NIS+, and 'compat' Name
+       Service Switch service libraries.  When it is disabled, those
+       services libraries are not installed; you should remove any
+       references to them from your 'nsswitch.conf' file.
+
+       This option group depends on the OPTION_EGLIBC_INET option
+       group; you must enable that to enable this option group.
+
 config OPTION_EGLIBC_NSSWITCH
    bool "Name service switch (nsswitch) support"
    help

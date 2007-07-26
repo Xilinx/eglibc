@@ -1,5 +1,15 @@
 2007-07-26  Jim Blandy  <jimb@codesourcery.com>
 
+	Implement the OPTION_EGLIBC_NIS option group.
+	* option-groups.def (OPTION_EGLIBC_NIS): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_NIS): Initialize.
+	* nis/Makefile (services-y, extra-libs-y): Use OPTION_EGLIBC_NIS 
+	as the condition.
+	* nscd/Makefile: If OPTION_EGLIBC_NIS is not enabled, don't try to
+	link against libnsl.so; link our own copy of nis_hash.c directly
+	into nscd.
+	* nscd/nis_hash.c: New file.
+
 	* nptl/tst-tls6.sh: Remove bashisms.
 
 2007-07-12  Jim Blandy  <jimb@codesourcery.com>

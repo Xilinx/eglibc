@@ -37,11 +37,11 @@ databases		= proto service hosts network grp pwd rpc ethers \
 # Specify rules for the nss_* modules.
 # The 'compat' module includes nis support, and the 'nss' directory
 # includes a bare-bones "files" library, so we'll include 'compat' in
-# OPTION_EGLIBC_INET.
+# OPTION_EGLIBC_NIS.
 services-y		:=
-services-$(OPTION_EGLIBC_INET) += nis nisplus compat
+services-$(OPTION_EGLIBC_NIS) += nis nisplus compat
 
-extra-libs-$(OPTION_EGLIBC_INET) += libnsl
+extra-libs-$(OPTION_EGLIBC_NIS) += libnsl
 extra-libs-y		+= $(services-y:%=libnss_%)
 
 # These libraries will be built in the `others' pass rather than
