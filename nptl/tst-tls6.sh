@@ -21,36 +21,44 @@ export LANG
 > $logfile
 fail=0
 
+preloads () {
+    l=''
+    for s in "$@"; do
+        l="$l ${common_objpfx}nptl/tst-tls5mod$s.so"
+    done
+    echo $l | sed 's/:$//;s/: /:/g'
+}
+
 for aligned in a e f; do
   echo "preload tst-tls5mod{$aligned,b,c,d}.so" >> $logfile
   echo "===============" >> $logfile
-  EGLIBC_TEST_LD_PRELOAD=`echo ${common_objpfx}nptl/tst-tls5mod{$aligned,b,c,d}.so \
-	      | sed 's/:$//;s/: /:/g'` ${tst_tls5} >> $logfile || fail=1
+  EGLIBC_TEST_LD_PRELOAD=`preloads $aligned b c d` \
+	      ${tst_tls5} >> $logfile || fail=1
   echo >> $logfile
 
   echo "preload tst-tls5mod{b,$aligned,c,d}.so" >> $logfile
   echo "===============" >> $logfile
-  EGLIBC_TEST_LD_PRELOAD=`echo ${common_objpfx}nptl/tst-tls5mod{b,$aligned,c,d}.so \
-	      | sed 's/:$//;s/: /:/g'` ${tst_tls5} >> $logfile || fail=1
+  EGLIBC_TEST_LD_PRELOAD=`preloads b $aligned c d` \
+	      ${tst_tls5} >> $logfile || fail=1
   echo >> $logfile
 
   echo "preload tst-tls5mod{b,c,d,$aligned}.so" >> $logfile
   echo "===============" >> $logfile
-  EGLIBC_TEST_LD_PRELOAD=`echo ${common_objpfx}nptl/tst-tls5mod{b,c,d,$aligned}.so \
-	      | sed 's/:$//;s/: /:/g'` ${tst_tls5} >> $logfile || fail=1
+  EGLIBC_TEST_LD_PRELOAD=`preloads b c d $aligned` \
+	      ${tst_tls5} >> $logfile || fail=1
   echo >> $logfile
 done
 
 echo "preload tst-tls5mod{d,a,b,c,e}" >> $logfile
 echo "===============" >> $logfile
-EGLIBC_TEST_LD_PRELOAD=`echo ${common_objpfx}nptl/tst-tls5mod{d,a,b,c,e}.so \
-	    | sed 's/:$//;s/: /:/g'` ${tst_tls5} >> $logfile || fail=1
+EGLIBC_TEST_LD_PRELOAD=`preloads d a b c e` \
+	    ${tst_tls5} >> $logfile || fail=1
 echo >> $logfile
 
 echo "preload tst-tls5mod{d,a,b,e,f}" >> $logfile
 echo "===============" >> $logfile
-EGLIBC_TEST_LD_PRELOAD=`echo ${common_objpfx}nptl/tst-tls5mod{d,a,b,e,f}.so \
-	    | sed 's/:$//;s/: /:/g'` ${tst_tls5} >> $logfile || fail=1
+EGLIBC_TEST_LD_PRELOAD=`preloads d a b e f` \
+	    ${tst_tls5} >> $logfile || fail=1
 echo >> $logfile
 
 exit $fail

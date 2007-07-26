@@ -1,3 +1,7 @@
+2007-07-26  Jim Blandy  <jimb@codesourcery.com>
+
+	* nptl/tst-tls6.sh: Remove bashisms.
+
 2007-07-12  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_NSSWITCH option group.
