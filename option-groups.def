@@ -291,6 +291,7 @@ config OPTION_EGLIBC_LOCALE_CODE
 config OPTION_EGLIBC_NIS
    bool "Support for NIS, NIS+, and the special 'compat' services."
    depends OPTION_EGLIBC_INET
+   depends OPTION_EGLIBC_SUNRPC
    help
        This option group includes the NIS, NIS+, and 'compat' Name
        Service Switch service libraries.  When it is disabled, those
@@ -371,6 +372,13 @@ config OPTION_EGLIBC_NSSWITCH
        'libnss_nis.so.2' service libraries, which use the Domain Name
        System and Network Information Service network protocols to
        answer queries.
+
+config OPTION_EGLIBC_SUNRPC
+   bool "Support for the Sun 'RPC' protocol."
+   depends OPTION_EGLIBC_INET
+   help
+      This option group includes support for the Sun RPC protocols,
+      including the 'rpcgen' and 'rpcinfo' programs.
 
 config OPTION_POSIX_REGEXP
     bool "Regular expressions"

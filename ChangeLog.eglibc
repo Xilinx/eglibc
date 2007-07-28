@@ -1,6 +1,21 @@
+2007-07-28  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_SUNRPC option group.
+
+	* option-groups.def (OPTION_EGLIBC_SUNRPC): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_SUNRPC): Initialize
+	(OPTION_EGLIBC_NIS): Note dependency on OPTION_EGLIBC_SUNRPC.
+	* sunrpc/Makefile (others-y, install-bin-y)
+	(install-sbin-y, extra-objs-y, install-others-y, tests-y)
+	(xtests-y, extra-libs-y): Use OPTION_EGLIBC_SUNRPC as the
+	condition, instead of OPTION_EGLIBC_INET.
+	(routines-y): Same.  Include xcrypt, des_crypt, des_impl, and
+	des_soft unconditionally.
+	
 2007-07-26  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_NIS option group.
+	
 	* option-groups.def (OPTION_EGLIBC_NIS): New entry.
 	* option-groups.defaults (OPTION_EGLIBC_NIS): Initialize.
 	* nis/Makefile (services-y, extra-libs-y): Use OPTION_EGLIBC_NIS 

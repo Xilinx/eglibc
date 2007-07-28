@@ -58,7 +58,7 @@ generated = $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
 	    $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen
 generated-dirs := rpcsvc
 
-routines-$(OPTION_EGLIBC_INET) \
+routines-$(OPTION_EGLIBC_SUNRPC) \
          += auth_none auth_unix authuxprot bindrsvprt \
 	    clnt_gen clnt_perr clnt_raw clnt_simp clnt_tcp \
 	    clnt_udp rpc_dtable get_myaddr getrpcport \
@@ -67,13 +67,16 @@ routines-$(OPTION_EGLIBC_INET) \
 	    svc svc_auth svc_authux svc_raw svc_run svc_simple \
 	    svc_tcp svc_udp xdr xdr_array xdr_float xdr_mem \
 	    xdr_rec xdr_ref xdr_stdio publickey xdr_sizeof \
-	    auth_des authdes_prot des_crypt des_impl des_soft \
-	    key_call key_prot netname openchild rtime svcauth_des xcrypt\
+	    auth_des authdes_prot \
+	    key_call key_prot netname openchild rtime svcauth_des \
 	    clnt_unix svc_unix create_xid xdr_intXX_t
 
-others-$(OPTION_EGLIBC_INET) += rpcinfo
-install-bin-$(OPTION_EGLIBC_INET) += rpcgen
-install-sbin-$(OPTION_EGLIBC_INET) += rpcinfo
+# xdecrypt is also used by nss/nss_files/files-key.c.
+routines-y += xcrypt des_crypt des_impl des_soft
+
+others-$(OPTION_EGLIBC_SUNRPC) += rpcinfo
+install-bin-$(OPTION_EGLIBC_SUNRPC) += rpcgen
+install-sbin-$(OPTION_EGLIBC_SUNRPC) += rpcinfo
 rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 	      rpc_scan.o rpc_util.o rpc_svcout.o rpc_clntout.o \
 	      rpc_tblout.o rpc_sample.o
@@ -81,19 +84,19 @@ rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 distribute := proto.h rpc_util.h rpc_parse.h rpc_scan.h \
 	      $(rpcgen-objs:.o=.c) etc.rpc \
 	      errqueue.h
-extra-objs-$(OPTION_EGLIBC_INET) += $(rpcgen-objs)
+extra-objs-$(OPTION_EGLIBC_SUNRPC) += $(rpcgen-objs)
 
 all: # Make this the default target; it will be defined in Rules.
 
 include ../Makeconfig
 
-install-others-$(OPTION_EGLIBC_INET) += $(inst_sysconfdir)/rpc
+install-others-$(OPTION_EGLIBC_SUNRPC) += $(inst_sysconfdir)/rpc
 
-tests-$(OPTION_EGLIBC_INET) = tst-xdrmem tst-xdrmem2
-xtests-$(OPTION_EGLIBC_INET) := tst-getmyaddr
+tests-$(OPTION_EGLIBC_SUNRPC) = tst-xdrmem tst-xdrmem2
+xtests-$(OPTION_EGLIBC_SUNRPC) := tst-getmyaddr
 
 ifeq ($(have-thread-library),yes)
-xtests-$(OPTION_EGLIBC_INET) += thrsvc
+xtests-$(OPTION_EGLIBC_SUNRPC) += thrsvc
 endif
 distribute += thrsvc.c
 
@@ -106,7 +109,7 @@ ifeq (no,$(cross-compiling))
 ifneq (yes,$(install-bootstrap-headers))
 # We can only build this library if we can run the rpcgen we build.
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
-extra-libs-$(OPTION_EGLIBC_INET) += librpcsvc
+extra-libs-$(OPTION_EGLIBC_SUNRPC) += librpcsvc
 # Make it in `others' pass, not `lib' pass.
 extra-libs-others-y += $(extra-libs-y)
 librpcsvc-routines = $(rpcsvc:%.x=x%)
