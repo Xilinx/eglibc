@@ -1,3 +1,9 @@
+2007-08-05  Daniel Jacobowitz  <dan@codesourcery.com>
+
+	Backport:
+	2007-06-17  Andreas Schwab  <schwab@suse.de>
+	* sysdeps/generic/initfini.c: Tell gcc about the nonstandard sections.
+
 2007-07-28  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_SUNRPC option group.
