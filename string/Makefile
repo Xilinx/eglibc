@@ -40,9 +40,11 @@ routines	:= strcat strchr strcmp strcoll strcpy strcspn		\
 		   $(addprefix argz-,append count create ctsep next	\
 			             delete extract insert stringify	\
 				     addsep replace)			\
-		   envz basename					\
+		   basename						\
 		   strcoll_l strxfrm_l string-inlines memrchr		\
 		   xpg-strerror strerror_l
+
+routines-$(OPTION_EGLIBC_ENVZ) += envz 
 
 # Gcc internally generates calls to unbounded memcpy and memset
 # for -fbounded-pointer compiles.  Glibc uses memchr for explicit checks.
@@ -56,7 +58,8 @@ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
 		   tst-strtok tst-strfry	\
 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
-		   bug-envz1 tst-strxfrm2
+		   tst-strxfrm2
+tests-$(OPTION_EGLIBC_ENVZ) += bug-envz1 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strxfrm bug-strcoll1
 distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h

@@ -114,7 +114,22 @@ config OPTION_EGLIBC_CHARSETS
 
           WCHAR_T           - EGLIBC's internal form (target-endian,
                               32-bit ISO 10646)
-         
+
+config OPTION_EGLIBC_ENVZ
+   bool "Functions for handling envz-style environment vectors."
+   help
+       This option group contains functions for creating and operating
+       on envz vectors.  An "envz vector" is a vector of strings in a
+       contiguous block of memory, where each element is a name-value
+       pair, and elements are separated from their neighbors by null
+       characters.
+
+       This option group includes the following functions:
+
+        envz_add        envz_merge 
+        envz_entry      envz_remove
+        envz_get        envz_strip 
+
 config OPTION_EGLIBC_INET
    bool "Networking support"
    help
