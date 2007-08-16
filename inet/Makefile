@@ -45,12 +45,13 @@ routines-$(OPTION_EGLIBC_INET) \
 	    getrpcent_r getrpcbyname_r getrpcbynumber_r \
 	    ether_aton ether_aton_r ether_hton ether_line \
 	    ether_ntoa ether_ntoa_r ether_ntoh \
-	    rcmd rexec ruserpass \
 	    getnetgrent_r getnetgrent \
 	    getaliasent_r getaliasent getaliasname getaliasname_r \
 	    in6_addr getnameinfo if_index ifaddrs inet6_option \
 	    getipv4sourcefilter setipv4sourcefilter \
 	    getsourcefilter setsourcefilter inet6_opt inet6_rth
+routines-$(OPTION_EGLIBC_RCMD) \
+	 += rcmd rexec ruserpass
 
 aux-$(OPTION_EGLIBC_INET) += check_pf ifreq
 

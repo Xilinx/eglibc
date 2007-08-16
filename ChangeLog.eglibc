@@ -1,9 +1,18 @@
+2007-08-16  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_RCMD option group.
+
+	* option-groups.def (OPTION_EGLIBC_RCMD): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_RCMD): Initialize.
+	* inet/Makefile (routines): Put the rcmd, rexec, and ruserpass
+	files in the group.
+	
 2007-08-11  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_ENVZ option group.
 
 	* option-groups.def (OPTION_EGLIBC_ENVZ): New entry.
-	* option-groups.defaults (OPTION_EGLIBC_ENVZ): Initialize
+	* option-groups.defaults (OPTION_EGLIBC_ENVZ): Initialize.
 	* string/Makefile (routines, tests): Put the envz routines and the
 	bug-envz1 test in the group.
 	

@@ -388,6 +388,24 @@ config OPTION_EGLIBC_NSSWITCH
        System and Network Information Service network protocols to
        answer queries.
 
+config OPTION_EGLIBC_RCMD
+   bool "Support for 'rcmd' and related library functions"
+   depends OPTION_EGLIBC_INET
+   help
+      This option group includes functions for running commands on
+      remote machines via the 'rsh' protocol, and doing authentication
+      related to those functions.  This also includes functions that
+      use the 'rexec' protocol.
+
+      This option group includes the following functions:
+
+        rcmd            ruserok
+        rcmd_af         ruserok_af
+        rexec           iruserok
+        rexec_af        iruserok_af
+        rresvport       ruserpass
+        rresvport_af
+        
 config OPTION_EGLIBC_SUNRPC
    bool "Support for the Sun 'RPC' protocol."
    depends OPTION_EGLIBC_INET
