@@ -52,7 +52,7 @@ routines := brk sbrk sstk ioctl \
 	    ualarm usleep \
 	    gtty stty \
 	    ptrace \
-	    fstab mntent mntent_r \
+	    mntent mntent_r \
 	    utimes lutimes futimes futimesat \
 	    truncate ftruncate truncate64 ftruncate64 \
 	    chflags fchflags \
@@ -70,6 +70,7 @@ routines := brk sbrk sstk ioctl \
 	    removexattr setxattr
 
 routines-$(OPTION_POSIX_REGEXP) += regexp
+routines-$(OPTION_EGLIBC_FSTAB) += fstab
 
 distribute := device-nrs.h
 

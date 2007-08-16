@@ -1,5 +1,11 @@
 2007-08-16  Jim Blandy  <jimb@codesourcery.com>
 
+	Implement the OPTION_EGLIBC_FSTAB option group
+
+	* option-groups.def (OPTION_EGLIBC_FSTAB): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_FSTAB): Initialize.
+	* misc/Makefile (routines): Put fstab.c in the option group.
+
 	Implement the OPTION_EGLIBC_RCMD option group.
 
 	* option-groups.def (OPTION_EGLIBC_RCMD): New entry.

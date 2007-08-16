@@ -130,6 +130,20 @@ config OPTION_EGLIBC_ENVZ
         envz_entry      envz_remove
         envz_get        envz_strip 
 
+config OPTION_EGLIBC_FSTAB
+   bool "Access functions for 'fstab'"
+   help
+       This option group includes functions for reading the mount
+       point specification table, '/etc/fstab'.  These functions are
+       not included in the POSIX standard, which provides the
+       'getmntent' family of functions instead.
+
+       This option group includues the following functions:
+
+         endfsent       getfsspec
+         getfsent       setfsent
+         getfsfile
+
 config OPTION_EGLIBC_INET
    bool "Networking support"
    help
