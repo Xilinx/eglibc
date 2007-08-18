@@ -59,6 +59,12 @@ routines :=								      \
 	sched_primin sched_rr_gi sched_getaffinity sched_setaffinity	      \
 	wordexp								      \
 	pread pwrite pread64 pwrite64					      \
+	posix_madvise							      \
+	get_child_max sched_cpucount
+
+routines-$(OPTION_EGLIBC_INET) += getaddrinfo gai_strerror 
+routines-$(OPTION_POSIX_REGEXP) += regex
+routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawn_faction_init spawn_faction_destroy spawn_faction_addclose	      \
 	spawn_faction_addopen spawn_faction_adddup2			      \
 	spawnattr_init spawnattr_destroy				      \
@@ -66,12 +72,7 @@ routines :=								      \
 	spawnattr_getflags spawnattr_setflags				      \
 	spawnattr_getpgroup spawnattr_setpgroup spawn spawnp spawni	      \
 	spawnattr_getsigmask spawnattr_getschedpolicy spawnattr_getschedparam \
-	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam \
-	posix_madvise							      \
-	get_child_max sched_cpucount
-
-routines-$(OPTION_EGLIBC_INET) += getaddrinfo gai_strerror 
-routines-$(OPTION_POSIX_REGEXP) += regex
+	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam
 
 include ../Makeconfig
 
@@ -105,7 +106,8 @@ tests-$(OPTION_EGLIBC_INET) \
 xtests-$(OPTION_EGLIBC_INET) += bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
-tests           += wordexp-test tst-exec tst-spawn
+tests           += wordexp-test tst-exec
+tests-$(OPTION_EGLIBC_SPAWN) += tst-spawn
 endif
 others		:= getconf
 install-bin	:= getconf

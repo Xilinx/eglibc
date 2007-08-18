@@ -79,6 +79,9 @@ CPPFLAGS-linereader = -DNOT_IN_libc
 CPPFLAGS-strtab = -DNOT_IN_libc
 CPPFLAGS-charmap = -DNOT_IN_libc
 CPPFLAGS-charmap-dir = -DNOT_IN_libc
+ifneq (y,$(OPTION_EGLIBC_SPAWN))
+CPPFLAGS-charmap-dir.c += -DNO_UNCOMPRESS
+endif
 
 include ../Rules
 

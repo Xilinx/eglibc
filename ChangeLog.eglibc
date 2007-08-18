@@ -1,3 +1,16 @@
+2007-08-17  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_SPAWN option group.
+
+	* option-groups.def (OPTION_EGLIBC_SPAWN): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_SPAWN): Initialize.
+	* posix/Makefile (routines): Move spawn routines into group.
+	(tests): Move tst-spawn into group.
+	* iconv/Makefile (CPPFLAGS-charmap-dir.c): Pass NO_UNCOMPRESS if
+	spawn is not available.
+	* locale/Makefile (CFLAGS-charmap-dir.c): Same.
+	* nptl/Makefile (tst-exec1): Put in group.
+
 2007-08-16  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_FSTAB option group
