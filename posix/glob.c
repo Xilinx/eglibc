@@ -564,6 +564,7 @@ glob (pattern, flags, errfunc, pglob)
 	  if (home_dir == NULL || home_dir[0] == '\0')
             home_dir = "c:/users/default"; /* poor default */
 #  else
+#   if OPTION_EGLIBC_GETLOGIN
 	  if (home_dir == NULL || home_dir[0] == '\0')
 	    {
 	      int success;
@@ -580,18 +581,18 @@ glob (pattern, flags, errfunc, pglob)
 	      if (success)
 		{
 		  struct passwd *p;
-#   if defined HAVE_GETPWNAM_R || defined _LIBC
+#    if defined HAVE_GETPWNAM_R || defined _LIBC
 		  long int pwbuflen = GETPW_R_SIZE_MAX ();
 		  char *pwtmpbuf;
 		  struct passwd pwbuf;
 		  int save = errno;
 
-#    ifndef _LIBC
+#     ifndef _LIBC
 		  if (pwbuflen == -1)
 		    /* `sysconf' does not support _SC_GETPW_R_SIZE_MAX.
 		       Try a moderate value.  */
 		    pwbuflen = 1024;
-#    endif
+#     endif
 		  pwtmpbuf = (char *) __alloca (pwbuflen);
 
 		  while (getpwnam_r (name, &pwbuf, pwtmpbuf, pwbuflen, &p)
@@ -602,22 +603,23 @@ glob (pattern, flags, errfunc, pglob)
 			  p = NULL;
 			  break;
 			}
-#    ifdef _LIBC
+#     ifdef _LIBC
 		      pwtmpbuf = extend_alloca (pwtmpbuf, pwbuflen,
 						2 * pwbuflen);
-#    else
+#     else
 		      pwbuflen *= 2;
 		      pwtmpbuf = (char *) __alloca (pwbuflen);
-#    endif
+#     endif
 		      __set_errno (save);
 		    }
-#   else
+#    else
 		  p = getpwnam (name);
-#   endif
+#    endif
 		  if (p != NULL)
 		    home_dir = p->pw_dir;
 		}
 	    }
+#   endif /* OPTION_EGLIBC_GETLOGIN */
 	  if (home_dir == NULL || home_dir[0] == '\0')
 	    {
 	      if (flags & GLOB_TILDE_CHECK)

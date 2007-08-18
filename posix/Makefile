@@ -50,7 +50,7 @@ routines :=								      \
 	getuid geteuid getgid getegid getgroups setuid setgid group_member    \
 	getpgid setpgid getpgrp bsd-getpgrp setpgrp getsid setsid	      \
 	getresuid getresgid setresuid setresgid				      \
-	getlogin getlogin_r setlogin					      \
+	setlogin							      \
 	pathconf sysconf fpathconf					      \
 	glob glob64 fnmatch						      \
 	confstr								      \
@@ -73,6 +73,7 @@ routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawnattr_getpgroup spawnattr_setpgroup spawn spawnp spawni	      \
 	spawnattr_getsigmask spawnattr_getschedpolicy spawnattr_getschedparam \
 	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam
+routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin getlogin_r
 
 include ../Makeconfig
 
@@ -149,6 +150,8 @@ endif
 # eglibc: endif
 
 OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
+OPTION_EGLIBC_GETLOGIN-CFLAGS-$(OPTION_EGLIBC_GETLOGIN) \
+	= -DOPTION_EGLIBC_GETLOGIN
 
 CFLAGS-regex.c = -Wno-strict-prototypes
 CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions $(OPTION_EGLIBC_INET-CFLAGS-y)
@@ -173,7 +176,8 @@ CFLAGS-spawnp.os = -fomit-frame-pointer
 CFLAGS-spawni.c = -fexceptions
 CFLAGS-spawni.os = -fomit-frame-pointer
 CFLAGS-pause.c = -fexceptions
-CFLAGS-glob.c = $(uses-callbacks) -fexceptions
+CFLAGS-glob.c = $(uses-callbacks) -fexceptions \
+		$(OPTION_EGLIBC_GETLOGIN-CFLAGS-y)
 CFLAGS-glob64.c = $(uses-callbacks) -fexceptions
 CFLAGS-getconf.c = -DGETCONF_DIR='"$(libexecdir)/getconf"'
 CFLAGS-execve.os = -fomit-frame-pointer

@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for debug portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= debug
 
 headers	:= execinfo.h
@@ -38,12 +40,13 @@ routines  = backtrace backtracesyms backtracesymsfd noophooks \
 	    wcpncpy_chk \
 	    swprintf_chk vswprintf_chk wprintf_chk fwprintf_chk \
 	    vwprintf_chk vfwprintf_chk fgetws_chk fgetws_u_chk \
-	    confstr_chk getgroups_chk ttyname_r_chk getlogin_r_chk \
+	    confstr_chk getgroups_chk ttyname_r_chk \
 	    gethostname_chk getdomainname_chk wcrtomb_chk mbsnrtowcs_chk \
 	    wcsnrtombs_chk mbsrtowcs_chk wcsrtombs_chk mbstowcs_chk \
 	    wcstombs_chk \
 	    stack_chk_fail fortify_fail \
 	    $(static-only-routines)
+routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
 static-only-routines := warning-nop stack_chk_fail_local
 
 CFLAGS-backtrace.c = -fno-omit-frame-pointer

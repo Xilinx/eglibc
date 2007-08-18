@@ -144,6 +144,18 @@ config OPTION_EGLIBC_FSTAB
          getfsent       setfsent
          getfsfile
 
+config OPTION_EGLIBC_GETLOGIN
+   bool "The getlogin function"
+   depends OPTION_EGLIBC_UTMP
+   help
+       This function group includes the 'getlogin' and 'getlogin_r'
+       functions, which return the user name associated by the login
+       activity with the current process's controlling terminal.
+
+       With this option group disabled, the 'glob' function will not
+       fall back on 'getlogin' to find the user's login name for tilde
+       expansion when the 'HOME' environment variable is not set.
+
 config OPTION_EGLIBC_INET
    bool "Networking support"
    help
@@ -462,6 +474,56 @@ config OPTION_EGLIBC_SUNRPC
    help
       This option group includes support for the Sun RPC protocols,
       including the 'rpcgen' and 'rpcinfo' programs.
+
+config OPTION_EGLIBC_UTMP
+    bool "Older access functions for 'utmp' login records"
+    help
+       This option group includes the older 'utent' family of
+       functions for accessing user login records in the 'utmp' file.
+       POSIX omits these functions in favor of the 'utxent' family,
+       and they are obsolete on systems other than Linux.
+
+       This option group includes the following functions:
+
+         endutent
+         getutent
+         getutent_r
+         getutid
+         getutid_r
+         getutline
+         getutline_r
+         logwtmp
+         pututline
+         setutent
+         updwtmp
+         utmpname
+
+       This option group includes the following libraries:
+
+         libutil.so (and libutil.a)
+
+config OPTION_EGLIBC_UTMPX
+    bool "POSIX access functions for 'utmp' login records"
+    depends OPTION_EGLIBC_UTMP    
+    help
+       This option group includes the POSIX functions for reading and
+       writing user login records in the 'utmp' file (usually
+       '/var/run/utmp').  The POSIX functions operate on 'struct
+       utmpx' structures, as opposed to the family of older 'utent'
+       functions, which operate on 'struct utmp' structures.
+
+       This option group includes the following functions:
+
+         endutxent
+         getutmp
+         getutmpx
+         getutxent
+         getutxid
+         getutxline
+         pututxline
+         setutxent
+         updwtmpx
+         utmpxname
 
 config OPTION_POSIX_REGEXP
     bool "Regular expressions"

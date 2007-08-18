@@ -1,5 +1,33 @@
 2007-08-17  Jim Blandy  <jimb@codesourcery.com>
 
+	Implement the OPTION_EGLIBC_UTMP, OPTION_EGLIBC_UTMPX, and
+	OPTION_EGLIBC_GETLOGIN option groups.
+	
+	* option-groups.def (OPTION_EGLIBC_UTMP, OPTION_EGLIBC_UTMPX)
+	(OPTION_EGLIBC_GETLOGIN): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_UTMP, OPTION_EGLIBC_UTMPX)
+	(OPTION_EGLIBC_GETLOGIN): Initialize.
+	* Makerules (sysdep_routines): Include value of sysdep_routines-y.
+	* debug/Makefile: Include option-groups.mak.
+	(routines): Put getlogin_r_chk in the OPTION_EGLIBC_GETLOGIN group.
+	* sysdeps/gnu/Makefile (sysdep_routines): For the login
+	subdirectory, put setutxent, getutxent, endutxent, getutxid,
+	getutxline, pututxline, utmpxname, updwtmpx, getutmpx, and getutmp
+	in the OPTION_EGLIBC_UTMPX group.
+	* login/Makefile: Include option-groups.mak.
+	(routines): Put getutent, getutent_r, getutid, getutline,
+	getutid_r, getutline_r, utmp_file, utmpname, and updwtmp in the
+	OPTION_EGLIBC_UTMP option group.
+	(others): Put utmpdump in the OPTION_EGLIBC_UTMP group.
+	(extra-libs): Put libutil in the OPTION_EGLIBC_UTMP group.
+	(extra-libs-others): Initialize from $(extra-libs-y).
+	* posix/glob.c (glob): If OPTION_EGLIBC_GETLOGIN is not defined,
+	don't try to call getlogin to find the username to use for tilde
+	expansion.
+	* posix/Makefile (routines): Put getlogin and getlogin_r in the
+	OPTION_EGLIBC_GETLOGIN group.
+	(CFLAGS-glob.c): Define OPTION_EGLIBC_GETLOGIN as appropriate.
+
 	Implement the OPTION_EGLIBC_SPAWN option group.
 
 	* option-groups.def (OPTION_EGLIBC_SPAWN): New entry.
