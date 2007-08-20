@@ -545,3 +545,10 @@ config OPTION_POSIX_REGEXP
         Furthermore, the compatibility regexp interface defined in the
         <regexp.h> header file, 'compile', 'step', and 'advance', is
         omitted.
+
+
+# This helps Emacs users browse this file using the page motion commands
+# and commands like 'pages-directory'.
+# Local Variables:
+# page-delimiter: "^config\\s-"
+# End:
