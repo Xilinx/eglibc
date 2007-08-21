@@ -8,6 +8,7 @@
 # are to be changed.
 #
 # By default, all option groups are enabled.
+OPTION_EGLIBC_ADVANCED_INET6 = y
 OPTION_EGLIBC_CATGETS = y
 OPTION_EGLIBC_CHARSETS = y
 OPTION_EGLIBC_ENVZ = y

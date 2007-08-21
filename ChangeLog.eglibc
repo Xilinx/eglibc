@@ -1,5 +1,12 @@
 2007-08-20  Jim Blandy  <jimb@codesourcery.com>
 
+	Implement the OPTION_EGLIBC_ADVANCED_INET6 option group.
+	* option-groups.def (OPTION_EGLIBC_ADVANCED_INET6): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_ADVANCED_INET6): Initialize.
+	* inet/Makefile (routines): Put inet6_option, inet6_opt, and
+	inet6_rth in the group.
+	(tests): Put test-inet6_opt in the option group.
+	
 	* option-groups.def: Add Emacs local variables section to use
 	'config' commands as page boundaries.
 

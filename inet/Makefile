@@ -47,16 +47,19 @@ routines-$(OPTION_EGLIBC_INET) \
 	    ether_ntoa ether_ntoa_r ether_ntoh \
 	    getnetgrent_r getnetgrent \
 	    getaliasent_r getaliasent getaliasname getaliasname_r \
-	    in6_addr getnameinfo if_index ifaddrs inet6_option \
+	    in6_addr getnameinfo if_index ifaddrs \
 	    getipv4sourcefilter setipv4sourcefilter \
-	    getsourcefilter setsourcefilter inet6_opt inet6_rth
+	    getsourcefilter setsourcefilter
 routines-$(OPTION_EGLIBC_RCMD) \
 	 += rcmd rexec ruserpass
+routines-$(OPTION_EGLIBC_ADVANCED_INET6) \
+	 += inet6_option inet6_opt inet6_rth
 
 aux-$(OPTION_EGLIBC_INET) += check_pf ifreq
 
 tests := htontest test_ifindex tst-ntoa tst-ether_aton tst-network \
-	 tst-gethnm test-ifaddrs bug-if1 test-inet6_opt
+	 tst-gethnm test-ifaddrs bug-if1
+tests-$(OPTION_EGLIBC_ADVANCED_INET6) += test-inet6_opt
 
 include ../Rules
 
