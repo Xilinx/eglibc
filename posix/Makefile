@@ -57,7 +57,6 @@ routines :=								      \
 	getopt getopt1 getopt_init					      \
 	sched_setp sched_getp sched_sets sched_gets sched_yield sched_primax  \
 	sched_primin sched_rr_gi sched_getaffinity sched_setaffinity	      \
-	wordexp								      \
 	pread pwrite pread64 pwrite64					      \
 	posix_madvise							      \
 	get_child_max sched_cpucount
@@ -74,6 +73,7 @@ routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawnattr_getsigmask spawnattr_getschedpolicy spawnattr_getschedparam \
 	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin getlogin_r
+routines-$(OPTION_EGLIBC_WORDEXP) += wordexp
 
 include ../Makeconfig
 
@@ -107,8 +107,9 @@ tests-$(OPTION_EGLIBC_INET) \
 xtests-$(OPTION_EGLIBC_INET) += bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
-tests           += wordexp-test tst-exec
+tests           += tst-exec
 tests-$(OPTION_EGLIBC_SPAWN) += tst-spawn
+tests-$(OPTION_EGLIBC_WORDEXP) += wordexp-test
 endif
 others		:= getconf
 install-bin	:= getconf
@@ -139,13 +140,16 @@ endif
 # eglibc: ifeq (no,$(cross-compiling))
 # globtest and wordexp-test currently only works with shared libraries
 ifeq (yes,$(build-shared))
-tests: $(objpfx)globtest.out $(objpfx)wordexp-tst.out
+tests: $(objpfx)globtest.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
 	$(SHELL) -e globtest.sh $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) '$(cross-test-wrapper)'
+ifeq (y,$(OPTION_EGLIBC_WORDEXP))
+tests: $(objpfx)wordexp-tst.out
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
 	$(SHELL) -e wordexp-tst.sh $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) '$(cross-test-wrapper)'
+endif
 endif
 # eglibc: endif
 

@@ -555,6 +555,13 @@ config OPTION_EGLIBC_UTMPX
          updwtmpx
          utmpxname
 
+config OPTION_EGLIBC_WORDEXP
+    bool "Shell-style word expansion"
+    help
+        This option group includes the 'wordexp' function for
+        performing word expansion in the manner of the shell, and the
+        accompanying 'wordfree' function.
+
 config OPTION_POSIX_REGEXP
     bool "Regular expressions"
     help
