@@ -3,7 +3,7 @@
 	Implement the OPTION_EGLIBC_WORDEXP option group.
 	* option-groups.def (OPTION_EGLIBC_WORDEXP): New entry.
 	* option-groups.defaults (OPTION_EGLIBC_WORDEXP): Initialize.
-	* posixf/Makefile (routines): Put wordexp in the group.
+	* posix/Makefile (routines): Put wordexp in the group.
 	(tests): Put wordexp-test and wordexp-tst.out in the option group.
 
 2007-08-20  Jim Blandy  <jimb@codesourcery.com>
