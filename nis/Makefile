@@ -31,8 +31,9 @@ distribute		:= nss-nis.h nss-nisplus.h nis_intern.h Banner \
 
 # These are the databases available for the nis (and perhaps later nisplus)
 # service.  This must be a superset of the services in nss.
-databases		= proto service hosts network grp pwd rpc ethers \
-			  spwd netgrp alias publickey
+databases-y		:= proto service hosts network grp pwd rpc ethers \
+			   spwd netgrp publickey
+databases-$(OPTION_EGLIBC_DB_ALIASES) += alias
 
 # Specify rules for the nss_* modules.
 # The 'compat' module includes nis support, and the 'nss' directory
@@ -67,11 +68,11 @@ libnsl-routines = yp_xdr ypclnt ypupdate_xdr \
 libnss_compat-routines	:= $(addprefix compat-,grp pwd spwd initgroups)
 libnss_compat-inhibit-o	= $(filter-out .os,$(object-suffixes))
 
-libnss_nis-routines	:= $(addprefix nis-,$(databases)) nis-initgroups \
+libnss_nis-routines	:= $(addprefix nis-,$(databases-y)) nis-initgroups \
 			   nss-nis
 libnss_nis-inhibit-o	= $(filter-out .os,$(object-suffixes))
 
-libnss_nisplus-routines	:= $(addprefix nisplus-,$(databases)) nisplus-parser \
+libnss_nisplus-routines	:= $(addprefix nisplus-,$(databases-y)) nisplus-parser \
 			   nss-nisplus nisplus-initgroups
 libnss_nisplus-inhibit-o = $(filter-out .os,$(object-suffixes))
 

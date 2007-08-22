@@ -88,7 +88,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
   fprintf (stream, gettext ("Written by %s.\n"), "Thorsten Kukuk");
 }
 
-#ifdef OPTION_EGLIBC_INET
+#ifdef OPTION_EGLIBC_DB_ALIASES
 /* This is for aliases */
 static inline void
 print_aliases (struct aliasent *alias)
@@ -133,7 +133,9 @@ aliases_keys (int number, char *key[])
 
   return result;
 }
+#endif /* OPTION_EGLIBC_DB_ALIASES */
 
+#ifdef OPTION_EGLIBC_INET
 /* This is for ethers */
 static int
 ethers_keys (int number, char *key[])
@@ -744,15 +746,23 @@ struct
   } databases[] =
   {
 #define D(name) { #name, name ## _keys },
+
 #ifdef OPTION_EGLIBC_INET
 #define DN(name) D(name)
 #else
 #define DN(name)
 #endif
+
+#ifdef OPTION_EGLIBC_DB_ALIASES
+#define DA(name) D(name)
+#else
+#define DA(name)
+#endif
+
 DN(ahosts)
 DN(ahostsv4)
 DN(ahostsv6)
-DN(aliases)
+DA(aliases)
 DN(ethers)
 D(group)
 DN(hosts)

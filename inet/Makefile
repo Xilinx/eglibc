@@ -46,12 +46,13 @@ routines-$(OPTION_EGLIBC_INET) \
 	    ether_aton ether_aton_r ether_hton ether_line \
 	    ether_ntoa ether_ntoa_r ether_ntoh \
 	    getnetgrent_r getnetgrent \
-	    getaliasent_r getaliasent getaliasname getaliasname_r \
 	    in6_addr getnameinfo if_index ifaddrs \
 	    getipv4sourcefilter setipv4sourcefilter \
 	    getsourcefilter setsourcefilter
 routines-$(OPTION_EGLIBC_RCMD) \
 	 += rcmd rexec ruserpass
+routines-$(OPTION_EGLIBC_DB_ALIASES) \
+	 += getaliasent_r getaliasent getaliasname getaliasname_r
 routines-$(OPTION_EGLIBC_ADVANCED_INET6) \
 	 += inet6_option inet6_opt inet6_rth
 

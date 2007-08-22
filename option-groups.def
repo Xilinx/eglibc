@@ -145,6 +145,23 @@ config OPTION_EGLIBC_CHARSETS
           WCHAR_T           - EGLIBC's internal form (target-endian,
                               32-bit ISO 10646)
 
+config OPTION_EGLIBC_DB_ALIASES
+   bool "Functions for accessing the mail aliases database"
+   help
+       This option group includues functions for looking up mail
+       aliases in '/etc/aliases' or using nsswitch.  It includes the
+       following functions:
+
+         endaliasent
+         getaliasbyname
+         getaliasbyname_r
+         getaliasent
+         getaliasent_r
+         setaliasent
+
+       When this option group is disabled, the NSS service libraries
+       also lack support for querying their mail alias tables.
+
 config OPTION_EGLIBC_ENVZ
    bool "Functions for handling envz-style environment vectors."
    help

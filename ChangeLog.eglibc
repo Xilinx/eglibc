@@ -1,3 +1,20 @@
+2007-08-22  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_DB_ALIASES option group.
+	* option-groups.def (OPTION_EGLIBC_DB_ALIASES): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_DB_ALIASES): Initialize.
+	* inet/Makefile (routines): Move getaliasent_r, getaliasent,
+	getaliasname, and getaliasname_r into the group.
+	* nss/Makefile (databases-y): Move alias into the option group.
+	(CFLAGS-getent.c): Define OPTION_EGLIBC_DB_ALIASES as appropriate.
+	* nss/getent.c (print_aliases, aliases_keys): Define these
+	functions only if OPTION_EGLIBC_DB_ALIASES is enabled.
+	(DA): New macro.
+	(databases): Use DA to decide whether to include the aliases
+	database in the list.
+	* nis/Makefile (databases-y): Renamed from databases; uses
+	changed.  Put alias in the group.
+	
 2007-08-21  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_WORDEXP option group.
