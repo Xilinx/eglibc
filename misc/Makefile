@@ -47,7 +47,7 @@ routines := brk sbrk sstk ioctl \
 	    select pselect \
 	    acct chroot fsync sync fdatasync reboot \
 	    gethostid sethostid \
-	    revoke vhangup \
+	    vhangup \
 	    swapon swapoff mktemp mkstemp mkstemp64 mkdtemp \
 	    ualarm usleep \
 	    gtty stty \
@@ -55,7 +55,6 @@ routines := brk sbrk sstk ioctl \
 	    mntent mntent_r \
 	    utimes lutimes futimes futimesat \
 	    truncate ftruncate truncate64 ftruncate64 \
-	    chflags fchflags \
 	    insremque getttyent getusershell getpass ttyslot \
 	    syslog syscall daemon \
 	    mmap mmap64 munmap mprotect msync madvise mincore remap_file_pages\
@@ -71,6 +70,7 @@ routines := brk sbrk sstk ioctl \
 
 routines-$(OPTION_POSIX_REGEXP) += regexp
 routines-$(OPTION_EGLIBC_FSTAB) += fstab
+routines-$(OPTION_EGLIBC_BSD) += chflags fchflags revoke 
 
 distribute := device-nrs.h
 

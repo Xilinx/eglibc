@@ -71,6 +71,22 @@ config OPTION_EGLIBC_ADVANCED_INET6
          inet6_rth_segments
          inet6_rth_space
 
+config OPTION_EGLIBC_BSD
+   bool "BSD-specific functions, and their compatibility stubs"
+   help
+       This option group includes functions specific to BSD kernels.
+       A number of these functions have stub versions that are also
+       included in libraries built for non-BSD systems for
+       compatibility.
+
+       This option group includes the following functions:
+
+         chflags
+         fchflags
+         lchmod
+         revoke
+         setlogin
+
 config OPTION_EGLIBC_CATGETS
    bool "Functions for accessing message catalogs"
    depends OPTION_EGLIBC_LOCALE_CODE

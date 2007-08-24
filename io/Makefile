@@ -19,6 +19,8 @@
 #
 #	Sub-makefile for I/O portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= io
 
 headers := sys/stat.h bits/stat.h sys/statfs.h bits/statfs.h sys/vfs.h \
@@ -35,7 +37,7 @@ routines :=								\
 	fxstatat fxstatat64						\
 	statfs fstatfs statfs64 fstatfs64				\
 	statvfs fstatvfs statvfs64 fstatvfs64				\
-	umask chmod fchmod lchmod fchmodat				\
+	umask chmod fchmod fchmodat					\
 	mkdir mkdirat							\
 	open open64 openat openat64 close				\
 	read write lseek lseek64 access euidaccess faccessat		\
@@ -53,6 +55,7 @@ routines :=								\
 	posix_fallocate posix_fallocate64				\
 	sendfile sendfile64 \
 	utimensat futimens
+routines-$(OPTION_EGLIBC_BSD) += lchmod
 
 # These routines will be omitted from the libc shared object.
 # Instead the static object files will be included in a special archive

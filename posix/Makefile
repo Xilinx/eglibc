@@ -50,7 +50,6 @@ routines :=								      \
 	getuid geteuid getgid getegid getgroups setuid setgid group_member    \
 	getpgid setpgid getpgrp bsd-getpgrp setpgrp getsid setsid	      \
 	getresuid getresgid setresuid setresgid				      \
-	setlogin							      \
 	pathconf sysconf fpathconf					      \
 	glob glob64 fnmatch						      \
 	confstr								      \
@@ -74,6 +73,7 @@ routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin getlogin_r
 routines-$(OPTION_EGLIBC_WORDEXP) += wordexp
+routines-$(OPTION_EGLIBC_BSD) += setlogin
 
 include ../Makeconfig
 

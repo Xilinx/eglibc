@@ -1,3 +1,14 @@
+2007-08-23  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_BSD option group.
+	* option-groups.def (OPTION_EGLIBC_BSD): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_BSD): Initialize.
+	* misc/Makefile (routines): Put revoke, chflags, and fchflags in
+	the group.
+	* posix/Makefile (routines): Put setlogin in the group.
+	* io/Makefile: include ../option-groups.mak.
+	(routines) Put lchmod in the group.
+
 2007-08-22  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_DB_ALIASES option group.
