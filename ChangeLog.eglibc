@@ -1,3 +1,10 @@
+2007-09-04  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_STREAMS option group.
+	* option-groups.def (OPTION_EGLIBC_STREAMS): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_STREAMS): Initialize.
+	* streams/Makefile (routines): Put all routines in the group.
+
 2007-08-23  Jim Blandy  <jimb@codesourcery.com>
 
 	Implement the OPTION_EGLIBC_BSD option group.
