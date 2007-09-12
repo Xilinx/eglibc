@@ -27,6 +27,7 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <list.h>
+# include <kernel-features.h>
 
 /* Type for the dtv.  */
 typedef union dtv
@@ -46,9 +47,18 @@ typedef struct
   dtv_t *dtv;
   void *self;
   int multiple_threads;
+#if __WORDSIZE == 64
+  int gscope_flag;
+#endif
   uintptr_t sysinfo;
   uintptr_t stack_guard;
   uintptr_t pointer_guard;
+#if __WORDSIZE != 64
+  int gscope_flag;
+#endif
+#ifndef __ASSUME_PRIVATE_FUTEX
+  int private_futex;
+#endif
 } tcbhead_t;
 
 #else /* __ASSEMBLER__ */
@@ -151,7 +161,7 @@ register struct pthread *__thread_self __asm__("%g7");
 	= atomic_exchange_rel (&THREAD_SELF->header.gscope_flag,	     \
 			       THREAD_GSCOPE_FLAG_UNUSED);		     \
       if (__res == THREAD_GSCOPE_FLAG_WAIT)				     \
-	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1);		     \
+	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1, LLL_PRIVATE);   \
     }									     \
   while (0)
 #define THREAD_GSCOPE_SET_FLAG() \

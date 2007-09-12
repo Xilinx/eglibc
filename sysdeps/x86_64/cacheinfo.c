@@ -55,11 +55,13 @@ static const struct intel_02_cache_info
     { 0x45, _SC_LEVEL2_CACHE_SIZE,  2097152,  4, 32 },
     { 0x46, _SC_LEVEL3_CACHE_SIZE,  4194304,  4, 64 },
     { 0x47, _SC_LEVEL3_CACHE_SIZE,  8388608,  8, 64 },
+    { 0x48, _SC_LEVEL2_CACHE_SIZE,  3145728, 12, 64 },
     { 0x49, _SC_LEVEL2_CACHE_SIZE,  4194304, 16, 64 },
     { 0x4a, _SC_LEVEL3_CACHE_SIZE,  6291456, 12, 64 },
     { 0x4b, _SC_LEVEL3_CACHE_SIZE,  8388608, 16, 64 },
     { 0x4c, _SC_LEVEL3_CACHE_SIZE, 12582912, 12, 64 },
     { 0x4d, _SC_LEVEL3_CACHE_SIZE, 16777216, 16, 64 },
+    { 0x4e, _SC_LEVEL2_CACHE_SIZE,  6291456, 24, 64 },
     { 0x60, _SC_LEVEL1_DCACHE_SIZE,   16384,  8, 64 },
     { 0x66, _SC_LEVEL1_DCACHE_SIZE,    8192,  4, 64 },
     { 0x67, _SC_LEVEL1_DCACHE_SIZE,   16384,  4, 64 },
@@ -257,7 +259,8 @@ handle_amd (int name)
 		: "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
 		: "0" (0x80000000));
 
-  if (name >= _SC_LEVEL3_CACHE_SIZE)
+  /* No level 4 cache (yet).  */
+  if (name > _SC_LEVEL3_CACHE_LINESIZE)
     return 0;
 
   unsigned int fn = 0x80000005 + (name >= _SC_LEVEL2_CACHE_SIZE);
@@ -278,36 +281,87 @@ handle_amd (int name)
     {
     case _SC_LEVEL1_DCACHE_SIZE:
       return (ecx >> 14) & 0x3fc00;
+
     case _SC_LEVEL1_DCACHE_ASSOC:
       ecx >>= 16;
       if ((ecx & 0xff) == 0xff)
 	/* Fully associative.  */
 	return (ecx << 2) & 0x3fc00;
       return ecx & 0xff;
+
     case _SC_LEVEL1_DCACHE_LINESIZE:
       return ecx & 0xff;
+
     case _SC_LEVEL2_CACHE_SIZE:
       return (ecx & 0xf000) == 0 ? 0 : (ecx >> 6) & 0x3fffc00;
+
     case _SC_LEVEL2_CACHE_ASSOC:
-      ecx >>= 12;
-      switch (ecx & 0xf)
+      switch ((ecx >> 12) & 0xf)
         {
         case 0:
         case 1:
         case 2:
         case 4:
-	  return ecx & 0xf;
+	  return (ecx >> 12) & 0xf;
 	case 6:
 	  return 8;
 	case 8:
 	  return 16;
-	case 0xf:
-	  return (ecx << 6) & 0x3fffc00;
+	case 10:
+	  return 32;
+	case 11:
+	  return 48;
+	case 12:
+	  return 64;
+	case 13:
+	  return 96;
+	case 14:
+	  return 128;
+	case 15:
+	  return ((ecx >> 6) & 0x3fffc00) / (ecx & 0xff);
 	default:
 	  return 0;
         }
+      /* NOTREACHED */
+
     case _SC_LEVEL2_CACHE_LINESIZE:
       return (ecx & 0xf000) == 0 ? 0 : ecx & 0xff;
+
+    case _SC_LEVEL3_CACHE_SIZE:
+      return (edx & 0xf000) == 0 ? 0 : (edx & 0x3ffc0000) << 1;
+
+    case _SC_LEVEL3_CACHE_ASSOC:
+      switch ((edx >> 12) & 0xf)
+	{
+	case 0:
+	case 1:
+	case 2:
+	case 4:
+	  return (edx >> 12) & 0xf;
+	case 6:
+	  return 8;
+	case 8:
+	  return 16;
+	case 10:
+	  return 32;
+	case 11:
+	  return 48;
+	case 12:
+	  return 64;
+	case 13:
+	  return 96;
+	case 14:
+	  return 128;
+	case 15:
+	  return ((edx & 0x3ffc0000) << 1) / (edx & 0xff);
+	default:
+	  return 0;
+	}
+      /* NOTREACHED */
+
+    case _SC_LEVEL3_CACHE_LINESIZE:
+      return (edx & 0xf000) == 0 ? 0 : edx & 0xff;
+
     default:
       assert (! "cannot happen");
     }

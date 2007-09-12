@@ -15,9 +15,42 @@ extern __typeof (wcstod_l) __wcstod_l;
 extern __typeof (wcstof_l) __wcstof_l;
 extern __typeof (wcstold_l) __wcstold_l;
 extern __typeof (wcsftime_l) __wcsftime_l;
+libc_hidden_proto (__wcstol_l)
+libc_hidden_proto (__wcstoul_l)
+libc_hidden_proto (__wcstoll_l)
+libc_hidden_proto (__wcstoull_l)
+libc_hidden_proto (__wcstod_l)
+libc_hidden_proto (__wcstof_l)
+libc_hidden_proto (__wcstold_l)
 libc_hidden_proto (__wcsftime_l)
 
 
+extern double __wcstod_internal (__const wchar_t *__restrict __nptr,
+				 wchar_t **__restrict __endptr, int __group)
+     __THROW;
+extern float __wcstof_internal (__const wchar_t *__restrict __nptr,
+				wchar_t **__restrict __endptr, int __group)
+     __THROW;
+extern long double __wcstold_internal (__const wchar_t *__restrict __nptr,
+				       wchar_t **__restrict __endptr,
+				       int __group) __THROW;
+extern long int __wcstol_internal (__const wchar_t *__restrict __nptr,
+				   wchar_t **__restrict __endptr,
+				   int __base, int __group) __THROW;
+extern unsigned long int __wcstoul_internal (__const wchar_t *__restrict __npt,
+					     wchar_t **__restrict __endptr,
+					     int __base, int __group) __THROW;
+__extension__
+extern long long int __wcstoll_internal (__const wchar_t *__restrict __nptr,
+					 wchar_t **__restrict __endptr,
+					 int __base, int __group) __THROW;
+__extension__
+extern unsigned long long int __wcstoull_internal (__const wchar_t *
+						   __restrict __nptr,
+						   wchar_t **
+						   __restrict __endptr,
+						   int __base,
+						   int __group) __THROW;
 libc_hidden_proto (__wcstof_internal)
 libc_hidden_proto (__wcstod_internal)
 libc_hidden_proto (__wcstold_internal)
@@ -25,6 +58,13 @@ libc_hidden_proto (__wcstol_internal)
 libc_hidden_proto (__wcstoll_internal)
 libc_hidden_proto (__wcstoul_internal)
 libc_hidden_proto (__wcstoull_internal)
+libc_hidden_proto (wcstof)
+libc_hidden_proto (wcstod)
+libc_hidden_proto (wcstold)
+libc_hidden_proto (wcstol)
+libc_hidden_proto (wcstoll)
+libc_hidden_proto (wcstoul)
+libc_hidden_proto (wcstoull)
 
 libc_hidden_proto (__wcscasecmp_l)
 libc_hidden_proto (__wcsncasecmp_l)

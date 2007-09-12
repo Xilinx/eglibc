@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,23 +19,10 @@
 
 #include <sysdep.h>
 #include <shlib-compat.h>
+#include <lowlevellock.h>
 #include <lowlevelcond.h>
 #include <kernel-features.h>
-
-#ifdef UP
-# define LOCK
-#else
-# define LOCK lock
-#endif
-
-#define SYS_futex		240
-#define FUTEX_WAIT		0
-#define FUTEX_WAKE		1
-#define FUTEX_WAKE_OP		5
-
-#define FUTEX_OP_CLEAR_WAKE_IF_GT_ONE	((4 << 24) | 1)
-
-#define EINVAL			22
+#include <pthread-errnos.h>
 
 
 	.text
@@ -83,7 +70,18 @@ __pthread_cond_signal:
 	/* Wake up one thread.  */
 	pushl	%esi
 	pushl	%ebp
-	movl	$FUTEX_WAKE_OP, %ecx
+#if FUTEX_PRIVATE_FLAG > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex-cond_futex(%ebx)
+	sete	%cl
+	subl	$1, %ecx
+#ifdef __ASSUME_PRIVATE_FUTEX
+	andl	$FUTEX_PRIVATE_FLAG, %ecx
+#else
+	andl	%gs:PRIVATE_FUTEX, %ecx
+#endif
+	addl	$FUTEX_WAKE_OP, %ecx
 	movl	$SYS_futex, %eax
 	movl	$1, %edx
 	movl	$1, %esi
@@ -105,7 +103,9 @@ __pthread_cond_signal:
 	popl	%ebx
 	ret
 
-7:	movl	$FUTEX_WAKE, %ecx
+7:	/* %ecx should be either FUTEX_WAKE_OP or
+	   FUTEX_WAKE_OP|FUTEX_PRIVATE_FLAG from the previous syscall.  */
+	xorl	$(FUTEX_WAKE ^ FUTEX_WAKE_OP), %ecx
 	movl	$SYS_futex, %eax
 	/* %edx should be 1 already from $FUTEX_WAKE_OP syscall.
 	movl	$1, %edx  */
@@ -119,17 +119,37 @@ __pthread_cond_signal:
 
 	/* Unlock in loop requires wakeup.  */
 5:	movl	%edi, %eax
-	call	__lll_mutex_unlock_wake
+#if (LLL_SHARED-LLL_PRIVATE) > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex-cond_futex(%ebx)
+	setne	%cl
+	subl	$1, %ecx
+	andl	$(LLL_SHARED-LLL_PRIVATE), %ecx
+#if LLL_PRIVATE != 0
+	addl	$LLL_PRIVATE, %ecx
+#endif
+	call	__lll_unlock_wake
 	jmp	6b
 
 	/* Initial locking failed.  */
 1:
 #if cond_lock == 0
-	movl	%edi, %ecx
+	movl	%edi, %edx
 #else
-	leal	cond_lock(%edi), %ecx
+	leal	cond_lock(%edi), %edx
 #endif
-	call	__lll_mutex_lock_wait
+#if (LLL_SHARED-LLL_PRIVATE) > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex(%edi)
+	setne	%cl
+	subl	$1, %ecx
+	andl	$(LLL_SHARED-LLL_PRIVATE), %ecx
+#if LLL_PRIVATE != 0
+	addl	$LLL_PRIVATE, %ecx
+#endif
+	call	__lll_lock_wait
 	jmp	2b
 
 	.size	__pthread_cond_signal, .-__pthread_cond_signal

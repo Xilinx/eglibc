@@ -3,8 +3,9 @@
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 2004.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; version 2 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,6 +17,8 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include <alloca.h>
+#include <kernel-features.h>
+
 /* This file uses the getaddrinfo code but it compiles it without NSCD
    support.  We just need a few symbol renames.  */
 #define __inet_aton inet_aton

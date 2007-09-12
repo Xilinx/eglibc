@@ -27,9 +27,13 @@
 
 
 #ifndef LLL_MUTEX_LOCK
-# define LLL_MUTEX_LOCK(mutex) lll_mutex_lock (mutex)
-# define LLL_MUTEX_TRYLOCK(mutex) lll_mutex_trylock (mutex)
-# define LLL_ROBUST_MUTEX_LOCK(mutex, id) lll_robust_mutex_lock (mutex, id)
+# define LLL_MUTEX_LOCK(mutex) \
+  lll_lock ((mutex)->__data.__lock, PTHREAD_MUTEX_PSHARED (mutex))
+# define LLL_MUTEX_TRYLOCK(mutex) \
+  lll_trylock ((mutex)->__data.__lock)
+# define LLL_ROBUST_MUTEX_LOCK(mutex, id) \
+  lll_robust_lock ((mutex)->__data.__lock, id, \
+		   PTHREAD_ROBUST_MUTEX_PSHARED (mutex))
 #endif
 
 
@@ -43,7 +47,8 @@ __pthread_mutex_lock (mutex)
   pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
 
   int retval = 0;
-  switch (__builtin_expect (mutex->__data.__kind, PTHREAD_MUTEX_TIMED_NP))
+  switch (__builtin_expect (PTHREAD_MUTEX_TYPE (mutex),
+			    PTHREAD_MUTEX_TIMED_NP))
     {
       /* Recursive mutex.  */
     case PTHREAD_MUTEX_RECURSIVE_NP:
@@ -61,7 +66,7 @@ __pthread_mutex_lock (mutex)
 	}
 
       /* We have to get the mutex.  */
-      LLL_MUTEX_LOCK (mutex->__data.__lock);
+      LLL_MUTEX_LOCK (mutex);
 
       assert (mutex->__data.__owner == 0);
       mutex->__data.__count = 1;
@@ -78,7 +83,7 @@ __pthread_mutex_lock (mutex)
     case PTHREAD_MUTEX_TIMED_NP:
     simple:
       /* Normal mutex.  */
-      LLL_MUTEX_LOCK (mutex->__data.__lock);
+      LLL_MUTEX_LOCK (mutex);
       assert (mutex->__data.__owner == 0);
       break;
 
@@ -86,7 +91,7 @@ __pthread_mutex_lock (mutex)
       if (! __is_smp)
 	goto simple;
 
-      if (LLL_MUTEX_TRYLOCK (mutex->__data.__lock) != 0)
+      if (LLL_MUTEX_TRYLOCK (mutex) != 0)
 	{
 	  int cnt = 0;
 	  int max_cnt = MIN (MAX_ADAPTIVE_COUNT,
@@ -95,7 +100,7 @@ __pthread_mutex_lock (mutex)
 	    {
 	      if (cnt++ >= max_cnt)
 		{
-		  LLL_MUTEX_LOCK (mutex->__data.__lock);
+		  LLL_MUTEX_LOCK (mutex);
 		  break;
 		}
 
@@ -103,7 +108,7 @@ __pthread_mutex_lock (mutex)
 	      BUSY_WAIT_NOP;
 #endif
 	    }
-	  while (LLL_MUTEX_TRYLOCK (mutex->__data.__lock) != 0);
+	  while (LLL_MUTEX_TRYLOCK (mutex) != 0);
 
 	  mutex->__data.__spins += (cnt - mutex->__data.__spins) / 8;
 	}
@@ -165,16 +170,15 @@ __pthread_mutex_lock (mutex)
 	  /* Check whether we already hold the mutex.  */
 	  if (__builtin_expect ((oldval & FUTEX_TID_MASK) == id, 0))
 	    {
-	      if (mutex->__data.__kind
-		  == PTHREAD_MUTEX_ROBUST_ERRORCHECK_NP)
+	      int kind = PTHREAD_MUTEX_TYPE (mutex);
+	      if (kind == PTHREAD_MUTEX_ROBUST_ERRORCHECK_NP)
 		{
 		  THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending,
 				 NULL);
 		  return EDEADLK;
 		}
 
-	      if (mutex->__data.__kind
-		  == PTHREAD_MUTEX_ROBUST_RECURSIVE_NP)
+	      if (kind == PTHREAD_MUTEX_ROBUST_RECURSIVE_NP)
 		{
 		  THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending,
 				 NULL);
@@ -190,14 +194,15 @@ __pthread_mutex_lock (mutex)
 		}
 	    }
 
-	  oldval = LLL_ROBUST_MUTEX_LOCK (mutex->__data.__lock, id);
+	  oldval = LLL_ROBUST_MUTEX_LOCK (mutex, id);
 
 	  if (__builtin_expect (mutex->__data.__owner
 				== PTHREAD_MUTEX_NOTRECOVERABLE, 0))
 	    {
 	      /* This mutex is now not recoverable.  */
 	      mutex->__data.__count = 0;
-	      lll_mutex_unlock (mutex->__data.__lock);
+	      lll_unlock (mutex->__data.__lock,
+			  PTHREAD_ROBUST_MUTEX_PSHARED (mutex));
 	      THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
 	      return ENOTRECOVERABLE;
 	    }
@@ -408,7 +413,8 @@ __pthread_mutex_lock (mutex)
 		  break;
 
 		if (oldval != ceilval)
-		  lll_futex_wait (&mutex->__data.__lock, ceilval | 2);
+		  lll_futex_wait (&mutex->__data.__lock, ceilval | 2,
+				  PTHREAD_MUTEX_PSHARED (mutex));
 	      }
 	    while (atomic_compare_and_exchange_val_acq (&mutex->__data.__lock,
 							ceilval | 2, ceilval)

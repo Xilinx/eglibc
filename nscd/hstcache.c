@@ -4,8 +4,9 @@
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; version 2 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -195,7 +196,7 @@ cache_addhst (struct database_dyn *db, int fd, request_header *req,
 
       /* Determine the number of addresses.  */
       h_addr_list_cnt = 0;
-      for (cnt = 0; hst->h_addr_list[cnt]; ++cnt)
+      while (hst->h_addr_list[h_addr_list_cnt] != NULL)
 	++h_addr_list_cnt;
 
       if (h_addr_list_cnt == 0)
@@ -220,7 +221,7 @@ cache_addhst (struct database_dyn *db, int fd, request_header *req,
 	 the current cache handling cannot handle and it is more than
 	 questionable whether it is worthwhile complicating the cache
 	 handling just for handling such a special case. */
-      if (he == NULL && hst->h_addr_list[1] == NULL)
+      if (he == NULL && h_addr_list_cnt == 1)
 	{
 	  dataset = (struct dataset *) mempool_alloc (db,
 						      total + req->key_len);
@@ -297,25 +298,31 @@ cache_addhst (struct database_dyn *db, int fd, request_header *req,
 	      /* The data has not changed.  We will just bump the
 		 timeout value.  Note that the new record has been
 		 allocated on the stack and need not be freed.  */
+	      assert (h_addr_list_cnt == 1);
 	      dh->timeout = dataset->head.timeout;
 	      ++dh->nreloads;
 	    }
 	  else
 	    {
-	      /* We have to create a new record.  Just allocate
-		 appropriate memory and copy it.  */
-	      struct dataset *newp
-		= (struct dataset *) mempool_alloc (db, total + req->key_len);
-	      if (newp != NULL)
+	      if (h_addr_list_cnt == 1)
 		{
-		  /* Adjust pointers into the memory block.  */
-		  addresses = (char *) newp + (addresses - (char *) dataset);
-		  aliases = (char *) newp + (aliases - (char *) dataset);
-		  assert (key_copy != NULL);
-		  key_copy = (char *) newp + (key_copy - (char *) dataset);
+		  /* We have to create a new record.  Just allocate
+		     appropriate memory and copy it.  */
+		  struct dataset *newp
+		    = (struct dataset *) mempool_alloc (db,
+							total + req->key_len);
+		  if (newp != NULL)
+		    {
+		      /* Adjust pointers into the memory block.  */
+		      addresses = (char *) newp + (addresses
+						   - (char *) dataset);
+		      aliases = (char *) newp + (aliases - (char *) dataset);
+		      assert (key_copy != NULL);
+		      key_copy = (char *) newp + (key_copy - (char *) dataset);
 
-		  dataset = memcpy (newp, dataset, total + req->key_len);
-		  alloca_used = false;
+		      dataset = memcpy (newp, dataset, total + req->key_len);
+		      alloca_used = false;
+		    }
 		}
 
 	      /* Mark the old record as obsolete.  */

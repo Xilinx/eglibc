@@ -4,8 +4,9 @@
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; version 2 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -467,6 +468,13 @@ fail:
 }
 
 
+#ifdef O_CLOEXEC
+# define EXTRA_O_FLAGS O_CLOEXEC
+#else
+# define EXTRA_O_FLAGS 0
+#endif
+
+
 /* Initialize database information structures.  */
 void
 nscd_init (void)
@@ -489,7 +497,7 @@ nscd_init (void)
 	if (dbs[cnt].persistent)
 	  {
 	    /* Try to open the appropriate file on disk.  */
-	    int fd = open (dbs[cnt].db_filename, O_RDWR);
+	    int fd = open (dbs[cnt].db_filename, O_RDWR | EXTRA_O_FLAGS);
 	    if (fd != -1)
 	      {
 		struct stat64 st;
@@ -568,7 +576,8 @@ nscd_init (void)
 		    /* We also need a read-only descriptor.  */
 		    if (dbs[cnt].shared)
 		      {
-			dbs[cnt].ro_fd = open (dbs[cnt].db_filename, O_RDONLY);
+			dbs[cnt].ro_fd = open (dbs[cnt].db_filename,
+					       O_RDONLY | EXTRA_O_FLAGS);
 			if (dbs[cnt].ro_fd == -1)
 			  dbg_log (_("\
 cannot create read-only descriptor for \"%s\"; no mmap"),
@@ -605,22 +614,23 @@ cannot create read-only descriptor for \"%s\"; no mmap"),
 	    if (dbs[cnt].persistent)
 	      {
 		fd = open (dbs[cnt].db_filename,
-			   O_RDWR | O_CREAT | O_EXCL | O_TRUNC,
+			   O_RDWR | O_CREAT | O_EXCL | O_TRUNC | EXTRA_O_FLAGS,
 			   S_IRUSR | S_IWUSR);
 		if (fd != -1 && dbs[cnt].shared)
-		  ro_fd = open (dbs[cnt].db_filename, O_RDONLY);
+		  ro_fd = open (dbs[cnt].db_filename,
+				O_RDONLY | EXTRA_O_FLAGS);
 	      }
 	    else
 	      {
 		char fname[] = _PATH_NSCD_XYZ_DB_TMP;
-		fd = mkstemp (fname);
+		fd = mkostemp (fname, EXTRA_O_FLAGS);
 
 		/* We do not need the file name anymore after we
 		   opened another file descriptor in read-only mode.  */
 		if (fd != -1)
 		  {
 		    if (dbs[cnt].shared)
-		      ro_fd = open (fname, O_RDONLY);
+		      ro_fd = open (fname, O_RDONLY | EXTRA_O_FLAGS);
 
 		    unlink (fname);
 		  }
@@ -739,6 +749,11 @@ cannot create read-only descriptor for \"%s\"; no mmap"),
 	      }
 	  }
 
+#if !defined O_CLOEXEC || !defined __ASSUME_O_CLOEXEC
+	/* We do not check here whether the O_CLOEXEC provided to the
+	   open call was successful or not.  The two fcntl calls are
+	   only performed once each per process start-up and therefore
+	   is not noticeable at all.  */
 	if (paranoia
 	    && ((dbs[cnt].wr_fd != -1
 		 && fcntl (dbs[cnt].wr_fd, F_SETFD, FD_CLOEXEC) == -1)
@@ -750,6 +765,7 @@ cannot set socket to close on exec: %s; disabling paranoia mode"),
 		     strerror (errno));
 	    paranoia = 0;
 	  }
+#endif
 
 	if (dbs[cnt].head == NULL)
 	  {
@@ -891,9 +907,14 @@ send_ro_fd (struct database_dyn *db, char *key, int fd)
     return;
 
   /* We need to send some data along with the descriptor.  */
-  struct iovec iov[1];
+  uint64_t mapsize = (db->head->data_size
+		      + roundup (db->head->module * sizeof (ref_t), ALIGN)
+		      + sizeof (struct database_pers_head));
+  struct iovec iov[2];
   iov[0].iov_base = key;
   iov[0].iov_len = strlen (key) + 1;
+  iov[1].iov_base = &mapsize;
+  iov[1].iov_len = sizeof (mapsize);
 
   /* Prepare the control message to transfer the descriptor.  */
   union
@@ -901,7 +922,7 @@ send_ro_fd (struct database_dyn *db, char *key, int fd)
     struct cmsghdr hdr;
     char bytes[CMSG_SPACE (sizeof (int))];
   } buf;
-  struct msghdr msg = { .msg_iov = iov, .msg_iovlen = 1,
+  struct msghdr msg = { .msg_iov = iov, .msg_iovlen = 2,
 			.msg_control = buf.bytes,
 			.msg_controllen = sizeof (buf) };
   struct cmsghdr *cmsg = CMSG_FIRSTHDR (&msg);
@@ -1000,7 +1021,7 @@ cannot handle old request version %d; current version is %d"),
 	  ssize_t nwritten;
 
 #ifdef HAVE_SENDFILE
-	  if (db->mmap_used || !cached->notfound)
+	  if (__builtin_expect (db->mmap_used, 1))
 	    {
 	      assert (db->wr_fd != -1);
 	      assert ((char *) cached->data > (char *) db->data);

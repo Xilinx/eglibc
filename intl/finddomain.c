@@ -1,5 +1,5 @@
 /* Handle list of needed message catalogs
-   Copyright (C) 1995-1999, 2000, 2001, 2002, 2004, 2006
+   Copyright (C) 1995-1999, 2000, 2001, 2002, 2004, 2006, 2007
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Ulrich Drepper <drepper@gnu.org>, 1995.
@@ -126,6 +126,9 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
      we use XPG4 style, and `_', `+', and `,' if we use CEN syntax.  */
   mask = _nl_explode_name (locale, &language, &modifier, &territory,
 			   &codeset, &normalized_codeset);
+  if (mask == -1)
+    /* This means we are out of core.  */
+    return NULL;
 
   /* We need to protect modifying the _NL_LOADED_DOMAINS data.  */
   __libc_rwlock_wrlock (lock);
@@ -140,7 +143,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 
   if (retval == NULL)
     /* This means we are out of core.  */
-    return NULL;
+    goto out;
 
   if (retval->decided <= 0)
     _nl_load_domain (retval, domainbinding);
@@ -156,6 +159,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 	}
     }
 
+out:
   /* The space for normalized_codeset is dynamically allocated.  Free it.  */
   if (mask & XPG_NORM_CODESET)
     free ((void *) normalized_codeset);

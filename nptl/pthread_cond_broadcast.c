@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2004, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Martin Schwidefsky <schwidefsky@de.ibm.com>, 2003.
 
@@ -32,8 +32,10 @@ int
 __pthread_cond_broadcast (cond)
      pthread_cond_t *cond;
 {
+  int pshared = (cond->__data.__mutex == (void *) ~0l)
+		? LLL_SHARED : LLL_PRIVATE;
   /* Make sure we are alone.  */
-  lll_mutex_lock (cond->__data.__lock);
+  lll_lock (cond->__data.__lock, pshared);
 
   /* Are there any waiters to be woken?  */
   if (cond->__data.__total_seq > cond->__data.__wakeup_seq)
@@ -47,7 +49,7 @@ __pthread_cond_broadcast (cond)
       ++cond->__data.__broadcast_seq;
 
       /* We are done.  */
-      lll_mutex_unlock (cond->__data.__lock);
+      lll_unlock (cond->__data.__lock, pshared);
 
       /* Do not use requeue for pshared condvars.  */
       if (cond->__data.__mutex == (void *) ~0l)
@@ -57,19 +59,22 @@ __pthread_cond_broadcast (cond)
       pthread_mutex_t *mut = (pthread_mutex_t *) cond->__data.__mutex;
 
       /* XXX: Kernel so far doesn't support requeue to PI futex.  */
-      if (__builtin_expect (mut->__data.__kind & PTHREAD_MUTEX_PRIO_INHERIT_NP,
-			    0))
+      /* XXX: Kernel so far can only requeue to the same type of futex,
+	 in this case private (we don't requeue for pshared condvars).  */
+      if (__builtin_expect (mut->__data.__kind
+			    & (PTHREAD_MUTEX_PRIO_INHERIT_NP
+			       | PTHREAD_MUTEX_PSHARED_BIT), 0))
 	goto wake_all;
 
       /* lll_futex_requeue returns 0 for success and non-zero
 	 for errors.  */
       if (__builtin_expect (lll_futex_requeue (&cond->__data.__futex, 1,
 					       INT_MAX, &mut->__data.__lock,
-					       futex_val), 0))
+					       futex_val, LLL_PRIVATE), 0))
 	{
 	  /* The requeue functionality is not available.  */
 	wake_all:
-	  lll_futex_wake (&cond->__data.__futex, INT_MAX);
+	  lll_futex_wake (&cond->__data.__futex, INT_MAX, pshared);
 	}
 
       /* That's all.  */
@@ -77,7 +82,7 @@ __pthread_cond_broadcast (cond)
     }
 
   /* We are done.  */
-  lll_mutex_unlock (cond->__data.__lock);
+  lll_unlock (cond->__data.__lock, pshared);
 
   return 0;
 }

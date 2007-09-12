@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -31,7 +31,8 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
 {
   int newowner = 0;
 
-  switch (__builtin_expect (mutex->__data.__kind, PTHREAD_MUTEX_TIMED_NP))
+  switch (__builtin_expect (PTHREAD_MUTEX_TYPE (mutex),
+			    PTHREAD_MUTEX_TIMED_NP))
     {
     case PTHREAD_MUTEX_RECURSIVE_NP:
       /* Recursive mutex.  */
@@ -46,7 +47,7 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
     case PTHREAD_MUTEX_ERRORCHECK_NP:
       /* Error checking mutex.  */
       if (mutex->__data.__owner != THREAD_GETMEM (THREAD_SELF, tid)
-	  || ! lll_mutex_islocked (mutex->__data.__lock))
+	  || ! lll_islocked (mutex->__data.__lock))
 	return EPERM;
       /* FALLTHROUGH */
 
@@ -60,7 +61,7 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
 	--mutex->__data.__nusers;
 
       /* Unlock.  */
-      lll_mutex_unlock (mutex->__data.__lock);
+      lll_unlock (mutex->__data.__lock, PTHREAD_MUTEX_PSHARED (mutex));
       break;
 
     case PTHREAD_MUTEX_ROBUST_RECURSIVE_NP:
@@ -91,7 +92,7 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
     case PTHREAD_MUTEX_ROBUST_ADAPTIVE_NP:
       if ((mutex->__data.__lock & FUTEX_TID_MASK)
 	  != THREAD_GETMEM (THREAD_SELF, tid)
-	  || ! lll_mutex_islocked (mutex->__data.__lock))
+	  || ! lll_islocked (mutex->__data.__lock))
 	return EPERM;
 
       /* If the previous owner died and the caller did not succeed in
@@ -114,7 +115,8 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
 	--mutex->__data.__nusers;
 
       /* Unlock.  */
-      lll_robust_mutex_unlock (mutex->__data.__lock);
+      lll_robust_unlock (mutex->__data.__lock,
+			 PTHREAD_ROBUST_MUTEX_PSHARED (mutex));
 
       THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
       break;
@@ -160,7 +162,7 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
     case PTHREAD_MUTEX_PI_ROBUST_ADAPTIVE_NP:
       if ((mutex->__data.__lock & FUTEX_TID_MASK)
 	  != THREAD_GETMEM (THREAD_SELF, tid)
-	  || ! lll_mutex_islocked (mutex->__data.__lock))
+	  || ! lll_islocked (mutex->__data.__lock))
 	return EPERM;
 
       /* If the previous owner died and the caller did not succeed in
@@ -240,7 +242,8 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
 						   newval, oldval));
 
       if ((oldval & ~PTHREAD_MUTEX_PRIO_CEILING_MASK) > 1)
-	lll_futex_wake (&mutex->__data.__lock, 1);
+	lll_futex_wake (&mutex->__data.__lock, 1,
+			PTHREAD_MUTEX_PSHARED (mutex));
 
       int oldprio = newval >> PTHREAD_MUTEX_PRIO_CEILING_SHIFT;
       return __pthread_tpp_change_priority (oldprio, -1);

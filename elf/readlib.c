@@ -1,11 +1,12 @@
-/* Copyright (C) 1999-2003, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 1999-2003, 2005, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 1999 and
 		  Jakub Jelinek <jakub@redhat.com>, 1999.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; version 2 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -68,7 +69,7 @@ static struct known_names known_libs[] =
 int
 process_file (const char *real_file_name, const char *file_name,
 	      const char *lib, int *flag, unsigned int *osversion,
-	      char **soname, int is_link)
+	      char **soname, int is_link, struct stat64 *stat_buf)
 {
   FILE *file;
   struct stat64 statbuf;
@@ -134,7 +135,7 @@ process_file (const char *real_file_name, const char *file_name,
       )
     {
       /* Aout files don't have a soname, just return the name
-         including the major number.  */
+	 including the major number.  */
       char *copy, *major, *dot;
       copy = xstrdup (lib);
       major = strstr (copy, ".so.");
@@ -174,7 +175,30 @@ process_file (const char *real_file_name, const char *file_name,
   munmap (file_contents, statbuf.st_size);
   fclose (file);
 
+  *stat_buf = statbuf;
   return ret;
+}
+
+/* Returns made up soname if lib doesn't have explicit DT_SONAME.  */
+
+char *
+implicit_soname (const char *lib, int flag)
+{
+  char *soname = xstrdup (lib);
+
+  if ((flag & FLAG_TYPE_MASK) != FLAG_LIBC4)
+    return soname;
+
+  /* Aout files don't have a soname, just return the name
+     including the major number.  */
+  char *major = strstr (soname, ".so.");
+  if (major)
+    {
+      char *dot = strstr (major + 4, ".");
+      if (dot)
+	*dot = '\0';
+    }
+  return soname;
 }
 
 /* Get architecture specific version of process_elf_file.  */

@@ -1,4 +1,4 @@
-/* Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+/* Copyright (C) 1999, 2000, 2001, 2002, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 1999 and
 		  Jakub Jelinek <jakub@redhat.com>, 1999.
@@ -127,16 +127,37 @@ process_elf_file (const char *file_name, const char *lib, int *flag,
 	  break;
 
 	case PT_NOTE:
-	  if (!*osversion && segment->p_filesz == 32 && segment->p_align >= 4)
+	  if (!*osversion && segment->p_filesz >= 32 && segment->p_align >= 4)
 	    {
 	      ElfW(Word) *abi_note = (ElfW(Word) *) (file_contents
 						     + segment->p_offset);
-	      if (abi_note [0] == 4 && abi_note [1] == 16 && abi_note [2] == 1
-		  && memcmp (abi_note + 3, "GNU", 4) == 0)
-		*osversion = (abi_note [4] << 24) |
-			     ((abi_note [5] & 0xff) << 16) |
-			     ((abi_note [6] & 0xff) << 8) |
-			     (abi_note [7] & 0xff);
+	      ElfW(Addr) size = segment->p_filesz;
+
+	      while (abi_note [0] != 4 || abi_note [1] != 16
+		     || abi_note [2] != 1
+		     || memcmp (abi_note + 3, "GNU", 4) != 0)
+		{
+#define ROUND(len) (((len) + sizeof (ElfW(Word)) - 1) & -sizeof (ElfW(Word)))
+		  ElfW(Addr) note_size = 3 * sizeof (ElfW(Word))
+					 + ROUND (abi_note[0])
+					 + ROUND (abi_note[1]);
+
+		  if (size - 32 < note_size || note_size == 0)
+		    {
+		      size = 0;
+		      break;
+		    }
+		  size -= note_size;
+		  abi_note = (void *) abi_note + note_size;
+		}
+
+	      if (size == 0)
+		break;
+
+	      *osversion = (abi_note [4] << 24) |
+			   ((abi_note [5] & 0xff) << 16) |
+			   ((abi_note [6] & 0xff) << 8) |
+			   (abi_note [7] & 0xff);
 	    }
 	  break;
 
@@ -209,12 +230,6 @@ process_elf_file (const char *file_name, const char *lib, int *flag,
 	    return 0;
 	}
     }
-
-  /* We reach this point only if the file doesn't contain a DT_SONAME
-     or if we can't classify the library.  If it doesn't have a
-     soname, return the name of the library.  */
-  if (*soname == NULL)
-    *soname = xstrdup (lib);
 
   return 0;
 }

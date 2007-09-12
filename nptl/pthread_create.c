@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -27,6 +27,7 @@
 #include <atomic.h>
 #include <libc-internal.h>
 #include <resolv.h>
+#include <kernel-features.h>
 
 #include <shlib-compat.h>
 
@@ -63,7 +64,7 @@ __find_in_stack_list (pd)
   list_t *entry;
   struct pthread *result = NULL;
 
-  lll_lock (stack_cache_lock);
+  lll_lock (stack_cache_lock, LLL_PRIVATE);
 
   list_for_each (entry, &stack_used)
     {
@@ -90,7 +91,7 @@ __find_in_stack_list (pd)
 	  }
       }
 
-  lll_unlock (stack_cache_lock);
+  lll_unlock (stack_cache_lock, LLL_PRIVATE);
 
   return result;
 }
@@ -286,9 +287,9 @@ start_thread (void *arg)
 	  int oldtype = CANCEL_ASYNC ();
 
 	  /* Get the lock the parent locked to force synchronization.  */
-	  lll_lock (pd->lock);
+	  lll_lock (pd->lock, LLL_PRIVATE);
 	  /* And give it up right away.  */
-	  lll_unlock (pd->lock);
+	  lll_unlock (pd->lock, LLL_PRIVATE);
 
 	  CANCEL_RESET (oldtype);
 	}
@@ -374,7 +375,7 @@ start_thread (void *arg)
 # endif
 	  this->__list.__next = NULL;
 
-	  lll_robust_mutex_dead (this->__lock);
+	  lll_robust_dead (this->__lock, /* XYZ */ LLL_SHARED);
 	}
       while (robust != (void *) &pd->robust_head);
     }
@@ -389,7 +390,7 @@ start_thread (void *arg)
       /* Some other thread might call any of the setXid functions and expect
 	 us to reply.  In this case wait until we did that.  */
       do
-	lll_futex_wait (&pd->setxid_futex, 0);
+	lll_futex_wait (&pd->setxid_futex, 0, LLL_PRIVATE);
       while (pd->cancelhandling & SETXID_BITMASK);
 
       /* Reset the value so that the stack can be reused.  */

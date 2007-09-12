@@ -313,7 +313,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS with_fp with_cvs enable_check_abi oldest_abi bindnow force_install all_warnings build build_cpu build_vendor build_os host host_cpu host_vendor host_os subdirs add_ons add_on_subdirs base_machine submachine sysnames sysdeps_add_ons INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC OBJEXT BUILD_CC cross_compiling CPP CXX CXXFLAGS ac_ct_CXX AR NM OBJDUMP RANLIB ac_ct_RANLIB MIG AS LD PWD_P MAKE MSGFMT MAKEINFO SED AUTOCONF SYSINCLUDES CXX_SYSINCLUDES libc_cv_gcc_static_libgcc BASH libc_cv_have_bash2 KSH libc_cv_have_ksh AWK PERL INSTALL_INFO BISON VERSIONING libc_cv_cc_with_libunwind libc_cv_Bgroup libc_cv_libgcc_s_suffix libc_cv_as_needed ASFLAGS_config libc_cv_z_combreloc libc_cv_z_execstack libc_cv_fpie libc_cv_hashstyle fno_unit_at_a_time libc_cv_ssp libc_cv_gnu89_inline libc_cv_have_initfini no_whole_archive exceptions LIBGD have_libaudit have_libcap have_selinux EGREP sizeof_long_double libc_cv_gcc_unwind_find_fde uname_sysname uname_release uname_version old_glibc_headers libc_cv_slibdir libc_cv_localedir libc_cv_sysconfdir libc_cv_rootsbindir libc_cv_forced_unwind use_ldconfig ldd_rewrite_script elf xcoff static shared pic_default profile omitfp bounded static_nss nopic_initfini DEFINES mach_interface_list VERSION RELEASE LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS with_fp with_cvs enable_check_abi oldest_abi bindnow force_install all_warnings build build_cpu build_vendor build_os host host_cpu host_vendor host_os subdirs add_ons add_on_subdirs base_machine submachine sysnames sysdeps_add_ons INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC OBJEXT BUILD_CC cross_compiling CPP CXX CXXFLAGS ac_ct_CXX AR NM OBJDUMP RANLIB ac_ct_RANLIB MIG AS LD PWD_P MAKE MSGFMT MAKEINFO SED AUTOCONF SYSINCLUDES CXX_SYSINCLUDES libc_cv_gcc_static_libgcc BASH_SHELL libc_cv_have_bash2 KSH libc_cv_have_ksh AWK PERL INSTALL_INFO BISON VERSIONING libc_cv_cc_with_libunwind libc_cv_Bgroup libc_cv_libgcc_s_suffix libc_cv_as_needed ASFLAGS_config libc_cv_z_combreloc libc_cv_z_execstack libc_cv_fpie libc_cv_hashstyle fno_unit_at_a_time libc_cv_ssp libc_cv_gnu89_inline libc_cv_have_initfini no_whole_archive exceptions LIBGD have_libaudit have_libcap have_selinux EGREP sizeof_long_double libc_cv_gcc_unwind_find_fde uname_sysname uname_release uname_version old_glibc_headers libc_cv_slibdir libc_cv_localedir libc_cv_sysconfdir libc_cv_rootsbindir libc_cv_forced_unwind use_ldconfig ldd_rewrite_script elf xcoff static shared pic_default profile omitfp bounded static_nss nopic_initfini DEFINES mach_interface_list VERSION RELEASE LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -4657,12 +4657,12 @@ echo "${ECHO_T}$libc_cv_gcc_static_libgcc" >&6
 set dummy bash; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_path_BASH+set}" = set; then
+if test "${ac_cv_path_BASH_SHELL+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  case $BASH in
+  case $BASH_SHELL in
   [\\/]* | ?:[\\/]*)
-  ac_cv_path_BASH="$BASH" # Let the user override the test with a path.
+  ac_cv_path_BASH_SHELL="$BASH_SHELL" # Let the user override the test with a path.
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -4672,29 +4672,29 @@ do
   test -z "$as_dir" && as_dir=.
   for ac_exec_ext in '' $ac_executable_extensions; do
   if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_BASH="$as_dir/$ac_word$ac_exec_ext"
+    ac_cv_path_BASH_SHELL="$as_dir/$ac_word$ac_exec_ext"
     echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
 done
 done
 
-  test -z "$ac_cv_path_BASH" && ac_cv_path_BASH="no"
+  test -z "$ac_cv_path_BASH_SHELL" && ac_cv_path_BASH_SHELL="no"
   ;;
 esac
 fi
-BASH=$ac_cv_path_BASH
+BASH_SHELL=$ac_cv_path_BASH_SHELL
 
-if test -n "$BASH"; then
-  echo "$as_me:$LINENO: result: $BASH" >&5
-echo "${ECHO_T}$BASH" >&6
+if test -n "$BASH_SHELL"; then
+  echo "$as_me:$LINENO: result: $BASH_SHELL" >&5
+echo "${ECHO_T}$BASH_SHELL" >&6
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
-if test "$BASH" != no &&
-   $BASH -c 'test "$BASH_VERSINFO" \
+if test "$BASH_SHELL" != no &&
+   $BASH_SHELL -c 'test "$BASH_VERSINFO" \
 	     && test "$BASH_VERSINFO" -ge 2 >&/dev/null'; then
   libc_cv_have_bash2=yes
 else
@@ -4702,7 +4702,7 @@ else
 fi
 
 
-if test "$BASH" = no; then
+if test "$BASH_SHELL" = no; then
   # Extract the first word of "ksh", so it can be a program name with args.
 set dummy ksh; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -4749,7 +4749,7 @@ fi
     libc_cv_have_ksh=yes
   fi
 else
-  KSH="$BASH"
+  KSH="$BASH_SHELL"
 
   libc_cv_have_ksh=yes
 fi
@@ -8512,7 +8512,7 @@ s,@AUTOCONF@,$AUTOCONF,;t t
 s,@SYSINCLUDES@,$SYSINCLUDES,;t t
 s,@CXX_SYSINCLUDES@,$CXX_SYSINCLUDES,;t t
 s,@libc_cv_gcc_static_libgcc@,$libc_cv_gcc_static_libgcc,;t t
-s,@BASH@,$BASH,;t t
+s,@BASH_SHELL@,$BASH_SHELL,;t t
 s,@libc_cv_have_bash2@,$libc_cv_have_bash2,;t t
 s,@KSH@,$KSH,;t t
 s,@libc_cv_have_ksh@,$libc_cv_have_ksh,;t t

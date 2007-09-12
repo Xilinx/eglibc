@@ -39,7 +39,7 @@ pthread_getattr_np (thread_id, attr)
   struct pthread_attr *iattr = (struct pthread_attr *) attr;
   int ret = 0;
 
-  lll_lock (thread->lock);
+  lll_lock (thread->lock, LLL_PRIVATE);
 
   /* The thread library is responsible for keeping the values in the
      thread desriptor up-to-date in case the user changes them.  */
@@ -164,12 +164,16 @@ pthread_getattr_np (thread_id, attr)
 	{
 	  free (cpuset);
 	  if (ret == ENOSYS)
-	    /* There is no such functionality.  */
-	    ret = 0;
+	    {	  
+	      /* There is no such functionality.  */
+	      ret = 0;
+	      iattr->cpuset = NULL;
+	      iattr->cpusetsize = 0;
+	    }
 	}
     }
 
-  lll_unlock (thread->lock);
+  lll_unlock (thread->lock, LLL_PRIVATE);
 
   return ret;
 }

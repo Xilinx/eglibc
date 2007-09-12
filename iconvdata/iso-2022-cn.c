@@ -1,5 +1,5 @@
 /* Conversion module for ISO-2022-CN.
-   Copyright (C) 1999, 2000-2002 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2000-2002, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1999.
 
@@ -263,7 +263,10 @@ enum
       }									      \
     else								      \
       {									      \
-	char buf[2];							      \
+	unsigned char buf[2];						      \
+	/* Fake initialization to keep gcc quiet.  */			      \
+	asm ("" : "=m" (buf));						      \
+									      \
 	int used;							      \
 	size_t written = 0;						      \
 									      \

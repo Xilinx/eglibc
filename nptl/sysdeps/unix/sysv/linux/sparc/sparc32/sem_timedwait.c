@@ -1,5 +1,5 @@
 /* sem_timedwait -- wait on a semaphore.  SPARC version.
-   Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Paul Mackerras <paulus@au.ibm.com>, 2003.
 
@@ -28,37 +28,48 @@
 #include <shlib-compat.h>
 
 
+extern void __sem_wait_cleanup (void *arg) attribute_hidden;
+
+
 int
 sem_timedwait (sem_t *sem, const struct timespec *abstime)
 {
-  /* First check for cancellation.  */
-  CANCELLATION_P (THREAD_SELF);
-
-  int *futex = (int *) sem;
-  int val;
+  struct sparc_new_sem *isem = (struct sparc_new_sem *) sem;
   int err;
+  int val;
 
-  if (*futex > 0)
+  if (__atomic_is_v9)
+    val = atomic_decrement_if_positive (&isem->value);
+  else
     {
-      if (__atomic_is_v9)
-	val = atomic_decrement_if_positive (futex);
-      else
-	{
-	  __sparc32_atomic_do_lock24 (futex + 1);
-	  val = *futex;
-	  if (val > 0)
-	    *futex = val - 1;
-	  __sparc32_atomic_do_unlock24 (futex + 1);
-	}
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      val = isem->value;
       if (val > 0)
-	return 0;
+        isem->value = val - 1;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
     }
 
-  err = -EINVAL;
-  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
-    goto error_return;
+  if (val > 0)
+    return 0;
 
-  do
+  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
+  if (__atomic_is_v9)
+    atomic_increment (&isem->nwaiters);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      isem->nwaiters++;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+
+  pthread_cleanup_push (__sem_wait_cleanup, isem);
+
+  while (1)
     {
       struct timeval tv;
       struct timespec rt;
@@ -79,7 +90,11 @@ sem_timedwait (sem_t *sem, const struct timespec *abstime)
       /* Already timed out?  */
       err = -ETIMEDOUT;
       if (sec < 0)
-	goto error_return;
+	{
+	  __set_errno (ETIMEDOUT);
+	  err = -1;
+	  break;
+	}
 
       /* Do wait.  */
       rt.tv_sec = sec;
@@ -88,30 +103,47 @@ sem_timedwait (sem_t *sem, const struct timespec *abstime)
       /* Enable asynchronous cancellation.  Required by the standard.  */
       int oldtype = __pthread_enable_asynccancel ();
 
-      err = lll_futex_timed_wait (futex, 0, &rt);
+      err = lll_futex_timed_wait (&isem->value, 0, &rt,
+				  isem->private ^ FUTEX_PRIVATE_FLAG);
 
       /* Disable asynchronous cancellation.  */
       __pthread_disable_asynccancel (oldtype);
 
       if (err != 0 && err != -EWOULDBLOCK)
-	goto error_return;
+	{
+	  __set_errno (-err);
+	  err = -1;
+	  break;
+	}
 
       if (__atomic_is_v9)
-	val = atomic_decrement_if_positive (futex);
+	val = atomic_decrement_if_positive (&isem->value);
       else
 	{
-	  __sparc32_atomic_do_lock24 (futex + 1);
-	  val = *futex;
+	  __sparc32_atomic_do_lock24 (&isem->lock);
+	  val = isem->value;
 	  if (val > 0)
-	    *futex = val - 1;
-	  __sparc32_atomic_do_unlock24 (futex + 1);
+	    isem->value = val - 1;
+	  __sparc32_atomic_do_unlock24 (&isem->lock);
+	}
+
+      if (val > 0)
+	{
+	  err = 0;
+	  break;
 	}
     }
-  while (val <= 0);
 
-  return 0;
+  pthread_cleanup_pop (0);
 
- error_return:
-  __set_errno (-err);
-  return -1;
+  if (__atomic_is_v9)
+    atomic_decrement (&isem->nwaiters);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      isem->nwaiters--;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+
+  return err;
 }

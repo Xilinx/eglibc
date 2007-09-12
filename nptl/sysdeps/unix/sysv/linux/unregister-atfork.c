@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2005, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -54,7 +54,7 @@ __unregister_atfork (dso_handle)
      that there couldn't have been another thread deleting something.
      The __unregister_atfork function is only called from the
      dlclose() code which itself serializes the operations.  */
-  lll_lock (__fork_lock);
+  lll_lock (__fork_lock, LLL_PRIVATE);
 
   /* We have to create a new list with all the entries we don't remove.  */
   struct deleted_handler
@@ -89,7 +89,7 @@ __unregister_atfork (dso_handle)
   while (runp != NULL);
 
   /* Release the lock.  */
-  lll_unlock (__fork_lock);
+  lll_unlock (__fork_lock, LLL_PRIVATE);
 
   /* Walk the list of all entries which have to be deleted.  */
   while (deleted != NULL)
@@ -104,7 +104,7 @@ __unregister_atfork (dso_handle)
       atomic_decrement (&deleted->handler->refcntr);
       unsigned int val;
       while ((val = deleted->handler->refcntr) != 0)
-	lll_futex_wait (&deleted->handler->refcntr, val);
+	lll_futex_wait (&deleted->handler->refcntr, val, LLL_PRIVATE);
 
       deleted = deleted->next;
     }

@@ -56,7 +56,8 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-fseek tst-fmemopen tst-gets \
 	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
-	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2
+	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2 bug18 bug18a \
+	 bug19 bug19a tst-popen2
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf
 
@@ -84,6 +85,7 @@ OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
 	= -DOPTION_EGLIBC_LOCALE_CODE
 
 CFLAGS-vfprintf.c = -Wno-uninitialized
+CFLAGS-vfwprintf.c = -Wno-uninitialized
 CFLAGS-tst-printf.c = -Wno-format
 CFLAGS-tstdiomisc.c = -Wno-format
 CFLAGS-scanf4.c = -Wno-format
@@ -101,6 +103,8 @@ CFLAGS-cuserid.c = -fexceptions
 CFLAGS-errlist.c = $(fno-unit-at-a-time)
 CFLAGS-siglist.c = $(fno-unit-at-a-time)
 
+# We know the test has a format string problem.
+CFLAGS-tst-sprintf.c = -Wno-format
 tst-sscanf-ENV = LOCPATH=$(common-objpfx)localedata
 tst-swprintf-ENV = LOCPATH=$(common-objpfx)localedata
 test-vfprintf-ENV = LOCPATH=$(common-objpfx)localedata

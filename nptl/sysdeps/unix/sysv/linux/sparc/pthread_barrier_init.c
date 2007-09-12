@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,20 +21,13 @@
 #include "pthreadP.h"
 #include <lowlevellock.h>
 
-struct sparc_pthread_barrier
-{
-  struct pthread_barrier b;
-  unsigned char left_lock;
-  unsigned char pshared;
-};
-
 int
 pthread_barrier_init (barrier, attr, count)
      pthread_barrier_t *barrier;
      const pthread_barrierattr_t *attr;
      unsigned int count;
 {
-  struct sparc_pthread_barrier *ibarrier;
+  union sparc_pthread_barrier *ibarrier;
 
   if (__builtin_expect (count == 0, 0))
     return EINVAL;
@@ -48,15 +41,15 @@ pthread_barrier_init (barrier, attr, count)
 	return EINVAL;
     }
 
-  ibarrier = (struct sparc_pthread_barrier *) barrier;
+  ibarrier = (union sparc_pthread_barrier *) barrier;
 
   /* Initialize the individual fields.  */
   ibarrier->b.lock = LLL_LOCK_INITIALIZER;
   ibarrier->b.left = count;
   ibarrier->b.init_count = count;
   ibarrier->b.curr_event = 0;
-  ibarrier->left_lock = 0;
-  ibarrier->pshared = (iattr && iattr->pshared == PTHREAD_PROCESS_SHARED);
+  ibarrier->s.left_lock = 0;
+  ibarrier->s.pshared = (iattr && iattr->pshared == PTHREAD_PROCESS_SHARED);
 
   return 0;
 }

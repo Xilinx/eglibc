@@ -1,4 +1,4 @@
-/* Copyright (C) 2000 Free Software Foundation, Inc.
+/* Copyright (C) 2000, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,5 +28,5 @@ int
 mkstemp64 (template)
      char *template;
 {
-  return __gen_tempname (template, __GT_BIGFILE);
+  return __gen_tempname (template, O_LARGEFILE, __GT_FILE);
 }

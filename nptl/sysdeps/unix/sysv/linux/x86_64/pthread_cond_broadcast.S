@@ -1,4 +1,5 @@
-/* Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,23 +20,11 @@
 
 #include <sysdep.h>
 #include <shlib-compat.h>
+#include <lowlevellock.h>
 #include <lowlevelcond.h>
 #include <kernel-features.h>
 #include <pthread-pi-defines.h>
-
-#ifdef UP
-# define LOCK
-#else
-# define LOCK lock
-#endif
-
-#define SYS_futex		202
-#define FUTEX_WAIT		0
-#define FUTEX_WAKE		1
-#define FUTEX_REQUEUE		3
-#define FUTEX_CMP_REQUEUE	4
-
-#define EINVAL			22
+#include <pthread-errnos.h>
 
 
 	.text
@@ -82,11 +71,18 @@ __pthread_cond_broadcast:
 	je	9f
 
 	/* XXX: The kernel so far doesn't support requeue to PI futex.  */
-	testl	$PI_BIT, MUTEX_KIND(%r8)
+	/* XXX: The kernel only supports FUTEX_CMP_REQUEUE to the same
+	   type of futex (private resp. shared).  */
+	testl	$(PI_BIT | PS_BIT), MUTEX_KIND(%r8)
 	jne	9f
 
 	/* Wake up all threads.  */
-	movl	$FUTEX_CMP_REQUEUE, %esi
+#ifdef __ASSUME_PRIVATE_FUTEX
+	movl	$(FUTEX_CMP_REQUEUE|FUTEX_PRIVATE_FLAG), %esi
+#else
+	movl	%fs:PRIVATE_FUTEX, %esi
+	orl	$FUTEX_CMP_REQUEUE, %esi
+#endif
 	movl	$SYS_futex, %eax
 	movl	$1, %edx
 	movl	$0x7fffffff, %r10d
@@ -115,7 +111,11 @@ __pthread_cond_broadcast:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	callq	__lll_mutex_lock_wait
+	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	movl	$LLL_PRIVATE, %eax
+	movl	$LLL_SHARED, %esi
+	cmovne	%eax, %esi
+	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
 #endif
@@ -123,18 +123,36 @@ __pthread_cond_broadcast:
 
 	/* Unlock in loop requires wakeup.  */
 5:	addq	$cond_lock-cond_futex, %rdi
-	callq	__lll_mutex_unlock_wake
+	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	movl	$LLL_PRIVATE, %eax
+	movl	$LLL_SHARED, %esi
+	cmovne	%eax, %esi
+	callq	__lll_unlock_wake
 	jmp	6b
 
 	/* Unlock in loop requires wakeup.  */
 7:	addq	$cond_lock-cond_futex, %rdi
-	callq	__lll_mutex_unlock_wake
+	cmpq	$-1, %r8
+	movl	$LLL_PRIVATE, %eax
+	movl	$LLL_SHARED, %esi
+	cmovne	%eax, %esi
+	callq	__lll_unlock_wake
 	subq	$cond_lock-cond_futex, %rdi
 	jmp	8b
 
 9:	/* The futex requeue functionality is not available.  */
+	cmpq	$-1, %r8
 	movl	$0x7fffffff, %edx
-	movl	$FUTEX_WAKE, %esi
+#ifdef __ASSUME_PRIVATE_FUTEX
+	movl	$FUTEX_WAKE, %eax
+	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
+	cmove	%eax, %esi
+#else
+	movl	$0, %eax
+	movl	%fs:PRIVATE_FUTEX, %esi
+	cmove	%eax, %esi
+	orl	$FUTEX_WAKE, %esi
+#endif
 	movl	$SYS_futex, %eax
 	syscall
 	jmp	10b

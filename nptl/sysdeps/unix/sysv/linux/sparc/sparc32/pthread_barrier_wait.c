@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2004, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Martin Schwidefsky <schwidefsky@de.ibm.com>, 2003.
 
@@ -22,24 +22,18 @@
 #include <lowlevellock.h>
 #include <pthreadP.h>
 
-struct sparc_pthread_barrier
-{
-  struct pthread_barrier b;
-  unsigned char left_lock;
-  unsigned char pshared;
-};
-
 /* Wait on barrier.  */
 int
 pthread_barrier_wait (barrier)
      pthread_barrier_t *barrier;
 {
-  struct sparc_pthread_barrier *ibarrier
-    = (struct sparc_pthread_barrier *) barrier;
+  union sparc_pthread_barrier *ibarrier
+    = (union sparc_pthread_barrier *) barrier;
   int result = 0;
+  int private = ibarrier->s.pshared ? LLL_SHARED : LLL_PRIVATE;
 
   /* Make sure we are alone.  */
-  lll_lock (ibarrier->b.lock);
+  lll_lock (ibarrier->b.lock, private);
 
   /* One more arrival.  */
   --ibarrier->b.left;
@@ -52,7 +46,7 @@ pthread_barrier_wait (barrier)
       ++ibarrier->b.curr_event;
 
       /* Wake up everybody.  */
-      lll_futex_wake (&ibarrier->b.curr_event, INT_MAX);
+      lll_futex_wake (&ibarrier->b.curr_event, INT_MAX, private);
 
       /* This is the thread which finished the serialization.  */
       result = PTHREAD_BARRIER_SERIAL_THREAD;
@@ -64,11 +58,11 @@ pthread_barrier_wait (barrier)
       unsigned int event = ibarrier->b.curr_event;
 
       /* Before suspending, make the barrier available to others.  */
-      lll_unlock (ibarrier->b.lock);
+      lll_unlock (ibarrier->b.lock, private);
 
       /* Wait for the event counter of the barrier to change.  */
       do
-	lll_futex_wait (&ibarrier->b.curr_event, event);
+	lll_futex_wait (&ibarrier->b.curr_event, event, private);
       while (event == ibarrier->b.curr_event);
     }
 
@@ -76,11 +70,11 @@ pthread_barrier_wait (barrier)
   unsigned int init_count = ibarrier->b.init_count;
 
   /* If this was the last woken thread, unlock.  */
-  if (__atomic_is_v9 || ibarrier->pshared == 0)
+  if (__atomic_is_v9 || ibarrier->s.pshared == 0)
     {
       if (atomic_increment_val (&ibarrier->b.left) == init_count)
 	/* We are done.  */
-	lll_unlock (ibarrier->b.lock);
+	lll_unlock (ibarrier->b.lock, private);
     }
   else
     {
@@ -88,12 +82,12 @@ pthread_barrier_wait (barrier)
       /* Slightly more complicated.  On pre-v9 CPUs, atomic_increment_val
 	 is only atomic for threads within the same process, not for
 	 multiple processes.  */
-      __sparc32_atomic_do_lock24 (&ibarrier->left_lock);
+      __sparc32_atomic_do_lock24 (&ibarrier->s.left_lock);
       left = ++ibarrier->b.left;
-      __sparc32_atomic_do_unlock24 (&ibarrier->left_lock);
+      __sparc32_atomic_do_unlock24 (&ibarrier->s.left_lock);
       if (left == init_count)
         /* We are done.  */
-        lll_unlock (ibarrier->b.lock);
+	lll_unlock (ibarrier->b.lock, private);
     }
 
   return result;

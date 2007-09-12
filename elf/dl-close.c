@@ -229,6 +229,8 @@ _dl_close_worker (struct link_map *map)
   bool do_audit = GLRO(dl_naudit) > 0 && !ns->_ns_loaded->l_auditing;
 #endif
   bool unload_any = false;
+  bool scope_mem_left = false;
+  unsigned int unload_global = 0;
   unsigned int first_loaded = ~0;
   for (unsigned int i = 0; i < nloaded; ++i)
     {
@@ -292,6 +294,9 @@ _dl_close_worker (struct link_map *map)
 
 	  /* We indeed have an object to remove.  */
 	  unload_any = true;
+
+	  if (imap->l_global)
+	    ++unload_global;
 
 	  /* Remember where the first dynamically loaded object is.  */
 	  if (i < first_loaded)
@@ -401,18 +406,18 @@ _dl_close_worker (struct link_map *map)
 
 	      struct r_scope_elem **old = imap->l_scope;
 
-	      if (RTLD_SINGLE_THREAD_P)
-		imap->l_scope = newp;
-	      else
-		{
-		  __rtld_mrlock_change (imap->l_scope_lock);
-		  imap->l_scope = newp;
-		  __rtld_mrlock_done (imap->l_scope_lock);
-		}
+	      imap->l_scope = newp;
 
 	      /* No user anymore, we can free it now.  */
 	      if (old != imap->l_scope_mem)
-		free (old);
+		{
+		  if (_dl_scope_free (old))
+		    /* If _dl_scope_free used THREAD_GSCOPE_WAIT (),
+		       no need to repeat it.  */
+		    scope_mem_left = false;
+		}
+	      else
+		scope_mem_left = true;
 
 	      imap->l_scope_max = new_size;
 	    }
@@ -458,6 +463,46 @@ _dl_close_worker (struct link_map *map)
   r->r_state = RT_DELETE;
   _dl_debug_state ();
 
+  if (unload_global)
+    {
+      /* Some objects are in the global scope list.  Remove them.  */
+      struct r_scope_elem *ns_msl = ns->_ns_main_searchlist;
+      unsigned int i;
+      unsigned int j = 0;
+      unsigned int cnt = ns_msl->r_nlist;
+
+      while (cnt > 0 && ns_msl->r_list[cnt - 1]->l_removed)
+	--cnt;
+
+      if (cnt + unload_global == ns_msl->r_nlist)
+	/* Speed up removing most recently added objects.  */
+	j = cnt;
+      else
+ 	for (i = 0; i < cnt; i++)
+	  if (ns_msl->r_list[i]->l_removed == 0)
+	    {
+	      if (i != j)
+		ns_msl->r_list[j] = ns_msl->r_list[i];
+	      j++;
+	    }
+      ns_msl->r_nlist = j;
+    }
+
+  if (!RTLD_SINGLE_THREAD_P
+      && (unload_global
+	  || scope_mem_left
+	  || (GL(dl_scope_free_list) != NULL
+	      && GL(dl_scope_free_list)->count)))
+    {
+      THREAD_GSCOPE_WAIT ();
+
+      /* Now we can free any queued old scopes.  */
+      struct dl_scope_free_list *fsl  = GL(dl_scope_free_list);
+      if (fsl != NULL)
+	while (fsl->count > 0)
+	  free (fsl->list[--fsl->count]);
+    }
+
   size_t tls_free_start;
   size_t tls_free_end;
   tls_free_start = tls_free_end = NO_TLS_OFFSET;
@@ -473,25 +518,6 @@ _dl_close_worker (struct link_map *map)
 
 	  /* That was the last reference, and this was a dlopen-loaded
 	     object.  We can unmap it.  */
-	  if (__builtin_expect (imap->l_global, 0))
-	    {
-	      /* This object is in the global scope list.  Remove it.  */
-	      struct r_scope_elem *ns_msl = ns->_ns_main_searchlist;
-	      unsigned int cnt = ns_msl->r_nlist;
-
-	      do
-		--cnt;
-	      while (ns_msl->r_list[cnt] != imap);
-
-	      /* The object was already correctly registered.  */
-	      while (++cnt < ns_msl->r_nlist)
-		ns_msl->r_list[cnt - 1] = ns_msl->r_list[cnt];
-
-	      --ns_msl->r_nlist;
-
-	      if (!RTLD_SINGLE_THREAD_P)
-		THREAD_GSCOPE_WAIT ();
-	    }
 
 	  /* Remove the object from the dtv slotinfo array if it uses TLS.  */
 	  if (__builtin_expect (imap->l_tls_blocksize > 0, 0))
@@ -773,4 +799,8 @@ libc_freeres_fn (free_mem)
 	   malloc), and in the static library it's in .bss space.  */
 	free_slotinfo (&GL(dl_tls_dtv_slotinfo_list)->next);
     }
+
+  void *scope_free_list = GL(dl_scope_free_list);
+  GL(dl_scope_free_list) = NULL;
+  free (scope_free_list);
 }

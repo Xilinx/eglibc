@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,23 +19,10 @@
 
 #include <sysdep.h>
 #include <shlib-compat.h>
+#include <lowlevellock.h>
 #include <lowlevelcond.h>
 #include <kernel-features.h>
-
-#ifdef UP
-# define LOCK
-#else
-# define LOCK lock
-#endif
-
-#define SYS_futex		202
-#define FUTEX_WAIT		0
-#define FUTEX_WAKE		1
-#define FUTEX_WAKE_OP		5
-
-#define FUTEX_OP_CLEAR_WAKE_IF_GT_ONE	((4 << 24) | 1)
-
-#define EINVAL			22
+#include <pthread-errnos.h>
 
 
 	.text
@@ -68,10 +55,20 @@ __pthread_cond_signal:
 	addl	$1, (%rdi)
 
 	/* Wake up one thread.  */
-	movl	$FUTEX_WAKE_OP, %esi
-	movl	$SYS_futex, %eax
+	cmpq	$-1, dep_mutex(%r8)
 	movl	$1, %edx
+#ifdef __ASSUME_PRIVATE_FUTEX
+	movl	$FUTEX_WAKE_OP, %eax
+	movl	$(FUTEX_WAKE_OP|FUTEX_PRIVATE_FLAG), %esi
+	cmove	%eax, %esi
+#else
+	movl	$0, %eax
+	movl	%fs:PRIVATE_FUTEX, %esi
+	cmove	%eax, %esi
+	orl	$FUTEX_WAKE_OP, %esi
+#endif
 	movl	$1, %r10d
+	movl	$SYS_futex, %eax
 #if cond_lock != 0
 	addq	$cond_lock, %r8
 #endif
@@ -88,7 +85,9 @@ __pthread_cond_signal:
 	xorl	%eax, %eax
 	retq
 
-7:	movl	$FUTEX_WAKE, %esi
+7:	/* %esi should be either FUTEX_WAKE_OP or
+	   FUTEX_WAKE_OP|FUTEX_PRIVATE_FLAG from the previous syscall.  */
+	xorl	$(FUTEX_WAKE ^ FUTEX_WAKE_OP), %esi
 	movl	$SYS_futex, %eax
 	/* %rdx should be 1 already from $FUTEX_WAKE_OP syscall.
 	movl	$1, %edx  */
@@ -111,7 +110,11 @@ __pthread_cond_signal:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	callq	__lll_mutex_lock_wait
+	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	movl	$LLL_PRIVATE, %eax
+	movl	$LLL_SHARED, %esi
+	cmovne	%eax, %esi
+	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
 #endif
@@ -120,7 +123,14 @@ __pthread_cond_signal:
 	/* Unlock in loop requires wakeup.  */
 5:
 	movq	%r8, %rdi
-	callq	__lll_mutex_unlock_wake
+#if cond_lock != 0
+	addq	$cond_lock, %rdi
+#endif
+	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	movl	$LLL_PRIVATE, %eax
+	movl	$LLL_SHARED, %esi
+	cmovne	%eax, %esi
+	callq	__lll_unlock_wake
 	jmp	6b
 	.size	__pthread_cond_signal, .-__pthread_cond_signal
 versioned_symbol (libpthread, __pthread_cond_signal, pthread_cond_signal,

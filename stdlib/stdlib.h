@@ -273,125 +273,7 @@ extern long double strtold_l (__const char *__restrict __nptr,
 #endif /* GNU */
 
 
-/* The internal entry points for `strtoX' take an extra flag argument
-   saying whether or not to parse locale-dependent number grouping.  */
-
-extern double __strtod_internal (__const char *__restrict __nptr,
-				 char **__restrict __endptr, int __group)
-     __THROW __nonnull ((1)) __wur;
-extern float __strtof_internal (__const char *__restrict __nptr,
-				char **__restrict __endptr, int __group)
-     __THROW __nonnull ((1)) __wur;
-extern long double __strtold_internal (__const char *__restrict __nptr,
-				       char **__restrict __endptr,
-				       int __group)
-     __THROW __nonnull ((1)) __wur;
-#ifndef __strtol_internal_defined
-extern long int __strtol_internal (__const char *__restrict __nptr,
-				   char **__restrict __endptr,
-				   int __base, int __group)
-     __THROW __nonnull ((1)) __wur;
-# define __strtol_internal_defined	1
-#endif
-#ifndef __strtoul_internal_defined
-extern unsigned long int __strtoul_internal (__const char *__restrict __nptr,
-					     char **__restrict __endptr,
-					     int __base, int __group)
-     __THROW __nonnull ((1)) __wur;
-# define __strtoul_internal_defined	1
-#endif
-#if defined __GNUC__ || defined __USE_ISOC99
-# ifndef __strtoll_internal_defined
-__extension__
-extern long long int __strtoll_internal (__const char *__restrict __nptr,
-					 char **__restrict __endptr,
-					 int __base, int __group)
-     __THROW __nonnull ((1)) __wur;
-#  define __strtoll_internal_defined	1
-# endif
-# ifndef __strtoull_internal_defined
-__extension__
-extern unsigned long long int __strtoull_internal (__const char *
-						   __restrict __nptr,
-						   char **__restrict __endptr,
-						   int __base, int __group)
-     __THROW __nonnull ((1)) __wur;
-#  define __strtoull_internal_defined	1
-# endif
-#endif /* GCC */
-
 #ifdef __USE_EXTERN_INLINES
-/* Define inline functions which call the internal entry points.  */
-
-__BEGIN_NAMESPACE_STD
-__extern_inline double
-__NTH (strtod (__const char *__restrict __nptr, char **__restrict __endptr))
-{
-  return __strtod_internal (__nptr, __endptr, 0);
-}
-__extern_inline long int
-__NTH (strtol (__const char *__restrict __nptr, char **__restrict __endptr,
-	       int __base))
-{
-  return __strtol_internal (__nptr, __endptr, __base, 0);
-}
-__extern_inline unsigned long int
-__NTH (strtoul (__const char *__restrict __nptr, char **__restrict __endptr,
-		int __base))
-{
-  return __strtoul_internal (__nptr, __endptr, __base, 0);
-}
-__END_NAMESPACE_STD
-
-# ifdef __USE_ISOC99
-__BEGIN_NAMESPACE_C99
-__extern_inline float
-__NTH (strtof (__const char *__restrict __nptr, char **__restrict __endptr))
-{
-  return __strtof_internal (__nptr, __endptr, 0);
-}
-#  ifndef __LDBL_COMPAT
-__extern_inline long double
-__NTH (strtold (__const char *__restrict __nptr, char **__restrict __endptr))
-{
-  return __strtold_internal (__nptr, __endptr, 0);
-}
-#  endif
-__END_NAMESPACE_C99
-# endif
-
-# ifdef __USE_BSD
-__extension__ __extern_inline long long int
-__NTH (strtoq (__const char *__restrict __nptr, char **__restrict __endptr,
-	       int __base))
-{
-  return __strtoll_internal (__nptr, __endptr, __base, 0);
-}
-__extension__ __extern_inline unsigned long long int
-__NTH (strtouq (__const char *__restrict __nptr, char **__restrict __endptr,
-		int __base))
-{
-  return __strtoull_internal (__nptr, __endptr, __base, 0);
-}
-# endif
-
-# if defined __USE_MISC || defined __USE_ISOC99
-__BEGIN_NAMESPACE_C99
-__extension__ __extern_inline long long int
-__NTH (strtoll (__const char *__restrict __nptr, char **__restrict __endptr,
-		int __base))
-{
-  return __strtoll_internal (__nptr, __endptr, __base, 0);
-}
-__extension__ __extern_inline unsigned long long int
-__NTH (strtoull (__const char * __restrict __nptr, char **__restrict __endptr,
-		 int __base))
-{
-  return __strtoull_internal (__nptr, __endptr, __base, 0);
-}
-__END_NAMESPACE_C99
-# endif
-
 __BEGIN_NAMESPACE_STD
 __extern_inline double
 __NTH (atof (__const char *__nptr))
@@ -597,8 +479,11 @@ __END_NAMESPACE_STD
 __BEGIN_NAMESPACE_STD
 /* Re-allocate the previously allocated block
    in PTR, making the new block SIZE bytes long.  */
+/* __attribute_malloc__ is not used, because if realloc returns
+   the same pointer that was passed to it, aliasing needs to be allowed
+   between objects pointed by the old and new pointers.  */
 extern void *realloc (void *__ptr, size_t __size)
-     __THROW __attribute_malloc__ __attribute_warn_unused_result__;
+     __THROW __attribute_warn_unused_result__;
 /* Free a block allocated by `malloc', `realloc' or `calloc'.  */
 extern void free (void *__ptr) __THROW;
 __END_NAMESPACE_STD
@@ -727,6 +612,28 @@ extern int mkstemp64 (char *__template) __nonnull ((1)) __wur;
    Returns TEMPLATE, or a null pointer if it cannot get a unique name.
    The directory is created mode 700.  */
 extern char *mkdtemp (char *__template) __THROW __nonnull ((1)) __wur;
+#endif
+
+#ifdef __USE_GNU
+/* Generate a unique temporary file name from TEMPLATE similar to
+   mkstemp.  But allow the caller to pass additional flags which are
+   used in the open call to create the file..
+
+   This function is a possible cancellation points and therefore not
+   marked with __THROW.  */
+# ifndef __USE_FILE_OFFSET64
+extern int mkostemp (char *__template, int __flags) __nonnull ((1)) __wur;
+# else
+#  ifdef __REDIRECT
+extern int __REDIRECT (mkostemp, (char *__template, int __flags), mkostemp64)
+     __nonnull ((1)) __wur;
+#  else
+#   define mkostemp mkostemp64
+#  endif
+# endif
+# ifdef __USE_LARGEFILE64
+extern int mkostemp64 (char *__template, int __flags) __nonnull ((1)) __wur;
+# endif
 #endif
 
 

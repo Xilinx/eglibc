@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,24 +19,11 @@
 
 #include <sysdep.h>
 #include <shlib-compat.h>
+#include <lowlevellock.h>
 #include <lowlevelcond.h>
 #include <kernel-features.h>
 #include <pthread-pi-defines.h>
-
-#ifdef UP
-# define LOCK
-#else
-# define LOCK lock
-#endif
-
-#define SYS_futex		240
-#define FUTEX_WAIT		0
-#define FUTEX_WAKE		1
-#define FUTEX_REQUEUE		3
-#define FUTEX_CMP_REQUEUE	4
-
-#define EINVAL			22
-
+#include <pthread-errnos.h>
 
 	.text
 
@@ -96,11 +83,18 @@ __pthread_cond_broadcast:
 	je	9f
 
 	/* XXX: The kernel so far doesn't support requeue to PI futex.  */
-	testl	$PI_BIT, MUTEX_KIND(%edi)
+	/* XXX: The kernel only supports FUTEX_CMP_REQUEUE to the same
+	   type of futex (private resp. shared).  */
+	testl	$(PI_BIT | PS_BIT), MUTEX_KIND(%edi)
 	jne	9f
 
 	/* Wake up all threads.  */
-	movl	$FUTEX_CMP_REQUEUE, %ecx
+#ifdef __ASSUME_PRIVATE_FUTEX
+	movl	$(FUTEX_CMP_REQUEUE|FUTEX_PRIVATE_FLAG), %ecx
+#else
+	movl	%gs:PRIVATE_FUTEX, %ecx
+	orl	$FUTEX_CMP_REQUEUE, %ecx
+#endif
 	movl	$SYS_futex, %eax
 	movl	$0x7fffffff, %esi
 	movl	$1, %edx
@@ -141,26 +135,67 @@ __pthread_cond_broadcast:
 	/* Initial locking failed.  */
 1:
 #if cond_lock == 0
-	movl	%ebx, %ecx
+	movl	%ebx, %edx
 #else
-	leal	cond_lock(%ebx), %ecx
+	leal	cond_lock(%ebx), %edx
 #endif
-	call	__lll_mutex_lock_wait
+#if (LLL_SHARED-LLL_PRIVATE) > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex(%ebx)
+	setne	%cl
+	subl	$1, %ecx
+	andl	$(LLL_SHARED-LLL_PRIVATE), %ecx
+#if LLL_PRIVATE != 0
+	addl	$LLL_PRIVATE, %ecx
+#endif
+	call	__lll_lock_wait
 	jmp	2b
 
 	/* Unlock in loop requires waekup.  */
 5:	leal	cond_lock-cond_futex(%ebx), %eax
-	call	__lll_mutex_unlock_wake
+#if (LLL_SHARED-LLL_PRIVATE) > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex-cond_futex(%ebx)
+	setne	%cl
+	subl	$1, %ecx
+	andl	$(LLL_SHARED-LLL_PRIVATE), %ecx
+#if LLL_PRIVATE != 0
+	addl	$LLL_PRIVATE, %ecx
+#endif
+	call	__lll_unlock_wake
 	jmp	6b
 
 	/* Unlock in loop requires waekup.  */
 7:	leal	cond_lock-cond_futex(%ebx), %eax
-	call	__lll_mutex_unlock_wake
+#if (LLL_SHARED-LLL_PRIVATE) > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex-cond_futex(%ebx)
+	setne	%cl
+	subl	$1, %ecx
+	andl	$(LLL_SHARED-LLL_PRIVATE), %ecx
+#if LLL_PRIVATE != 0
+	addl	$LLL_PRIVATE, %ecx
+#endif
+	call	__lll_unlock_wake
 	jmp	8b
 
 9:	/* The futex requeue functionality is not available.  */
 	movl	$0x7fffffff, %edx
-	movl	$FUTEX_WAKE, %ecx
+#if FUTEX_PRIVATE_FLAG > 255
+	xorl	%ecx, %ecx
+#endif
+	cmpl	$-1, dep_mutex-cond_futex(%ebx)
+	sete	%cl
+	subl	$1, %ecx
+#ifdef __ASSUME_PRIVATE_FUTEX
+	andl	$FUTEX_PRIVATE_FLAG, %ecx
+#else
+	andl	%gs:PRIVATE_FUTEX, %ecx
+#endif
+	addl	$FUTEX_WAKE, %ecx
 	movl	$SYS_futex, %eax
 	ENTER_KERNEL
 	jmp	10b

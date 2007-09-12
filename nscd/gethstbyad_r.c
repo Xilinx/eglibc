@@ -1,10 +1,11 @@
-/* Copyright (C) 1996,1997,1998,1999,2000,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1996-2000, 2005, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; version 2 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,5 +26,6 @@
 #define ADD_VARIABLES	addr, len, type
 #define NEED_H_ERRNO	1
 #define NEED__RES	1
+#define NEED__RES_HCONF 1
 
 #include "../nss/getXXbyYY_r.c"

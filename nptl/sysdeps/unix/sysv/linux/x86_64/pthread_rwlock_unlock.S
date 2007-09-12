@@ -18,18 +18,9 @@
    02111-1307 USA.  */
 
 #include <sysdep.h>
+#include <lowlevellock.h>
 #include <lowlevelrwlock.h>
-
-
-#define SYS_futex		202
-#define FUTEX_WAIT		0
-#define FUTEX_WAKE		1
-
-#ifndef UP
-# define LOCK lock
-#else
-# define LOCK
-#endif
+#include <kernel-features.h>
 
 
 	.text
@@ -78,7 +69,7 @@ __pthread_rwlock_unlock:
 	jne	7f
 
 8:
-#if __ASSUME_PRIVATE_FUTEX
+#ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_PRIVATE_FLAG|FUTEX_WAKE, %esi
 	xorl	PSHARED(%rdi), %esi
 #else
@@ -105,28 +96,28 @@ __pthread_rwlock_unlock:
 4:	xorl	%eax, %eax
 	retq
 
-1:
+1:	movl	PSHARED(%rdi), %esi
 #if MUTEX != 0
 	addq	$MUTEX, %rdi
 #endif
-	callq	__lll_mutex_lock_wait
+	callq	__lll_lock_wait
 #if MUTEX != 0
 	subq	$MUTEX, %rdi
 #endif
 	jmp	2b
 
-3:
+3:	movl	PSHARED(%rdi), %esi
 #if MUTEX != 0
 	addq	$MUTEX, %rdi
 #endif
-	callq	__lll_mutex_unlock_wake
+	callq	__lll_unlock_wake
 	jmp	4b
 
-7:
+7:	movl	PSHARED(%rdi), %esi
 #if MUTEX != 0
 	addq	$MUTEX, %rdi
 #endif
-	callq	__lll_mutex_unlock_wake
+	callq	__lll_unlock_wake
 	jmp	8b
 
 	.size	__pthread_rwlock_unlock,.-__pthread_rwlock_unlock

@@ -1,5 +1,5 @@
 /* Determine various system internal values, Linux version.
-   Copyright (C) 1996-2001, 2002, 2003, 2006 Free Software Foundation, Inc.
+   Copyright (C) 1996-2001, 2002, 2003, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -21,7 +21,9 @@
 #include <alloca.h>
 #include <assert.h>
 #include <ctype.h>
+#include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <mntent.h>
 #include <paths.h>
 #include <stdio.h>
@@ -32,6 +34,7 @@
 #include <sys/sysinfo.h>
 
 #include <atomic.h>
+#include <not-cancel.h>
 
 
 /* How we can determine the number of available processors depends on
@@ -64,13 +67,14 @@
   while (0)
 #endif
 
+
 int
 __get_nprocs ()
 {
+  /* XXX Here will come a test for the new system call.  */
+
   char buffer[8192];
   int result = 1;
-
-  /* XXX Here will come a test for the new system call.  */
 
   /* The /proc/stat format is more uniform, use it by default.  */
   FILE *fp = fopen ("/proc/stat", "rc");
@@ -103,35 +107,56 @@ __get_nprocs ()
 weak_alias (__get_nprocs, get_nprocs)
 
 
-#ifdef GET_NPROCS_CONF_PARSER
 /* On some architectures it is possible to distinguish between configured
    and active cpus.  */
 int
 __get_nprocs_conf ()
 {
-  char buffer[8192];
-  int result = 1;
-
   /* XXX Here will come a test for the new system call.  */
 
+  /* Try to use the sysfs filesystem.  It has actual information about
+     online processors.  */
+  DIR *dir = __opendir ("/sys/devices/system/cpu");
+  if (dir != NULL)
+    {
+      int count = 0;
+      struct dirent64 *d;
+
+      while ((d = __readdir64 (dir)) != NULL)
+	/* NB: the sysfs has d_type support.  */
+	if (d->d_type == DT_DIR && strncmp (d->d_name, "cpu", 3) == 0)
+	  {
+	    char *endp;
+	    unsigned long int nr = strtoul (d->d_name + 3, &endp, 10);
+	    if (nr != ULONG_MAX && endp != d->d_name + 3 && *endp == '\0')
+	      ++count;
+	  }
+
+      __closedir (dir);
+
+      return count;
+    }
+
+  int result = 1;
+
+#ifdef GET_NPROCS_CONF_PARSER
   /* If we haven't found an appropriate entry return 1.  */
   FILE *fp = fopen ("/proc/cpuinfo", "rc");
   if (fp != NULL)
     {
+      char buffer[8192];
+
       /* No threads use this stream.  */
       __fsetlocking (fp, FSETLOCKING_BYCALLER);
       GET_NPROCS_CONF_PARSER (fp, buffer, result);
       fclose (fp);
     }
+#else
+  result = __get_nprocs ();
+#endif
 
   return result;
 }
-#else
-/* As far as I know Linux has no separate numbers for configured and
-   available processors.  So make the `get_nprocs_conf' function an
-   alias.  */
-strong_alias (__get_nprocs, __get_nprocs_conf)
-#endif
 weak_alias (__get_nprocs_conf, get_nprocs_conf)
 
 /* General function to get information about memory status from proc

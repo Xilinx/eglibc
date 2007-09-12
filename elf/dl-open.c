@@ -165,6 +165,40 @@ add_to_global (struct link_map *new)
   return 0;
 }
 
+int
+_dl_scope_free (struct r_scope_elem **old)
+{
+  struct dl_scope_free_list *fsl;
+#define DL_SCOPE_FREE_LIST_SIZE (sizeof (fsl->list) / sizeof (fsl->list[0]))
+
+  if (RTLD_SINGLE_THREAD_P)
+    free (old);
+  else if ((fsl = GL(dl_scope_free_list)) == NULL)
+    {
+      GL(dl_scope_free_list) = fsl = malloc (sizeof (*fsl));
+      if (fsl == NULL)
+	{
+	  THREAD_GSCOPE_WAIT ();
+	  free (old);
+	  return 1;
+	}
+      else
+	{
+	  fsl->list[0] = old;
+	  fsl->count = 1;
+	}
+    }
+  else if (fsl->count < DL_SCOPE_FREE_LIST_SIZE)
+    fsl->list[fsl->count++] = old;
+  else
+    {
+      THREAD_GSCOPE_WAIT ();
+      while (fsl->count > 0)
+	free (fsl->list[--fsl->count]);
+      return 1;
+    }
+  return 0;
+}
 
 static void
 dl_open_worker (void *a)
@@ -201,10 +235,10 @@ dl_open_worker (void *a)
       for (Lmid_t ns = 0; ns < DL_NNS; ++ns)
 	for (l = GL(dl_ns)[ns]._ns_loaded; l != NULL; l = l->l_next)
 	  if (caller_dlopen >= (const void *) l->l_map_start
-	      && caller_dlopen < (const void *) l->l_map_end)
+	      && caller_dlopen < (const void *) l->l_map_end
+	      && (l->l_contiguous
+		  || _dl_addr_inside_object (l, (ElfW(Addr)) caller_dlopen)))
 	    {
-	      /* There must be exactly one DSO for the range of the virtual
-		 memory.  Otherwise something is really broken.  */
 	      assert (ns == l->l_ns);
 	      call_map = l;
 	      goto found_caller;
@@ -429,17 +463,10 @@ dl_open_worker (void *a)
 	      memcpy (newp, imap->l_scope, cnt * sizeof (imap->l_scope[0]));
 	      struct r_scope_elem **old = imap->l_scope;
 
-	      if (RTLD_SINGLE_THREAD_P)
-		imap->l_scope = newp;
-	      else
-		{
-		  __rtld_mrlock_change (imap->l_scope_lock);
-		  imap->l_scope = newp;
-		  __rtld_mrlock_done (imap->l_scope_lock);
-		}
+	      imap->l_scope = newp;
 
 	      if (old != imap->l_scope_mem)
-		free (old);
+		_dl_scope_free (old);
 
 	      imap->l_scope_max = new_size;
 	    }
@@ -660,5 +687,23 @@ show_scope (struct link_map *new)
 
       _dl_printf ("\n");
     }
+}
+#endif
+
+#ifdef IS_IN_rtld
+/* Return non-zero if ADDR lies within one of L's segments.  */
+int
+internal_function
+_dl_addr_inside_object (struct link_map *l, const ElfW(Addr) addr)
+{
+  int n = l->l_phnum;
+  const ElfW(Addr) reladdr = addr - l->l_addr;
+
+  while (--n >= 0)
+    if (l->l_phdr[n].p_type == PT_LOAD
+	&& reladdr - l->l_phdr[n].p_vaddr >= 0
+	&& reladdr - l->l_phdr[n].p_vaddr < l->l_phdr[n].p_memsz)
+      return 1;
+  return 0;
 }
 #endif

@@ -1,5 +1,5 @@
 /* sem_post -- post to a POSIX semaphore.  SPARC version.
-   Copyright (C) 2003, 2004, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Jakub Jelinek <jakub@redhat.com>, 2003.
 
@@ -29,17 +29,51 @@
 int
 __new_sem_post (sem_t *sem)
 {
-  int *futex = (int *) sem, nr;
+  struct sparc_new_sem *isem = (struct sparc_new_sem *) sem;
+  int nr;
 
   if (__atomic_is_v9)
-    nr = atomic_increment_val (futex);
+    nr = atomic_increment_val (&isem->value);
   else
     {
-      __sparc32_atomic_do_lock24 (futex + 1);
-      nr = ++*futex;
-      __sparc32_atomic_do_unlock24 (futex + 1);
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      nr = ++(isem->value);
+      __sparc32_atomic_do_unlock24 (&isem->lock);
     }
-  int err = lll_futex_wake (futex, nr);
+  atomic_full_barrier ();
+  if (isem->nwaiters > 0)
+    {
+      int err = lll_futex_wake (&isem->value, 1,
+				isem->private ^ FUTEX_PRIVATE_FLAG);
+      if (__builtin_expect (err, 0) < 0)
+	{
+	  __set_errno (-err);
+	  return -1;
+	}
+    }
+  return 0;
+}
+versioned_symbol (libpthread, __new_sem_post, sem_post, GLIBC_2_1);
+
+
+#if SHLIB_COMPAT (libpthread, GLIBC_2_0, GLIBC_2_1)
+int
+attribute_compat_text_section
+__old_sem_post (sem_t *sem)
+{
+  struct sparc_old_sem *isem = (struct sparc_old_sem *) sem;
+  int nr;
+
+  if (__atomic_is_v9)
+    nr = atomic_increment_val (&isem->value);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      nr = ++(isem->value);
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+  int err = lll_futex_wake (&isem->value, 1,
+			    isem->private ^ FUTEX_PRIVATE_FLAG);
   if (__builtin_expect (err, 0) < 0)
     {
       __set_errno (-err);
@@ -47,8 +81,5 @@ __new_sem_post (sem_t *sem)
     }
   return 0;
 }
-versioned_symbol (libpthread, __new_sem_post, sem_post, GLIBC_2_1);
-#if SHLIB_COMPAT (libpthread, GLIBC_2_0, GLIBC_2_1)
-strong_alias (__new_sem_post, __old_sem_post)
 compat_symbol (libpthread, __old_sem_post, sem_post, GLIBC_2_0);
 #endif

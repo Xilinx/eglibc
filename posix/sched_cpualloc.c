@@ -1,5 +1,4 @@
-/* ELF symbol resolve functions for VDSO objects.
-   Copyright (C) 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,11 +16,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _DL_VDSO_H
-#define _DL_VDSO_H	1
+#include <sched.h>
+#include <stdlib.h>
 
-/* Functions for resolving symbols in the VDSO link map.  */
-extern void *_dl_vdso_vsym (const char *name, const char *version)
-     internal_function attribute_hidden;
 
-#endif /* dl-vdso.h */
+cpu_set_t *
+__sched_cpualloc (size_t count)
+{
+  return malloc (CPU_ALLOC_SIZE (count));
+}

@@ -1,5 +1,5 @@
 /* Conversion module for ISO-2022-KR.
-   Copyright (C) 1998, 1999, 2000-2002 Free Software Foundation, Inc.
+   Copyright (C) 1998, 1999, 2000-2002, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -200,9 +200,7 @@ enum
 #define LOOPFCT			TO_LOOP
 #define BODY \
   {									      \
-    uint32_t ch;							      \
-									      \
-    ch = get32 (inptr);							      \
+    uint32_t ch = get32 (inptr);					      \
 									      \
     /* First see whether we can write the character using the currently	      \
        selected character set.  */					      \
@@ -223,11 +221,11 @@ enum
       }									      \
     else								      \
       {									      \
-	char buf[2];							      \
-	size_t written;							      \
+	unsigned char buf[2];						      \
+	/* Fake initialization to keep gcc quiet.  */			      \
+	asm ("" : "=m" (buf));						      \
 									      \
-	written = ucs4_to_ksc5601 (ch, buf, 2);				      \
-									      \
+	size_t written = ucs4_to_ksc5601 (ch, buf, 2);			      \
 	if (__builtin_expect (written, 0) == __UNKNOWN_10646_CHAR)	      \
 	  {								      \
 	    UNICODE_TAG_HANDLER (ch, 4);				      \

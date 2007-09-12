@@ -1,5 +1,5 @@
-/* sem_wait -- wait on a semaphore.  SPARC version.
-   Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+/* sem_wait -- wait on a semaphore.  Generic futex-using version.
+   Copyright (C) 2003, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Paul Mackerras <paulus@au.ibm.com>, 2003.
 
@@ -28,35 +28,135 @@
 #include <shlib-compat.h>
 
 
+void
+attribute_hidden
+__sem_wait_cleanup (void *arg)
+{
+  struct sparc_new_sem *isem = (struct sparc_new_sem *) arg;
+
+  if (__atomic_is_v9)
+    atomic_decrement (&isem->nwaiters);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      isem->nwaiters--;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+}
+
+
 int
 __new_sem_wait (sem_t *sem)
 {
-  /* First check for cancellation.  */
-  CANCELLATION_P (THREAD_SELF);
-
-  int *futex = (int *) sem;
+  struct sparc_new_sem *isem = (struct sparc_new_sem *) sem;
   int err;
+  int val;
+
+  if (__atomic_is_v9)
+    val = atomic_decrement_if_positive (&isem->value);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      val = isem->value;
+      if (val > 0)
+	isem->value = val - 1;
+      else
+	isem->nwaiters++;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+
+  if (val > 0)
+    return 0;
+
+  if (__atomic_is_v9)
+    atomic_increment (&isem->nwaiters);
+  else
+    /* Already done above while still holding isem->lock.  */;
+
+  pthread_cleanup_push (__sem_wait_cleanup, isem);
+
+  while (1)
+    {
+      /* Enable asynchronous cancellation.  Required by the standard.  */
+      int oldtype = __pthread_enable_asynccancel ();
+
+      err = lll_futex_wait (&isem->value, 0,
+			    isem->private ^ FUTEX_PRIVATE_FLAG);
+
+      /* Disable asynchronous cancellation.  */
+      __pthread_disable_asynccancel (oldtype);
+
+      if (err != 0 && err != -EWOULDBLOCK)
+	{
+	  __set_errno (-err);
+	  err = -1;
+	  break;
+	}
+
+      if (__atomic_is_v9)
+	val = atomic_decrement_if_positive (&isem->value);
+      else
+	{
+	  __sparc32_atomic_do_lock24 (&isem->lock);
+	  val = isem->value;
+	  if (val > 0)
+	    isem->value = val - 1;
+	  __sparc32_atomic_do_unlock24 (&isem->lock);
+	}
+
+      if (val > 0)
+	{
+	  err = 0;
+	  break;
+	}
+    }
+
+  pthread_cleanup_pop (0);
+
+  if (__atomic_is_v9)
+    atomic_decrement (&isem->nwaiters);
+  else
+    {
+      __sparc32_atomic_do_lock24 (&isem->lock);
+      isem->nwaiters--;
+      __sparc32_atomic_do_unlock24 (&isem->lock);
+    }
+
+  return err;
+}
+versioned_symbol (libpthread, __new_sem_wait, sem_wait, GLIBC_2_1);
+
+
+#if SHLIB_COMPAT (libpthread, GLIBC_2_0, GLIBC_2_1)
+int
+attribute_compat_text_section
+__old_sem_wait (sem_t *sem)
+{
+  struct sparc_old_sem *isem = (struct sparc_old_sem *) sem;
+  int err;
+  int val;
 
   do
     {
-      int val;
       if (__atomic_is_v9)
-	val = atomic_decrement_if_positive (futex);
+	val = atomic_decrement_if_positive (&isem->value);
       else
 	{
-	  __sparc32_atomic_do_lock24 (futex + 1);
-	  val = *futex;
+	  __sparc32_atomic_do_lock24 (&isem->lock);
+	  val = isem->value;
 	  if (val > 0)
-	    *futex = val - 1;
-	  __sparc32_atomic_do_unlock24 (futex + 1);
+	    isem->value = val - 1;
+	  __sparc32_atomic_do_unlock24 (&isem->lock);
 	}
+
       if (val > 0)
 	return 0;
 
       /* Enable asynchronous cancellation.  Required by the standard.  */
       int oldtype = __pthread_enable_asynccancel ();
 
-      err = lll_futex_wait (futex, 0);
+      err = lll_futex_wait (futex, 0,
+			    isem->private ^ FUTEX_PRIVATE_FLAG);
 
       /* Disable asynchronous cancellation.  */
       __pthread_disable_asynccancel (oldtype);
@@ -67,8 +167,5 @@ __new_sem_wait (sem_t *sem)
   return -1;
 }
 
-versioned_symbol (libpthread, __new_sem_wait, sem_wait, GLIBC_2_1);
-#if SHLIB_COMPAT (libpthread, GLIBC_2_0, GLIBC_2_1)
-strong_alias (__new_sem_wait, __old_sem_wait)
 compat_symbol (libpthread, __old_sem_wait, sem_wait, GLIBC_2_0);
 #endif

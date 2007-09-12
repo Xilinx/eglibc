@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2004 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2004, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Martin Schwidefsky <schwidefsky@de.ibm.com>, 2003.
 
@@ -32,7 +32,7 @@ pthread_barrier_wait (barrier)
   int result = 0;
 
   /* Make sure we are alone.  */
-  lll_lock (ibarrier->lock);
+  lll_lock (ibarrier->lock, ibarrier->private ^ FUTEX_PRIVATE_FLAG);
 
   /* One more arrival.  */
   --ibarrier->left;
@@ -45,7 +45,8 @@ pthread_barrier_wait (barrier)
       ++ibarrier->curr_event;
 
       /* Wake up everybody.  */
-      lll_futex_wake (&ibarrier->curr_event, INT_MAX);
+      lll_futex_wake (&ibarrier->curr_event, INT_MAX,
+		      ibarrier->private ^ FUTEX_PRIVATE_FLAG);
 
       /* This is the thread which finished the serialization.  */
       result = PTHREAD_BARRIER_SERIAL_THREAD;
@@ -57,11 +58,12 @@ pthread_barrier_wait (barrier)
       unsigned int event = ibarrier->curr_event;
 
       /* Before suspending, make the barrier available to others.  */
-      lll_unlock (ibarrier->lock);
+      lll_unlock (ibarrier->lock, ibarrier->private ^ FUTEX_PRIVATE_FLAG);
 
       /* Wait for the event counter of the barrier to change.  */
       do
-	lll_futex_wait (&ibarrier->curr_event, event);
+	lll_futex_wait (&ibarrier->curr_event, event,
+			ibarrier->private ^ FUTEX_PRIVATE_FLAG);
       while (event == ibarrier->curr_event);
     }
 
@@ -71,7 +73,7 @@ pthread_barrier_wait (barrier)
   /* If this was the last woken thread, unlock.  */
   if (atomic_increment_val (&ibarrier->left) == init_count)
     /* We are done.  */
-    lll_unlock (ibarrier->lock);
+    lll_unlock (ibarrier->lock, ibarrier->private ^ FUTEX_PRIVATE_FLAG);
 
   return result;
 }

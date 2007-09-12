@@ -308,7 +308,8 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 		  $(filter-out $(map-file),$^) $(load-map-file)		\
 		  -Wl,-soname=$(rtld-installed-name) -T $@.lds
 	rm -f $@.lds
-	nm -u $@ | cmp -s /dev/null -
+	readelf -s $@ \
+	  | awk '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 
 # interp.c exists just to get this string into the libraries.
 CFLAGS-interp.c = -D'RUNTIME_LINKER="$(slibdir)/$(rtld-installed-name)"' \
@@ -843,27 +844,25 @@ $(objpfx)tst-dlmodcount: $(libdl)
 $(objpfx)tst-dlmodcount.out: $(test-modules)
 
 check-data := $(firstword $(wildcard \
-	        $(foreach M,$(config-machine) $(base-machine),\
-			  ../scripts/data/localplt-$M-$(config-os).data)))
-ifneq (,$(check-data))
+	        $(patsubst %,../scripts/data/localplt-%.data,\
+			   $(addsuffix -$(config-os),\
+			   	       $(config-machine) $(base-machine))\
+			   generic)))
 tests: $(objpfx)check-localplt.out
 
 ifeq ($(have-thread-library),yes)
 thread-dso := $(filter-out %_nonshared.a, $(shared-thread-library))
 endif
 
-$(objpfx)check-localplt.out: $(objpfx)check-localplt $(common-objpfx)libc.so \
-			     $(common-objpfx)math/libm.so $(thread-dso) \
-			     $(common-objpfx)rt/librt.so \
-			     $(common-objpfx)dlfcn/libdl.so \
+$(objpfx)check-localplt.out: $(objpfx)check-localplt \
+			     $(common-objpfx)libc.so \
+ 		    	     $(common-objpfx)math/libm.so $(thread-dso) \
+ 		    	     $(common-objpfx)rt/librt.so \
+ 		    	     $(common-objpfx)dlfcn/libdl.so \
 			     $(check-data)
-	$(objpfx)check-localplt $(common-objpfx)libc.so \
-				$(common-objpfx)math/libm.so $(thread-dso) \
-				$(common-objpfx)rt/librt.so \
-				$(common-objpfx)dlfcn/libdl.so | \
+	$(dir $<)$(notdir $<) $(filter-out $< $(check-data),$^) | \
 	  LC_ALL=C sort | \
 	  diff -u $(check-data) - > $@
-endif
 endif
 
 $(objpfx)tst-dlopenrpathmod.so: $(libdl)

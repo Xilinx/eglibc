@@ -34,7 +34,7 @@ routines  = backtrace backtracesyms backtracesymsfd noophooks \
 	    gets_chk chk_fail readonly-area fgets_chk fgets_u_chk \
 	    read_chk pread_chk pread64_chk recv_chk recvfrom_chk \
 	    readlink_chk readlinkat_chk getwd_chk getcwd_chk \
-	    realpath_chk ptsname_r_chk \
+	    realpath_chk ptsname_r_chk fread_chk fread_u_chk \
 	    wctomb_chk wcscpy_chk wmemcpy_chk wmemmove_chk wmempcpy_chk \
 	    wcpcpy_chk wcsncpy_chk wcscat_chk wcsncat_chk wmemset_chk \
 	    wcpncpy_chk \
@@ -61,6 +61,8 @@ CFLAGS-vfprintf_chk.c = -D_IO_MTSAFE_IO $(exceptions)
 CFLAGS-gets_chk.c = -D_IO_MTSAFE_IO $(exceptions)
 CFLAGS-fgets_chk.c = -D_IO_MTSAFE_IO $(exceptions)
 CFLAGS-fgets_u_chk.c = -D_IO_MTSAFE_IO $(exceptions)
+CFLAGS-fread_chk.c = -D_IO_MTSAFE_IO $(exceptions)
+CFLAGS-fread_u_chk.c = -D_IO_MTSAFE_IO $(exceptions)
 CFLAGS-swprintf_chk.c = -D_IO_MTSAFE_IO
 CFLAGS-vswprintf_chk.c = -D_IO_MTSAFE_IO
 CFLAGS-wprintf_chk.c = -D_IO_MTSAFE_IO $(exceptions)
@@ -75,6 +77,11 @@ CFLAGS-pread64_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recv_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recvfrom_chk.c = -fexceptions -fasynchronous-unwind-tables
 
+# We know these tests have problems with format strings, this is what
+# we are testing.  Disable that warning.
+CFLAGS-tst-chk1.c = -Wno-format
+CFLAGS-tst-chk2.c = -Wno-format
+CFLAGS-tst-chk3.c = -Wno-format
 tst-chk1-ENV = LOCPATH=$(common-objpfx)localedata
 tst-chk2-ENV = LOCPATH=$(common-objpfx)localedata
 tst-chk3-ENV = LOCPATH=$(common-objpfx)localedata

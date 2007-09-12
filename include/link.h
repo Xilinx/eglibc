@@ -44,7 +44,6 @@ extern unsigned int la_objopen (struct link_map *__map, Lmid_t __lmid,
 #include <dl-lookupcfg.h>
 #include <tls.h>
 #include <bits/libc-lock.h>
-#include <rtld-lowlevel.h>
 
 
 /* Some internal data structures of the dynamic linker used in the
@@ -187,6 +186,9 @@ struct link_map
 				       is interested in the PLT interception.*/
     unsigned int l_removed:1;	/* Nozero if the object cannot be used anymore
 				   since it is removed.  */
+    unsigned int l_contiguous:1; /* Nonzero if inter-segment holes are
+				    mprotected or if no holes are present at
+				    all.  */
 
     /* Collected information about own RPATH directories.  */
     struct r_search_path_struct l_rpath_dirs;
@@ -220,8 +222,6 @@ struct link_map
     /* This is an array defining the lookup scope for this link map.
        There are initially at most three different scope lists.  */
     struct r_scope_elem **l_scope;
-    /* We need to protect using the SCOPEREC.  */
-    __rtld_mrlock_define (, l_scope_lock)
 
     /* A similar array, this time only with the local scope.  This is
        used occasionally.  */

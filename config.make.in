@@ -17,6 +17,7 @@ libexecdir = @libexecdir@
 rootsbindir = @libc_cv_rootsbindir@
 infodir = @infodir@
 includedir = @includedir@
+datarootdir = @datarootdir@
 
 # Should we use and build ldconfig?
 use-ldconfig = @use_ldconfig@
@@ -118,7 +119,7 @@ LN_S = @LN_S@
 MSGFMT = @MSGFMT@
 
 # Script execution tools.
-BASH = @BASH@
+BASH = @BASH_SHELL@
 KSH = @KSH@
 AWK = @AWK@
 PERL = @PERL@

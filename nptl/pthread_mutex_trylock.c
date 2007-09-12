@@ -31,7 +31,8 @@ __pthread_mutex_trylock (mutex)
   int oldval;
   pid_t id = THREAD_GETMEM (THREAD_SELF, tid);
 
-  switch (__builtin_expect (mutex->__data.__kind, PTHREAD_MUTEX_TIMED_NP))
+  switch (__builtin_expect (PTHREAD_MUTEX_TYPE (mutex),
+			    PTHREAD_MUTEX_TIMED_NP))
     {
       /* Recursive mutex.  */
     case PTHREAD_MUTEX_RECURSIVE_NP:
@@ -47,7 +48,7 @@ __pthread_mutex_trylock (mutex)
 	  return 0;
 	}
 
-      if (lll_mutex_trylock (mutex->__data.__lock) == 0)
+      if (lll_trylock (mutex->__data.__lock) == 0)
 	{
 	  /* Record the ownership.  */
 	  mutex->__data.__owner = id;
@@ -61,7 +62,7 @@ __pthread_mutex_trylock (mutex)
     case PTHREAD_MUTEX_TIMED_NP:
     case PTHREAD_MUTEX_ADAPTIVE_NP:
       /* Normal mutex.  */
-      if (lll_mutex_trylock (mutex->__data.__lock) != 0)
+      if (lll_trylock (mutex->__data.__lock) != 0)
 	break;
 
       /* Record the ownership.  */
@@ -114,16 +115,15 @@ __pthread_mutex_trylock (mutex)
 	  /* Check whether we already hold the mutex.  */
 	  if (__builtin_expect ((oldval & FUTEX_TID_MASK) == id, 0))
 	    {
-	      if (mutex->__data.__kind
-		  == PTHREAD_MUTEX_ROBUST_ERRORCHECK_NP)
+	      int kind = PTHREAD_MUTEX_TYPE (mutex);
+	      if (kind == PTHREAD_MUTEX_ROBUST_ERRORCHECK_NP)
 		{
 		  THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending,
 				 NULL);
 		  return EDEADLK;
 		}
 
-	      if (mutex->__data.__kind
-		  == PTHREAD_MUTEX_ROBUST_RECURSIVE_NP)
+	      if (kind == PTHREAD_MUTEX_ROBUST_RECURSIVE_NP)
 		{
 		  THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending,
 				 NULL);
@@ -139,7 +139,7 @@ __pthread_mutex_trylock (mutex)
 		}
 	    }
 
-	  oldval = lll_robust_mutex_trylock (mutex->__data.__lock, id);
+	  oldval = lll_robust_trylock (mutex->__data.__lock, id);
 	  if (oldval != 0 && (oldval & FUTEX_OWNER_DIED) == 0)
 	    {
 	      THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
@@ -153,7 +153,8 @@ __pthread_mutex_trylock (mutex)
 	      /* This mutex is now not recoverable.  */
 	      mutex->__data.__count = 0;
 	      if (oldval == id)
-		lll_mutex_unlock (mutex->__data.__lock);
+		lll_unlock (mutex->__data.__lock,
+			    PTHREAD_ROBUST_MUTEX_PSHARED (mutex));
 	      THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
 	      return ENOTRECOVERABLE;
 	    }
