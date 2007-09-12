@@ -95,7 +95,7 @@ endif
 
 ifeq (,$(wildcard $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)))
 $(warning OPTION_EGLIBC_NSSWITCH is disabled, but fixed functions file)
-oooo$(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS))
+$(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS))
 endif
 
 before-compile := $(objpfx)fixed-nsswitch.h
