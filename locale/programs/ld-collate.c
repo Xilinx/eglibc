@@ -2357,8 +2357,6 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 
   wchead_table_iterate (&collate->wcheads, add_to_tablewc);
 
-  add_locale_collidx_table (&file, &tablewc);
-
   memset (&atwc, 0, sizeof (atwc));
 
   /* Now add the four tables.  */
