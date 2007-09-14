@@ -1,3 +1,9 @@
+2007-09-13  Jim Blandy  <jimb@codesourcery.com>
+
+	* locale/programs/ld-collate.c (collate_output): Call
+	add_locale_callidx_table as required by cross-localedef changes,
+	not collidx_table_finalize.
+
 2007-09-11  Jim Blandy  <jimb@codesourcery.com>
 
 	* nss/Makefile: Delete stray text.
