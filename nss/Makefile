@@ -89,33 +89,33 @@ ifndef OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS
 $(error OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS variable left unset)
 endif
 
-ifeq (,$(wildcard $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)))
+ifeq (,$(wildcard $(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)))
 $(warning OPTION_EGLIBC_NSSWITCH is disabled, but fixed config file)
 $(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG))
 endif
 
-ifeq (,$(wildcard $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)))
+ifeq (,$(wildcard $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)))
 $(warning OPTION_EGLIBC_NSSWITCH is disabled, but fixed functions file)
 $(error does not exist: $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS))
 endif
 
 before-compile := $(objpfx)fixed-nsswitch.h
 generated := fixed-nsswitch.h
-$(objpfx)fixed-nsswitch.h $(objfpx)fixed-nsswitch-libs:		\
-    $(objpfx)gen-fixed-nsswitch					\
-    $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
-	$< $(objpfx)fixed-nsswitch.h					\
-	   $(objpfx)fixed-nsswitch-libs					\
-	   $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
+$(objpfx)fixed-nsswitch.h $(objfpx)fixed-nsswitch-libs:	\
+    $(objpfx)gen-fixed-nsswitch				\
+    $(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
+	$< $(objpfx)fixed-nsswitch.h			\
+	   $(objpfx)fixed-nsswitch-libs			\
+	   $(OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG)
 
-$(objpfx)gen-fixed-nsswitch: gen-fixed-nsswitch.c		\
-    $(common-objpfx)option-groups.config			\
-    $(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)
+$(objpfx)gen-fixed-nsswitch: gen-fixed-nsswitch.c	\
+    $(common-objpfx)option-groups.config		\
+    $(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)
 	$(native-compile)
-gen-fixed-nsswitch-CFLAGS = \
-	-g3 -O -Wall \
-	-I $(objpfx) \
-	-DFIXED_FUNCTIONS='"$(common-objpfx)$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)"'
+gen-fixed-nsswitch-CFLAGS =						\
+	-g3 -O -Wall							\
+	-I $(objpfx)							\
+	-DFIXED_FUNCTIONS='"$(OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS)"'
 endif
 
 include ../Rules

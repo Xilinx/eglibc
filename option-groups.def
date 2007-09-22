@@ -447,9 +447,9 @@ config OPTION_EGLIBC_NSSWITCH
           specifies, instead of consulting '/etc/nsswitch.conf' at run
           time.
 
-          This should be a relative file name; EGLIBC will look for it
-          in the top build directory, along with the
-          'option-groups.config' file.
+          This should be an absolute filename.  The EGLIBC build
+          process may use it from several different working
+          directories.
 
           The EGLIBC source tree includes a sample configuration file
           named 'nss/fixed-nsswitch.conf'; for simple configurations,
@@ -464,9 +464,9 @@ config OPTION_EGLIBC_NSSWITCH
           configuration file for this setting, and explains its syntax
           and meaning in more detail.
 
-          This should be a relative file name; EGLIBC will look for it
-          in the top build directory, along with the
-          'option-groups.config' file.
+          This should be an absolute file name.  The EGLIBC build
+          process may use it from several different working
+          directories.
 
           Be sure to mention each function in each service you wish to
           use.  If you do not mention a service's function here, the

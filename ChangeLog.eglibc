@@ -1,5 +1,9 @@
 2007-09-21  Jim Blandy  <jimb@codesourcery.com>
 
+	* nss/Makefile: Treat OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS and
+	OPTION_EGLIBC_NSSWITCH_FIXED_CONFIG as absolute filenames.
+	* option-groups.def: Update documentation.
+
 	Implement the OPTION_EGLIBC_BACKTRACE option group.
 	* option-groups.def (OPTION_EGLIBC_BACKTRACE): New entry.
 	* option-groups.defaults (OPTION_EGLIBC_BACKTRACE): Initialize.
