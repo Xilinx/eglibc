@@ -95,6 +95,7 @@ catch_segfault (int signal, SIGCONTEXT ctx)
   REGISTER_DUMP;
 #endif
 
+#ifdef OPTION_EGLIBC_BACKTRACE
   WRITE_STRING ("\nBacktrace:\n");
 
   /* Get the backtrace.  */
@@ -117,6 +118,7 @@ catch_segfault (int signal, SIGCONTEXT ctx)
 
   /* Now generate nicely formatted output.  */
   __backtrace_symbols_fd (arr + i, cnt - i, fd);
+#endif
 
 #ifdef HAVE_PROC_SELF
   /* Now the link map.  */

@@ -260,7 +260,6 @@ tests = tst-typesizes \
 	tst-clock1 \
 	tst-context1 \
 	tst-sched1 \
-	tst-backtrace1 \
 	tst-oddstacklimit \
 	tst-vfork1 tst-vfork2 tst-vfork1x tst-vfork2x \
 	tst-getpid1 tst-getpid2 tst-getpid3 \
@@ -269,6 +268,9 @@ xtests = tst-setuid1 tst-setuid1-static tst-mutexpp1 tst-mutexpp6 tst-mutexpp10
 
 # This test uses the posix_spawn functions.
 tests-$(OPTION_EGLIBC_SPAWN) += tst-exec1
+
+# This test uses the 'backtrace' functions.
+tests-$(OPTION_EGLIBC_BACKTRACE) += tst-backtrace1
 
 # Files which must not be linked with libpthread.
 tests-nolibpthread = tst-unload

@@ -71,6 +71,20 @@ config OPTION_EGLIBC_ADVANCED_INET6
          inet6_rth_segments
          inet6_rth_space
 
+config OPTION_EGLIBC_BACKTRACE
+   bool "Functions for producing backtraces"
+   help
+       This option group includes functions for producing a list of
+       the function calls that are currently active in a thread, from
+       within the thread itself.  These functions are often used
+       within signal handlers, to produce diagnostic output.
+
+       This option group includes the following functions:
+
+         backtrace
+         backtrace_symbols
+         backtrace_symbols_fd
+
 config OPTION_EGLIBC_BSD
    bool "BSD-specific functions, and their compatibility stubs"
    help

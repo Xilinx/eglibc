@@ -1,3 +1,21 @@
+2007-09-21  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_BACKTRACE option group.
+	* option-groups.def (OPTION_EGLIBC_BACKTRACE): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_BACKTRACE): Initialize.
+	* debug/Makefile (routines): Put all backtrace, backtracesyms, and
+	backtracesymsfd in the group.
+	(tests): Put backtrace-tst in the group.
+	(CFLAGS-segfault.c): Define OPTION_EGLIBC_BACKTRACE as
+	appropriate.
+	* debug/segfault.c (catch_segfault): Only produce a backtrace when
+	the group is enabled.
+	* sysdeps/unix/sysv/linux/Makefile (CFLAGS-libc_fatal.c): Define
+	OPTION_EGLIBC_BACKTRACE as appropriate.
+	* sysdeps/unix/sysv/linux/libc_fatal.c (__libc_message): Don't
+	print a backtrace if the group is not enabled.
+	* nptl/Makefile (tests): Put tst-backtrace1 in the option group.
+
 2007-09-14  Jim Blandy  <jimb@codesourcery.com>
 
 	* locale/programs/ld-collate.c (collate_output): Remove extra call

@@ -26,7 +26,7 @@ subdir	:= debug
 headers	:= execinfo.h
 distribute = sigcontextinfo.h register-dump.h frame.h
 
-routines  = backtrace backtracesyms backtracesymsfd noophooks \
+routines  = noophooks \
 	    memcpy_chk memmove_chk mempcpy_chk memset_chk stpcpy_chk \
 	    strcat_chk strcpy_chk strncat_chk strncpy_chk stpncpy_chk \
 	    sprintf_chk vsprintf_chk snprintf_chk vsnprintf_chk \
@@ -47,6 +47,7 @@ routines  = backtrace backtracesyms backtracesymsfd noophooks \
 	    stack_chk_fail fortify_fail \
 	    $(static-only-routines)
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
+routines-$(OPTION_EGLIBC_BACKTRACE) += backtrace backtracesyms backtracesymsfd 
 static-only-routines := warning-nop stack_chk_fail_local
 
 CFLAGS-backtrace.c = -fno-omit-frame-pointer
@@ -89,14 +90,18 @@ tst-lfschk1-ENV = LOCPATH=$(common-objpfx)localedata
 tst-lfschk2-ENV = LOCPATH=$(common-objpfx)localedata
 tst-lfschk3-ENV = LOCPATH=$(common-objpfx)localedata
 
-tests = backtrace-tst tst-chk1 tst-chk2 tst-chk3 \
+tests = tst-chk1 tst-chk2 tst-chk3 \
 	tst-lfschk1 tst-lfschk2 tst-lfschk3 test-strcpy_chk test-stpcpy_chk
+tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst 
 
 extra-libs = libSegFault libpcprofile
 extra-libs-others = $(extra-libs)
 
 libSegFault-routines = segfault
 libSegFault-inhibit-o = $(filter-out .os,$(object-suffixes))
+OPTION_EGLIBC_BACKTRACE-CFLAGS-$(OPTION_EGLIBC_BACKTRACE) \
+	= -DOPTION_EGLIBC_BACKTRACE
+CFLAGS-segfault.c = $(OPTION_EGLIBC_BACKTRACE-CFLAGS-y)
 
 libpcprofile-routines = pcprofile
 libpcprofile-inhibit-o = $(filter-out .os,$(object-suffixes))
