@@ -1,3 +1,7 @@
+2007-09-24  Jim Blandy  <jimb@codesourcery.com>
+
+	* option-groups.def (OPTION_EGLIBC_NSSWITCH): Doc fixes.
+
 2007-09-21  Jim Blandy  <jimb@codesourcery.com>
 
 	* nss/Makefile: Treat OPTION_EGLIBC_NSSWITCH_FIXED_FUNCTIONS and

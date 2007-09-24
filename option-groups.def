@@ -449,7 +449,10 @@ config OPTION_EGLIBC_NSSWITCH
 
           This should be an absolute filename.  The EGLIBC build
           process may use it from several different working
-          directories.
+          directories.  It may include references to Makefile
+          variables like 'common-objpfx' (the top of the build tree,
+          with a trailing slash), or '..' (the top of the source tree,
+          with a trailing slash).
 
           The EGLIBC source tree includes a sample configuration file
           named 'nss/fixed-nsswitch.conf'; for simple configurations,
@@ -466,7 +469,10 @@ config OPTION_EGLIBC_NSSWITCH
 
           This should be an absolute file name.  The EGLIBC build
           process may use it from several different working
-          directories.
+          directories.  It may include references to Makefile
+          variables like 'common-objpfx' (the top of the build tree,
+          with a trailing slash), or '..' (the top of the source tree,
+          with a trailing slash).
 
           Be sure to mention each function in each service you wish to
           use.  If you do not mention a service's function here, the
