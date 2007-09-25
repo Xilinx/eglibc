@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2000,2002,2003,2004,2005,2006
+# Copyright (C) 1995-2000,2002,2003,2004,2005,2006,2007
 #	Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
@@ -40,10 +40,12 @@ routines := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
 	    wcwidth wcswidth \
 	    wcscoll_l wcsxfrm_l \
 	    wcscasecmp wcsncase wcscasecmp_l wcsncase_l \
-	    wcsmbsload mbsrtowcs_l
+	    wcsmbsload mbsrtowcs_l \
+	    isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf \
+	    isoc99_swscanf isoc99_vswscanf
 
 tests := tst-wcstof wcsmbs-tst1 tst-wcsnlen \
-	 tst-wcpncpy tst-mbsrtowcs tst-wchar-h
+	 tst-wcpncpy tst-mbsrtowcs tst-wchar-h wcsatcliff
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb
 
@@ -72,6 +74,14 @@ CFLAGS-tst-wchar-h.c = -D_FORTIFY_SOURCE=2
 OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
 	= -DOPTION_EGLIBC_LOCALE_CODE
 CFLAGS-wcsmbsload.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
+
+CFLAGS-isoc99_wscanf.c += $(exceptions)
+CFLAGS-isoc99_fwscanf.c += $(exceptions)
+CFLAGS-isoc99_vwscanf.c += $(exceptions)
+CFLAGS-isoc99_vfwscanf.c += $(exceptions)
+ifneq (,$(filter %REENTRANT, $(defines)))
+CPPFLAGS += -D_IO_MTSAFE_IO
+endif
 
 # We need to find the default version of strtold_l in stdlib.
 CPPFLAGS-wcstold_l.c = -I../stdlib

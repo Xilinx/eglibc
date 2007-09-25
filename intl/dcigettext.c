@@ -854,6 +854,9 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
       /* We are supposed to do a conversion.  */
       const char *encoding = get_output_charset (domainbinding);
 
+      /* Protect against reallocation of the table.  */
+      __libc_rwlock_rdlock (domain->conversions_lock);
+
       /* Search whether a table with converted translations for this
 	 encoding has already been allocated.  */
       size_t nconversions = domain->nconversions;
@@ -870,8 +873,25 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 	    }
 	}
 
+      __libc_rwlock_unlock (domain->conversions_lock);
+
       if (convd == NULL)
 	{
+	  /* We have to allocate a new conversions table.  */
+	  __libc_rwlock_wrlock (domain->conversions_lock);
+
+	  /* Maybe in the meantime somebody added the translation.
+	     Recheck.  */
+	  for (i = nconversions; i > 0; )
+	    {
+	      i--;
+	      if (strcmp (domain->conversions[i].encoding, encoding) == 0)
+		{
+		  convd = &domain->conversions[i];
+		  goto found_convd;
+		}
+	    }
+
 	  /* Allocate a table for the converted translations for this
 	     encoding.  */
 	  struct converted_domain *new_conversions =
@@ -880,9 +900,13 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 		     (nconversions + 1) * sizeof (struct converted_domain));
 
 	  if (__builtin_expect (new_conversions == NULL, 0))
-	    /* Nothing we can do, no more memory.  We cannot use the
-	       translation because it might be encoded incorrectly.  */
-	    return (char *) -1;
+	    {
+	      /* Nothing we can do, no more memory.  We cannot use the
+		 translation because it might be encoded incorrectly.  */
+	    unlock_fail:
+	      __libc_rwlock_unlock (domain->conversions_lock);
+	      return (char *) -1;
+	    }
 
 	  domain->conversions = new_conversions;
 
@@ -891,7 +915,7 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 	  if (__builtin_expect (encoding == NULL, 0))
 	    /* Nothing we can do, no more memory.  We cannot use the
 	       translation because it might be encoded incorrectly.  */
-	    return (char *) -1;
+	    goto unlock_fail;
 
 	  convd = &new_conversions[nconversions];
 	  convd->encoding = encoding;
@@ -993,6 +1017,9 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 	  convd->conv_tab = NULL;
 	  /* Here domain->conversions is still == new_conversions.  */
 	  domain->nconversions++;
+
+	found_convd:
+	  __libc_rwlock_unlock (domain->conversions_lock);
 	}
 
       if (

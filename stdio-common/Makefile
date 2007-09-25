@@ -36,7 +36,9 @@ routines	:=							      \
 	tmpfile tmpfile64 tmpnam tmpnam_r tempnam tempname		      \
 	getline getw putw						      \
 	remove rename renameat						      \
-	flockfile ftrylockfile funlockfile
+	flockfile ftrylockfile funlockfile				      \
+	isoc99_scanf isoc99_vscanf isoc99_fscanf isoc99_vfscanf isoc99_sscanf \
+	isoc99_vsscanf
 
 include ../Makeconfig
 
@@ -57,7 +59,7 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2 bug18 bug18a \
-	 bug19 bug19a tst-popen2
+	 bug19 bug19a tst-popen2 scanf13 scanf14 scanf15
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf
 
@@ -100,14 +102,34 @@ CFLAGS-tempname.c = -fexceptions
 CFLAGS-psignal.c = -fexceptions
 CFLAGS-vprintf.c = -fexceptions
 CFLAGS-cuserid.c = -fexceptions
+
+CFLAGS-vfprintf.c += $(exceptions)
+CFLAGS-fprintf.c += $(exceptions)
+CFLAGS-printf.c += $(exceptions)
+CFLAGS-vfwprintf.c += $(exceptions)
+CFLAGS-vfscanf.c += $(exceptions)
+CFLAGS-vfwscanf.c += $(exceptions)
+CFLAGS-fscanf.c += $(exceptions)
+CFLAGS-scanf.c += $(exceptions)
+CFLAGS-isoc99_vfscanf.c += $(exceptions)
+CFLAGS-isoc99_vscanf.c += $(exceptions)
+CFLAGS-isoc99_fscanf.c += $(exceptions)
+CFLAGS-isoc99_scanf.c += $(exceptions)
 CFLAGS-errlist.c = $(fno-unit-at-a-time)
 CFLAGS-siglist.c = $(fno-unit-at-a-time)
+
+# The following is a hack since we must compile scanf15.c without any
+# GNU extension.  The latter are needed, though, when internal headers
+# are used.  So made sure we see the installed headers first.
+CFLAGS-scanf15.c = -I../libio -I../stdlib -I../wcsmbs -I../time -I../string \
+		   -I../wctype
 
 # We know the test has a format string problem.
 CFLAGS-tst-sprintf.c = -Wno-format
 tst-sscanf-ENV = LOCPATH=$(common-objpfx)localedata
 tst-swprintf-ENV = LOCPATH=$(common-objpfx)localedata
 test-vfprintf-ENV = LOCPATH=$(common-objpfx)localedata
+scanf13-ENV = LOCPATH=$(common-objpfx)localedata
 bug14-ENV = LOCPATH=$(common-objpfx)localedata
 bug15-ENV = LOCPATH=$(common-objpfx)localedata
 
