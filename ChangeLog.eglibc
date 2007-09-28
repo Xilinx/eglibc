@@ -1,3 +1,9 @@
+2007-09-27  Jim Blandy  <jimb@codesourcery.com>
+
+	* bits/wchar.h (__WCHAR_MIN, __WCHAR_MAX): Use information
+	provided by GCC and the preprocessor's behavior to handle both
+	signed and unsigned wchar_t ranges.
+
 2007-09-24  Jim Blandy  <jimb@codesourcery.com>
 
 	* option-groups.def (OPTION_EGLIBC_NSSWITCH): Doc fixes.
