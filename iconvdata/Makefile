@@ -62,7 +62,7 @@ modules-$(OPTION_EGLIBC_CHARSETS)					 \
 	   IBM1149 IBM1166 IBM1167 IBM4517 IBM4899 IBM4909 IBM4971 	 \
 	   IBM5347 IBM9030 IBM9066 IBM9448 IBM12712 IBM16804             \
 	   IBM1364 IBM1371 IBM1388 IBM1390 IBM1399 ISO_11548-1 MIK BRF	 \
-	   MAC-CENTRALEUROPE
+	   MAC-CENTRALEUROPE KOI8-RU ISO8859-9E
 
 modules.so := $(addsuffix .so, $(modules-y))
 
@@ -169,7 +169,7 @@ distribute := gconv-modules extra-module.mk gap.awk gaptab.awk gconv.map    \
 	      inis-cyrillic.c iso-2022-jp.c iso-2022-kr.c iso646.c	    \
 	      iso8859-1.c iso8859-2.c iso8859-3.c iso8859-4.c iso8859-5.c   \
 	      iso8859-6.c iso8859-7.c iso8859-8.c iso8859-9.c iso8859-10.c  \
-	      iso8859-11.c iso8859-13.c iso8859-14.c			    \
+	      iso8859-11.c iso8859-13.c iso8859-14.c iso8859-9e.c	    \
 	      iso8859-15.c iso_2033.c iso_5427-ext.c iso_5427.c iso_5428.c  \
 	      iso_6937.c iso_6937-2.c iso_10367-box.c jis0201.c jis0201.h   \
 	      jis0208.c jis0208.h jis0212.c jis0212.h johab.c koi-8.c	    \
@@ -225,7 +225,8 @@ gen-8bit-modules := iso8859-2 iso8859-3 iso8859-4 iso8859-6 iso8859-9 koi-8 \
 		    ebcdic-es-s ebcdic-fi-se ebcdic-fi-se-a ebcdic-fr	    \
 		    ebcdic-is-friss ebcdic-it ebcdic-pt ebcdic-uk ebcdic-us \
 		    ibm037 ibm038 ibm274 ibm275 ibm423 ibm500 ibm870 ibm871 \
-		    ibm891 ibm903 ibm904 ibm905 ibm1047 iso8859-16 viscii
+		    ibm891 ibm903 ibm904 ibm905 ibm1047 iso8859-16 viscii   \
+		    iso8859-9e
 
 gen-8bit-gap-modules := koi8-r latin-greek latin-greek-1 ibm256 ibm273	   \
 			ibm277 ibm278 ibm280 ibm281 ibm284 ibm285 ibm290   \
@@ -243,7 +244,7 @@ gen-8bit-gap-modules := koi8-r latin-greek latin-greek-1 ibm256 ibm273	   \
 			iso-ir-197 tis-620 koi8-u ibm874 cp10007 koi8-t	   \
 			georgian-ps georgian-academy iso-ir-209 mac-sami   \
 			iso8859-11 ibm866nav pt154 rk1048 mik brf \
-			mac-centraleurope
+			mac-centraleurope koi8-ru
 
 gen-special-modules := iso8859-7jp
 

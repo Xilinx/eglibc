@@ -1,5 +1,5 @@
 /* Conversion from and to KOI8-R.
-   Copyright (C) 1997, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1997, 1998, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -24,6 +24,6 @@
 #define TABLES <koi8-r.h>
 
 #define CHARSET_NAME	"KOI8-R//"
-#define HAS_HOLES	1	/* Not all 256 character are defined.  */
+#define HAS_HOLES	0	/* All 256 character are defined.  */
 
 #include <8bit-gap.c>

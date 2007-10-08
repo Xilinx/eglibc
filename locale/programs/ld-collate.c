@@ -1552,9 +1552,10 @@ collate_finish (struct localedef_t *locale, const struct charmap_t *charmap)
      or in none.  */
   for (i = 0; i < nrules; ++i)
     for (sect = collate->sections; sect != NULL; sect = sect->next)
-      if (sect->rules != NULL
+      if (sect != collate->current_section
+	  && sect->rules != NULL
 	  && ((sect->rules[i] & sort_position)
-	      != (collate->sections->rules[i] & sort_position)))
+	      != (collate->current_section->rules[i] & sort_position)))
 	{
 	  WITH_CUR_LOCALE (error (0, 0, _("\
 %s: `position' must be used for a specific level in all sections or none"),
@@ -1846,7 +1847,8 @@ symbol `%s' has the same encoding as"), (*eptr)->name);
 
       while (osect != sect)
 	if (osect->rules != NULL
-	    && memcmp (osect->rules, sect->rules, nrules) == 0)
+	    && memcmp (osect->rules, sect->rules,
+		       nrules * sizeof (osect->rules[0])) == 0)
 	  break;
 	else
 	  osect = osect->next;
@@ -2515,7 +2517,6 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 
   if (nowtok == tok_copy)
     {
-      state = 2;
       now = lr_token (ldfile, charmap, result, NULL, verbose);
       if (now->tok != tok_string)
 	{
@@ -3070,13 +3071,16 @@ error while adding equivalent collating symbol"));
 		    {
 		      /* Insert sp in the collate->sections list,
 			 right after collate->current_section.  */
-		      if (collate->current_section == NULL)
-			collate->current_section = sp;
-		      else
+		      if (collate->current_section != NULL)
 			{
 			  sp->next = collate->current_section->next;
 			  collate->current_section->next = sp;
 			}
+		      else if (collate->sections == NULL)
+			/* This is the first section to be defined.  */
+			collate->sections = sp;
+
+		      collate->current_section = sp;
 		    }
 
 		  /* Next should come the end of the line or a semicolon.  */
@@ -3182,7 +3186,9 @@ error while adding equivalent collating symbol"));
 		  was_ellipsis = tok_none;
 		}
 	    }
-	  else if (state != 2 && state != 3)
+	  else if (state == 0 && copy_locale == NULL)
+	    goto err_label;
+	  else if (state != 0 && state != 2 && state != 3)
 	    goto err_label;
 	  state = 3;
 
@@ -3651,7 +3657,7 @@ error while adding equivalent collating symbol"));
 	  /* Next we assume `LC_COLLATE'.  */
 	  if (!ignore_content)
 	    {
-	      if (state == 0)
+	      if (state == 0 && copy_locale == NULL)
 		/* We must either see a copy statement or have
 		   ordering values.  */
 		lr_error (ldfile,
