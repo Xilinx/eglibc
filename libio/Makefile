@@ -19,6 +19,8 @@
 #
 #	Specific makefile for libio.
 #
+include ../option-groups.mak
+
 subdir	:= libio
 
 headers	:= stdio.h libio.h _G_config.h bits/stdio.h bits/stdio-lock.h \
@@ -31,11 +33,10 @@ routines	:=							      \
 	ioseekoff ioseekpos iosetbuffer iosetvbuf ioungetc		      \
 	iovsprintf iovsscanf						      \
 	iofgetpos64 iofopen64 iofsetpos64				      \
-	fputwc fputwc_u getwc getwc_u getwchar getwchar_u iofgetws iofgetws_u \
-	iofputws iofputws_u iogetwline iowpadn ioungetwc putwc putwc_u	      \
-	putwchar putwchar_u putchar putchar_u fwprintf swprintf vwprintf      \
-	wprintf wscanf fwscanf vwscanf vswprintf iovswscanf swscanf wgenops   \
-	wstrops wfileops iofwide fwide wmemstream			      \
+	iowpadn								      \
+	putchar putchar_u swprintf 					      \
+	vswprintf iovswscanf swscanf wgenops				      \
+	wstrops wfileops iofwide wmemstream				      \
 									      \
 	clearerr feof ferror fileno fputc freopen fseek getc getchar	      \
 	memstream pclose putc putchar rewind setbuf setlinebuf vasprintf      \
@@ -46,21 +47,31 @@ routines	:=							      \
 	__fpurge __fpending __fsetlocking				      \
 									      \
 	libc_fatal fmemopen
+routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) +=				      \
+	fputwc fputwc_u getwc getwc_u getwchar getwchar_u iofgetws iofgetws_u \
+	iofputws iofputws_u iogetwline ioungetwc putwc putwc_u		      \
+	putwchar putwchar_u fwprintf vwprintf				      \
+	wprintf wscanf fwscanf vwscanf					      \
+	fwide
 
-tests = tst_swprintf tst_wprintf tst_swscanf tst_wscanf tst_getwc tst_putwc   \
-	tst_wprintf2 tst-widetext test-fmemopen tst-ext tst-ext2 tst-fopenloc \
-	tst-fgetws tst-ungetwc1 tst-ungetwc2 tst-sscanf	      \
-	tst-mmap-setvbuf bug-ungetwc1 bug-ungetwc2 tst-atime tst-eof          \
-	tst-freopen bug-rewind bug-rewind2 bug-ungetc bug-fseek \
-	tst-mmap-eofsync tst-mmap-fflushsync bug-mmap-fflush \
-	tst-mmap2-eofsync tst-mmap-offend bug-fopena+ bug-wfflush \
-	bug-ungetc2 bug-ftell bug-ungetc3 bug-ungetc4 tst-fopenloc2 \
-	tst-memstream1 tst-memstream2 \
-	tst-wmemstream1 tst-wmemstream2 \
-	bug-memstream1 bug-wmemstream1 \
-	tst-setvbuf1
+tests = tst_swprintf tst_swscanf				\
+	test-fmemopen tst-ext tst-ext2				\
+	tst-sscanf						\
+	tst-mmap-setvbuf tst-atime tst-eof			\
+	tst-freopen bug-ungetc bug-fseek			\
+	tst-mmap-eofsync tst-mmap-fflushsync bug-mmap-fflush	\
+	tst-mmap2-eofsync tst-mmap-offend bug-fopena+		\
+	bug-ungetc2 bug-ungetc3 bug-ungetc4			\
+	tst-memstream1 tst-memstream2				\
+	tst-wmemstream1 tst-wmemstream2				\
+	bug-memstream1
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
      += tst-swscanf
+tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				  \
+     += bug-ftell bug-rewind bug-rewind2 bug-ungetwc1 bug-ungetwc2	  \
+	bug-wfflush bug-wmemstream1 tst-fgetws tst-fopenloc tst-fopenloc2 \
+	tst-setvbuf1 tst-ungetwc1 tst-ungetwc2 tst-widetext tst_getwc	  \
+	tst_putwc tst_wprintf tst_wprintf2 tst_wscanf
 test-srcs = test-freopen
 
 all: # Make this the default target; it will be defined in Rules.
@@ -174,6 +185,7 @@ distribute := iolibio.h libioP.h strfile.h Banner test-freopen.sh \
 
 include ../Rules
 
+ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
 # eglibc: ifeq (no,$(cross-compiling))
 tests: $(objpfx)test-freopen.out $(objpfx)tst-fopenloc.check
 # eglibc: endif
@@ -186,3 +198,4 @@ $(objpfx)tst-fopenloc.check: $(objpfx)tst-fopenloc.out
 	cmp ../iconvdata/testdata/ISO-8859-1..UTF8 $(objpfx)tst-fopenloc.out \
 	  > $@
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-fopenloc.mtrace >> $@
+endif

@@ -41,6 +41,7 @@ extern char *__progname;
 }
 
 #ifdef USE_IN_LIBIO
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 static void
 convert_and_print (const char *format, __gnuc_va_list ap)
 {
@@ -86,6 +87,7 @@ convert_and_print (const char *format, __gnuc_va_list ap)
   __vfwprintf (stderr, wformat, ap);
 }
 #endif
+#endif
 
 void
 vwarnx (const char *format, __gnuc_va_list ap)
@@ -94,9 +96,13 @@ vwarnx (const char *format, __gnuc_va_list ap)
 #ifdef USE_IN_LIBIO
   if (_IO_fwide (stderr, 0) > 0)
     {
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
       __fwprintf (stderr, L"%s: ", __progname);
       convert_and_print (format, ap);
       putwc_unlocked (L'\n', stderr);
+#else
+      abort ();
+#endif
     }
   else
 #endif
@@ -119,6 +125,7 @@ vwarn (const char *format, __gnuc_va_list ap)
 #ifdef USE_IN_LIBIO
   if (_IO_fwide (stderr, 0) > 0)
     {
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
       __fwprintf (stderr, L"%s: ", __progname);
       if (format)
 	{
@@ -127,6 +134,9 @@ vwarn (const char *format, __gnuc_va_list ap)
 	}
       __set_errno (error);
       __fwprintf (stderr, L"%m\n");
+#else
+      abort ();
+#endif
     }
   else
 #endif

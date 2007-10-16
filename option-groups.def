@@ -101,6 +101,21 @@ config OPTION_EGLIBC_BSD
          revoke
          setlogin
 
+config OPTION_EGLIBC_CXX_TESTS
+   bool "Tests that link against the standard C++ library."
+   depends OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+   depends OPTION_EGLIBC_LIBM
+   help
+       This option group does not include any C library functions;
+       instead, it controls which EGLIBC tests an ordinary 'make
+       tests' runs.  With this group disabled, tests that would
+       normally link against the standard C++ library are not
+       run.
+
+       The standard C++ library depends on the math library 'libm' and
+       the wide character I/O functions included in EGLIBC.  If those
+       option groups are disabled, this test must also be disabled.
+
 config OPTION_EGLIBC_CATGETS
    bool "Functions for accessing message catalogs"
    depends OPTION_EGLIBC_LOCALE_CODE
@@ -651,6 +666,32 @@ config OPTION_POSIX_REGEXP
         Furthermore, the compatibility regexp interface defined in the
         <regexp.h> header file, 'compile', 'step', and 'advance', is
         omitted.
+
+config OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+    bool "Input and output functions for wide characters"
+    help
+        This option group includes functions for reading and writing
+        wide characters to and from <stdio.h> streams.
+
+        This option group includes the following functions:
+
+          fgetwc        fwprintf      putwchar      vwscanf
+          fgetws        fwscanf       ungetwc       wprintf
+          fputwc        getwc         vfwprintf     wscanf
+          fputws        getwchar      vfwscanf
+          fwide         putwc         vwprintf
+
+        This option group further includes the following unlocked
+        variants of the above functions:
+
+          fgetwc_unlocked           getwc_unlocked
+          fgetws_unlocked           getwchar_unlocked
+          fputwc_unlocked           putwc_unlocked
+          fputws_unlocked           putwchar_unlocked
+                    
+        Note that the GNU standard C++ library, 'libstdc++.so', uses
+        some of these functions; you will not be able to link or run
+        C++ programs if you disable this option group.
 
 
 # This helps Emacs users browse this file using the page motion commands

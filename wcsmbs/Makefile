@@ -41,8 +41,9 @@ routines := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
 	    wcscoll_l wcsxfrm_l \
 	    wcscasecmp wcsncase wcscasecmp_l wcsncase_l \
 	    wcsmbsload mbsrtowcs_l \
-	    isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf \
 	    isoc99_swscanf isoc99_vswscanf
+routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				\
+	 += isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf
 
 tests := tst-wcstof wcsmbs-tst1 tst-wcsnlen \
 	 tst-wcpncpy tst-mbsrtowcs tst-wchar-h wcsatcliff

@@ -38,8 +38,7 @@ routines  = noophooks \
 	    wctomb_chk wcscpy_chk wmemcpy_chk wmemmove_chk wmempcpy_chk \
 	    wcpcpy_chk wcsncpy_chk wcscat_chk wcsncat_chk wmemset_chk \
 	    wcpncpy_chk \
-	    swprintf_chk vswprintf_chk wprintf_chk fwprintf_chk \
-	    vwprintf_chk vfwprintf_chk fgetws_chk fgetws_u_chk \
+	    swprintf_chk vswprintf_chk \
 	    confstr_chk getgroups_chk ttyname_r_chk \
 	    gethostname_chk getdomainname_chk wcrtomb_chk mbsnrtowcs_chk \
 	    wcsnrtombs_chk mbsrtowcs_chk wcsrtombs_chk mbstowcs_chk \
@@ -48,6 +47,10 @@ routines  = noophooks \
 	    $(static-only-routines)
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
 routines-$(OPTION_EGLIBC_BACKTRACE) += backtrace backtracesyms backtracesymsfd 
+routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)			\
+	 += wprintf_chk fwprintf_chk	\
+	    vwprintf_chk vfwprintf_chk fgetws_chk fgetws_u_chk
+
 static-only-routines := warning-nop stack_chk_fail_local
 
 CFLAGS-backtrace.c = -fno-omit-frame-pointer
@@ -112,9 +115,10 @@ LDFLAGS-tst-lfschk5 = -lstdc++
 LDFLAGS-tst-lfschk6 = -lstdc++
 
 tests = tst-chk1 tst-chk2 tst-chk3 \
-	tst-lfschk1 tst-lfschk2 tst-lfschk3 test-strcpy_chk test-stpcpy_chk \
-	tst-chk4 tst-chk5 tst-chk6 tst-lfschk4 tst-lfschk5 tst-lfschk6
+	tst-lfschk1 tst-lfschk2 tst-lfschk3 test-strcpy_chk test-stpcpy_chk
 tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst 
+tests-$(OPTION_EGLIBC_CXX_TESTS) \
+     += tst-chk4 tst-chk5 tst-chk6 tst-lfschk4 tst-lfschk5 tst-lfschk6
 
 extra-libs = libSegFault libpcprofile
 extra-libs-others = $(extra-libs)

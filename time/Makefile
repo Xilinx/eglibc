@@ -35,12 +35,14 @@ routines := offtime asctime clock ctime ctime_r difftime \
 aux-$(OPTION_EGLIBC_LOCALE_CODE) += alt_digit era lc-time-cleanup
 distribute := datemsk
 
-tests	:= test_time clocktest tst-posixtz tst_wcsftime \
+tests	:= test_time clocktest tst-posixtz \
 	   tst-getdate tst-mktime tst-mktime2 tst-ftime_l tst-strftime \
 	   tst-mktime3 tst-strptime2 bug-asctime bug-asctime_r bug-mktime1 \
 	   tst-strptime3
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 	+= tst-strptime
+tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+	+= tst_wcsftime
 
 include ../Rules
 

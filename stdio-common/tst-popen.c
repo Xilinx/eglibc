@@ -35,12 +35,14 @@ do_test (void)
       return 1;
     }
 
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
   /* POSIX says that pipe streams are byte-oriented.  */
   if (fwide (f, 0) >= 0)
     {
       puts ("popen did not return byte-oriented stream");
       result = 1;
     }
+#endif
 
   if (getline (&line, &len, f) != 5)
     {

@@ -173,8 +173,11 @@ $(addsuffix .out,$(addprefix $(objpfx),$(tests))): %: \
 ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
 tests: $(objpfx)sort-test.out $(objpfx)tst-fmon.out $(objpfx)tst-locale.out \
        $(objpfx)tst-rpmatch.out $(objpfx)tst-trans.out \
-       $(objpfx)tst-mbswcs.out $(objpfx)tst-ctype.out $(objpfx)tst-wctype.out \
+       $(objpfx)tst-mbswcs.out $(objpfx)tst-ctype.out \
        $(objpfx)tst-langinfo.out $(objpfx)tst-numeric.out
+ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
+tests: $(objpfx)tst-wctype.out
+endif
 endif
 
 $(objpfx)sort-test.out: sort-test.sh $(objpfx)collate-test $(objpfx)xfrm-test \

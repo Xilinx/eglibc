@@ -19,6 +19,8 @@
 #
 #	Makefile for argp.
 #
+include ../option-groups.mak
+
 subdir	:= argp
 
 headers		= argp.h
@@ -28,9 +30,13 @@ routines	= $(addprefix argp-, ba fmtstream fs-xinl help parse pv \
 
 tests		= argp-test tst-argp1 bug-argp1 tst-argp2
 
-CFLAGS-argp-help.c = $(uses-callbacks) -fexceptions
+OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+	= -DOPTION_POSIX_WIDE_CHAR_DEVICE_IO
+
+CFLAGS-argp-help.c = $(uses-callbacks) -fexceptions \
+	             $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 CFLAGS-argp-parse.c = $(uses-callbacks)
-CFLAGS-argp-fmtstream.c = -fexceptions
+CFLAGS-argp-fmtstream.c = -fexceptions $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 
 bug-argp1-ARGS = -- --help
 

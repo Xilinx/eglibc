@@ -152,7 +152,13 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 		{
 #ifdef USE_IN_LIBIO
 		  if (_IO_fwide (fs->stream, 0) > 0)
-		    putwc_unlocked (L' ', fs->stream);
+                    {
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+                      putwc_unlocked (L' ', fs->stream);
+#else
+                      abort ();
+#endif
+                    }
 		  else
 #endif
 		    putc_unlocked (' ', fs->stream);
@@ -317,7 +323,13 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 	    for (i = 0; i < fs->wmargin; ++i)
 #ifdef USE_IN_LIBIO
 	      if (_IO_fwide (fs->stream, 0) > 0)
-		putwc_unlocked (L' ', fs->stream);
+                {
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+                  putwc_unlocked (L' ', fs->stream);
+#else
+                  abort ();
+#endif
+                }
 	      else
 #endif
 		putc_unlocked (' ', fs->stream);

@@ -56,12 +56,14 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 scanf1 scanf2 scanf3 scanf4 scanf5 scanf7 scanf8 scanf9 scanf10 \
 	 scanf11 scanf12 tst-tmpnam tst-cookie tst-obprintf \
 	 tst-fseek tst-fmemopen tst-gets \
-	 tst-perror tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
+	 tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2 bug18 bug18a \
-	 bug19 bug19a tst-popen2 scanf13 scanf14 scanf15
+	 bug19 tst-popen2 scanf13 scanf14 scanf15
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf
+tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+      += tst-perror bug19a
 
 test-srcs = tst-unbputc tst-printf
 
@@ -85,6 +87,8 @@ $(objpfx)tst-printf.out: $(objpfx)tst-printf tst-printf.sh
 
 OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
 	= -DOPTION_EGLIBC_LOCALE_CODE
+OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+	= -DOPTION_POSIX_WIDE_CHAR_DEVICE_IO
 
 CFLAGS-vfprintf.c = -Wno-uninitialized
 CFLAGS-vfwprintf.c = -Wno-uninitialized
@@ -95,6 +99,7 @@ CFLAGS-scanf7.c = -Wno-format
 CFLAGS-tst-printfsz.c = -Wno-format
 CFLAGS-printf_fp.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 CFLAGS-printf_fphex.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
+CFLAGS-fxprintf.c = $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 
 CFLAGS-tmpfile.c = -fexceptions
 CFLAGS-tmpfile64.c = -fexceptions
@@ -117,6 +122,7 @@ CFLAGS-isoc99_fscanf.c += $(exceptions)
 CFLAGS-isoc99_scanf.c += $(exceptions)
 CFLAGS-errlist.c = $(fno-unit-at-a-time)
 CFLAGS-siglist.c = $(fno-unit-at-a-time)
+CFLAGS-tst-popen.c = $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 
 # The following is a hack since we must compile scanf15.c without any
 # GNU extension.  The latter are needed, though, when internal headers

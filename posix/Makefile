@@ -156,6 +156,8 @@ endif
 OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
 OPTION_EGLIBC_GETLOGIN-CFLAGS-$(OPTION_EGLIBC_GETLOGIN) \
 	= -DOPTION_EGLIBC_GETLOGIN
+OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+	= -DOPTION_POSIX_WIDE_CHAR_DEVICE_IO
 
 CFLAGS-regex.c = -Wno-strict-prototypes
 CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions $(OPTION_EGLIBC_INET-CFLAGS-y)
@@ -191,6 +193,7 @@ CFLAGS-execle.os = -fomit-frame-pointer
 CFLAGS-execl.os = -fomit-frame-pointer
 CFLAGS-execvp.os = -fomit-frame-pointer
 CFLAGS-execlp.os = -fomit-frame-pointer
+CFLAGS-bug-regex1.c = $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 
 tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 		--none random --col --color --colour

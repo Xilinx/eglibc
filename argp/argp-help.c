@@ -1876,7 +1876,13 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 
 #ifdef USE_IN_LIBIO
 	  if (_IO_fwide (stream, 0) > 0)
-	    putwc_unlocked (L'\n', stream);
+            {
+#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+              putwc_unlocked (L'\n', stream);
+#else
+              abort ();
+#endif
+            }
 	  else
 #endif
 	    putc_unlocked ('\n', stream);

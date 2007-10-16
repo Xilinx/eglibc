@@ -86,10 +86,16 @@ endif
 gpl2lgpl := error.c error.h
 
 tests := tst-dirname tst-tsearch tst-fdset tst-efgcvt tst-mntent tst-hsearch \
-	 tst-error1 tst-pselect tst-insremque tst-mntent2
+	 tst-pselect tst-insremque tst-mntent2
+tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) += tst-error1
 # eglibc: ifeq (no,$(cross-compiling))
+ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
 tests: $(objpfx)tst-error1-mem
+endif
 # eglibc: endif
+
+OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
+	= -DOPTION_POSIX_WIDE_CHAR_DEVICE_IO
 
 CFLAGS-tsearch.c = $(uses-callbacks)
 CFLAGS-lsearch.c = $(uses-callbacks)
@@ -98,13 +104,13 @@ CFLAGS-readv.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-writev.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-usleep.c = -fexceptions
 CFLAGS-syslog.c = -fexceptions
-CFLAGS-error.c = -fexceptions
+CFLAGS-error.c = -fexceptions $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 CFLAGS-getpass.c = -fexceptions
 CFLAGS-mkstemp.c = -fexceptions
 CFLAGS-mkstemp64.c = -fexceptions
 CFLAGS-getsysstats.c = -fexceptions
 CFLAGS-getusershell.c = -fexceptions
-CFLAGS-err.c = -fexceptions
+CFLAGS-err.c = -fexceptions $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
 CFLAGS-tst-tsearch.c = $(stack-align-test-flags)
 CFLAGS-mntent_r.c = -D_IO_MTSAFE_IO
 

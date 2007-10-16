@@ -1,3 +1,66 @@
+2007-10-07  Jim Blandy  <jimb@codesourcery.com>
+
+	Implement the OPTION_EGLIBC_CXX_TESTS option group.
+	* option-groups.def (OPTION_EGLIBC_CXX_TESTS): New entry.
+	* option-groups.defaults (OPTION_EGLIBC_CXX_TESTS):
+	Initialize.
+	* debug/Makefile (tests): Put tst-chk4, tst-chk5, tst-chk6,
+	tst-lfschk4, tst-lfschk5, and tst-lfschk6 in the group.
+	* dlfcn/Makefile: Include option-groups.mak.
+	(tests): Put bug-atexit3 in the group.
+	* nptl/Makefile (tests): Put tst-cancel24 in the group.
+
+	Implement the OPTION_POSIX_WIDE_CHAR_DEVICE_IO option group.
+	* option-groups.def (OPTION_POSIX_WIDE_CHAR_DEVICE_IO): New entry.
+	* option-groups.defaults (OPTION_POSIX_WIDE_CHAR_DEVICE_IO):
+	Initialize.
+	* argp/Makefile (CFLAGS-argp-help.c, CFLAGS-argp-fmtstream.c):
+	Define OPTION_POSIX_WIDE_CHAR_DEVICE_IO as appropriate.
+	* argp/argp-help.c (__argp_failure): Support the wide character
+	case only if OPTION_POSIX_WIDE_CHAR_DEVICE_IO is #defined.
+	* argp/argp-fmtstream.c (__argp_fmtstream_update): Same.
+	* debug/Makefile (routines): Put wprintf_chk, fwprintf_chk,
+	vwprintf_chk, vfwprintf_chk, fgetws_chk, and fgetws_u_chk in the
+	group.
+	* libio/Makefile: Include ../option-groups.mak.
+	(routines): Put in the group: fputwc, fputwc_u, getwc, getwc_u,
+	getwchar, getwchar_u, iofgetws, iofgetws_u, iofputws, iofputws_u,
+	iogetwline, ioungetwc, putwc, putwc_u, putwchar, putwchar_u,
+	fwprintf, swprintf, vwprintf, wprintf, wscanf, fwscanf, vwscanf,
+	and fwide.
+	(tests): Put in the group: bug-ftell, bug-rewind, bug-rewind2,
+	bug-ungetwc1, bug-ungetwc2, bug-wfflush, bug-wmemstream1,
+	tst-fgetws, tst-fopenloc, tst-fopenloc2, tst-setvbuf1,
+	tst-ungetwc1, tst-ungetwc2, tst-widetext, tst_getwc, tst_putwc,
+	tst_wprintf, tst_wprintf2, tst_wscanf, and test-freopen.
+	* localedata/Makefile (tests): Put tst-wctype in the group.
+	* misc/Makefile (CFLAGS-error.c, CFLAGS-err.c): Define
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO as appropriate.
+	(tests): Put tst-error1 in the group.
+	* misc/err.c (convert_and_print): Define only if
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO is #defined.
+	(vwarnx, vwarn): Support the wide character case only if
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO is #defined.
+	* misc/error.c (error_tail): Same.
+	* posix/Makefile (CFLAGS-bug-regex1.c): Define
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO as appropriate.
+	* posix/bug-regex1.c (main): Call fwide only if the group is enabled.
+	* stdio-common/Makefile: (routines): Put vfwprintf and vfwscanf in
+	the group.
+	(tests): Put tst-perror and bug19a in the group.
+	(CFLAGS-fxprintf.c, CFLAGS-tst-popen.c): Define
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO as appropriate.
+	* stdio-common/fxprintf.c (__fxprintf): Support the wide character
+	case only if OPTION_POSIX_WIDE_CHAR_DEVICE_IO is #defined.
+	* stdio-common/tst-perror.c (main): Test wide character case only
+	if group is enabled.
+	* stdio-common/tst-popen.c (main): Check the stream's orientation
+	only if the group is enabled.
+	* time/Makefile (tests): Put tst_wcsftime in the group.
+	* wcsmbs/Makefile (routines): Put isoc99_wscanf, isoc99_vwscanf,
+	isoc99_fwscanf, isoc99_vfwscanf, isoc99_swscanf, and
+	isoc99_vswscanf in the group.
+	
 2007-09-27  Jim Blandy  <jimb@codesourcery.com>
 
 	* bits/wchar.h (__WCHAR_MIN, __WCHAR_MAX): Use information
