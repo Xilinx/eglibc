@@ -63,7 +63,7 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
-      += tst-perror bug19a
+      += tst-perror bug19a bug20
 
 test-srcs = tst-unbputc tst-printf
 
