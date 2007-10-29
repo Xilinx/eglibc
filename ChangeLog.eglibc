@@ -1,3 +1,17 @@
+2007-10-29  Jim Blandy  <jimb@codesourcery.com>
+
+	* nss/gen-fixed-nsswitch.c: Don't #include "nsswitch.h".  Instead,
+	make our own copies of the datatype and enum definitions.  Do
+	#include "nss.h".
+	(lookup_actions, service_library, known_function, service_user)
+	(name_database_entry, name_database): Copy definitions from
+	nsswitch.c.
+	* grp/Makefile (LDLIBS-testgrp): Link against the libraries listed
+	in nss/fixed-nsswitch-libs when OPTION_EGLIBC_NSSWITCH is
+	disabled.
+	* posix/Makefile (LDLIBS-globtest): Same.
+	* option-groups.def (OPTION_EGLIBC_NSSWITCH): Doc fix.
+
 2007-10-23  Jim Blandy  <jimb@codesourcery.com>
 
 	* bits/wchar.h (__WCHAR_MIN): Add missing underscores to name.

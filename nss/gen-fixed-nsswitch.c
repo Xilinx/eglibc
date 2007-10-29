@@ -27,10 +27,8 @@
 #include <assert.h>
 #include <ctype.h>
 
-#define libc_hidden_proto(func)
-
-#include "nsswitch.h"
 #include "gnu/lib-names.h"
+#include "nss.h"
 
 
 /* Simple utilities.  */
@@ -79,6 +77,95 @@ saprintf (const char *format, ...)
 
   return buf;
 }
+
+
+
+/* Data structures representing the configuration file in memory.  */
+
+/* These are copied from nsswitch.h.
+
+   We could simply #include that file, but this program runs on the
+   build machine and links against the build machine's libraries,
+   whereas that header is meant for use by target code; it uses
+   'libc_hidden_proto', 'internal_function', and related hair.  Since
+   we've copied the parsing code, we might as well copy the data
+   structure definitions as well.  */
+
+/* Actions performed after lookup finished.  */
+typedef enum
+{
+  NSS_ACTION_CONTINUE,
+  NSS_ACTION_RETURN
+} lookup_actions;
+
+
+typedef struct service_library
+{
+  /* Name of service (`files', `dns', `nis', ...).  */
+  const char *name;
+  /* Pointer to the loaded shared library.  */
+  void *lib_handle;
+  /* And the link to the next entry.  */
+  struct service_library *next;
+} service_library;
+
+
+/* For mapping a function name to a function pointer.  It is known in
+   nsswitch.c:nss_lookup_function that a string pointer for the lookup key
+   is the first member.  */
+typedef struct
+{
+  const char *fct_name;
+  void *fct_ptr;
+} known_function;
+
+
+typedef struct service_user
+{
+  /* And the link to the next entry.  */
+  struct service_user *next;
+  /* Action according to result.  */
+  lookup_actions actions[5];
+  /* Link to the underlying library object.  */
+  service_library *library;
+  /* Collection of known functions.
+
+     With OPTION_EGLIBC_NSSWITCH enabled, this is the root of a
+     'tsearch'-style tree.
+
+     With OPTION_EGLIBC_NSSWITCH disabled, this is an array of
+     pointers to known_function structures, NULL-terminated.  */
+  union
+  {
+    void *tree;
+    const known_function **array;
+  } known;
+  /* Name of the service (`files', `dns', `nis', ...).  */
+  const char *name;
+} service_user;
+
+/* To access the action based on the status value use this macro.  */
+#define nss_next_action(ni, status) ((ni)->actions[2 + status])
+
+
+typedef struct name_database_entry
+{
+  /* And the link to the next entry.  */
+  struct name_database_entry *next;
+  /* List of service to be used.  */
+  service_user *service;
+  /* Name of the database.  */
+  const char *name;
+} name_database_entry;
+
+
+typedef struct name_database
+{
+  /* List of all known databases.  */
+  name_database_entry *entry;
+  /* List of libraries with service implementation.  */
+  service_library *library;
+} name_database;
 
 
 
@@ -659,7 +746,7 @@ generate_service_lib_list (FILE *out, name_database *service_table)
         {
           if (printed_any)
             putc (' ', out);
-          fprintf (out, "libnss_%s.so%s",
+          fprintf (out, "-lnss_%s",
                    functions[i].service,
                    nss_shlib_revision);
           printed_any = 1;

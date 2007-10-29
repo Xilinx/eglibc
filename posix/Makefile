@@ -144,6 +144,7 @@ tests: $(objpfx)globtest.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
 	$(SHELL) -e globtest.sh $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) '$(cross-test-wrapper)'
+LDLIBS-globtest += $(shell cat $(common-objpfx)nss/fixed-nsswitch-libs)
 ifeq (y,$(OPTION_EGLIBC_WORDEXP))
 tests: $(objpfx)wordexp-tst.out
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test

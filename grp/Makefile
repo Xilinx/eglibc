@@ -33,6 +33,9 @@ routines := fgetgrent initgroups setgroups \
 include ../Makeconfig
 
 tests := testgrp
+ifneq (y,$(OPTION_EGLIBC_NSSWITCH))
+LDLIBS-testgrp += $(shell cat $(common-objpfx)nss/fixed-nsswitch-libs)
+endif
 
 ifeq (yes,$(build-shared))
 test-srcs :=  tst_fgetgrent

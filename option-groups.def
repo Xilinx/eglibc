@@ -507,10 +507,9 @@ config OPTION_EGLIBC_NSSWITCH
 
        Note that some nsswitch service libraries require other option
        groups to be enabled; for example, the OPTION_EGLIBC_INET
-       option group must be enabled to use the 'libnss_dns.so.2' or
-       'libnss_nis.so.2' service libraries, which use the Domain Name
-       System and Network Information Service network protocols to
-       answer queries.
+       option group must be enabled to use the 'libnss_dns.so.2'
+       service library, which uses the Domain Name System network
+       protocol to answer queries.
 
 config OPTION_EGLIBC_RCMD
    bool "Support for 'rcmd' and related library functions"
