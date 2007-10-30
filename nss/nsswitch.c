@@ -185,9 +185,12 @@ libc_hidden_def (__nss_database_lookup)
     0 == function found
     1 == finished */
 int
-__nss_lookup (service_user **ni, const char *fct_name, void **fctp)
+__nss_lookup (service_user **ni, const char *fct_name, const char *fct2_name,
+	      void **fctp)
 {
   *fctp = __nss_lookup_function (*ni, fct_name);
+  if (*fctp == NULL && fct2_name != NULL)
+    *fctp = __nss_lookup_function (*ni, fct_name);
 
   while (*fctp == NULL
 	 && nss_next_action (*ni, NSS_STATUS_UNAVAIL) == NSS_ACTION_CONTINUE
@@ -196,6 +199,8 @@ __nss_lookup (service_user **ni, const char *fct_name, void **fctp)
       *ni = (*ni)->next;
 
       *fctp = __nss_lookup_function (*ni, fct_name);
+      if (*fctp == NULL && fct2_name != NULL)
+	*fctp = __nss_lookup_function (*ni, fct_name);
     }
 
   return *fctp != NULL ? 0 : (*ni)->next == NULL ? 1 : -1;
@@ -206,8 +211,8 @@ __nss_lookup (service_user **ni, const char *fct_name, void **fctp)
     0 == adjusted for next function
     1 == finished */
 int
-__nss_next (service_user **ni, const char *fct_name, void **fctp, int status,
-	    int all_values)
+__nss_next2 (service_user **ni, const char *fct_name, const char *fct2_name,
+	     void **fctp, int status, int all_values)
 {
   if (all_values)
     {
@@ -220,7 +225,8 @@ __nss_next (service_user **ni, const char *fct_name, void **fctp, int status,
   else
     {
       /* This is really only for debugging.  */
-       if (NSS_STATUS_TRYAGAIN > status || status > NSS_STATUS_RETURN)
+      if (__builtin_expect (NSS_STATUS_TRYAGAIN > status
+			    || status > NSS_STATUS_RETURN, 0))
 	 __libc_fatal ("illegal status in __nss_next");
 
        if (nss_next_action (*ni, status) == NSS_ACTION_RETURN)
@@ -235,6 +241,8 @@ __nss_next (service_user **ni, const char *fct_name, void **fctp, int status,
       *ni = (*ni)->next;
 
       *fctp = __nss_lookup_function (*ni, fct_name);
+      if (*fctp == NULL && fct2_name != NULL)
+	*fctp = __nss_lookup_function (*ni, fct2_name);
     }
   while (*fctp == NULL
 	 && nss_next_action (*ni, NSS_STATUS_UNAVAIL) == NSS_ACTION_CONTINUE
@@ -242,10 +250,19 @@ __nss_next (service_user **ni, const char *fct_name, void **fctp, int status,
 
   return *fctp != NULL ? 0 : -1;
 }
-libc_hidden_def (__nss_next)
+libc_hidden_def (__nss_next2)
 
 
 #if __OPTION_EGLIBC_NSSWITCH
+int
+attribute_compat_text_section
+__nss_next (service_user **ni, const char *fct_name, void **fctp, int status,
+	    int all_values)
+{
+  return __nss_next2 (ni, fct_name, NULL, fctp, status, all_values);
+}
+
+
 int
 __nss_configure_lookup (const char *dbname, const char *service_line)
 {
