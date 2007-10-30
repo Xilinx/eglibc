@@ -158,9 +158,6 @@ CFLAGS-pthread_setcanceltype.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-cancellation.c = -fasynchronous-unwind-tables
 CFLAGS-libc-cancellation.c = -fasynchronous-unwind-tables
 
-OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) := -DOPTION_EGLIBC_INET
-CFLAGS-pthread_create.c := $(OPTION_EGLIBC_INET-CFLAGS-y)
-
 # Calling pthread_exit() must cause the registered cancel handlers to
 # be executed.  Therefore exceptions have to be thrown through this
 # function.

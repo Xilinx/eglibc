@@ -19,8 +19,9 @@
 
 #include "localeinfo.h"
 #include <endian.h>
+#include <gnu/option-groups.h>
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
 #include "C-translit.h"
 #endif
 
@@ -649,7 +650,7 @@ const struct locale_data _nl_C_LC_CTYPE attribute_hidden =
     { .word = L'7' },
     { .word = L'8' },
     { .word = L'9' },
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
     /* _NL_CTYPE_TRANSLIT_TAB_SIZE */
     { .word = NTRANSLIT },
     /* _NL_CTYPE_TRANSLIT_FROM_IDX */

@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/param.h>
+#include <gnu/option-groups.h>
 
 
 static __thread char *last_value;
@@ -30,7 +31,7 @@ static __thread char *last_value;
 static const char *
 translate (const char *str, locale_t loc)
 {
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
   locale_t oldloc = __uselocale (loc);
   const char *res = _(str);
   __uselocale (oldloc);

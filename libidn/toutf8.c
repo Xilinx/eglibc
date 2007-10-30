@@ -35,6 +35,11 @@
 /* Get strlen. */
 #include <string.h>
 
+/* Get __OPTION_EGLIBC_LOCALE_CODE.  */
+#ifdef _LIBC
+# include <gnu/option-groups.h>
+#endif
+
 /* Get iconv_string. */
 #include "iconvme.h"
 
@@ -49,7 +54,7 @@
 #endif
 
 #ifdef _LIBC
-# ifdef OPTION_EGLIBC_LOCALE_CODE
+# if __OPTION_EGLIBC_LOCALE_CODE
 #  define stringprep_locale_charset() nl_langinfo (CODESET)
 # else
 #  define stringprep_locale_charset() "ANSI_X3.4-1968"

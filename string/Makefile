@@ -67,10 +67,6 @@ distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h
 
 include ../Rules
 
-OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
-	= -DOPTION_EGLIBC_LOCALE_CODE
-
-CFLAGS-strerror_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
 
 tester-ENV = LANGUAGE=C
 inl-tester-ENV = LANGUAGE=C

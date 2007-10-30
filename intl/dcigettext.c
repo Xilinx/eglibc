@@ -78,6 +78,10 @@ extern int errno;
 #endif
 #include "hash-string.h"
 
+#ifdef _LIBC
+# include <gnu/option-groups.h>
+#endif
+
 /* Thread safetyness.  */
 #ifdef _LIBC
 # include <bits/libc-lock.h>
@@ -464,7 +468,7 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
   search->category = category;
 # ifdef HAVE_PER_THREAD_LOCALE
 #  ifdef _LIBC
-#   ifdef OPTION_EGLIBC_LOCALE_CODE
+#   if __OPTION_EGLIBC_LOCALE_CODE
   localename = __current_locale_name (category);
 #   else
   localename = "C";
@@ -1337,7 +1341,7 @@ guess_category_value (category, categoryname)
      `LC_xxx', and `LANG'.  On some systems this can be done by the
      `setlocale' function itself.  */
 #ifdef _LIBC
-# ifdef OPTION_EGLIBC_LOCALE_CODE
+# if __OPTION_EGLIBC_LOCALE_CODE
   retval = __current_locale_name (category);
 # else
   retval = "C";

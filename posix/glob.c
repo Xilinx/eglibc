@@ -27,6 +27,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stddef.h>
+#ifdef _LIBC
+# include <gnu/option-groups.h>
+#endif
 
 /* Outcomment the following line for production quality code.  */
 /* #define NDEBUG 1 */
@@ -566,7 +569,7 @@ glob (pattern, flags, errfunc, pglob)
 	  if (home_dir == NULL || home_dir[0] == '\0')
             home_dir = "c:/users/default"; /* poor default */
 #  else
-#   if OPTION_EGLIBC_GETLOGIN
+#   if ! _LIBC || __OPTION_EGLIBC_GETLOGIN
 	  if (home_dir == NULL || home_dir[0] == '\0')
 	    {
 	      int success;
@@ -621,7 +624,7 @@ glob (pattern, flags, errfunc, pglob)
 		    home_dir = p->pw_dir;
 		}
 	    }
-#   endif /* OPTION_EGLIBC_GETLOGIN */
+#   endif /* ! _LIBC || __OPTION_EGLIBC_GETLOGIN */
 	  if (home_dir == NULL || home_dir[0] == '\0')
 	    {
 	      if (flags & GLOB_TILDE_CHECK)

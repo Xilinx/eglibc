@@ -24,6 +24,7 @@
 #include <wchar.h>
 #include <string.h>
 #include <libioP.h>
+#include <gnu/option-groups.h>
 
 
 int
@@ -38,7 +39,7 @@ __fxprintf (FILE *fp, const char *fmt, ...)
   int res;
   if (_IO_fwide (fp, 0) > 0)
     {
-#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+#if __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
       size_t len = strlen (fmt) + 1;
       wchar_t wfmt[len];
       for (size_t i = 0; i < len; ++i)

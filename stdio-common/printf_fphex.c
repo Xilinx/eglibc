@@ -29,6 +29,7 @@
 #include "_itoa.h"
 #include "_itowa.h"
 #include <locale/localeinfo.h>
+#include <gnu/option-groups.h>
 
 /* #define NDEBUG 1*/		/* Undefine this for debugging assertions.  */
 #include <assert.h>
@@ -148,7 +149,7 @@ __printf_fphex (FILE *fp,
 
 
   /* Figure out the decimal point character.  */
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
       decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);

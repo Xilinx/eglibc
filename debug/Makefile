@@ -125,9 +125,6 @@ extra-libs-others = $(extra-libs)
 
 libSegFault-routines = segfault
 libSegFault-inhibit-o = $(filter-out .os,$(object-suffixes))
-OPTION_EGLIBC_BACKTRACE-CFLAGS-$(OPTION_EGLIBC_BACKTRACE) \
-	= -DOPTION_EGLIBC_BACKTRACE
-CFLAGS-segfault.c = $(OPTION_EGLIBC_BACKTRACE-CFLAGS-y)
 
 libpcprofile-routines = pcprofile
 libpcprofile-inhibit-o = $(filter-out .os,$(object-suffixes))

@@ -52,6 +52,7 @@ char *alloca ();
 #ifdef _LIBC
 # include <../libio/libioP.h>
 # include <wchar.h>
+# include <gnu/option-groups.h>
 #endif
 
 #ifndef _
@@ -1877,7 +1878,7 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 #ifdef USE_IN_LIBIO
 	  if (_IO_fwide (stream, 0) > 0)
             {
-#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+#if ! _LIBC || __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
               putwc_unlocked (L'\n', stream);
 #else
               abort ();

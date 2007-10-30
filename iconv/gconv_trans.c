@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <gnu/option-groups.h>
 
 #include <bits/libc-lock.h>
 #include "gconv_int.h"
@@ -60,7 +61,7 @@ __gconv_transliterate (struct __gconv_step *step,
     PTR_DEMANGLE (fct);
 #endif
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
   /* If there is no transliteration information in the locale don't do
      anything and return the error.  */
   size = _NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_TRANSLIT_TAB_SIZE);

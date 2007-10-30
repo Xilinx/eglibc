@@ -94,9 +94,6 @@ tests: $(objpfx)tst-error1-mem
 endif
 # eglibc: endif
 
-OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
-	= -DOPTION_POSIX_WIDE_CHAR_DEVICE_IO
-
 CFLAGS-tsearch.c = $(uses-callbacks)
 CFLAGS-lsearch.c = $(uses-callbacks)
 CFLAGS-pselect.c = -fexceptions
@@ -104,13 +101,13 @@ CFLAGS-readv.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-writev.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-usleep.c = -fexceptions
 CFLAGS-syslog.c = -fexceptions
-CFLAGS-error.c = -fexceptions $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
+CFLAGS-error.c = -fexceptions
 CFLAGS-getpass.c = -fexceptions
 CFLAGS-mkstemp.c = -fexceptions
 CFLAGS-mkstemp64.c = -fexceptions
 CFLAGS-getsysstats.c = -fexceptions
 CFLAGS-getusershell.c = -fexceptions
-CFLAGS-err.c = -fexceptions $(OPTION_POSIX_WIDE_CHAR_DEVICE_IO-CFLAGS-y)
+CFLAGS-err.c = -fexceptions
 CFLAGS-tst-tsearch.c = $(stack-align-test-flags)
 CFLAGS-mntent_r.c = -D_IO_MTSAFE_IO
 

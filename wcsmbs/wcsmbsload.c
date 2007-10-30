@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gnu/option-groups.h>
 
 #include <locale/localeinfo.h>
 #include <wcsmbsload.h>
@@ -144,7 +145,7 @@ __wcsmbs_getfct (const char *to, const char *from, size_t *nstepsp)
   })
 
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
 /* Some of the functions here must not be used while setlocale is called.  */
 __libc_lock_define (extern, __libc_setlocale_lock attribute_hidden)
 

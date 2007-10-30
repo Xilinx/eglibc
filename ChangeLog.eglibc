@@ -1,5 +1,44 @@
 2007-10-29  Jim Blandy  <jimb@codesourcery.com>
 
+	* Makeconfig ($(common-objpfx)gnu/option-groups.h): New generated
+	header.
+	* scripts/option-groups.awk: New script, to generate it.
+	* debug/Makefile (CFLAGS-segfault.c): Don't define option group
+	symbols here.
+	* wcsmbs/Makefile (CFLAGS-wcsmbsload.c): Same.
+	* time/Makefile (CFLAGS-strftime_l.c, CFLAGS-strptime_l.c): Same.
+	* intl/Makefile (CFLAGS-dcigettext.c): Same.
+	* sysdeps/unix/sysv/linux/Makefile (CFLAGS-gethostid.c)
+	(CFLAGS-libc_fatal.c): Same.
+	* misc/Makefile (CFLAGS-error.c, CFLAGS-err.c): Same.
+	* nss/Makefile (CFLAGS-nsswitch.c, CFLAGS-getnssent_r.c)
+	(CFLAGS-getent.c): Same.
+	* string/Makefile (CFLAGS-strerror_l.c): Same.
+	* iconv/Makefile (CFLAGS-gconv_db.c, CFLAGS-gconv_trans.c)
+	(CFLAGS-iconv_prog.c): Same.
+	* locale/Makefile (CFLAGS-C-ctype.c, CFLAGS-xlocale.c)
+	(CFLAGS-ld-messages.c): Same.
+	* argp/Makefile (CFLAGS-argp-help.c, CFLAGS-argp-fmtstream.c): Same.
+	* nptl/Makefile (CFLAGS-pthread_create.c): Same.
+	* posix/Makefile (CFLAGS-glob.c, CFLAGS-bug-regex1.c): Same.
+	* stdio-common/Makefile (CFLAGS-printf_fp.c)
+	(CFLAGS-printf_fphex.c, CFLAGS-fxprintf.c, CFLAGS-tst-popen.c): Same.
+	* libidn/Makefile (CFLAGS-toutf8.c): Same.
+	* debug/segfault.c, wcsmbs/wcsmbsload.c, time/strftime_l.c: 
+	* time/strptime_l.c, intl/dcigettext.c:
+	* sysdeps/unix/sysv/linux/libc_fatal.c:
+	* sysdeps/unix/sysv/linux/gethostid.c, misc/err.c, misc/error.c:
+	* nss/getnssent_r.c, nss/nsswitch.c, nss/getent.c:
+	* string/strerror_l.c, iconv/gconv_db.c, iconv/iconv_prog.c:
+	* iconv/gconv_trans.c, locale/xlocale.c, locale/C-ctype.c:
+	* locale/programs/ld-messages.c, argp/argp-help.c:
+	* argp/argp-fmtstream.c, nptl/pthread_create.c, posix/glob.c:
+	* posix/bug-regex1.c, stdio-common/printf_fp.c:
+	* stdio-common/printf_fphex.c, stdio-common/tst-popen.c:
+	* stdio-common/fxprintf.c, libidn/toutf8.c: #include
+	<gnu/option-groups.h>, and test for the symbols that #defines,
+	instead.
+
 	* nss/gen-fixed-nsswitch.c: Don't #include "nsswitch.h".  Instead,
 	make our own copies of the datatype and enum definitions.  Do
 	#include "nss.h".

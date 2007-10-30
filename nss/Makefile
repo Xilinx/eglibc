@@ -130,15 +130,3 @@ endif
 # a statically-linked program that hasn't already loaded it.
 $(services:%=$(objpfx)libnss_%.so): $(common-objpfx)libc.so \
 				    $(common-objpfx)libc_nonshared.a
-
-OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DOPTION_EGLIBC_INET=1
-OPTION_EGLIBC_NSSWITCH-CFLAGS-$(OPTION_EGLIBC_NSSWITCH) \
-	= -DOPTION_EGLIBC_NSSWITCH=1
-OPTION_EGLIBC_DB_ALIASES-CFLAGS-$(OPTION_EGLIBC_DB_ALIASES) \
-	= -DOPTION_EGLIBC_DB_ALIASES=1
-
-CFLAGS-nsswitch.c    = $(OPTION_EGLIBC_INET-CFLAGS-y) \
-		       $(OPTION_EGLIBC_NSSWITCH-CFLAGS-y)
-CFLAGS-getnssent_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y)
-CFLAGS-getent.c      = $(OPTION_EGLIBC_INET-CFLAGS-y) \
-		       $(OPTION_EGLIBC_DB_ALIASES-y)

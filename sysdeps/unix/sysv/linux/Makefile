@@ -17,13 +17,7 @@ sysdep_routines += sysctl clone llseek umount umount2 readahead \
 		   eventfd eventfd_read eventfd_write
 
 
-inet-CFLAGS-$(OPTION_EGLIBC_INET) = -DOPTION_EGLIBC_INET
-
-CFLAGS-gethostid.c = -fexceptions $(inet-CFLAGS-y)
-
-OPTION_EGLIBC_BACKTRACE-CFLAGS-$(OPTION_EGLIBC_BACKTRACE) \
-	= -DOPTION_EGLIBC_BACKTRACE
-CFLAGS-libc_fatal.c += $(OPTION_EGLIBC_BACKTRACE-CFLAGS-y)
+CFLAGS-gethostid.c = -fexceptions
 
 sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
 		  sys/klog.h sys/kdaemon.h \

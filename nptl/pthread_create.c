@@ -28,6 +28,7 @@
 #include <libc-internal.h>
 #include <resolv.h>
 #include <kernel-features.h>
+#include <gnu/option-groups.h>
 
 #include <shlib-compat.h>
 
@@ -236,7 +237,7 @@ start_thread (void *arg)
   THREAD_SETMEM (pd, cpuclock_offset, now);
 #endif
 
-#ifdef OPTION_EGLIBC_INET
+#if __OPTION_EGLIBC_INET
   /* Initialize resolver state pointer.  */
   __resp = &pd->res;
 #endif
@@ -305,7 +306,7 @@ start_thread (void *arg)
   /* Run the destructor for the thread-local data.  */
   __nptl_deallocate_tsd ();
 
-#ifdef OPTION_EGLIBC_INET
+#if __OPTION_EGLIBC_INET
   /* Clean up any state libc stored in thread-local variables.  */
   __libc_thread_freeres ();
 #endif

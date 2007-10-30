@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <not-cancel.h>
+#include <gnu/option-groups.h>
 
 #define HOSTIDFILE "/etc/hostid"
 
@@ -91,7 +92,7 @@ gethostid ()
 	return id;
     }
 
-#ifdef OPTION_EGLIBC_INET
+#if __OPTION_EGLIBC_INET
   /* Getting from the file was not successful.  An intelligent guess for
      a unique number of a host is its IP address.  Return this.  */
   if (__gethostname (hostname, MAXHOSTNAMELEN) < 0 || hostname[0] == '\0')

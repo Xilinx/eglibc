@@ -43,6 +43,7 @@
 #if defined _LIBC && defined USE_IN_LIBIO
 # include <wchar.h>
 # include <libio/libioP.h>
+# include <gnu/option-groups.h>
 # define __vsnprintf(s, l, f, a) _IO_vsnprintf (s, l, f, a)
 #endif
 
@@ -153,7 +154,7 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 #ifdef USE_IN_LIBIO
 		  if (_IO_fwide (fs->stream, 0) > 0)
                     {
-#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+#if ! _LIBC || __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
                       putwc_unlocked (L' ', fs->stream);
 #else
                       abort ();

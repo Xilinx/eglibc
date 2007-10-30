@@ -29,6 +29,7 @@
 #include <stdbool.h>
 
 #ifdef _LIBC
+# include <gnu/option-groups.h>
 # include "../locale/localeinfo.h"
 #endif
 
@@ -93,7 +94,7 @@ localtime_r (t, tp)
     if (val < from || val > to)						      \
       return NULL;							      \
   } while (0)
-#if defined (OPTION_EGLIBC_LOCALE_CODE) && defined (_NL_CURRENT)
+#if (! _LIBC || __OPTION_EGLIBC_LOCALE_CODE) && defined (_NL_CURRENT)
 # define get_alt_number(from, to, n) \
   ({									      \
      __label__ do_normal;						      \
@@ -828,7 +829,7 @@ __strptime_internal (rp, fmt, tmp, statep LOCALE_PARAM)
 	      s.want_xday = 1;
 	      break;
 	    case 'C':
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if ! _LIBC || __OPTION_EGLIBC_LOCALE_CODE
 	      if (s.decided != raw)
 		{
 		  if (s.era_cnt >= 0)
@@ -870,7 +871,7 @@ __strptime_internal (rp, fmt, tmp, statep LOCALE_PARAM)
 		 normal representation.  */
 	      goto match_century;
  	    case 'y':
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if ! _LIBC || __OPTION_EGLIBC_LOCALE_CODE
 	      if (s.decided != raw)
 		{
 		  get_number(0, 9999, 4);
@@ -932,7 +933,7 @@ __strptime_internal (rp, fmt, tmp, statep LOCALE_PARAM)
 #endif
 	      goto match_year_in_century;
 	    case 'Y':
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if ! _LIBC || __OPTION_EGLIBC_LOCALE_CODE
 	      if (s.decided != raw)
 		{
 		  num_eras = _NL_CURRENT_WORD (LC_TIME,
@@ -1132,7 +1133,7 @@ __strptime_internal (rp, fmt, tmp, statep LOCALE_PARAM)
 	tm->tm_year = (s.century - 19) * 100;
     }
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if ! _LIBC || __OPTION_EGLIBC_LOCALE_CODE
   if (s.era_cnt != -1)
     {
       era = _nl_select_era_entry (s.era_cnt HELPER_LOCALE_ARG);

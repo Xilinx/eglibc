@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+#include <gnu/option-groups.h>
 
 static int
 do_test (void)
@@ -35,7 +36,7 @@ do_test (void)
       return 1;
     }
 
-#ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+#if __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
   /* POSIX says that pipe streams are byte-oriented.  */
   if (fwide (f, 0) >= 0)
     {

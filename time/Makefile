@@ -54,12 +54,6 @@ CFLAGS-tzfile.c = $(tz-cflags)
 CFLAGS-tzset.c = $(tz-cflags)
 CFLAGS-getdate.c = -fexceptions
 
-OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
-	= -DOPTION_EGLIBC_LOCALE_CODE
-
-CFLAGS-strftime_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
-CFLAGS-strptime_l.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
-
 # Don't warn about Y2k problem in strftime format string.
 CFLAGS-test_time.c = -Wno-format
 

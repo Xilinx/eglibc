@@ -36,6 +36,7 @@
 #ifdef _POSIX_MAPPED_FILES
 # include <sys/mman.h>
 #endif
+#include <gnu/option-groups.h>
 #include <charmap.h>
 #include <gconv_int.h>
 #include "iconv_prog.h"
@@ -230,7 +231,7 @@ main (int argc, char *argv[])
 	      bool to_wrong =
 		(iconv_open (to_code, "UTF-8") == (iconv_t) -1
 		 && errno == EINVAL);
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
 	      const char *from_pretty =
 		(from_code[0] ? from_code : nl_langinfo (CODESET));
 	      const char *to_pretty =

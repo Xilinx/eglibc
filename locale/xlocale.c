@@ -19,6 +19,7 @@
    02111-1307 USA.  */
 
 #include <locale.h>
+#include <gnu/option-groups.h>
 #include "localeinfo.h"
 
 #define DEFINE_CATEGORY(category, category_name, items, a) \
@@ -32,7 +33,7 @@ extern struct locale_data _nl_C_##category;
    strong reference to the 'class', 'toupper', and 'tolower' tables
    will cause C-ctype.o to be brought in, as it should be, even when
    the reference to _nl_C_LC_CTYPE will be weak.)  */
-#ifndef OPTION_EGLIBC_LOCALE_CODE
+#if ! __OPTION_EGLIBC_LOCALE_CODE
 # define DEFINE_CATEGORY(category, category_name, items, a) \
   weak_extern (_nl_C_##category)
 # include "categories.def"
@@ -68,7 +69,7 @@ const struct __locale_struct _nl_C_locobj attribute_hidden =
   };
 
 
-#ifndef OPTION_EGLIBC_LOCALE_CODE
+#if ! __OPTION_EGLIBC_LOCALE_CODE
 /* When locale code is enabled, these are each defined in the
    appropriate lc-CATEGORY.c file, so that static links (when __thread
    is supported) bring in only those lc-CATEGORY.o files for
@@ -77,7 +78,7 @@ const struct __locale_struct _nl_C_locobj attribute_hidden =
 
    When locale code is disabled, the _nl_C_CATEGORY objects are the
    only possible referents.  At the moment, there isn't a way to get
-   OPTION_EGLIBC_LOCALE_CODE defined in every compilation unit that
+   __OPTION_EGLIBC_LOCALE_CODE defined in every compilation unit that
    #includes localeinfo.h, so we can't just turn off
    NL_CURRENT_INDIRECT.  So we'll define the _nl_current_CATEGORY
    pointers here.  */
@@ -88,4 +89,4 @@ const struct __locale_struct _nl_C_locobj attribute_hidden =
 #include "categories.def"
 #undef DEFINE_CATEGORY
 #endif
-#endif /* OPTION_EGLIBC_LOCALE_CODE */
+#endif /* __OPTION_EGLIBC_LOCALE_CODE */

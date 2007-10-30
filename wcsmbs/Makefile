@@ -72,10 +72,6 @@ CFLAGS-wcstold_l.c = $(strtox-CFLAGS)
 CFLAGS-wcstof_l.c = $(strtox-CFLAGS)
 CFLAGS-tst-wchar-h.c = -D_FORTIFY_SOURCE=2
 
-OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
-	= -DOPTION_EGLIBC_LOCALE_CODE
-CFLAGS-wcsmbsload.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
-
 CFLAGS-isoc99_wscanf.c += $(exceptions)
 CFLAGS-isoc99_fwscanf.c += $(exceptions)
 CFLAGS-isoc99_vwscanf.c += $(exceptions)

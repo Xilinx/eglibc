@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <stdio-common/_itoa.h>
 #include <ldsodefs.h>
+#include <gnu/option-groups.h>
 
 #include <bp-checks.h>
 
@@ -95,7 +96,7 @@ catch_segfault (int signal, SIGCONTEXT ctx)
   REGISTER_DUMP;
 #endif
 
-#ifdef OPTION_EGLIBC_BACKTRACE
+#if __OPTION_EGLIBC_BACKTRACE
   WRITE_STRING ("\nBacktrace:\n");
 
   /* Get the backtrace.  */

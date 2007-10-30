@@ -102,11 +102,6 @@ $(objpfx)msgs.h: po2test.sed ../po/de.po
 	$(make-target-directory)
 	LC_ALL=C sed -f $^ > $@
 
-OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
-	= -DOPTION_EGLIBC_LOCALE_CODE
-
-CFLAGS-dcigettext.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
-
 CFLAGS-tst-gettext.c = -DTESTSTRS_H=\"$(objpfx)msgs.h\"
 CFLAGS-tst-translit.c = -DOBJPFX=\"$(objpfx)\"
 CFLAGS-tst-gettext2.c = -DOBJPFX=\"$(objpfx)\"

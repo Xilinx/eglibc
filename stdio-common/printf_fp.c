@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <gnu/option-groups.h>
 
 #ifdef COMPILE_WPRINTF
 # define CHAR_T        wchar_t
@@ -262,7 +263,7 @@ ___printf_fp (FILE *fp,
 
 
   /* Figure out the decimal point character.  */
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
       decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);
@@ -288,7 +289,7 @@ ___printf_fp (FILE *fp,
   decimalwc = L'.';
 #endif
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (info->group)
     {
       if (info->extra == 0)

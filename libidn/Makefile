@@ -39,8 +39,3 @@ libcidn-inhibit-o = $(filter-out .os,$(object-suffixes))
 include $(..)Rules
 
 $(objpfx)libcidn.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a
-
-OPTION_EGLIBC_LOCALE_CODE-CFLAGS-$(OPTION_EGLIBC_LOCALE_CODE) \
-	= -DOPTION_EGLIBC_LOCALE_CODE
-
-CFLAGS-toutf8.c = $(OPTION_EGLIBC_LOCALE_CODE-CFLAGS-y)
