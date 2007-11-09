@@ -30,6 +30,12 @@
 #include "gnu/lib-names.h"
 #include "nss.h"
 
+/* Provide a fallback definition to allow this file to be compiled outside
+   libc.  */
+#ifndef internal_function
+# define internal_function
+#endif
+
 
 /* Simple utilities.  */
 

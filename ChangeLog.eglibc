@@ -1,3 +1,8 @@
+2007-11-09  Sandra Loosemore  <sandra@codesourcery.com>
+
+	* nss/gen-fixed-nsswitch.c (internal_function):  Provide a fallback
+	definition.
+
 2007-10-29  Jim Blandy  <jimb@codesourcery.com>
 
 	* Makeconfig ($(common-objpfx)gnu/option-groups.h): New generated
