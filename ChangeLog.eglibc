@@ -1,3 +1,10 @@
+2007-11-29  Sandra Loosemore  <sandra@codesourcery.com>
+
+	Allow building EGLIBC with -Os.
+
+	* include/features.h (__USE_EXTERN_INLINES_IN_LIBC):  New.
+	* io/sys/stat.h: Use it instead of __USE_EXTERN_INLINES.
+
 2007-11-09  Sandra Loosemore  <sandra@codesourcery.com>
 
 	* nss/gen-fixed-nsswitch.c (internal_function):  Provide a fallback
