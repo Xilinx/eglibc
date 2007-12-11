@@ -1,3 +1,9 @@
+2007-12-11  Jim Blandy  <jimb@codesourcery.com>
+
+	Fix testing with OPTION_EGLIBC_CATGETS disabled.
+	* catgets/Makefile (tests): Put de/libc.cat, test1.cat,
+	test2.cat, and test-gencat.out in the option group.
+
 2007-11-29  Sandra Loosemore  <sandra@codesourcery.com>
 
 	Allow building EGLIBC with -Os.

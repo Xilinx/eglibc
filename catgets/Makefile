@@ -56,8 +56,10 @@ generated-dirs = de
 tst-catgets-ENV = NLSPATH="$(objpfx)%l/%N.cat" LANG=de
 
 # eglibc: ifneq ($(cross-compiling),yes)
+ifeq (y,$(OPTION_EGLIBC_CATGETS))
 tests: $(objpfx)de/libc.cat $(objpfx)test1.cat $(objpfx)test2.cat \
        $(objpfx)test-gencat.out
+endif
 # This test just checks whether the program produces any error or not.
 # The result is not tested.
 $(objpfx)test1.cat: test1.msg $(objpfx)gencat
