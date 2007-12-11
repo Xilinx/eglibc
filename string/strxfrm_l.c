@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/param.h>
+#include <gnu/option-groups.h>
 
 #ifndef STRING_TYPE
 # define STRING_TYPE char
@@ -87,7 +88,11 @@ size_t
 STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n, __locale_t l)
 {
   struct locale_data *current = l->__locales[LC_COLLATE];
+#if __OPTION_EGLIBC_LOCALE_CODE
   uint_fast32_t nrules = current->values[_NL_ITEM_INDEX (_NL_COLLATE_NRULES)].word;
+#else
+  const uint_fast32_t nrules = 0;
+#endif
   /* We don't assign the following values right away since it might be
      unnecessary in case there are no rules.  */
   const unsigned char *rulesets;

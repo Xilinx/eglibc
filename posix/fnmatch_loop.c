@@ -52,10 +52,15 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
   const char *collseq = (const char *)
     _NL_CURRENT(LC_COLLATE, _NL_COLLATE_COLLSEQWC);
 # else
+#  if __OPTION_EGLIBC_LOCALE_CODE
   const UCHAR *collseq = (const UCHAR *)
     _NL_CURRENT(LC_COLLATE, _NL_COLLATE_COLLSEQMB);
-# endif
-#endif
+#   define COLLSEQ_BYTE_LOOKUP(ix) (collseq[(ix)])
+#  else
+#   define COLLSEQ_BYTE_LOOKUP(ix) (ix)
+#  endif /* __OPTION_EGLIBC_LOCALE_CODE */
+# endif /* WIDE_CHAR_VERSION */
+#endif /* _LIBC */
 
   while ((c = *p++) != L('\0'))
     {
@@ -676,8 +681,10 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
 			else
 			  lcollseq = __collseq_table_lookup (collseq, cold);
 # else
-			fcollseq = collseq[fn];
-			lcollseq = is_seqval ? cold : collseq[(UCHAR) cold];
+			fcollseq = COLLSEQ_BYTE_LOOKUP (fn);
+			lcollseq = (is_seqval
+                                    ? cold
+                                    : COLLSEQ_BYTE_LOOKUP ((UCHAR) cold));
 # endif
 
 			is_seqval = 0;
@@ -853,7 +860,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
 				    goto matched;
 				  }
 # else
-				hcollseq = collseq[cend];
+				hcollseq = COLLSEQ_BYTE_LOOKUP (cend);
 # endif
 			      }
 

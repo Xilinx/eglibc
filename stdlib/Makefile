@@ -73,11 +73,11 @@ tests		:= tst-strtol tst-strtod testmb testrand testsort testdiv   \
 		   test-canon test-canon2 tst-strtoll tst-environ	    \
 		   tst-xpg-basename tst-random tst-random2 tst-bsearch	    \
 		   tst-limits tst-rand48 bug-strtod tst-setcontext	    \
-		   test-a64l tst-qsort tst-system testmb2 bug-strtod2	    \
+		   test-a64l tst-qsort tst-system bug-strtod2		    \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
-		   tst-makecontext tst-strtod4 tst-strtod5 tst-qsort2
+		   tst-makecontext tst-qsort2
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-		+= tst-strtod3
+		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
 include ../Makeconfig
 
 ifeq ($(build-shared),yes)

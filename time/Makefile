@@ -36,11 +36,11 @@ aux-$(OPTION_EGLIBC_LOCALE_CODE) += alt_digit era lc-time-cleanup
 distribute := datemsk
 
 tests	:= test_time clocktest tst-posixtz \
-	   tst-getdate tst-mktime tst-mktime2 tst-ftime_l tst-strftime \
+	   tst-getdate tst-mktime tst-mktime2 tst-strftime \
 	   tst-mktime3 tst-strptime2 bug-asctime bug-asctime_r bug-mktime1 \
 	   tst-strptime3
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-	+= tst-strptime
+	+= tst-strptime tst-ftime_l
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
 	+= tst_wcsftime
 

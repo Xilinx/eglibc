@@ -65,12 +65,14 @@ tests = tst_swprintf tst_swscanf				\
 	tst-memstream1 tst-memstream2				\
 	tst-wmemstream1 tst-wmemstream2				\
 	bug-memstream1
-tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-     += tst-swscanf
-tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				  \
-     += bug-ftell bug-rewind bug-rewind2 bug-ungetwc1 bug-ungetwc2	  \
-	bug-wfflush bug-wmemstream1 tst-fgetws tst-fopenloc tst-fopenloc2 \
-	tst-setvbuf1 tst-ungetwc1 tst-ungetwc2 tst-widetext tst_getwc	  \
+tests-$(OPTION_EGLIBC_LOCALE_CODE)				\
+     += tst-swscanf tst-fgetws tst-fopenloc tst-setvbuf1	\
+	tst-ungetwc1 tst-ungetwc2 bug-ftell bug-ungetwc2	\
+	tst-widetext 
+tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)		\
+     += bug-rewind bug-rewind2 bug-ungetwc1		\
+	bug-wfflush bug-wmemstream1 tst-fopenloc2	\
+	tst_getwc					\
 	tst_putwc tst_wprintf tst_wprintf2 tst_wscanf
 test-srcs = test-freopen
 
@@ -186,14 +188,14 @@ distribute := iolibio.h libioP.h strfile.h Banner test-freopen.sh \
 include ../Rules
 
 ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
-# eglibc: ifeq (no,$(cross-compiling))
-tests: $(objpfx)test-freopen.out $(objpfx)tst-fopenloc.check
-# eglibc: endif
-
+tests: $(objpfx)test-freopen.out
 $(objpfx)test-freopen.out: test-freopen.sh $(objpfx)test-freopen
 	$(SHELL) -e $< $(common-objpfx) '$(run-program-prefix)'	\
 	$(common-objpfx)libio/
+endif
 
+ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
+tests: $(objpfx)tst-fopenloc.check
 $(objpfx)tst-fopenloc.check: $(objpfx)tst-fopenloc.out
 	cmp ../iconvdata/testdata/ISO-8859-1..UTF8 $(objpfx)tst-fopenloc.out \
 	  > $@

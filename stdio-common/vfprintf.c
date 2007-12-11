@@ -31,6 +31,7 @@
 #include "_itoa.h"
 #include <locale/localeinfo.h>
 #include <stdio.h>
+#include <gnu/option-groups.h>
 
 /* This code is shared between the standard stdio implementation found
    in GNU C library and the libio implementation originally found in
@@ -104,6 +105,12 @@
 # define _itoa_word(Val, Buf, Base, Case) _itowa_word (Val, Buf, Base, Case)
 # undef EOF
 # define EOF WEOF
+#endif
+
+#if __OPTION_EGLIBC_LOCALE_CODE
+# define LOCALE_SUPPORT (1)
+#else
+# define LOCALE_SUPPORT (0)
 #endif
 
 #include "_i18n_number.h"
@@ -1151,7 +1158,8 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 		/* Search for the end of the string, but don't search past    \
 		   the length (in bytes) specified by the precision.  Also    \
 		   don't use incomplete characters.  */			      \
-		if (_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_MB_CUR_MAX) == 1)   \
+		if (! LOCALE_SUPPORT                                          \
+                    ||_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_MB_CUR_MAX) == 1) \
 		  len = __strnlen (string, prec);			      \
 		else							      \
 		  {							      \
@@ -1381,7 +1389,9 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
     LABEL (flag_quote):
       group = 1;
 
-      if (grouping == (const char *) -1)
+      if (! LOCALE_SUPPORT)
+        grouping = NULL;
+      else if (grouping == (const char *) -1)
 	{
 #ifdef COMPILE_WPRINTF
 	  thousands_sep = _NL_CURRENT_WORD (LC_NUMERIC,
@@ -1622,7 +1632,9 @@ do_positional:
     free (workstart);
     workstart = NULL;
 
-    if (grouping == (const char *) -1)
+    if (! LOCALE_SUPPORT)
+      grouping = NULL;
+    else if (grouping == (const char *) -1)
       {
 #ifdef COMPILE_WPRINTF
 	thousands_sep = _NL_CURRENT_WORD (LC_NUMERIC,

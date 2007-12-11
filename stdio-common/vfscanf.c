@@ -29,6 +29,7 @@
 #include <wctype.h>
 #include <bits/libc-lock.h>
 #include <locale/localeinfo.h>
+#include <gnu/option-groups.h>
 
 #ifdef	__GNUC__
 # define HAVE_LONGLONG
@@ -293,24 +294,35 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
   ARGCHECK (s, format);
 
  {
-#ifndef COMPILE_WSCANF
+#if __OPTION_EGLIBC_LOCALE_CODE && !defined (COMPILE_WSCANF)
    struct locale_data *const curnumeric = loc->__locales[LC_NUMERIC];
 #endif
 
+#if __OPTION_EGLIBC_LOCALE_CODE
    /* Figure out the decimal point character.  */
-#ifdef COMPILE_WSCANF
+# ifdef COMPILE_WSCANF
    decimal = _NL_CURRENT_WORD (LC_NUMERIC, _NL_NUMERIC_DECIMAL_POINT_WC);
-#else
+# else
    decimal = curnumeric->values[_NL_ITEM_INDEX (DECIMAL_POINT)].string;
-#endif
+# endif
    /* Figure out the thousands separator character.  */
-#ifdef COMPILE_WSCANF
+# ifdef COMPILE_WSCANF
    thousands = _NL_CURRENT_WORD (LC_NUMERIC, _NL_NUMERIC_THOUSANDS_SEP_WC);
-#else
+# else
    thousands = curnumeric->values[_NL_ITEM_INDEX (THOUSANDS_SEP)].string;
    if (*thousands == '\0')
      thousands = NULL;
-#endif
+# endif
+#else /* if ! __OPTION_EGLIBC_LOCALE_CODE */
+   /* Hard-code values from the C locale.  */
+# ifdef COMPILE_WSCANF
+   decimal = L'.';
+   thousands = L'\0';
+# else
+   decimal = ".";
+   thousands = NULL;
+# endif
+#endif /* __OPTION_EGLIBC_LOCALE_CODE */
  }
 
   /* Lock the stream.  */
@@ -1365,10 +1377,17 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	      const char *mbdigits[10];
 	      const char *mbdigits_extended[10];
 #endif
+#if __OPTION_EGLIBC_LOCALE_CODE
 	      /*  "to_inpunct" is a map from ASCII digits to their
 		  equivalent in locale. This is defined for locales
 		  which use an extra digits set.  */
 	      wctrans_t map = __wctrans ("to_inpunct");
+#else
+              /* This will always be the case when
+                 OPTION_EGLIBC_LOCALE_CODE is disabled, but the
+                 compiler can't figure that out.  */
+              wctrans_t map = NULL;
+#endif
 	      int n;
 
 	      from_level = 0;
@@ -2026,6 +2045,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 		--width;
 	    }
 
+#if __OPTION_EGLIBC_LOCALE_CODE
 	  wctrans_t map;
 	  if (__builtin_expect ((flags & I18N) != 0, 0)
 	      /* Hexadecimal floats make no sense, fixing localized
@@ -2242,6 +2262,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	      ;
 #endif
 	    }
+#endif /* __OPTION_EGLIBC_LOCALE_CODE */
 
 	  /* Have we read any character?  If we try to read a number
 	     in hexadecimal notation and we have read only the `0x'

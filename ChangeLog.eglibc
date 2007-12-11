@@ -1,5 +1,73 @@
 2007-12-11  Jim Blandy  <jimb@codesourcery.com>
 
+	Clean up test results with OPTION_EGLIBC_LOCALE_CODE disabled.
+	* debug/tst-chk1.c: Omit locale tests when group is disabled.
+	* intl/Makefile (tests): Put tst-translit, tst-gettext2,
+	tst-codeset, and tst-gettext3 in the group.
+	* libio/Makefile (tests): Put tst-fgetws, tst-fopenloc,
+	tst-setvbuf1, tst-ungetwc1, tst-ungetwc2, bug-ftell, bug-ungetwc2,
+	tst-widetext, and tst-fopenloc in the group; some were formerly in
+	OPTION_POSIX_WIDE_CHAR_DEVICE_IO.
+	* nptl/Makefile (tests): Put tst-locale1 in the group.
+	* posix/Makefile (tests): Put bug-regex17, bug-regex18,
+	bug-regex20, bug-regex23, and bug-regex26 in the group.
+	(tst-rxspencer): Pass --utf8 only when the group is enabled.
+	* posix/bug-regex6.c: Omit non-C locale tests when group is disabled.
+	* stdio-common/Makefile (tests): Put bug14 and scanf13 in the group.
+	* stdlib/Makefile (tests): Put tst-strtod4, tst-strtod5, and
+	testmb2 in the group.
+	* stdlib/tst-strtod.c: Omit locale tests when group is disabled.
+	* string/tst-strxfrm.c, string/tst-strxfrm2.c: Same.
+	* time/Makefile (tests): Put tst-ftime_l in the group.
+	
+	Fix code broken by OPTION_EGLIBC_LOCALE_CODE.
+	* posix/regex_internal.h: #include <gnu/option-groups.h>.
+	(string_mb_cur_max, dfa_mb_cur_max): New macros for accessing the
+	'mb_cur_max' fields of re_string_t and re_dfa_t, whose values can
+	be constant when the group is disabled.  Use them throughout.
+	* posix/regex_internal.c: Use string_mb_cur_max and dfa_mb_cur_max
+	as appropriate.
+	* posix/regcomp.c: Same.
+	(re_compile_fastmap_iter): Process COMPLEX_BRACKET nodes only when
+	the group is enabled.
+	(init_dfa): When the group is disabled, clear map_notascii.
+	(parse_bracket_exp): Process MB_CHAR elements only when the group
+	is enabled.  Otherwise, fix 'nrules' at zero, for the compiler's
+	benefit, and assume the collation sequence is the identity.
+	(parse_bracket_element): Create MB_CHAR elements only when the
+	group is enabled.
+	(build_equiv_class): When the group is disabled, we know there
+	will be no collation rules.
+	(build_charclass): When the group is disabled, do not try to
+	process references to wide character categories accessed via
+	'wctype'.
+	* posix/regexec.c: Use string_mb_cur_max and dfa_mb_cur_max
+	as appropriate.
+	(find_collation_sequence_value): Define function only when the
+	group is enabled.
+	(check_node_accept_bytes): Check character against 'wctype' style
+	classes only if group is enabled.  When the group is disabled,
+	Skip collation-rule-based matching.
+	* posix/fnmatch.c: #include <gnu/option-groups.h>.
+	Define HANDLE_MULTIBYTE only if when OPTION_EGLIBC_LOCALE_CODE is
+	enabled.
+	* posix/fnmatch_loop.c (FCT (internal_fnmatch or internal_fnwmatch)): 
+	If the group is disabled, assume that the collation sequence is
+	the identity.
+	* stdio-common/_i18n_number.h (_i18n_number_rewrite): Provide only
+	a trivial definition when the group is disabled.
+	* stdio-common/vfprintf.c: #include <gnu/option-groups.h>.
+	(LOCALE_SUPPORT): Define.
+	(vfprintf): Consult it as appropriate.
+	* stdio-common/vfscanf.c: #include <gnu/option-groups.h>.
+	(_IO_vfwscanf): If the group is disabled, don't try to consult the
+	locale for decimal point and thousands separator characters, or
+	for custom digits.
+	* stdlib/strtod_l.c (__STRTOF_INTERNAL): Don't try to consult the
+	locale's numeric settings.
+	* string/strxfrm_l.c, string/strcoll_l.c: Don't try to consult the
+	locale's collation settings.
+
 	Fix testing with OPTION_EGLIBC_CATGETS disabled.
 	* catgets/Makefile (tests): Put de/libc.cat, test1.cat,
 	test2.cat, and test-gencat.out in the option group.

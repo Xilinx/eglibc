@@ -56,12 +56,12 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 scanf1 scanf2 scanf3 scanf4 scanf5 scanf7 scanf8 scanf9 scanf10 \
 	 scanf11 scanf12 tst-tmpnam tst-cookie tst-obprintf \
 	 tst-fseek tst-fmemopen tst-gets \
-	 tst-sprintf tst-rndseek tst-fdopen tst-fphex bug14 \
+	 tst-sprintf tst-rndseek tst-fdopen tst-fphex \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-swscanf tst-sprintf2 bug18 bug18a \
-	 bug19 tst-popen2 scanf13 scanf14 scanf15
+	 bug19 tst-popen2 scanf14 scanf15
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-      += tst-sscanf tst-swprintf bug15 test-vfprintf
+      += tst-sscanf tst-swprintf bug15 test-vfprintf bug14 scanf13
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
       += tst-perror bug19a bug20
 

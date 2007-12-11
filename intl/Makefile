@@ -63,7 +63,7 @@ $(objpfx)plural.o: plural.c
 include ../Rules
 
 # eglibc: ifeq (no,$(cross-compiling))
-ifeq (yyes,$(OPTION_EGLIBC_LOCALES)$(build-shared))
+ifeq (yyyes,$(OPTION_EGLIBC_LOCALES)$(OPTION_EGLIBC_LOCALE_CODE)$(build-shared))
 ifneq ($(strip $(MSGFMT)),:)
 tests: $(objpfx)tst-translit.out $(objpfx)tst-gettext2.out \
        $(objpfx)tst-codeset.out $(objpfx)tst-gettext3.out

@@ -251,7 +251,7 @@ tests = tst-typesizes \
 	tst-unload \
 	tst-dlsym1 \
 	tst-sysconf \
-	tst-locale1 tst-locale2 \
+	tst-locale2 \
 	tst-umask1 \
 	tst-popen1 \
 	tst-clock1 \
@@ -271,6 +271,8 @@ tests-$(OPTION_EGLIBC_BACKTRACE) += tst-backtrace1
 
 # This test is written in C++.
 tests-$(OPTION_EGLIBC_CXX_TESTS) += tst-cancel24
+
+tests-$(OPTION_EGLIBC_LOCALE_CODE) += tst-locale1 
 
 # Files which must not be linked with libpthread.
 tests-nolibpthread = tst-unload

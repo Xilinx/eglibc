@@ -1,6 +1,7 @@
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
+#include <gnu/option-groups.h>
 
 static int
 do_test (void)
@@ -38,6 +39,7 @@ do_test (void)
       res = 1;
     }
 
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (setlocale (LC_ALL, "de_DE.UTF-8") == NULL)
     {
       puts ("setlocale failed");
@@ -75,6 +77,7 @@ do_test (void)
 	  res = 1;
 	}
     }
+#endif
 
   return res;
 }

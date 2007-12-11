@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <string.h>
 #include <math.h>
+#include <gnu/option-groups.h>
 
 struct ltest
   {
@@ -174,7 +175,9 @@ main (int argc, char ** argv)
 
   status |= long_dbl ();
 
+#if __OPTION_EGLIBC_LOCALE_CODE
   status |= locale_test ();
+#endif
 
   return status ? EXIT_FAILURE : EXIT_SUCCESS;
 }
@@ -217,6 +220,7 @@ long_dbl (void)
   return 0;
 }
 
+#if __OPTION_EGLIBC_LOCALE_CODE
 /* Perform a few tests in a locale with thousands separators.  */
 static int
 locale_test (void)
@@ -274,3 +278,4 @@ locale_test (void)
 
   return result;
 }
+#endif /* __OPTION_EGLIBC_LOCALE_CODE */

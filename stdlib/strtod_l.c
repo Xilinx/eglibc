@@ -19,6 +19,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <gnu/option-groups.h>
 #include <xlocale.h>
 
 extern double ____strtod_l_internal (const char *, char **, int, __locale_t);
@@ -480,6 +481,7 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
   /* Used in several places.  */
   int cnt;
 
+#if __OPTION_EGLIBC_LOCALE_CODE
   struct locale_data *current = loc->__locales[LC_NUMERIC];
 
   if (__builtin_expect (group, 0))
@@ -518,6 +520,17 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
   decimal_len = strlen (decimal);
   assert (decimal_len > 0);
 #endif
+#else /* if ! __OPTION_EGLIBC_LOCALE_CODE */
+  /* Hard-code values from the 'C' locale.  */
+  grouping = NULL;
+#ifdef USE_WIDE_CHAR
+  decimal = L'.';
+# define decimal_len 1
+#else
+  decimal = ".";
+  decimal_len = 1;
+#endif
+#endif /* __OPTION_EGLIBC_LOCALE_CODE */
 
   /* Prepare number representation.  */
   exponent = 0;

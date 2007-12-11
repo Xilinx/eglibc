@@ -19,9 +19,12 @@
 
 #include <wchar.h>
 #include <wctype.h>
+#include <gnu/option-groups.h>
 
 #include "../locale/outdigits.h"
 #include "../locale/outdigitswc.h"
+
+#if __OPTION_EGLIBC_LOCALE_CODE
 
 static CHAR_T *
 _i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr)
@@ -93,3 +96,13 @@ _i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr)
 
   return w;
 }
+
+#else
+
+static CHAR_T *
+_i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr)
+{
+  return w;
+}
+
+#endif

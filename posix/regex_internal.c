@@ -44,8 +44,8 @@ re_string_allocate (re_string_t *pstr, const char *str, int len, int init_len,
   int init_buf_len;
 
   /* Ensure at least one character fits into the buffers.  */
-  if (init_len < dfa->mb_cur_max)
-    init_len = dfa->mb_cur_max;
+  if (init_len < dfa_mb_cur_max (dfa))
+    init_len = dfa_mb_cur_max (dfa);
   init_buf_len = (len + 1 < init_len) ? len + 1: init_len;
   re_string_construct_common (str, len, pstr, trans, icase, dfa);
 
@@ -56,7 +56,7 @@ re_string_allocate (re_string_t *pstr, const char *str, int len, int init_len,
   pstr->word_char = dfa->word_char;
   pstr->word_ops_used = dfa->word_ops_used;
   pstr->mbs = pstr->mbs_allocated ? pstr->mbs : (unsigned char *) str;
-  pstr->valid_len = (pstr->mbs_allocated || dfa->mb_cur_max > 1) ? 0 : len;
+  pstr->valid_len = (pstr->mbs_allocated || dfa_mb_cur_max (dfa) > 1) ? 0 : len;
   pstr->valid_raw_len = pstr->valid_len;
   return REG_NOERROR;
 }
@@ -83,7 +83,7 @@ re_string_construct (re_string_t *pstr, const char *str, int len,
   if (icase)
     {
 #ifdef RE_ENABLE_I18N
-      if (dfa->mb_cur_max > 1)
+      if (dfa_mb_cur_max (dfa) > 1)
 	{
 	  while (1)
 	    {
@@ -92,7 +92,7 @@ re_string_construct (re_string_t *pstr, const char *str, int len,
 		return ret;
 	      if (pstr->valid_raw_len >= len)
 		break;
-	      if (pstr->bufs_len > pstr->valid_len + dfa->mb_cur_max)
+	      if (pstr->bufs_len > pstr->valid_len + dfa_mb_cur_max (dfa))
 		break;
 	      ret = re_string_realloc_buffers (pstr, pstr->bufs_len * 2);
 	      if (BE (ret != REG_NOERROR, 0))
@@ -106,7 +106,7 @@ re_string_construct (re_string_t *pstr, const char *str, int len,
   else
     {
 #ifdef RE_ENABLE_I18N
-      if (dfa->mb_cur_max > 1)
+      if (dfa_mb_cur_max (dfa) > 1)
 	build_wcs_buffer (pstr);
       else
 #endif /* RE_ENABLE_I18N  */
@@ -131,7 +131,7 @@ internal_function
 re_string_realloc_buffers (re_string_t *pstr, int new_buf_len)
 {
 #ifdef RE_ENABLE_I18N
-  if (pstr->mb_cur_max > 1)
+  if (string_mb_cur_max (pstr) > 1)
     {
       wint_t *new_wcs = re_realloc (pstr->wcs, wint_t, new_buf_len);
       if (BE (new_wcs == NULL, 0))
@@ -171,7 +171,7 @@ re_string_construct_common (const char *str, int len, re_string_t *pstr,
   pstr->trans = trans;
   pstr->icase = icase ? 1 : 0;
   pstr->mbs_allocated = (trans != NULL || icase);
-  pstr->mb_cur_max = dfa->mb_cur_max;
+  pstr->mb_cur_max = dfa_mb_cur_max (dfa);
   pstr->is_utf8 = dfa->is_utf8;
   pstr->map_notascii = dfa->map_notascii;
   pstr->stop = pstr->len;
@@ -197,7 +197,7 @@ build_wcs_buffer (re_string_t *pstr)
 {
 #ifdef _LIBC
   unsigned char buf[MB_LEN_MAX];
-  assert (MB_LEN_MAX >= pstr->mb_cur_max);
+  assert (MB_LEN_MAX >= string_mb_cur_max (pstr));
 #else
   unsigned char buf[64];
 #endif
@@ -220,7 +220,7 @@ build_wcs_buffer (re_string_t *pstr)
 	{
 	  int i, ch;
 
-	  for (i = 0; i < pstr->mb_cur_max && i < remain_len; ++i)
+	  for (i = 0; i < string_mb_cur_max (pstr) && i < remain_len; ++i)
 	    {
 	      ch = pstr->raw_mbs [pstr->raw_mbs_idx + byte_idx + i];
 	      buf[i] = pstr->mbs[byte_idx + i] = pstr->trans[ch];
@@ -268,7 +268,7 @@ build_wcs_upper_buffer (re_string_t *pstr)
   size_t mbclen;
 #ifdef _LIBC
   char buf[MB_LEN_MAX];
-  assert (MB_LEN_MAX >= pstr->mb_cur_max);
+  assert (MB_LEN_MAX >= string_mb_cur_max (pstr));
 #else
   char buf[64];
 #endif
@@ -360,7 +360,7 @@ build_wcs_upper_buffer (re_string_t *pstr)
 	  {
 	    int i, ch;
 
-	    for (i = 0; i < pstr->mb_cur_max && i < remain_len; ++i)
+	    for (i = 0; i < string_mb_cur_max (pstr) && i < remain_len; ++i)
 	      {
 		ch = pstr->raw_mbs [pstr->raw_mbs_idx + src_idx + i];
 		buf[i] = pstr->trans[ch];
@@ -555,8 +555,9 @@ re_string_translate_buffer (re_string_t *pstr)
 }
 
 /* This function re-construct the buffers.
-   Concretely, convert to wide character in case of pstr->mb_cur_max > 1,
-   convert to upper case in case of REG_ICASE, apply translation.  */
+   Concretely, convert to wide character in case of
+   string_mb_cur_max (pstr) > 1, convert to upper case in case of
+   REG_ICASE, apply translation.  */
 
 static reg_errcode_t
 internal_function
@@ -567,7 +568,7 @@ re_string_reconstruct (re_string_t *pstr, int idx, int eflags)
     {
       /* Reset buffer.  */
 #ifdef RE_ENABLE_I18N
-      if (pstr->mb_cur_max > 1)
+      if (string_mb_cur_max (pstr) > 1)
 	memset (&pstr->cur_state, '\0', sizeof (mbstate_t));
 #endif /* RE_ENABLE_I18N */
       pstr->len = pstr->raw_len;
@@ -658,7 +659,7 @@ re_string_reconstruct (re_string_t *pstr, int idx, int eflags)
 	      pstr->tip_context = re_string_context_at (pstr, offset - 1,
 							eflags);
 #ifdef RE_ENABLE_I18N
-	      if (pstr->mb_cur_max > 1)
+	      if (string_mb_cur_max (pstr) > 1)
 		memmove (pstr->wcs, pstr->wcs + offset,
 			 (pstr->valid_len - offset) * sizeof (wint_t));
 #endif /* RE_ENABLE_I18N */
@@ -687,7 +688,7 @@ re_string_reconstruct (re_string_t *pstr, int idx, int eflags)
 #endif
 	  pstr->valid_len = 0;
 #ifdef RE_ENABLE_I18N
-	  if (pstr->mb_cur_max > 1)
+	  if (string_mb_cur_max (pstr) > 1)
 	    {
 	      int wcs_idx;
 	      wint_t wc = WEOF;
@@ -699,7 +700,7 @@ re_string_reconstruct (re_string_t *pstr, int idx, int eflags)
 		  /* Special case UTF-8.  Multi-byte chars start with any
 		     byte other than 0x80 - 0xbf.  */
 		  raw = pstr->raw_mbs + pstr->raw_mbs_idx;
-		  end = raw + (offset - pstr->mb_cur_max);
+		  end = raw + (offset - string_mb_cur_max (pstr));
 		  if (end < pstr->raw_mbs)
 		    end = pstr->raw_mbs;
 		  p = raw + offset - 1;
@@ -791,7 +792,7 @@ re_string_reconstruct (re_string_t *pstr, int idx, int eflags)
 
   /* Then build the buffers.  */
 #ifdef RE_ENABLE_I18N
-  if (pstr->mb_cur_max > 1)
+  if (string_mb_cur_max (pstr) > 1)
     {
       if (pstr->icase)
 	{
@@ -829,7 +830,7 @@ re_string_peek_byte_case (const re_string_t *pstr, int idx)
     return re_string_peek_byte (pstr, idx);
 
 #ifdef RE_ENABLE_I18N
-  if (pstr->mb_cur_max > 1
+  if (string_mb_cur_max (pstr) > 1
       && ! re_string_is_single_byte_char (pstr, pstr->cur_idx + idx))
     return re_string_peek_byte (pstr, idx);
 #endif
@@ -918,7 +919,7 @@ re_string_context_at (const re_string_t *input, int idx, int eflags)
     return ((eflags & REG_NOTEOL) ? CONTEXT_ENDBUF
 	    : CONTEXT_NEWLINE | CONTEXT_ENDBUF);
 #ifdef RE_ENABLE_I18N
-  if (input->mb_cur_max > 1)
+  if (string_mb_cur_max (input) > 1)
     {
       wint_t wc;
       int wc_idx = idx;
@@ -1429,7 +1430,7 @@ re_dfa_add_node (re_dfa_t *dfa, re_token_t token)
   dfa->nodes[dfa->nodes_len].constraint = 0;
 #ifdef RE_ENABLE_I18N
   dfa->nodes[dfa->nodes_len].accept_mb =
-    (type == OP_PERIOD && dfa->mb_cur_max > 1) || type == COMPLEX_BRACKET;
+    (type == OP_PERIOD && dfa_mb_cur_max (dfa) > 1) || type == COMPLEX_BRACKET;
 #endif
   dfa->nexts[dfa->nodes_len] = -1;
   re_node_set_init_empty (dfa->edests + dfa->nodes_len);

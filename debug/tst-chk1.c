@@ -30,6 +30,7 @@
 #include <wchar.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <gnu/option-groups.h>
 
 char *temp_filename;
 static void do_prepare (void);
@@ -1173,6 +1174,7 @@ do_test (void)
 # endif
 #endif
 
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (setlocale (LC_ALL, "de_DE.UTF-8") != NULL)
     {
       assert (MB_CUR_MAX <= 10);
@@ -1329,6 +1331,7 @@ do_test (void)
       puts ("cannot set locale");
       ret = 1;
     }
+#endif
 
   fd = posix_openpt (O_RDWR);
   if (fd != -1)
