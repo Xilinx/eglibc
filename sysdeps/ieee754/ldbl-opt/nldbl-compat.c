@@ -693,6 +693,7 @@ __nldbl___printf_fp (FILE *fp, const struct printf_info *info,
   return ___printf_fp (fp, &info_no_ldbl, args);
 }
 
+#if __OPTION_EGLIBC_LOCALE_CODE
 ssize_t
 attribute_compat_text_section
 __nldbl_strfmon (char *s, size_t maxsize, const char *format, ...)
@@ -747,6 +748,7 @@ __nldbl___vstrfmon_l (char *s, size_t maxsize, __locale_t loc,
   return res;
 }
 libc_hidden_def (__nldbl___vstrfmon_l)
+#endif
 
 void
 attribute_compat_text_section

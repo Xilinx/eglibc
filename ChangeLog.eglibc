@@ -1,3 +1,11 @@
+2007-12-13  Sandra Loosemore  <sandra@codesourcery.com>
+
+	* sysdeps/ieee754/ldbl-opt/Makefile (libnldbl-calls):  Make strfmon
+	and strfmon_l conditional on OPTION_EGLIBC_LOCALE_CODE.
+	* sysdeps/ieee754/ldbl-opt/nldbl-compat.c (__nldbl___vstrfmon,
+	__nldbl___vstrfmon_l, __nldbl___strfmon, __nldbl___strfmon_l):
+	Make conditional on __OPTION_EGLIBC_LOCALE_CODE.
+
 2007-12-13  Jim Blandy  <jimb@codesourcery.com>
 	    Sandra Loosemore  <sandra@codesourcery.com>
 
