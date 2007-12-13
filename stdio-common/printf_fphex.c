@@ -145,7 +145,14 @@ __printf_fphex (FILE *fp,
   int done = 0;
 
   /* Nonzero if this is output on a wide character stream.  */
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
   int wide = info->wide;
+#else
+  /* This should never be called on a wide-oriented stream when
+     OPTION_POSIX_C_LANG_WIDE_CHAR is disabled, but the compiler can't
+     be trusted to figure that out.  */
+  const int wide = 0;
+#endif
 
 
   /* Figure out the decimal point character.  */

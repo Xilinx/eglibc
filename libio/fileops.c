@@ -176,7 +176,7 @@ _IO_new_file_close_it (fp)
 
   /* Free buffer. */
 #if defined _LIBC || defined _GLIBCPP_USE_WCHAR_T
-  if (fp->_mode > 0)
+  if (_IO_is_wide (fp))
     {
       if (_IO_have_wbackup (fp))
 	INTUSE(_IO_free_wbackup_area) (fp);
@@ -343,6 +343,7 @@ _IO_new_file_fopen (fp, filename, mode, is32not64)
       cs = strstr (last_recognized + 1, ",ccs=");
       if (cs != NULL)
 	{
+#if __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 	  /* Yep.  Load the appropriate conversions and set the orientation
 	     to wide.  */
 	  struct gconv_fcts fcts;
@@ -407,6 +408,12 @@ _IO_new_file_fopen (fp, filename, mode, is32not64)
 
 	  /* Set the mode now.  */
 	  result->_mode = 1;
+#else
+          /* Treat this as if we couldn't find the given character set.  */
+          (void) INTUSE(_IO_file_close_it) (fp);
+          __set_errno (EINVAL);
+          return NULL;
+#endif
 	}
     }
 #endif	/* GNU libc */

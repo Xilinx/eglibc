@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include <gnu/option-groups.h>
 
 #define FAIL() \
   do {							\
@@ -36,6 +37,7 @@ main (void)
     FAIL ();
   else if (d != 2.25 || memcmp (c, " x", 2) != 0)
     FAIL ();
+#if __OPTION_EGLIBC_LOCALE_CODE
   if (sscanf (" 3.25S x", "%4aS%3c", &lsp, c) != 2)
     FAIL ();
   else
@@ -45,6 +47,7 @@ main (void)
       memset (lsp, 'x', sizeof L"3.25");
       free (lsp);
     }
+#endif
   if (sscanf ("4.25[0-9.] x", "%a[0-9.]%8c", &sp, c) != 2)
     FAIL ();
   else

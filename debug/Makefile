@@ -35,21 +35,23 @@ routines  = noophooks \
 	    read_chk pread_chk pread64_chk recv_chk recvfrom_chk \
 	    readlink_chk readlinkat_chk getwd_chk getcwd_chk \
 	    realpath_chk ptsname_r_chk fread_chk fread_u_chk \
-	    wctomb_chk wcscpy_chk wmemcpy_chk wmemmove_chk wmempcpy_chk \
-	    wcpcpy_chk wcsncpy_chk wcscat_chk wcsncat_chk wmemset_chk \
-	    wcpncpy_chk \
-	    swprintf_chk vswprintf_chk \
 	    confstr_chk getgroups_chk ttyname_r_chk \
-	    gethostname_chk getdomainname_chk wcrtomb_chk mbsnrtowcs_chk \
-	    wcsnrtombs_chk mbsrtowcs_chk wcsrtombs_chk mbstowcs_chk \
-	    wcstombs_chk \
+	    gethostname_chk getdomainname_chk \
 	    stack_chk_fail fortify_fail \
 	    $(static-only-routines)
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
 routines-$(OPTION_EGLIBC_BACKTRACE) += backtrace backtracesyms backtracesymsfd 
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)			\
-	 += wprintf_chk fwprintf_chk	\
+	 += wprintf_chk fwprintf_chk				\
 	    vwprintf_chk vfwprintf_chk fgetws_chk fgetws_u_chk
+routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR)				\
+	 += wctomb_chk wcscpy_chk wmemcpy_chk wmemmove_chk wmempcpy_chk	\
+	    wcpcpy_chk wcsncpy_chk wcscat_chk wcsncat_chk wmemset_chk	\
+	    wcpncpy_chk							\
+	    swprintf_chk vswprintf_chk					\
+	    wcrtomb_chk mbsnrtowcs_chk					\
+	    wcsnrtombs_chk mbsrtowcs_chk wcsrtombs_chk mbstowcs_chk	\
+	    wcstombs_chk 
 
 static-only-routines := warning-nop stack_chk_fail_local
 

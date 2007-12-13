@@ -28,15 +28,13 @@ headers	:= stdio.h libio.h _G_config.h bits/stdio.h bits/stdio-lock.h \
 
 routines	:=							      \
 	filedoalloc iofclose iofdopen iofflush iofgetpos iofgets iofopen      \
-	iofopncook iofputs iofread iofsetpos ioftell wfiledoalloc	      \
+	iofopncook iofputs iofread iofsetpos ioftell			      \
 	iofwrite iogetdelim iogetline iogets iopadn iopopen ioputs	      \
 	ioseekoff ioseekpos iosetbuffer iosetvbuf ioungetc		      \
 	iovsprintf iovsscanf						      \
 	iofgetpos64 iofopen64 iofsetpos64				      \
-	iowpadn								      \
-	putchar putchar_u swprintf 					      \
-	vswprintf iovswscanf swscanf wgenops				      \
-	wstrops wfileops iofwide wmemstream				      \
+	putchar putchar_u						      \
+	iofwide								      \
 									      \
 	clearerr feof ferror fileno fputc freopen fseek getc getchar	      \
 	memstream pclose putc putchar rewind setbuf setlinebuf vasprintf      \
@@ -47,6 +45,14 @@ routines	:=							      \
 	__fpurge __fpending __fsetlocking				      \
 									      \
 	libc_fatal fmemopen
+routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) +=				      \
+	wfiledoalloc							      \
+	iowpadn								      \
+	swprintf							      \
+	vswprintf iovswscanf swscanf wgenops				      \
+	wstrops wfileops wmemstream
+routines-$(call option-disabled, OPTION_POSIX_C_LANG_WIDE_CHAR) +=	      \
+	wdummyfileops
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) +=				      \
 	fputwc fputwc_u getwc getwc_u getwchar getwchar_u iofgetws iofgetws_u \
 	iofputws iofputws_u iogetwline ioungetwc putwc putwc_u		      \
@@ -54,16 +60,13 @@ routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) +=				      \
 	wprintf wscanf fwscanf vwscanf					      \
 	fwide
 
-tests = tst_swprintf tst_swscanf				\
-	test-fmemopen tst-ext tst-ext2				\
-	tst-sscanf						\
+tests = test-fmemopen tst-ext tst-ext2				\
 	tst-mmap-setvbuf tst-atime tst-eof			\
 	tst-freopen bug-ungetc bug-fseek			\
 	tst-mmap-eofsync tst-mmap-fflushsync bug-mmap-fflush	\
 	tst-mmap2-eofsync tst-mmap-offend bug-fopena+		\
 	bug-ungetc2 bug-ungetc3 bug-ungetc4			\
 	tst-memstream1 tst-memstream2				\
-	tst-wmemstream1 tst-wmemstream2				\
 	bug-memstream1
 tests-$(OPTION_EGLIBC_LOCALE_CODE)				\
      += tst-swscanf tst-fgetws tst-fopenloc tst-setvbuf1	\
@@ -74,6 +77,10 @@ tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)		\
 	bug-wfflush bug-wmemstream1 tst-fopenloc2	\
 	tst_getwc					\
 	tst_putwc tst_wprintf tst_wprintf2 tst_wscanf
+tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR)			\
+     += tst_swprintf tst_swscanf			\
+	tst-sscanf					\
+	tst-wmemstream1 tst-wmemstream2
 test-srcs = test-freopen
 
 all: # Make this the default target; it will be defined in Rules.

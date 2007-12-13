@@ -40,9 +40,11 @@ _IO_setbuffer (fp, buf, size)
   if (!buf)
     size = 0;
   (void) _IO_SETBUF (fp, buf, size);
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
   if (_IO_vtable_offset (fp) == 0 && fp->_mode == 0 && _IO_CHECK_WIDE (fp))
     /* We also have to set the buffer using the wide char function.  */
     (void) _IO_WSETBUF (fp, buf, size);
+#endif /* __OPTION_POSIX_C_LANG_WIDE_CHAR */
   _IO_release_lock (fp);
 }
 INTDEF(_IO_setbuffer)

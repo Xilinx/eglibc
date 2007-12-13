@@ -107,6 +107,12 @@
 # define EOF WEOF
 #endif
 
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
+# define MULTIBYTE_SUPPORT (1)
+#else
+# define MULTIBYTE_SUPPORT (0)
+#endif
+
 #if __OPTION_EGLIBC_LOCALE_CODE
 # define LOCALE_SUPPORT (1)
 #else
@@ -1082,8 +1088,11 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 # define process_string_arg(fspec) \
     LABEL (form_character):						      \
       /* Character.  */							      \
-      if (is_long)							      \
-	goto LABEL (form_wcharacter);					      \
+      if (is_long)                                                            \
+        {                                                                     \
+          assert (MULTIBYTE_SUPPORT);                                         \
+          goto LABEL (form_wcharacter);                                       \
+        }                                                                     \
       --width;	/* Account for the character itself.  */		      \
       if (!left)							      \
 	PAD (' ');							      \
@@ -1096,6 +1105,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
       break;								      \
 									      \
     LABEL (form_wcharacter):						      \
+      assert (MULTIBYTE_SUPPORT);                                             \
       {									      \
 	/* Wide character.  */						      \
 	char buf[MB_CUR_MAX];						      \
@@ -1195,6 +1205,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	  }								      \
 	else								      \
 	  {								      \
+            assert (MULTIBYTE_SUPPORT);                                       \
 	    const wchar_t *s2 = (const wchar_t *) string;		      \
 	    mbstate_t mbstate;						      \
 									      \

@@ -1,3 +1,86 @@
+2007-12-13  Jim Blandy  <jimb@codesourcery.com>
+	    Sandra Loosemore  <sandra@codesourcery.com>
+
+	Implement the OPTION_POSIX_C_LANG_WIDE_CHAR option group.
+	* option-groups.def (OPTION_POSIX_C_LANG_WIDE_CHAR): New entry.
+	(OPTION_EGLIBC_LOCALE_CODE, OPTION_POSIX_WIDE_CHAR_DEVICE_IO):
+	Note dependence on OPTION_POSIX_C_LANG_WIDE_CHAR.
+	(OPTION_POSIX_WIDE_CHAR_DEVICE_IO): Doc fix; note effect on 
+        support for 'ccs=CHARSET' strings in fopen and friends.
+	* option-groups.mak (option-disabled): New function.
+	* scripts/option-groups.awk: Generate preprocessor conditionals to
+	protect gnu/option-groups.h from multiple #inclusion.
+
+	* stdlib/Makefile (routines): Put in group: mblen mbstowcs mbtowc
+	wcstombs wctomb wcstoimax wcstoumax.
+	(tests): Put in group: testmb.
+	* debug/Makefile (routines): Put in group: wctomb_chk wcscpy_chk
+	wmemcpy_chk wmemmove_chk wmempcpy_chk wcpcpy_chk wcsncpy_chk
+	wcscat_chk wcsncat_chk wmemset_chk wcpncpy_chk swprintf_chk
+	vswprintf_chk wcrtomb_chk mbsnrtowcs_chk wcsnrtombs_chk
+	mbsrtowcs_chk wcsrtombs_chk mbstowcs_chk wcstombs_chk.
+	* debug/tst-chk1.c (do_test): Make wide character parts conditional
+	on __OPTION_POSIX_WIDE_CHAR_DEVICE_IO.
+	* wcsmbs/Makefile (routines): Put in group: wcscat wcschr wcscmp
+	wcscpy wcscspn wcsdup wcslen wcsncat wcsncmp wcsncpy wcspbrk
+	wcsrchr wcsspn wcstok wcsstr wmemchr wmemcmp wmemmove wcpcpy
+	wcpncpy wmempcpy btowc wctob mbsinit mbrlen mbrtowc wcrtomb
+	mbsrtowcs wcsrtombs mbsnrtowcs wcsnrtombs wcsnlen wcschrnul wcstol
+	wcstoul wcstoll wcstoull wcstod wcstold wcstof wcstol_l wcstoul_l
+	wcstoll_l wcstoull_l wcstod_l wcstold_l wcstof_l wcscoll wcsxfrm
+	wcwidth wcswidth wcscoll_l wcsxfrm_l wcscasecmp wcsncase
+	wcscasecmp_l wcsncase_l wcsmbsload mbsrtowcs_l isoc99_swscanf
+	isoc99_vswscanf.
+	(tests): Put in group: tst-wcstof wcsmbs-tst1 tst-wcsnlen tst-wcpncpy
+	tst-mbsrtowcs wcsatcliff.
+	* time/Makefile (routines): Put in group: wcsftime wcsftime_l
+	* libio/Makefile (routines): When group is disabled, add
+	wdummyfileops.  Put in group: wfiledoalloc iowpadn swprintf
+	vswprintf iovswscanf swscanf wgenops wstrops wfileops wmemstream.
+        (tests): Put in group: tst_swprintf tst_swscanf	tst-sscanf
+	tst-wmemstream1 tst-wmemstream2.
+	* libio/wdummyfileops.c: New file.  Provide a dummy definition for
+	the _IO_FILE functions that prints an error message and dies.
+	* libio/libioP.h: #include <gnu/option-groups.h>.
+	(_IO_is_wide): New macro.  Used as necessary to excise references
+	to wide character code.
+	* libio/iosetbuffer.c (_IO_setbuffer): Don't call _IO_WSETBUF if
+	wide characters are not supported.
+	* libio/ioseekoff.c (_IO_seekoff_unlocked): Use _IO_is_wide.
+	* libio/iofwide.c: #include <gnu/option-groups.h>.
+	(_IO_fwide): When the group is disabled, provide a simplified
+	definition that aborts if the caller attempts to make a stream
+	wide-oriented.
+	* libio/fileops.c (_IO_new_file_close_it): Use _IO_is_wide.
+	(_IO_new_file_fopen): Conditionalize for
+	__OPTION_POSIX_WIDE_CHAR_DEVICE_IO.
+	* libio/ioseekpos.c (_IO_seekpos_unlocked): Use _IO_is_wide.
+	* libio/__fpurge.c (__fpurge): Likewise.
+	* wctype/Makefile (routines): Put in group: wcfuncs wctype
+	iswctype wcfuncs_l wctype_l iswctype_l wctrans_l.
+	(tests): Put in group: test_wctype test_wcfuncs.
+	* posix/fnmatch_loop.c (FCT) (either internal_fnmatch or
+	internal_fnwmatch): Handle character categories accessed via
+	'wctype' only if the group is enabled.
+	* stdio-common/Makefile (routines): Put in group: vfwprintf
+	vfwscanf printf-parsewc.
+	(tests): Put in group: bug18a tst-swscanf tst-wc-printf.
+	* stdio-common/printf_fp.c (__printf_fp): When the group is
+	disabled, fix 'wide' at zero.
+	* stdio-common/printf_fphex.c (__printf_fphex): Same.
+	* stdio-common/printf_size.c (__printf_size): Same.
+	* stdio-common/vfprintf.c (MULTIBYTE_SUPPORT): New macro.
+	(process_string_arg): If the format contains wide characters or
+	strings, assert that we have multibyte support.
+	* stdio-common/vfscanf.c (MULTIBYTE_SUPPORT): New macro.
+	(_IO_vfscanf_internal): If we see wide string or character format
+	directives, assert that we have multibyte support.
+	* stdio-common/scanf14.c (main): Make conditional on
+	__OPTION_EGLIBC_LOCALE_CODE.
+	* stdio-common/tst-sprintf.c (main): Make wide character test 
+	conditional on __OPTION_POSIX_C_LANG_WIDE_CHAR.
+	* stdio-common/tstdiomisc.c (F): Likewise.
+
 2007-12-11  Jim Blandy  <jimb@codesourcery.com>
 
 	Clean up test results with OPTION_EGLIBC_LOCALE_CODE disabled.

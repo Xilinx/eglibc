@@ -150,6 +150,10 @@ static wchar_t *group_number (wchar_t *buf, wchar_t *bufend,
 			      wchar_t thousands_sep, int ngroups)
      internal_function;
 
+/* Ideally, when OPTION_EGLIBC_LOCALE_CODE is disabled, this should do
+   all its work in ordinary characters, rather than doing it in wide
+   characters and then converting at the end.  But that is a challenge
+   for another day.  */
 
 int
 ___printf_fp (FILE *fp,
@@ -211,7 +215,14 @@ ___printf_fp (FILE *fp,
   mp_limb_t cy;
 
   /* Nonzero if this is output on a wide character stream.  */
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
   int wide = info->wide;
+#else
+  /* This should never be called on a wide-oriented stream when
+     OPTION_POSIX_C_LANG_WIDE_CHAR is disabled, but the compiler can't
+     be trusted to figure that out.  */
+  const int wide = 0;
+#endif
 
   /* Buffer in which we produce the output.  */
   wchar_t *wbuffer = NULL;

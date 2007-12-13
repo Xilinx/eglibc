@@ -27,9 +27,13 @@ subdir	:= wcsmbs
 headers	:= wchar.h bits/wchar.h bits/wchar2.h bits/wchar-ldbl.h
 distribute := wcwidth.h wcsmbsload.h
 
-routines := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
+# These functions are used by printf_fp.c, even in the plain case; see
+# comments there for OPTION_EGLIBC_LOCALE_CODE.
+routines  := wmemcpy wmemset 
+routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
+	  := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
 	    wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstok wcsstr wmemchr \
-	    wmemcmp wmemcpy wmemmove wmemset wcpcpy wcpncpy wmempcpy \
+	    wmemcmp wmemmove wcpcpy wcpncpy wmempcpy \
 	    btowc wctob mbsinit \
 	    mbrlen mbrtowc wcrtomb mbsrtowcs wcsrtombs \
 	    mbsnrtowcs wcsnrtombs wcsnlen wcschrnul \
@@ -45,10 +49,12 @@ routines := wcscat wcschr wcscmp wcscpy wcscspn wcsdup wcslen wcsncat \
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				\
 	 += isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf
 
-tests := tst-wcstof wcsmbs-tst1 tst-wcsnlen \
-	 tst-wcpncpy tst-mbsrtowcs tst-wchar-h wcsatcliff
+tests := tst-wchar-h 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb
+tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
+      += tst-wcstof wcsmbs-tst1 tst-wcsnlen \
+	 tst-wcpncpy tst-mbsrtowcs wcsatcliff
 
 include ../Rules
 

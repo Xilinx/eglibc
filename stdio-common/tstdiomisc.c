@@ -66,6 +66,7 @@ F (void)
   result |= strcmp (buf, "inf INF") != 0;
   printf ("expected \"inf INF\", got \"%s\"\n", buf);
 
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
   swprintf (wbuf, sizeof wbuf / sizeof (wbuf[0]), L"%f %F", nanval, nanval);
   result |= wcscmp (wbuf, L"nan NAN") != 0;
   printf ("expected L\"nan NAN\", got L\"%S\"\n", wbuf);
@@ -74,6 +75,7 @@ F (void)
 	    DBL_MAX * DBL_MAX, DBL_MAX * DBL_MAX);
   result |= wcscmp (wbuf, L"inf INF") != 0;
   printf ("expected L\"inf INF\", got L\"%S\"\n", wbuf);
+#endif /* __OPTION_POSIX_C_LANG_WIDE_CHAR */
 
   return result;
 }

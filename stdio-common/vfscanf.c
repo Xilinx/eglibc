@@ -134,6 +134,12 @@
 # define WINT_T		int
 #endif
 
+#if __OPTION_POSIX_C_LANG_WIDE_CHAR
+# define MULTIBYTE_SUPPORT (1)
+#else
+# define MULTIBYTE_SUPPORT (0)
+#endif
+
 #define encode_error() do {						      \
 			  errval = 4;					      \
 			  __set_errno (EILSEQ);				      \
@@ -374,6 +380,8 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 #ifndef COMPILE_WSCANF
       if (!isascii ((unsigned char) *f))
 	{
+          assert (MULTIBYTE_SUPPORT);
+
 	  /* Non-ASCII, may be a multibyte.  */
 	  int len = __mbrlen (f, strlen (f), &state);
 	  if (len > 0)
@@ -810,6 +818,8 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	    }
 	  /* FALLTHROUGH */
 	case L_('C'):
+          assert (MULTIBYTE_SUPPORT);
+
 	  if (width == -1)
 	    width = 1;
 
@@ -1136,6 +1146,8 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	  /* FALLTHROUGH */
 
 	case L_('S'):
+          assert (MULTIBYTE_SUPPORT);
+
 	  {
 #ifndef COMPILE_WSCANF
 	    mbstate_t cstate;
@@ -2302,7 +2314,10 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 
 	case L_('['):	/* Character class.  */
 	  if (flags & LONG)
-	    STRING_ARG (wstr, wchar_t, 100);
+            {
+              assert (MULTIBYTE_SUPPORT);
+              STRING_ARG (wstr, wchar_t, 100);
+            }
 	  else
 	    STRING_ARG (str, char, 100);
 
@@ -2376,6 +2391,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	  if (flags & LONG)
 	    {
 	      size_t now = read_in;
+              assert (MULTIBYTE_SUPPORT);
 #ifdef COMPILE_WSCANF
 	      if (__builtin_expect (inchar () == WEOF, 0))
 		input_error ();

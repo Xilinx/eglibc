@@ -19,13 +19,19 @@
 #
 #	Sub-makefile for wctype portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= wctype
 
 headers		:= wctype.h
 distribute	:= wchar-lookup.h
-routines	:= wcfuncs wctype iswctype wctrans towctrans \
-		   wcfuncs_l wctype_l iswctype_l wctrans_l towctrans_l
+routines 	:= wctrans towctrans towctrans_l
+routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
+		:= wcfuncs wctype iswctype \
+		   wcfuncs_l wctype_l iswctype_l wctrans_l
 
-tests	:= test_wctype test_wcfuncs
+tests	:= 
+tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
+     += test_wctype test_wcfuncs
 
 include ../Rules

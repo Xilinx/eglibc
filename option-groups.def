@@ -401,6 +401,7 @@ config OPTION_EGLIBC_LOCALES
 
 config OPTION_EGLIBC_LOCALE_CODE
    bool "Locale functions"
+   depends OPTION_POSIX_C_LANG_WIDE_CHAR
    help
        This option group includes locale support functions, programs,
        and libraries.  With OPTION_EGLIBC_LOCALE_FUNCTIONS disabled,
@@ -645,6 +646,35 @@ config OPTION_EGLIBC_WORDEXP
         performing word expansion in the manner of the shell, and the
         accompanying 'wordfree' function.
 
+config OPTION_POSIX_C_LANG_WIDE_CHAR
+    bool "ISO C library wide character functions, excluding I/O"
+    help
+        This option group includes the functions defined by the ISO C
+        standard for working with wide and multibyte characters in
+        memory.  Functions for reading and writing wide and multibyte
+        characters from and to files call in the
+        OPTION_POSIX_WIDE_CHAR_DEVICE_IO option group.
+
+        This option group includes the following functions:
+
+          btowc         mbsinit       wcscspn       wcstoll
+          iswalnum      mbsrtowcs     wcsftime      wcstombs
+          iswalpha      mbstowcs      wcslen        wcstoul
+          iswblank      mbtowc        wcsncat       wcstoull
+          iswcntrl      swprintf      wcsncmp       wcstoumax
+          iswctype      swscanf       wcsncpy       wcsxfrm
+          iswdigit      towctrans     wcspbrk       wctob
+          iswgraph      towlower      wcsrchr       wctomb
+          iswlower      towupper      wcsrtombs     wctrans
+          iswprint      vswprintf     wcsspn        wctype
+          iswpunct      vswscanf      wcsstr        wmemchr
+          iswspace      wcrtomb       wcstod        wmemcmp
+          iswupper      wcscat        wcstof        wmemcpy
+          iswxdigit     wcschr        wcstoimax     wmemmove
+          mblen         wcscmp        wcstok        wmemset
+          mbrlen        wcscoll       wcstol
+          mbrtowc       wcscpy        wcstold
+
 config OPTION_POSIX_REGEXP
     bool "Regular expressions"
     help
@@ -668,6 +698,7 @@ config OPTION_POSIX_REGEXP
 
 config OPTION_POSIX_WIDE_CHAR_DEVICE_IO
     bool "Input and output functions for wide characters"
+    depends OPTION_POSIX_C_LANG_WIDE_CHAR
     help
         This option group includes functions for reading and writing
         wide characters to and from <stdio.h> streams.
@@ -691,6 +722,25 @@ config OPTION_POSIX_WIDE_CHAR_DEVICE_IO
         Note that the GNU standard C++ library, 'libstdc++.so', uses
         some of these functions; you will not be able to link or run
         C++ programs if you disable this option group.
+
+        This option group also affects the behavior of the following
+        functions:
+
+          fdopen
+          fopen
+          fopen64
+          freopen
+          freopen64
+
+        These functions all take an OPENTYPE parameter which may
+        contain a string of the form ",ccs=CHARSET", indicating that
+        the underlying file uses the character set named CHARSET.
+        This produces a wide-oriented stream, which is only useful
+        when the functions included in this option group are present.
+        If the user attempts to open a file specifying a character set
+        in the OPENTYPE parameter, and EGLIBC was built with this
+        option group disabled, the function returns NULL, and sets
+        errno to EINVAL.
 
 
 # This helps Emacs users browse this file using the page motion commands

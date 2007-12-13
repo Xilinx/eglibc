@@ -62,7 +62,7 @@ _IO_seekoff_unlocked (fp, offset, dir, mode)
 	  else
 	    abort ();
 	}
-      if (_IO_fwide (fp, 0) < 0)
+      if (! _IO_is_wide (fp))
 	INTUSE(_IO_free_backup_area) (fp);
       else
 	INTUSE(_IO_free_wbackup_area) (fp);

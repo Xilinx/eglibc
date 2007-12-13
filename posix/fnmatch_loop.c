@@ -282,7 +282,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
 		    /* Leave room for the null.  */
 		    CHAR str[CHAR_CLASS_MAX_LENGTH + 1];
 		    size_t c1 = 0;
-#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+#if defined _LIBC ? __OPTION_POSIX_C_LANG_WIDE_CHAR : (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
 		    wctype_t wt;
 #endif
 		    const CHAR *startp = p;
@@ -312,7 +312,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
 		      }
 		    str[c1] = L('\0');
 
-#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+#if defined _LIBC ? __OPTION_POSIX_C_LANG_WIDE_CHAR : (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
 		    wt = IS_CHAR_CLASS (str);
 		    if (wt == 0)
 		      /* Invalid character class name.  */
