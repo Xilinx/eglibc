@@ -1,3 +1,10 @@
+2008-01-09  Daniel Jacobowitz  <dan@codesourcery.com>
+
+	* scripts/cross-test-ssh.sh (env_blacklist): Add TERM, TERMCAP, PWD.
+	(remove_newlines): New.
+	(blacklist_exports): Unset blacklisted variables and use export.
+	(Top level): Use remove_newlines.
+
 2007-12-13  Sandra Loosemore  <sandra@codesourcery.com>
 
 	* sysdeps/ieee754/ldbl-opt/Makefile (libnldbl-calls):  Make strfmon

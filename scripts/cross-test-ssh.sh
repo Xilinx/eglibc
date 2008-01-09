@@ -3,7 +3,7 @@
 # Run with --help flag to get more detailed help.
 
 progname="$(basename $0)"
-env_blacklist='HOME LOGNAME MAIL PATH SHELL SHLVL SSH_CLIENT SSH_CONNECTION USER'
+env_blacklist='HOME LOGNAME MAIL PATH SHELL SHLVL SSH_CLIENT SSH_CONNECTION USER TERM TERMCAP PWD'
 
 usage="usage: ${progname} [--ssh SSH] HOST COMMAND ..."
 help="Run an EGLIBC test COMMAND on the remote machine HOST, via ssh,
@@ -87,24 +87,32 @@ bourne_quote () {
     printf '%s' '"'
 }
 
-# Echo all lines of input except those starting with 'export VAR=',
-# where VAR is a blacklisted variable.  Turn lines starting with
-# 'declare -x VAR=' into the analogous export commands, before
-# blacklisting.
+# Remove unnecessary newlines from a Bourne shell command sequence.
+remove_newlines () {
+    sed -n \
+        -e '1h' \
+        -e '2,$H' \
+        -e '${g
+              s/\([^\]\)\n/\1; /g
+              p
+             }'
+}
+
+# Unset all variables from the blacklist.  Then echo all exported
+# variables.  This should be run in a subshell.  The 'export -p'
+# command adds backslashes for environment variables which contain
+# newlines.
 blacklist_exports () {
-    local pat
-    pat="$(for var in ${env_blacklist}; do
-             echo "^export ${var}="
-           done)"
-    sed -e 's|^declare -x |export |' \
-        | grep -v -e "$pat"
+    local var
+    for var in ${env_blacklist}; do
+	unset $var
+    done
+    export -p
 }
 
 # Produce properly quoted Bourne shell arguments for 'env' to carry
 # over the current environment, less blacklisted variables.
-# The 'export -p' command munges the values of environment variables if
-# they contain newlines.
-exports="$(export -p | blacklist_exports)"
+exports="$( (blacklist_exports) | sed -e 's|^declare -x |export |')"
 
 # Transform the current argument list into a properly quoted Bourne shell
 # command string.
@@ -122,4 +130,4 @@ ${command}"
 # passes them to some shell.  We want to force the use of /bin/sh,
 # so we need to re-quote the whole command to ensure it appears as
 # the sole argument of the '-c' option.
-$ssh "$host" /bin/sh -c "$(printf '%s\n' "${command}" | bourne_quote)"
+$ssh "$host" /bin/sh -c "$(printf '%s\n' "${command}" | bourne_quote | remove_newlines)"
