@@ -1,3 +1,14 @@
+2008-02-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makerules (install-extras, install-map): New variables.
+	(installed-libcs): Add libc_pic.a.
+	(install-lib): Include _pic.a files for versioned shared
+	libraries.
+	(install-map-nosubdir, install-extras-nosubdir): Add rules for
+	installing extra files.
+	(install-no-libc.a-nosubdir): Depend on install-map-nosubdir and
+	install-extras-nosubdir.
+
 2008-01-09  Daniel Jacobowitz  <dan@codesourcery.com>
 
 	* scripts/cross-test-ssh.sh (env_blacklist): Add TERM, TERMCAP, PWD.

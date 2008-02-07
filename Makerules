@@ -640,6 +640,9 @@ ifeq ($(versioning),yes)
 $(common-objpfx)libc.so: $(common-objpfx)libc.map
 endif
 common-generated += libc.so libc_pic.os
+ifndef subdir
+install-extras := soinit.o sofini.o
+endif
 ifdef libc.so-version
 $(common-objpfx)libc.so$(libc.so-version): $(common-objpfx)libc.so
 	$(make-link)
@@ -885,6 +888,7 @@ endef
 installed-libcs := $(foreach o,$(filter-out .os,$(object-suffixes-for-libc)),\
 			     $(inst_libdir)/$(patsubst %,$(libtype$o),\
 						     $(libprefix)$(libc-name)))
+installed-libcs := $(installed-libcs) $(inst_libdir)/libc_pic.a
 install: $(installed-libcs)
 $(installed-libcs): $(inst_libdir)/lib$(libprefix)%: lib $(+force)
 	$(make-target-directory)
@@ -915,6 +919,17 @@ versioned := $(strip $(foreach so,$(install-lib.so),\
 
 install-lib.so-versioned := $(filter $(versioned), $(install-lib.so))
 install-lib.so-unversioned := $(filter-out $(versioned), $(install-lib.so))
+
+# Install the _pic.a files for versioned libraries, and corresponding
+# .map files.
+install-lib := $(install-lib) $(install-lib.so-versioned:%.so=%_pic.a)
+ifeq ($(versioning),yes)
+install-map := $(patsubst %.so,%.map,\
+			$(foreach L,$(install-lib.so-versioned),$(notdir $L)))
+ifndef subdir
+install-map := $(install-map) libc.map
+endif
+endif
 
 # For versioned libraries, we install three files:
 #	$(inst_libdir)/libfoo.so	-- for linking, symlink or ld script
@@ -1151,9 +1166,22 @@ $(addprefix $(inst_includedir)/,$(headers-nonh)): $(inst_includedir)/%: \
 endif	# headers-nonh
 endif	# headers
 
+ifdef install-map
+$(addprefix $(inst_libdir)/,$(patsubst lib%.map,lib%_pic.map,$(install-map))): \
+  $(inst_libdir)/lib%_pic.map: $(common-objpfx)lib%.map $(+force)
+	$(do-install)
+endif
+
+ifdef install-extras
+$(addprefix $(inst_libdir)/libc_pic/,$(install-extras)): \
+  $(inst_libdir)/libc_pic/%.o: $(elfobjdir)/%.os $(+force)
+	$(do-install)
+endif
+
 .PHONY: install-bin-nosubdir install-bin-script-nosubdir \
 	install-rootsbin-nosubdir install-sbin-nosubdir install-lib-nosubdir \
-	install-data-nosubdir install-headers-nosubdir
+	install-data-nosubdir install-headers-nosubdir install-map-nosubdir \
+	install-extras-nosubdir
 install-bin-nosubdir: $(addprefix $(inst_bindir)/,$(install-bin))
 install-bin-script-nosubdir: $(addprefix $(inst_bindir)/,$(install-bin-script))
 install-rootsbin-nosubdir: \
@@ -1166,6 +1194,10 @@ install-data-nosubdir: $(addprefix $(inst_datadir)/,$(install-data))
 install-headers-nosubdir: $(addprefix $(inst_includedir)/,$(headers))
 install-others-nosubdir: $(install-others)
 install-others-programs-nosubdir: $(install-others-programs)
+install-map-nosubdir: $(addprefix $(inst_libdir)/,\
+		       $(patsubst lib%.map,lib%_pic.map,$(install-map)))
+install-extras-nosubdir: $(addprefix $(inst_libdir)/libc_pic/,\
+		       $(install-extras))
 
 # We need all the `-nosubdir' targets so that `install' in the parent
 # doesn't depend on several things which each iterate over the subdirs.
@@ -1175,7 +1207,8 @@ install-%:: install-%-nosubdir ;
 
 .PHONY: install install-no-libc.a-nosubdir
 install-no-libc.a-nosubdir: install-headers-nosubdir install-data-nosubdir \
-			    install-lib-nosubdir install-others-nosubdir
+			    install-lib-nosubdir install-others-nosubdir \
+			    install-map-nosubdir install-extras-nosubdir
 ifeq ($(build-programs),yes)
 install-no-libc.a-nosubdir: install-bin-nosubdir install-bin-script-nosubdir \
 			    install-rootsbin-nosubdir install-sbin-nosubdir \
