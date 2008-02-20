@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 1991-2006, 2007, 2008 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -77,7 +77,7 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   tst-limits tst-rand48 bug-strtod tst-setcontext	    \
 		   test-a64l tst-qsort tst-system bug-strtod2		    \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
-		   tst-makecontext tst-qsort2
+		   tst-makecontext tst-qsort2 tst-makecontext2
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
@@ -118,6 +118,7 @@ endif
 
 CFLAGS-tst-bsearch.c = $(stack-align-test-flags)
 CFLAGS-tst-qsort.c = $(stack-align-test-flags)
+CFLAGS-tst-makecontext2.c = $(stack-align-test-flags)
 
 include ../Rules
 

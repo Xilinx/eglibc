@@ -1,5 +1,5 @@
 /* Create new context.
-   Copyright (C) 2001, 2002, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2001, 2002, 2005, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2001.
 
@@ -35,23 +35,31 @@ ENTRY(__makecontext)
 	movl	%ecx, oEIP(%eax)
 	addl	oSS_SIZE(%eax), %edx
 
-	/* Put the next context on the new stack (from the uc_link
-	   element).  */
-	movl	oLINK(%eax), %ecx
-	movl	%ecx, -4(%edx)
-
 	/* Remember the number of parameters for the exit handler since
 	   it has to remove them.  We store the number in the EBX register
 	   which the function we will call must preserve.  */
 	movl	12(%esp), %ecx
 	movl	%ecx, oEBX(%eax)
 
-	/* Make room on the new stack for the parameters.  */
+	/* Make room on the new stack for the parameters.
+	   Room for the arguments, return address (== L(exitcode)) and
+	   oLINK pointer is needed.  One of the pointer sizes is subtracted
+	   after aligning the stack.  */
 	negl	%ecx
-	leal	-8(%edx,%ecx,4), %edx
+	leal	-4(%edx,%ecx,4), %edx
 	negl	%ecx
+
+	/* Align the stack.  */
+	andl	$0xfffffff0, %edx
+	subl	$4, %edx
+
 	/* Store the future stack pointer.  */
 	movl	%edx, oESP(%eax)
+
+	/* Put the next context on the new stack (from the uc_link
+	   element).  */
+	movl	oLINK(%eax), %eax
+	movl	%eax, 4(%edx,%ecx,4)
 
 	/* Copy all the parameters.  */
 	jecxz	2f

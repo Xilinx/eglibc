@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ struct signalfd_siginfo
   uint32_t ssi_trapno;
   int32_t ssi_status;
   int32_t ssi_int;
-  uintptr_t ssi_ptr;
+  uint64_t ssi_ptr;
   uint64_t ssi_utime;
   uint64_t ssi_stime;
   uint64_t ssi_addr;
@@ -51,7 +51,7 @@ __BEGIN_DECLS
 /* Request notification for delivery of signals in MASK to be
    performed using descriptor FD.*/
 extern int signalfd (int __fd, const sigset_t *__mask, int __flags)
-  __nonnull (2) __THROW;
+  __nonnull ((2)) __THROW;
 
 __END_DECLS
 

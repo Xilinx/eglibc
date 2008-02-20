@@ -18,6 +18,12 @@ __check_pf (bool *p1, bool *p2, struct in6addrinfo **in6ai, size_t *in6ailen)
   *in6ai = NULL;
   *in6ailen = 0;
 }
+void
+attribute_hidden
+__check_native (uint32_t a1_index, int *a1_native,
+		uint32_t a2_index, int *a2_native)
+{
+}
 int
 __idna_to_ascii_lz (const char *input, char **output, int flags)
 {
@@ -60,6 +66,7 @@ do_test (void)
 {
   labels = default_labels;
   precedence = default_precedence;
+  scopes = default_scopes;
 
   struct sockaddr_in so1;
   so1.sin_family = AF_INET;
@@ -93,26 +100,32 @@ do_test (void)
 
 
   struct sort_result results[2];
+  size_t order[2];
 
   results[0].dest_addr = &ai1;
   results[0].got_source_addr = true;
   results[0].source_addr_len = sizeof (so1);
   results[0].source_addr_flags = 0;
-  results[0].service_order = 0;
+  results[0].prefixlen = 16;
+  results[0].index = 0;
   memcpy (&results[0].source_addr, &so1, sizeof (so1));
+  order[0] = 0;
 
   results[1].dest_addr = &ai2;
   results[1].got_source_addr = true;
   results[1].source_addr_len = sizeof (so2);
   results[1].source_addr_flags = 0;
-  results[1].service_order = 1;
+  results[1].prefixlen = 16;
+  results[1].index = 0;
   memcpy (&results[1].source_addr, &so2, sizeof (so2));
+  order[1] = 1;
 
 
-  qsort (results, 2, sizeof (results[0]), rfc3484_sort);
+  struct sort_result_combo combo = { .results = results, .nresults = 2 };
+  qsort_r (order, 2, sizeof (order[0]), rfc3484_sort, &combo);
 
   int result = 0;
-  if (results[0].dest_addr->ai_family == AF_INET6)
+  if (results[order[0]].dest_addr->ai_family == AF_INET6)
     {
       puts ("wrong order in first test");
       result |= 1;
@@ -124,20 +137,24 @@ do_test (void)
   results[1].got_source_addr = true;
   results[1].source_addr_len = sizeof (so1);
   results[1].source_addr_flags = 0;
-  results[1].service_order = 1;
+  results[1].prefixlen = 16;
+  results[1].index = 0;
   memcpy (&results[1].source_addr, &so1, sizeof (so1));
+  order[1] = 1;
 
   results[0].dest_addr = &ai2;
   results[0].got_source_addr = true;
   results[0].source_addr_len = sizeof (so2);
   results[0].source_addr_flags = 0;
-  results[0].service_order = 0;
+  results[0].prefixlen = 16;
+  results[0].index = 0;
   memcpy (&results[0].source_addr, &so2, sizeof (so2));
+  order[0] = 0;
 
 
-  qsort (results, 2, sizeof (results[0]), rfc3484_sort);
+  qsort_r (order, 2, sizeof (order[0]), rfc3484_sort, &combo);
 
-  if (results[0].dest_addr->ai_family == AF_INET6)
+  if (results[order[0]].dest_addr->ai_family == AF_INET6)
     {
       puts ("wrong order in second test");
       result |= 1;

@@ -36,6 +36,10 @@
 #include "dbg_log.h"
 
 
+/* Wrapper functions with error checking for standard functions.  */
+extern void *xcalloc (size_t n, size_t s);
+
+
 /* Number of times a value is reloaded without being used.  UINT_MAX
    means unlimited.  */
 unsigned int reload_count = DEFAULT_RELOAD_LIMIT;
@@ -197,6 +201,20 @@ cache_add (int type, const void *key, size_t len, struct datahead *packet,
 	   (char *) &table->head->array[hash] - (char *) table->head
 	   + sizeof (ref_t), MS_ASYNC);
 
+  /* Perhaps the prune thread for the data is not running in a long
+     time.  Wake it if necessary.  */
+  time_t next_wakeup = table->wakeup_time;
+  while (next_wakeup + CACHE_PRUNE_INTERVAL > packet->timeout)
+    if (atomic_compare_and_exchange_bool_acq (&table->wakeup_time,
+					      packet->timeout,
+					      next_wakeup) == 0)
+      {
+	pthread_cond_signal (&table->prune_cond);
+	break;
+      }
+    else
+      next_wakeup = table->wakeup_time;
+
   return 0;
 }
 
@@ -212,7 +230,7 @@ cache_add (int type, const void *key, size_t len, struct datahead *packet,
    actually remove them.  This is complicated by the way we have to
    free the data structures since some hash table entries share the same
    data.  */
-void
+time_t
 prune_cache (struct database_dyn *table, time_t now, int fd)
 {
   size_t cnt = table->head->module;
@@ -226,7 +244,9 @@ prune_cache (struct database_dyn *table, time_t now, int fd)
 	  int32_t resp = 0;
 	  writeall (fd, &resp, sizeof (resp));
 	}
-      return;
+
+      /* No need to do this again anytime soon.  */
+      return 24 * 60 * 60;
     }
 
   /* If we check for the modification of the underlying file we invalidate
@@ -256,28 +276,26 @@ prune_cache (struct database_dyn *table, time_t now, int fd)
 	}
     }
 
-  /* This function can be called from the cleanup thread but also in
-     response to an invalidate command.  Make sure only one thread is
-     running.  When not serving INVALIDATE request, no need for the
-     second thread to wait around.  */
-  if (__builtin_expect (pthread_mutex_trylock (&table->prunelock) != 0, 0))
-    {
-      /* The work is already being done.  */
-      if (fd == -1)
-	return;
-
-      /* We have to wait until the thread is done and then run again
-	 so that the large NOW value invalidates all entries.  */
-      pthread_mutex_lock (&table->prunelock);
-    }
-
   /* We run through the table and find values which are not valid anymore.
 
      Note that for the initial step, finding the entries to be removed,
      we don't need to get any lock.  It is at all timed assured that the
      linked lists are set up correctly and that no second thread prunes
      the cache.  */
-  bool mark[cnt];
+  bool *mark;
+  size_t memory_needed = cnt * sizeof (bool);
+  bool mark_use_alloca;
+  if (__builtin_expect (memory_needed <= MAX_STACK_USE, 1))
+    {
+      mark = alloca (cnt * sizeof (bool));
+      memset (mark, '\0', memory_needed);
+      mark_use_alloca = true;
+    }
+  else
+    {
+      mark = xcalloc (1, memory_needed);
+      mark_use_alloca = false;
+    }
   size_t first = cnt + 1;
   size_t last = 0;
   char *const data = table->data;
@@ -287,7 +305,8 @@ prune_cache (struct database_dyn *table, time_t now, int fd)
     dbg_log (_("pruning %s cache; time %ld"),
 	     dbnames[table - dbs], (long int) now);
 
-  time_t next_timeout = LONG_MAX;
+#define NO_TIMEOUT LONG_MAX
+  time_t next_timeout = NO_TIMEOUT;
   do
     {
       ref_t run = table->head->array[--cnt];
@@ -469,9 +488,14 @@ prune_cache (struct database_dyn *table, time_t now, int fd)
 	}
     }
 
+  if (__builtin_expect (! mark_use_alloca, 0))
+    free (mark);
+
   /* Run garbage collection if any entry has been removed or replaced.  */
   if (any)
     gc (table);
 
-  pthread_mutex_unlock (&table->prunelock);
+  /* If there is no entry in the database and we therefore have no new
+     timeout value, tell the caller to wake up in 24 hours.  */
+  return next_timeout == NO_TIMEOUT ? 24 * 60 * 60 : next_timeout - now;
 }

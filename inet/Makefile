@@ -56,10 +56,10 @@ routines-$(OPTION_EGLIBC_DB_ALIASES) \
 routines-$(OPTION_EGLIBC_ADVANCED_INET6) \
 	 += inet6_option inet6_opt inet6_rth
 
-aux-$(OPTION_EGLIBC_INET) += check_pf ifreq
+aux-$(OPTION_EGLIBC_INET) += check_pf check_native ifreq
 
 tests := htontest test_ifindex tst-ntoa tst-ether_aton tst-network \
-	 tst-gethnm test-ifaddrs bug-if1
+	 tst-gethnm test-ifaddrs bug-if1 tst-ether_line
 tests-$(OPTION_EGLIBC_ADVANCED_INET6) += test-inet6_opt
 
 include ../Rules

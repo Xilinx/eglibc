@@ -1,3 +1,124 @@
+2008-01-31  Roland McGrath  <roland@redhat.com>
+
+	* Makefile (omit-deps): Variable removed.
+
+2008-01-30  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/sem_post.S (sem_post): Avoid
+	unnecessary addr32 prefix.
+
+2008-01-29  Roland McGrath  <roland@redhat.com>
+
+	* Makeconfig (ptw-CPPFLAGS, sysd-rules-patterns): New variables.
+
+2008-01-22  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/sem_post.S: Don't overflow value field.
+
+2008-01-21  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/lowlevel-atomic.h (XADD): Use
+	a scratch register.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.S
+	(__lll_lock_wait_private): Fix typo.
+	* sysdeps/unix/sysv/linux/sh/pthread_barrier_wait.S
+	(pthread_barrier_wait): Likewise.  Adjust XADD use.
+	* sysdeps/unix/sysv/linux/sh/sem_post.S (__new_sem_post):
+	Adjust XADD use.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_timedrdlock.S
+	(pthread_rwlock_timedrdlock): Return correct return value.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_timedwrlock.S
+	(pthread_rwlock_timedwrlock): Likewise.
+
+2008-01-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-eintr2.c (do_test): make sure that if mutex_lock in main
+	thread returns the program exits with an error code.
+
+2008-01-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* pthread-errnos.sym: Add EOVERFLOW.
+	* sysdeps/unix/sysv/linux/structsem.sym: Add SEM_VALUE_MAX.
+	* sysdeps/unix/sysv/linux/sem_post.c: Don't overflow value field.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_post.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_post.S: Likewise.
+
+2007-12-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/pthreaddef.h (ARCH_RETRY_MMAP): Take additional
+	parameter.  Passed it as permission to mmap.
+	* allocatestack.c (allocate_stack): Pass prot as second parameter
+	to ARCH_RETRY_MMAP.
+
+2007-12-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-basic7.c: Allocate memory for the stack.
+
+	[BZ #5465]
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S [!SHARED]
+	(__pthread_cond_timedwait): Don't use VDSO.
+	Patch by Michal Januszewski.
+
+2007-12-07  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5455]
+	* sysdeps/pthread/pthread.h [!__EXCEPTIONS] (pthread_cleanup_pop):
+	Allow label before pthread_cleanup_pop.
+	(pthread_cleanup_pop_restore_np): Likewise.
+
+2007-12-04  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.S (__lll_timedlock_wait):
+	Store 2 before returning ETIMEDOUT.
+
+2007-11-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S (__lll_timedlock_wait):
+	Store 2 before returning ETIMEDOUT.
+	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S: Likewise
+	* sysdeps/unix/sysv/linux/lowlevellock.c: Likewise.
+	(__lll_lock_wait_private): Optimize.
+	(__lll_lock_wait): Likewise.
+
+2007-11-20  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/pthread/pthread.h (pthread_cleanup_push,
+	pthread_cleanup_push_defer_np): Add extra (void *) cast to shut up
+	g++ 4.1 and 4.2 -Wstrict-aliasing warnings.
+
+2007-11-08  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5240]
+	* sysdeps/unix/sysv/linux/lowlevellock.c (__lll_timedlock_wait):
+	If we time out, try one last time to lock the futex to avoid
+	losing a wakeup signal.
+	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S: Likewise.
+
+	[BZ #5245]
+	* sysdeps/pthread/createthread.c (do_clone): Translate clone error
+	if necessary.
+
+2007-11-07  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5245]
+	* allocatestack.c (allocate_stack): Change ENOMEM error in case
+	mmap failed to EAGAIN.
+	* Makefile (tests): Add tst-basic7.
+	* tst-basic7.c: New file.
+
+2007-11-05  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/register-atfork.c (__register_atfork):
+	Use __linkin_atfork.
+
+2007-11-03  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.S (LOAD_FUTEX_WAIT): Add
+	missing line continuations.
+	* sysdeps/unix/sysv/linux/sh/lowlevelrobustlock.S (LOAD_FUTEX_WAIT,
+	LOAD_FUTEX_WAKE): Likewise.  Also add missing 3rd parameter.
+
 2007-10-28  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #5220]

@@ -1,4 +1,5 @@
-# Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+# Copyright (C) 2002,2003,2004,2005,2006,2007,2008
+#	Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -196,9 +197,6 @@ CFLAGS-tcdrain.c = -fexceptions -fasynchronous-unwind-tables
 
 CFLAGS-pt-system.c = -fexceptions
 
-# Don't generate deps for calls with no sources.  See sysdeps/unix/Makefile.
-omit-deps = $(unix-syscalls:%=ptw-%)
-
 
 tests = tst-typesizes \
 	tst-attr1 tst-attr2 tst-attr3 \
@@ -226,6 +224,7 @@ tests = tst-typesizes \
 	tst-barrier1 tst-barrier2 tst-barrier3 tst-barrier4 \
 	tst-align tst-align2 tst-align3 \
 	tst-basic1 tst-basic2 tst-basic3 tst-basic4 tst-basic5 tst-basic6 \
+	tst-basic7 \
 	tst-kill1 tst-kill2 tst-kill3 tst-kill4 tst-kill5 tst-kill6 \
 	tst-raise1 \
 	tst-join1 tst-join2 tst-join3 tst-join4 tst-join5 tst-join6 \

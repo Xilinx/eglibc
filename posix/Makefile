@@ -103,7 +103,7 @@ tests-$(OPTION_EGLIBC_LOCALE_CODE)					    \
 		   bug-regex22 bug-regex23 bug-regex25 bug-regex26
 tests-$(OPTION_EGLIBC_INET) \
 	        += tst-getaddrinfo bug-ga1 tst-getaddrinfo2 \
-		   tst-rfc3484 tst-rfc3484-2 tst-getaddrinfo3
+		   tst-rfc3484 tst-rfc3484-2 tst-rfc3484-3 tst-getaddrinfo3
 xtests-$(OPTION_EGLIBC_INET) += bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
