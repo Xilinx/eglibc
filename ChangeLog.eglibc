@@ -1,3 +1,15 @@
+2008-02-23  Daniel Jacobowitz  <dan@codesourcery.com>
+
+	PR nptl/3270
+	nptl/
+	* allocatestack.c (setxid_mark_thread, setxid_unmark_thread): New.
+	(setxid_signal_thread): Return a successful signal indicator.  Just
+	skip threads without SETXID_BITMASK.
+	(__nptl_setxid): Use separate marking and unmarking loops.  Repeat
+	signalling if necessary.
+	* init.c (sighandler_setxid): Use atomic operations for
+	cancelhandling.  Wake __nptl_setxid last.
+
 2008-02-17  Joseph Myers  <joseph@codesourcery.com>
 
 	Backport:
