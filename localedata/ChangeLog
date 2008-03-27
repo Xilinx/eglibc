@@ -1,3 +1,31 @@
+2008-03-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* locales/iso14651_t1_common: Add support for Devanagari script.
+	* locales/mr_IN: Adjust Devanagari sorting for mr_IN.
+	Patch by Pravin Satpute <psatpute@redhat.com>.
+
+2008-03-08  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5602]
+	* locales/pt_PT: Fix mon_decimal_point.
+
+2008-03-07  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5777]
+	* locales/es_CR: Define am/pm format.
+
+2008-03-04  Ulrich Drepper  <drepper@redhat.com>
+
+	* SUPPORTED (SUPPORTED-LOCALES): Add shs_CA.UTF-8.
+
+	* locales/en_CA: Add language information in LC_ADDRESS section.
+	* locales/fr_CA: Likewise.
+	* locales/ik_CA: Likewise.
+	* locales/iu_CA: Likewise.
+
+	[BZ #5627]
+	* locales/shs_CA: New file.
+
 2008-01-10  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #5520]

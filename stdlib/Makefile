@@ -61,7 +61,7 @@ routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) +=				      \
 ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_POSIX_REGEXP))
 routines-y += rpmatch
 endif
-aux =	grouping groupingwc
+aux =	grouping groupingwc tens_in_limb
 
 # These routines will be omitted from the libc shared object.
 # Instead the static object files will be included in a special archive
@@ -77,7 +77,7 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   tst-limits tst-rand48 bug-strtod tst-setcontext	    \
 		   test-a64l tst-qsort tst-system bug-strtod2		    \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
-		   tst-makecontext tst-qsort2 tst-makecontext2
+		   tst-makecontext tst-qsort2 tst-makecontext2 tst-strtod6
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \

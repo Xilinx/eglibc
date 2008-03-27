@@ -2819,10 +2819,8 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 		col_elem_free:
 		  if (symbol != NULL)
 		    free ((char *) symbol);
-		  if (arg->val.str.startmb != NULL)
-		    free (arg->val.str.startmb);
-		  if (arg->val.str.startwc != NULL)
-		    free (arg->val.str.startwc);
+		  free (arg->val.str.startmb);
+		  free (arg->val.str.startwc);
 		}
 	      lr_ignore_rest (ldfile, 1);
 	    }
@@ -2968,10 +2966,8 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 	      else
 		{
 		col_sym_free:
-		  if (symbol != NULL)
-		    free (symbol);
-		  if (endsymbol != NULL)
-		    free (endsymbol);
+		  free (symbol);
+		  free (endsymbol);
 		}
 	    }
 	  break;

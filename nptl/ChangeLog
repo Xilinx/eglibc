@@ -1,3 +1,23 @@
+2008-03-18  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/ia64/dl-sysdep.h: Use __ASSEMBLER__ instead
+	of ASSEMBLER.
+	* sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h: Likewise.
+	* sysdeps/unix/sysv/linux/i386/dl-sysdep.h: Likewise.
+
+2008-03-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/dl-sysdep.h: Define
+	HAVE_DL_DISCOVER_OSVERSION.
+	* sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/dl-sysdep.h: Likewise.
+
+2008-03-07  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5778]
+	* sysdeps/unix/sysv/linux/bits/posix_opt.h: Change
+	_POSIX_CHOWN_RESTRICTED value to zero.
+
 2008-01-31  Roland McGrath  <roland@redhat.com>
 
 	* Makefile (omit-deps): Variable removed.
