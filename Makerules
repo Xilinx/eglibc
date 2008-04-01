@@ -908,10 +908,13 @@ install-lib.so-unversioned := $(filter-out $(versioned), $(install-lib.so))
 
 # Install the _pic.a files for versioned libraries, and corresponding
 # .map files.
+# libpthread_pic.a breaks mklibs, so don't install it and its map.
 install-lib := $(install-lib) $(install-lib.so-versioned:%.so=%_pic.a)
+install-lib := $(filter-out libpthread_pic.a,$(install-lib))
 ifeq ($(versioning),yes)
 install-map := $(patsubst %.so,%.map,\
 			$(foreach L,$(install-lib.so-versioned),$(notdir $L)))
+install-map := $(filter-out libpthread.map,$(install-map))
 ifndef subdir
 install-map := $(install-map) libc.map
 endif

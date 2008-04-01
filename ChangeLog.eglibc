@@ -1,3 +1,8 @@
+2008-04-01  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* Makerules (install-lib): Don't install libpthread_pic.a.
+	(install-map): Don't install libpthread_pic.map.
+
 2008-02-23  Daniel Jacobowitz  <dan@codesourcery.com>
 
 	PR nptl/3270
