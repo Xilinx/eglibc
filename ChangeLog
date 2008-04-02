@@ -1,3 +1,88 @@
+2008-03-31  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #6007]
+	* string/strfry.c: Handle empty strings again.
+
+2008-03-30  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #5443]
+	* intl/dcigettext.c (__dcigettext): Get reader lock for locale data
+	before looking for translation.
+	* locale/duplocale.c: Transform __libc_setlocale_lock into rwlock.
+	* locale/freelocale.c: Likewise.
+	* locale/newlocale.c: Likewise.
+	* locale/setlocale.c: Likewise.
+	Based partially on a patch by ryo@np.css.fujitsu.com.
+
+2008-03-30  Jakub Jelinek  <jakub@redhat.com>
+
+	* intl/dcigettext.c (_nl_find_msg): Reread nconversions after
+	acquiring wrlock.  Do conv_tab allocation while holding lock.
+	* intl/Makefile: Add rules to build and run tst-gettext6.
+	* intl/tst-gettext6.c: New test.
+	* intl/tst-gettext6.sh: New file.
+
+2008-03-30  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/nl.po: Update from translation team.
+
+	* sysdeps/unix/opendir.c (__alloc_dir): If allocation fails for size
+	provided through st_blksize, try the default size before giving up.
+
+2008-03-29  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdio-common/vfprintf.c (vfprintf): Correct overflow test.
+
+	[BZ #5939]
+	* sysdeps/posix/tempname.c (__gen_tempname): Correct flag selection.
+
+	* posix/getopt.c (_getopt_internal_r): Remove old POSIX-demanded
+	error message.  POSIX today does not require the messages to be in
+	a specific form.  Suggested by Jim Meyering <jim@meyering.net>.
+
+	[BZ #5979]
+	* sunrpc/auth_unix.c: Unify printed strings.
+	* sunrpc/clnt_tcp.c: Likewise.
+	* sunrpc/clnt_udp.c: Likewise.
+	* sunrpc/clnt_unix.c: Likewise.
+	* sunrpc/svc_tcp.c: Likewise.
+	* sunrpc/svc_udp.c: Likewise.
+	* sunrpc/svc_unix.c: Likewise.
+	* sunrpc/xdr.c: Likewise.
+	* sunrpc/xdr_array.c: Likewise.
+	* sunrpc/xdr_rec.c: Likewise.
+	* sunrpc/xdr_ref.c: Likewise.
+	* locale/programs/ld-time.c (time_finish): Unify messages.
+	* locale/programs/locfile.c (handle_copy): Fix typo.
+	* nscd/nscd.c (options): Fix typo.
+
+	[BZ #5995]
+	* stdlib/strtod_l.c: Use correct sign for result in one more
+	underflow case.
+	Patch by Eric Blake <ebb9@byu.net>.
+
+2008-03-27  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/wordsize-64/syscalls.list: Add open
+	and creat system calls.
+	* sysdeps/unix/sysv/linux/alpha/syscalls.list: Remove open system
+	call.
+	* sysdeps/unix/sysv/linux/ia64/syscalls.list: Remove open and creat
+	system calls.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/syscalls.list: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/syscalls.list: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/syscalls.list: Likewise.
+
+2008-03-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/bits/local_lim.h: Undefined ARG_MAX if
+	<linux/limits.h> has defined it.
+	* sysdeps/unix/sysv/linux/sys/param.h: Define NCARGS to the legacy
+	ARG_MAX value and prevent ARG_MAX from being defined by the kernel
+	headers.
+	* sysdeps/unix/sysv/linux/sysconf.c: Define legacy_ARG_MAX and use
+	it instead of ARG_MAX.
+
 2008-03-25  Jakub Jelinek  <jakub@redhat.com>
 
 	* posix/gai.conf: Fix comment for scope nullbits.
