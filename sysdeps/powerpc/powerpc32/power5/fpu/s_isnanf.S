@@ -1,4 +1,5 @@
-/* Copyright (C) 2005, 2008 Free Software Foundation, Inc.
+/* isnan().  PowerPC32 version.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,21 +17,30 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <locale.h>
-#include <stdlib.h>
-#include <wcsmbs/wcsmbsload.h>
+#include <sysdep.h>
+#include <math_ldbl_opt.h>
 
+/* int __isnanf(x)  */
+	.machine power5
+EALIGN (__isnanf, 4, 0)
+	stwu	r1,-32(r1)
+	cfi_adjust_cfa_offset (32)
+	stfs	fp1,28(r1)	/* copy FPR to GPR */
+	nop
+	nop
+	lwz	r4,28(r1)
+	lis	r0,0x7f80	/* const long r0 0x7f800000 */
+	clrlwi	r4,r4,1		/* x = fabs(x) */
+	cmpw	cr7,r4,r0	/* if (fabs(x) =< inf) */
+	li	r3,0		/* then return 0 */
+	addi	r1,r1,32
+	cfi_adjust_cfa_offset (-32)
+	blelr+	cr7
+L(NaN):
+	li	r3,1		/* else return 1 */
+	blr
+	END (__isnanf)
 
-extern mbstate_t __wctomb_state attribute_hidden; /* Defined in wctomb.c.  */
+hidden_def (__isnanf)
+weak_alias (__isnanf, isnanf)
 
-
-int
-__wctomb_chk (char *s, wchar_t wchar, size_t buflen)
-{
-  /* We do not have to implement the full wctomb semantics since we
-     know that S cannot be NULL when we come here.  */
-  if (buflen < MB_CUR_MAX)
-    __chk_fail ();
-
-  return __wcrtomb (s, wchar, &__wctomb_state);
-}
