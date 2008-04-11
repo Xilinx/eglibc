@@ -1,3 +1,66 @@
+2008-04-11  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #5443]
+	* time/era.c: Transform __libc_setlocale_lock into rwlock.
+	* time/alt_digit.c: Likewise.
+	* wcsmbs/wcsmbsload.c: Likewise.
+
+2008-04-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* version.h (VERSION): Bump to 2.8.
+
+	* timzeone/asia: Update from tzdata2008b.
+	* timezone/backward: Likewise.
+	* timezone/europe: Likewise.
+	* timezone/northamerica: Likewise.
+	* timezone/southamerica: Likewise.
+	* timezone/iso3166.tab: Likewise.
+	* timezone/leapseconds: Likewise.
+	* timezone/zone.tab: Likewise.
+	* timezone/private.h: Update from tzcode2008a.
+	* timezone/zdump.c: Likewise.
+	* timezone/zic.c: Likewise.
+
+2008-01-24  Steven Munroe  <sjmunroe@us.ibm.com>
+
+	[BZ #5741]
+	* sysdeps/powerpc/powerpc64/dl-machine.h (PPC_DCBT, PPC_DCBF):
+	Define additonal Data Cache Block instruction macros.
+	(elf_machine_fixup_plt): Add dcbt for opd and plt entries.
+	Replace dcbst with dcbf and sync with sync/isync.
+
+2008-02-21  Alan Modra  <amodra@bigpond.net.au>
+
+	* sysdeps/powerpc/powerpc64/dl-machine.h (elf_machine_type_class):
+	Always set ELF_RTYPE_CLASS_PLT.
+	(elf_machine_lookup_noexec_p, elf_machine_lookup_noplt_p): Delete.
+
+2008-04-03  Steven Munroe  <sjmunroe@us.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power4/hp-timing.c: New file.
+	* sysdeps/powerpc/powerpc32/power4/hp-timing.h: New file.
+	* sysdeps/powerpc/powerpc64/hp-timing.h [_ARCH_PWR4] (HP_TIMING_NOW):
+	For ISA 2.01 and later replace mftb with mfspr 268.
+
+2008-02-19  Steven Munroe  <sjmunroe@us.ibm.com>
+
+	[BZ #5768]
+	* sysdeps/powerpc/fpu/Makefile (libm-tests): Add test-powerpc-snan.
+	* sysdeps/powerpc/fpu/test-powerpc-snan.c: New file.
+
+2008-02-18  Steven Munroe  <sjmunroe@us.ibm.com>
+
+	[BZ #5768]
+	* sysdeps/powerpc/powerpc32/fpu/s_isnan.S: New file.
+	* sysdeps/powerpc/powerpc32/fpu/s_isnan.c: Removed.
+	* sysdeps/powerpc/powerpc64/fpu/s_isnan.S: New file.
+	* sysdeps/powerpc/powerpc64/fpu/s_isnan.c: Removed.
+
+2008-04-10  Jakub Jelinek  <jakub@redhat.com>
+
+	* stdlib/tst-makecontext.c (othervar): New variable.
+	(cf): Test sign extending the argument to long.
+
 2008-03-03  Steven Munroe  <sjmunroe@us.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power5/fpu/s_isnan.S: New file.
@@ -32,11 +95,12 @@
 2008-04-09  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #4314]
-	* sysdeps/i386/i686/memcpy.S: Optimize copying of aligned buffers.
+	* sysdeps/i386/i686/memcpy.S: Optimize copying of equally aligned
+	buffers.
 
 	[BZ #5209]
-	* sysdeps/unix/sysv/syscalls.list: The times syscall doesn't return
-	an error value.
+	* sysdeps/unix/sysv/syscalls.list: The times syscall doesn't have
+	a reserved error value.
 
 	* stdlib/tst-makecontext.c: Change parameter to cf to negative
 	value to check for correct sign extension.
