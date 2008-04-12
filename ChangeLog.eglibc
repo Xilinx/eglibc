@@ -1,3 +1,8 @@
+2008-04-12  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/mathinline.h: Also test
+	__NO_FPRS__.
+
 2008-04-01  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* Makerules (install-lib): Don't install libpthread_pic.a.
