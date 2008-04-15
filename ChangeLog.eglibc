@@ -1,3 +1,7 @@
+2008-04-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/configure: Regenerate.
+
 2008-04-12  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/powerpc/bits/mathinline.h: Also test
