@@ -1,3 +1,11 @@
+2008-04-25  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Cross-rpcgen.
+
+	* sunrpc/Makefile: Make librpcsvc.a built when cross-building.
+	Build cross-rpcgen for $build when cross-building.
+	* sunrpc/proto.h: Define stuff for cross-building.
+
 2008-04-15  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/configure: Regenerate.

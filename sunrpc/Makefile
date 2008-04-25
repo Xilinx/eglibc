@@ -105,9 +105,7 @@ otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \
 	     $(resolvobjdir)/libresolv.a
 endif
 
-ifeq (no,$(cross-compiling))
 ifneq (yes,$(install-bootstrap-headers))
-# We can only build this library if we can run the rpcgen we build.
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
 extra-libs-$(OPTION_EGLIBC_SUNRPC) += librpcsvc
 # Make it in `others' pass, not `lib' pass.
@@ -115,7 +113,6 @@ extra-libs-others-y += $(extra-libs-y)
 librpcsvc-routines = $(rpcsvc:%.x=x%)
 librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
 omit-deps = $(librpcsvc-routines)
-endif
 endif
 
 CFLAGS-xbootparam_prot.c = -Wno-unused $(PIC-ccflag)
@@ -146,13 +143,30 @@ $(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs)) \
   $(addprefix $(csu-objpfx),start.o) $(+preinit) $(+postinit)
 	$(+link)
 
+$(addprefix $(objpfx)cross-,$(rpcgen-objs)): $(objpfx)cross-%.o: %.c
+	gcc $< -c -D_RPC_THREAD_SAFE_ -D_CROSS_RPCGEN_ \
+		$(OUTPUT_OPTION) $(compile-mkdep-flags)
+
+$(objpfx)cross-rpcgen: $(addprefix $(objpfx)cross-,$(rpcgen-objs))
+	gcc $^ -o $@
+
 # This makes sure -DNOT_IN_libc is passed for all these modules.
 cpp-srcs-left := $(rpcgen-objs:.o=.c)
 lib := nonlib
 include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 
+ifeq (no,$(cross-compiling))
 # Tell rpcgen where to find the C preprocessor.
 rpcgen-cmd = CPP='$(CC) -E -x c-header' $(built-program-cmd) -Y ../scripts
+# Depend rpcsvc headers and sources on rpcgen.
+rpcgen-dep = $(objpfx)rpcgen
+else
+# Tell rpcgen where to find the C preprocessor.
+rpcgen-cmd = CPP='$(CC) -E -x c-header' $(objpfx)cross-rpcgen -Y ../scripts
+# Depend rpcsvc headers and sources on cross-rpcgen and rpcgen (to trigger
+# its build).
+rpcgen-dep = $(objpfx)rpcgen $(objpfx)cross-rpcgen
+endif
 
 # Install the rpc data base file.
 $(inst_sysconfdir)/rpc: etc.rpc $(+force)
@@ -163,7 +177,7 @@ $(inst_sysconfdir)/rpc: etc.rpc $(+force)
 # relinked.
 $(rpcsvc:%.x=$(objpfx)rpcsvc/%.h): $(objpfx)rpcsvc/%.h: $(objpfx)rpcsvc/%.stmp
 	@:
-$(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(objpfx)rpcgen
+$(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(rpcgen-dep)
 	$(make-target-directory)
 	-@rm -f ${@:stmp=T} $@
 	$(rpcgen-cmd) -h $< -o ${@:stmp=T}
@@ -173,7 +187,7 @@ $(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(objpfx)rpcgen
 # Generate the rpcsvc XDR functions with rpcgen.
 $(rpcsvc:%.x=$(objpfx)x%.c): $(objpfx)x%.c: $(objpfx)x%.stmp
 	@:
-$(objpfx)x%.stmp: rpcsvc/%.x $(objpfx)rpcgen
+$(objpfx)x%.stmp: rpcsvc/%.x $(rpcgen-dep)
 	-@rm -f ${@:stmp=T} $@
 	$(rpcgen-cmd) -c $< -o ${@:stmp=T}
 	$(move-if-change) $(@:stmp=T) $(@:stmp=c)

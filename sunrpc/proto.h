@@ -50,3 +50,24 @@ void crash(void) __attribute__ ((noreturn));
 void tabify(FILE *f, int tab);
 char *make_argname(const char *pname, const char *vname);
 void add_type(int len, const char *type);
+
+/* This header is the last one included in all rpc_*.c files,
+   so we define stuff for cross-rpcgen here to avoid conflicts with
+   $build's C library and $host's GLIBC.  */
+#ifdef _CROSS_RPCGEN_
+
+/* Rather then defining _GNU_SOURCE before including $build's <string.h>
+   we just declare stpcpy here.  */
+extern char *stpcpy (char *, const char *);
+
+/* Use $build's i18n support as we can't use $host's.  */
+#define _(X) (gettext (X))
+
+/* rpcgen sources check for __GNU_LIBRARY__ to tweak for GLIBC code
+   that rpcgen generates.  The proper fix would be to rename all those checks
+   to something like '#if defined(TWEAK_FOR_GLIBC) || 1'.  */
+#ifndef __GNU_LIBRARY__
+#define __GNU_LIBRARY__
+#endif
+
+#endif
