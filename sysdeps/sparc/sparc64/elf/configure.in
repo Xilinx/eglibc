@@ -1,49 +1,52 @@
 GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
 # Local configure fragment for sysdeps/sparc/sparc64/elf.
 
-if test "$usetls" != no; then
-# Check for support of thread-local storage handling in assembler and linker.
-AC_CACHE_CHECK(for sparc64 TLS support, libc_cv_sparc64_tls, [dnl
-changequote(,)dnl
-cat > conftest.s <<\EOF
-	.section ".tdata", "awT", @progbits
-	.globl foo
-foo:	.word	1
-	.section ".tbss", "awT", @nobits
-	.globl bar
-bar:	.skip	4
-	.text
-	.globl main
-main:	sethi	%tgd_hi22(foo), %l1
-	add	%l1, %tgd_lo10(foo), %l1
-	add	%l7, %l1, %o0, %tgd_add(foo)
-	call	__tls_get_addr, %tgd_call(foo)
-	sethi	%tldm_hi22(bar), %l1
-	add	%l1, %tldm_lo10(bar), %l1
-	add	%l7, %l1, %o0, %tldm_add(bar)
-	call	__tls_get_addr, %tldm_call(bar)
-	sethi	%tldo_hix22(bar), %l1
-	xor	%l1, %tldo_lox10(bar), %l1
-	add	%o0, %l1, %l1, %tldo_add(bar)
-	sethi	%tie_hi22(foo), %l1
-	add	%l1, %tie_lo10(foo), %l1
-	ldx	[%l7 + %l1], %l1, %tie_ldx(foo)
-	add	%g7, %l1, %l1, %tie_add(foo)
-	sethi	%tle_hix22(foo), %l1
-	xor	%l1, %tle_lox10(foo), %l1
-EOF
-changequote([,])dnl
-dnl
-if AC_TRY_COMMAND(${CC-cc} -o conftest.bin $CFLAGS conftest.s 1>&AS_MESSAGE_LOG_FD); then
-  libc_cv_sparc64_tls=yes
-else
-  libc_cv_sparc64_tls=no
-fi
-rm -f conftest*])
-if test $libc_cv_sparc64_tls = yes; then
-  AC_DEFINE(HAVE_TLS_SUPPORT)
-fi
-fi
+AC_DEFINE(HAVE_TLS_SUPPORT) 
+libc_cv_sparc64_tls=yes
+
+dnl if test "$usetls" != no; then
+dnl # Check for support of thread-local storage handling in assembler and linker.
+dnl AC_CACHE_CHECK(for sparc64 TLS support, libc_cv_sparc64_tls, [dnl
+dnl changequote(,)dnl
+dnl cat > conftest.s <<\EOF
+dnl 	.section ".tdata", "awT", @progbits
+dnl 	.globl foo
+dnl foo:	.word	1
+dnl 	.section ".tbss", "awT", @nobits
+dnl 	.globl bar
+dnl bar:	.skip	4
+dnl 	.text
+dnl 	.globl main
+dnl main:	sethi	%tgd_hi22(foo), %l1
+dnl 	add	%l1, %tgd_lo10(foo), %l1
+dnl 	add	%l7, %l1, %o0, %tgd_add(foo)
+dnl 	call	__tls_get_addr, %tgd_call(foo)
+dnl 	sethi	%tldm_hi22(bar), %l1
+dnl 	add	%l1, %tldm_lo10(bar), %l1
+dnl 	add	%l7, %l1, %o0, %tldm_add(bar)
+dnl 	call	__tls_get_addr, %tldm_call(bar)
+dnl 	sethi	%tldo_hix22(bar), %l1
+dnl 	xor	%l1, %tldo_lox10(bar), %l1
+dnl 	add	%o0, %l1, %l1, %tldo_add(bar)
+dnl 	sethi	%tie_hi22(foo), %l1
+dnl 	add	%l1, %tie_lo10(foo), %l1
+dnl 	ldx	[%l7 + %l1], %l1, %tie_ldx(foo)
+dnl 	add	%g7, %l1, %l1, %tie_add(foo)
+dnl 	sethi	%tle_hix22(foo), %l1
+dnl 	xor	%l1, %tle_lox10(foo), %l1
+dnl EOF
+dnl changequote([,])dnl
+dnl dnl
+dnl if AC_TRY_COMMAND(${CC-cc} -o conftest.bin $CFLAGS conftest.s 1>&AS_MESSAGE_LOG_FD); then
+dnl   libc_cv_sparc64_tls=yes
+dnl else
+dnl   libc_cv_sparc64_tls=no
+dnl fi
+dnl rm -f conftest*])
+dnl if test $libc_cv_sparc64_tls = yes; then
+dnl   AC_DEFINE(HAVE_TLS_SUPPORT)
+dnl fi
+dnl fi
 
 # Check for broken WDISP22 in the linker.
 AC_CACHE_CHECK(for sparc64 ld WDISP22 handling, libc_cv_sparc64_wdisp22, [dnl
