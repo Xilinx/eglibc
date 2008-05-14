@@ -1,3 +1,10 @@
+2008-05-14  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Generate zoneinfo when cross-building EGLIBC.
+
+	* timezone/Makefile: When cross-compiling, build cross-zic, then
+	use it to generate zoneinfo files.
+
 2008-04-25  Vladimir Prus  <vladimir@codesourcery.com>
 
 	* sysdeps/sparc/sparc64/elf/configure.in: Hard-code result of TLS

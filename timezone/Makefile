@@ -69,13 +69,10 @@ installed-posixrules-file := $(firstword $(filter /%,$(posixrules-file)) \
 					 $(addprefix $(inst_zonedir)/, \
 						     $(posixrules-file)))
 
-ifeq ($(cross-compiling),no)
-# Don't try to install the zoneinfo files since we can't run zic.
 install-others = $(addprefix $(inst_zonedir)/,$(zonenames) \
 					      $(zonenames:%=posix/%) \
 					      $(zonenames:%=right/%)) \
 		 $(installed-localtime-file) $(installed-posixrules-file)
-endif
 
 ifeq ($(have-ksh),yes)
 install-others += $(inst_zonedir)/iso3166.tab $(inst_zonedir)/zone.tab
@@ -106,18 +103,35 @@ $(tzfiles:%=$(objpfx)z.%): $(objpfx)z.%: % Makefile
 	   echo '$$(addprefix $$(inst_zonedir)/,$$($*-zones)): \'	    ;\
 	   echo '$$(foreach t,$$(tzbases),$$(addprefix $$(inst_zonedir)/,$$($$t-zones)))' ;\
 	 fi								    ;\
-	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/right/,$$($*-zones)): \' ;\
-	 echo '$< $$(objpfx)zic leapseconds yearistype'			    ;\
-	 echo '	$$(tzcompile)'						    ;\
-	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/posix/,$$($*-zones)): \' ;\
-	 echo '$< $$(objpfx)zic /dev/null yearistype'			    ;\
-	 echo '	$$(tzcompile)'						    ;\
-	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/,$$($*-zones)): \' ;\
-	 echo '$< $$(objpfx)zic $$(leapseconds) yearistype'		    ;\
-	 echo '	$$(tzcompile)'						    ;\
+	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/right/,$$($*-zones)): \' ;) > $@.new
+
+ifeq (no,$(cross-compiling))
+	(echo '$< $$(objpfx)zic leapseconds yearistype'			    ;) >> $@.new
+else
+	(echo '$< $$(objpfx)cross-zic leapseconds yearistype'		    ;) >> $@.new
+endif
+
+	(echo '	$$(tzcompile)'						    ;\
+	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/posix/,$$($*-zones)): \' ;) >> $@.new
+
+ifeq (no,$(cross-compiling))
+	(echo '$< $$(objpfx)zic /dev/null yearistype'			    ;) >> $@.new
+else
+	(echo '$< $$(objpfx)cross-zic /dev/null yearistype'		    ;) >> $@.new
+endif
+
+	(echo '	$$(tzcompile)'						    ;\
+	 echo '$$(addprefix $$(dir $$(inst_zonedir))zone%/,$$($*-zones)): \' ;) >> $@.new
+
+ifeq (no,$(cross-compiling))
+	(echo '$< $$(objpfx)zic $$(leapseconds) yearistype'		    ;) >> $@.new
+else
+	(echo '$< $$(objpfx)cross-zic $$(leapseconds) yearistype'	    ;) >> $@.new
+endif
+
+	(echo '	$$(tzcompile)'						    ;\
 	 echo 'endif'							    ;\
-	 echo 'zonenames := $$(zonenames) $$($*-zones)'			    ;\
-	) > $@.new
+	 echo 'zonenames := $$(zonenames) $$($*-zones)'			    ;) >> $@.new
 	mv $@.new $@
 
 .PHONY: echo-zonenames
@@ -128,7 +142,11 @@ echo-zonenames:
 # We have to use `-d $(inst_zonedir)' to explictly tell zic where to
 # place the output files although $(zonedir) is compiled in.  But the
 # user might have set $(install_root) on the command line of `make install'.
+ifeq (no,$(cross-compiling))
 zic-cmd = $(built-program-cmd) -d $(inst_zonedir)
+else
+zic-cmd = $(objpfx)cross-zic -d $(inst_zonedir)
+endif
 tzcompile = $(zic-cmd)$(target-zone-flavor) -L $(word 3,$^) \
 	    -y $(dir $(word 4,$^))$(notdir $(word 4,$^)) $<
 
@@ -158,8 +176,16 @@ $(installed-posixrules-file): $(inst_zonedir)/$(posixrules) $(objpfx)zic \
 	$(zic-cmd) -p $(posixrules)
 endif
 
+zic-objs = zic.o ialloc.o scheck.o
 
-$(objpfx)zic: $(objpfx)scheck.o $(objpfx)ialloc.o
+$(objpfx)zic: $(addprefix $(objpfx), $(zic-objs))
+
+$(addprefix $(objpfx)cross-,$(zic-objs)): $(objpfx)cross-%.o: %.c
+	gcc $< -c $(OUTPUT_OPTION) $(CFLAGS-$*.c) $(CPPFLAGS-$*) \
+		$(compile-mkdep-flags)
+
+$(objpfx)cross-zic: $(addprefix $(objpfx)cross-,$(zic-objs))
+	gcc $(addprefix $(objpfx)cross-,$(zic-objs)) -o $@
 
 tz-cflags = -DTZDIR='"$(zonedir)"' \
 	    -DTZDEFAULT='"$(localtime-file)"' \
@@ -192,7 +218,11 @@ test-tz-ENV = TZDIR=$(testdata)
 tst-timezone-ENV = TZDIR=$(testdata)
 
 # Note this must come second in the deps list for $(built-program-cmd) to work.
+ifeq (no,$(cross-compiling))
 zic-deps = $(objpfx)zic $(leapseconds) yearistype
+else
+zic-deps = $(objpfx)cross-zic $(objpfx)zic $(leapseconds) yearistype
+endif
 
 $(testdata)/America/New_York: northamerica $(zic-deps)
 	$(build-testdata)
