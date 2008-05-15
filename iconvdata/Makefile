@@ -75,6 +75,9 @@ ifeq ($(have-thread-library),yes)
 tests += bug-iconv3
 endif
 
+bug-iconv6-ENV = LOCPATH=$(common-objpfx)localedata
+tst-iconv7-ENV = LOCPATH=$(common-objpfx)localedata
+
 test-srcs := tst-table-from tst-table-to
 endif
 
