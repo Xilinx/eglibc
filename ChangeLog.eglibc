@@ -1,3 +1,7 @@
+2008-05-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* posix/globtest.sh: Set HOME with env on test target system.
+
 2008-05-14  Joseph Myers  <joseph@codesourcery.com>
 
 	* iconvdata/Makefile (bug-iconv6-ENV, tst-iconv7-ENV): Define.

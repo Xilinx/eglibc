@@ -746,8 +746,9 @@ cat <<"EOF" | $CMP - $testout >> $logfile || failed=1
 `dir6/fil*[a'
 `nondir\/'
 EOF
-HOME="$testdir" \
-${run_program_prefix} \
+${cross_test_wrapper} \
+env HOME="$testdir" \
+${elf_objpfx}${rtld_installed_name} --library-path ${library_path} \
 ${common_objpfx}posix/globtest -ct "$testdir" \
 '~/dir1/file1_1' '~/dir1/file1_9' '~/dir3\*/file1' '~/dir3\*/file2' \
 '~\/dir1/file1_2' |
