@@ -61,6 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <not-cancel.h>
 #include <nscd/nscd-client.h>
 #include <nscd/nscd_proto.h>
+#include <resolv/res_hconf.h>
 
 #ifdef HAVE_LIBIDN
 extern int __idna_to_ascii_lz (const char *input, char **output, int flags);
@@ -97,8 +98,9 @@ struct gaih_typeproto
   {
     int socktype;
     int protocol;
-    char name[4];
-    int protoflag;
+    uint8_t protoflag;
+    bool defaultflag;
+    char name[8];
   };
 
 /* Values for `protoflag'.  */
@@ -107,11 +109,21 @@ struct gaih_typeproto
 
 static const struct gaih_typeproto gaih_inet_typeproto[] =
 {
-  { 0, 0, "", 0 },
-  { SOCK_STREAM, IPPROTO_TCP, "tcp", 0 },
-  { SOCK_DGRAM, IPPROTO_UDP, "udp", 0 },
-  { SOCK_RAW, 0, "raw", GAI_PROTO_PROTOANY|GAI_PROTO_NOSERVICE },
-  { 0, 0, "", 0 }
+  { 0, 0, 0, false, "" },
+  { SOCK_STREAM, IPPROTO_TCP, 0, true, "tcp" },
+  { SOCK_DGRAM, IPPROTO_UDP, 0, true, "udp" },
+#if defined SOCK_DCCP && defined IPPROTO_DCCP
+  { SOCK_DCCP, IPPROTO_DCCP, 0, false, "dccp" },
+#endif
+#ifdef IPPROTO_UDPLITE
+  { SOCK_DGRAM, IPPROTO_UDPLITE, 0, false, "udplite" },
+#endif
+#ifdef IPPROTO_SCTP
+  { SOCK_STREAM, IPPROTO_SCTP, 0, false, "sctp" },
+  { SOCK_SEQPACKET, IPPROTO_SCTP, 0, false, "sctp" },
+#endif
+  { SOCK_RAW, 0, GAI_PROTO_PROTOANY|GAI_PROTO_NOSERVICE, true, "raw" },
+  { 0, 0, 0, false, "" }
 };
 
 struct gaih
@@ -363,18 +375,19 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	     we know about.  */
 	  struct gaih_servtuple **lastp = &st;
 	  for (++tp; tp->name[0]; ++tp)
-	    {
-	      struct gaih_servtuple *newp;
+	    if (tp->defaultflag)
+	      {
+		struct gaih_servtuple *newp;
 
-	      newp = __alloca (sizeof (struct gaih_servtuple));
-	      newp->next = NULL;
-	      newp->socktype = tp->socktype;
-	      newp->protocol = tp->protocol;
-	      newp->port = port;
+		newp = __alloca (sizeof (struct gaih_servtuple));
+		newp->next = NULL;
+		newp->socktype = tp->socktype;
+		newp->protocol = tp->protocol;
+		newp->port = port;
 
-	      *lastp = newp;
-	      lastp = &newp->next;
-	    }
+		*lastp = newp;
+		lastp = &newp->next;
+	      }
 	}
     }
 
@@ -1099,7 +1112,10 @@ get_scope (const struct sockaddr_in6 *in6)
     {
       if (! IN6_IS_ADDR_MULTICAST (&in6->sin6_addr))
 	{
-	  if (IN6_IS_ADDR_LINKLOCAL (&in6->sin6_addr))
+	  if (IN6_IS_ADDR_LINKLOCAL (&in6->sin6_addr)
+	      /* RFC 4291 2.5.3 says that the loopback address is to be
+		 treated like a link-local address.  */
+	      || IN6_IS_ADDR_LOOPBACK (&in6->sin6_addr))
 	    scope = 2;
 	  else if (IN6_IS_ADDR_SITELOCAL (&in6->sin6_addr))
 	    scope = 5;
@@ -1232,20 +1248,14 @@ match_prefix (const struct sockaddr_in6 *in6,
     {
       const struct sockaddr_in *in = (const struct sockaddr_in *) in6;
 
-      /* Convert to IPv6 address.  */
+      /* Construct a V4-to-6 mapped address.  */
       in6_mem.sin6_family = PF_INET6;
       in6_mem.sin6_port = in->sin_port;
       in6_mem.sin6_flowinfo = 0;
-      if (in->sin_addr.s_addr == htonl (0x7f000001))
-	in6_mem.sin6_addr = (struct in6_addr) IN6ADDR_LOOPBACK_INIT;
-      else
-	{
-	  /* Construct a V4-to-6 mapped address.  */
-	  memset (&in6_mem.sin6_addr, '\0', sizeof (in6_mem.sin6_addr));
-	  in6_mem.sin6_addr.s6_addr16[5] = 0xffff;
-	  in6_mem.sin6_addr.s6_addr32[3] = in->sin_addr.s_addr;
-	  in6_mem.sin6_scope_id = 0;
-	}
+      memset (&in6_mem.sin6_addr, '\0', sizeof (in6_mem.sin6_addr));
+      in6_mem.sin6_addr.s6_addr16[5] = 0xffff;
+      in6_mem.sin6_addr.s6_addr32[3] = in->sin_addr.s_addr;
+      in6_mem.sin6_scope_id = 0;
 
       in6 = &in6_mem;
     }
@@ -2076,6 +2086,10 @@ getaddrinfo (const char *name, const char *service,
 
   if ((hints->ai_flags & AI_CANONNAME) && name == NULL)
     return EAI_BADFLAGS;
+
+  /* Initialize configurations.  */
+  if (__builtin_expect (!_res_hconf.initialized, 0))
+    _res_hconf_init ();
 
   struct in6addrinfo *in6ai = NULL;
   size_t in6ailen = 0;

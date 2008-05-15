@@ -75,10 +75,10 @@ ifeq ($(have-thread-library),yes)
 tests += bug-iconv3
 endif
 
+test-srcs := tst-table-from tst-table-to
+
 bug-iconv6-ENV = LOCPATH=$(common-objpfx)localedata
 tst-iconv7-ENV = LOCPATH=$(common-objpfx)localedata
-
-test-srcs := tst-table-from tst-table-to
 endif
 
 # No code here is in libc.so.
