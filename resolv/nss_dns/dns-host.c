@@ -990,6 +990,9 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
   char *h_name = NULL;
   int h_namelen = 0;
 
+  if (ancount == 0)
+    return NSS_STATUS_NOTFOUND;
+
   while (ancount-- > 0 && cp < end_of_message && had_error == 0)
     {
       n = __ns_name_unpack (answer->buf, end_of_message, cp,
@@ -1069,12 +1072,13 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
       if (__builtin_expect (type == T_SIG, 0)
 	  || __builtin_expect (type == T_KEY, 0)
 	  || __builtin_expect (type == T_NXT, 0)
-	  || __builtin_expect (type == T_PTR, 0))
+	  || __builtin_expect (type == T_PTR, 0)
+	  || __builtin_expect (type == T_DNAME, 0))
 	{
 	  /* We don't support DNSSEC yet.  For now, ignore the record
 	     and send a low priority message to syslog.
 
-	     We also don't expect T_PTR messages.  */
+	     We also don't expect T_PTR or T_DNAME messages.  */
 	  syslog (LOG_DEBUG | LOG_AUTH,
 		  "getaddrinfo*.gaih_getanswer: got type \"%s\"",
 		  p_type (type));
@@ -1093,11 +1097,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
 
 	  if (__builtin_expect (buflen < sizeof (struct gaih_addrtuple),
 				0))
-	    {
-	      *errnop = ERANGE;
-	      *h_errnop = NETDB_INTERNAL;
-	      return NSS_STATUS_TRYAGAIN;
-	    }
+	    goto too_small;
 
 	  *pat = (struct gaih_addrtuple *) buffer;
 	  buffer += sizeof (struct gaih_addrtuple);
@@ -1164,15 +1164,24 @@ gaih_getanswer (const querybuf *answer1, int anslen1, const querybuf *answer2,
 {
   int first = 1;
 
-  enum nss_status status = gaih_getanswer_slice(answer1, anslen1, qname,
-						&pat, &buffer, &buflen,
-						errnop, h_errnop, ttlp,
-						&first);
-  if ((status == NSS_STATUS_SUCCESS || status == NSS_STATUS_NOTFOUND)
-      && answer2 != NULL)
-    status = gaih_getanswer_slice(answer2, anslen2, qname,
+  enum nss_status status = NSS_STATUS_NOTFOUND;
+
+  if (anslen1 > 0)
+    status = gaih_getanswer_slice(answer1, anslen1, qname,
 				  &pat, &buffer, &buflen,
-				  errnop, h_errnop, ttlp, &first);
+				  errnop, h_errnop, ttlp,
+				  &first);
+  if ((status == NSS_STATUS_SUCCESS || status == NSS_STATUS_NOTFOUND
+       || status == NSS_STATUS_TRYAGAIN)
+      && answer2 != NULL && anslen2 > 0)
+    {
+      enum nss_status status2 = gaih_getanswer_slice(answer2, anslen2, qname,
+						     &pat, &buffer, &buflen,
+						     errnop, h_errnop, ttlp,
+						     &first);
+      if (status != NSS_STATUS_SUCCESS)
+	status = status2;
+    }
 
   return status;
 }

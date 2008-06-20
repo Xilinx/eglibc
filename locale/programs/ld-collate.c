@@ -2817,8 +2817,7 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 	      else
 		{
 		col_elem_free:
-		  if (symbol != NULL)
-		    free ((char *) symbol);
+		  free ((char *) symbol);
 		  free (arg->val.str.startmb);
 		  free (arg->val.str.startwc);
 		}
@@ -2998,8 +2997,7 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 	      arg = lr_token (ldfile, charmap, result, repertoire, verbose);
 	      if (arg->tok != tok_bsymbol)
 		{
-		  if (newname != NULL)
-		    free ((char *) newname);
+		  free ((char *) newname);
 		  goto err_label;
 		}
 
@@ -3013,10 +3011,8 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 			    "LC_COLLATE");
 
 		sym_equiv_free:
-		  if (newname != NULL)
-		    free ((char *) newname);
-		  if (symname != NULL)
-		    free ((char *) symname);
+		  free ((char *) newname);
+		  free ((char *) symname);
 		  break;
 		}
 	      if (symname == NULL)

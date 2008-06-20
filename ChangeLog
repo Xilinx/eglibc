@@ -1,3 +1,257 @@
+2008-06-18  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/connections.c (main_loop_poll): Fix test for read error.
+	(main_loop_epoll): Likewise.
+
+2008-06-13  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c: Move _res_hconf_init call to a
+	better place so it is not called when nscd is used.
+
+	* nscd/connections.c: Also recognize and handle changes to the
+	resolver configuration file.
+
+2008-06-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* time/strftime.c: Pass reference to tzset_called around to handle
+	recursive calls.
+
+	[BZ #6612]
+	* time/strftime.c (__strftime_internal): Call tzset() only
+	when printing timezone-dependent values.
+	Based on a patch by Petr Baudis <pasky@suse.cz>.
+
+	* resolv/nss_dns/dns-host.c (gaih_getanswer): Don't
+	unconditionally use second gaih_getanswer_slice result.
+
+	* sysdeps/posix/getaddrinfo.c (gai_inet): Remove unnecessary test.
+	(getaddrinfo): RES must always be non-NULL.
+
+2008-06-12  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/powerpc/powerpc64/fpu/s_llround.S (__llround): Avoid using
+	cr[34] registers.
+	* sysdeps/powerpc/powerpc64/fpu/s_llroundf.S (__llroundf): Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/s_llround.S (__llround):
+	Likewise.
+	* sysdeps/powerpc/powerpc32/fpu/s_lround.S (__lround): Avoid using cr3
+	register.
+
+2008-06-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/nscd.h (struct database_dyn): Add inotify_descr and clear_cache
+	fields.
+	* nscd/connections.c (inotify_fd): New variable.
+	(nscd_init): Try to open an inotify descriptor.
+	If successful, watch files for databases using inotify instead of
+	having prune threads stat the files.
+	(nscd_run_prune): Recognize clear_cache flag being set and call
+	prune_cache appropriately.
+	(main_loop_poll): Add inotify descriptor to wait set and handle the
+	reported changes.
+	(main_loop_epoll): Likewise.
+	* nscd/cache.c (prune_cache): Don't stat files for databases if
+	inotify is used.
+	* sysdeps/unix/sysv/linux/Makefile [subdir=nscd]
+	(CFLAGS-connections.c): Add -DHAVE_INOTIFY.
+
+	* nscd/grpcache.c (cache_addgr): Correctly compute size of
+	fixed-size portion of the record.
+	* nscd/servicescache.c (cache_addserv): Likewise.
+	* nscd/pwdcache.c (cache_addpw): Likewise.
+	* nscd/initgrcache.c (addinitgroupsX): Likewise.
+
+2008-06-11  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/mem.c (gc): Initialize obstack earlier so that if we jump
+	out we don't use uninitialized memory.
+
+	* nscd/hstcache.c (cache_addhst): Send correct number of bytes to
+	the client.
+
+2008-06-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/nss_dns/dns-host.c (gaih_getanswer_slice): Also log and
+	ignore T_DNAME messages.
+	* resolv/arpa/nameser_compat.h (T_DNAME): Define.
+
+2008-06-05  Jakub Jelinek  <jakub@redhat.com>
+
+	* misc/regexp.h (compile): Use __REPB_PREFIX macro.
+	Avoid segfault if first GETC returns eof/'\0'/'\n'.
+
+2008-06-03  Jakub Jelinek  <jakub@redhat.com>
+
+	* nscd/nscd_getserv_r.c (__nscd_getservbyport_r): Pass cp
+	instead of portstr to nscd_getserv_r.  Patch by
+	Roman Kagan <rkagan@mail.ru>.
+
+2008-05-26  Jim Meyering  <meyering@redhat.com>
+
+	Remove more useless "if" tests before "free".
+	* include/inline-hashtab.h (htab_delete): Likewise.
+	* libio/freopen.c (freopen): Likewise.
+	* libio/freopen64.c (freopen64): Likewise.
+	* locale/programs/ld-collate.c (collate_read): Likewise.
+	* misc/fstab.c (libc_freeres_fn): Likewise.
+	* posix/glob.c (globfree): Likewise.
+
+2008-05-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* string/Makefile (strop-tests): Add memmem.
+	* string/test-memmem.c: New file.
+	* string/test-string.h (BUF1PAGES): Define to 1 if undefined.
+	(test_init): Size buf1 according to BUF1PAGES.
+
+2008-05-24  Jakub Jelinek  <jakub@redhat.com>
+
+	* libio/stdio.h (vscanf): Fix -std=c99 redirect.
+	* stdio-common/Makefile (tests): Add scanf16 and scanf17.
+	(CFLAGS-scanf17.c): New.
+	* stdio-common/scanf14.c (main): Add fscanf and scanf tests.
+	* stdio-common/scanf15.c (main): Likewise.
+	* stdio-common/scanf16.c: New file.
+	* stdio-common/scanf17.c: New file.
+
+2008-05-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_send.c (send_dg): If we already have one of two
+	answers and the server reports SERVFAIL, NOTIMP, or REFUSED, then
+	use the one answer insted of failing.
+
+2008-02-20  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* math/libm-test.inc (exp_test): Exclude expl(1000.0L) from
+	being executed on PowerPC as the expected result exceeds IBM
+	long double 128 __LDBL_MAX__.
+
+2008-05-21  Roland McGrath  <roland@redhat.com>
+
+	* shlib-versions (sparc.*-.*-.*, sparc64.*-.*-.*): Add ABI lines.
+
+	* Makefile (check-data): Use $(abi-name) before other guesses.
+	Look in $(add-ons) dirs before scripts/data/.
+	* elf/Makefile (check-data): Likewise.
+
+	* scripts/soversions.awk: Grok ABI line.
+	* Makeconfig ($(common-objpfx)soversions.mk): Likewise.
+	Emit definition for abi-name variable.
+
+2008-05-21  Ulrich Drepper  <drepper@redhat.com>
+
+	* string/endian.h: Define new fixed-size hto* and *toh macros only
+	if [__USE_BSD].
+
+	* iconvdata/Depend: Add localedata.
+
+2008-05-21  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* bits/termios.h (ONLCR): Define under [__USE_XOPEN] too.
+
+2008-05-08  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/setcontext.S: Use
+	HIDDEN_JUMPTARGET.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sysdep.h
+	(__SYSCALL_CLOBBERS): Remove %g* registers.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sysdep.h
+	(__SYSCALL_CLOBBERS): Likewise.
+	* scripts/data/localplt-sparc-linux-gnu.data: New file.
+	* scripts/data/localplt-sparc64-linux-gnu.data: New file.
+
+2008-05-21  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sysdep.h
+	(CALL_ERRNO_LOCATION): Define.
+	(__SYSCALL_STRING, __CLONE_SYSCALL_STRING): Use it.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sysdep.h
+	(CALL_ERRNO_LOCATION): Define.
+	(__SYSCALL_STRING, __CLONE_SYSCALL_STRING): Use it.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/brk.S (__brk): Use
+	HIDDEN_JUMPTARGET for __errno_location call in libc.so.
+
+2008-05-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* include/inline-hashtab.h (higher_prime_number): Fix type of mid
+	variable.
+
+2008-05-20  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sigcontextinfo.h
+	(FIRST_FRAME_POINTER): Define.
+
+2008-05-09  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/backtrace.c: New file.
+
+2008-05-14  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/machine-gmon.h: New file.
+	* sysdeps/sparc/sparc-mcount.S: Likewise.
+	* sysdeps/sparc/Makefile: Add sparc-mcount target to
+	sysdep_routines in gmon directory.
+
+2008-05-19  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/soinit.c (__EH_FRAME_BEGIN__): Remove.
+
+2008-05-19  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_query.c (__libc_res_nquery): In case one of two
+	answer was too short don't try to read that answer's header.
+
+	* resolv/res_send.c (send_dg): In case of timeout and there are
+	two queries and one has been answered, return value indicating
+	success.
+
+2008-05-18  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/cache.c (cache_add): Take additional parameter specifying
+	whether this is in response of a cache refill.  Check alignment
+	of package data.  Revamp waking of pruning thread.
+	(prune_cache): Small optimization.
+	* nscd/nscd.h: Adjust cache_add prototypes.
+	* nscd/aicache.c: Adjust cache_add calls.
+	* nscd/grpcache.c: Likewise.
+	* nscd/hstcache.c: Likewise.
+	* nscd/initgrcache.c: Likewise.
+	* nscd/pwdcache.c: Likewise.
+	* nscd/servicescache.c: Likewise.
+	* nscd/connections.c (restart): Really disable cache use before
+	exec attempt.  If it fails, reenable cache.
+	(nscd_run_prune): Initialize wakeup_time.  After wakeup, set wakeup
+	time to max to be able to notice concurrent cache additions.  Unlock
+	prune_lock while performing gc.  Afterwards compute wakeup time with
+	current wakeup_time value in mind.
+
+2008-05-17  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/mem.c (gc): Avoid stack overflow when allocating move list.
+
+	* nscd/mem.c (gc): Correctly determine highest used array element
+	in mark.
+
+	* nscd/mem.c (markrange): Add assert to check entries are all
+	aligned.  Small cleanup in bitmap use.
+
+	* nscd/nscd.h (mem_in_flight): Replace blockaddr field with
+	blockoff of type nscd_ssize_t.
+	* nscd/mem.c (gc): Simplify markrange call for on-flight blocks.
+	(mempoll_alloc): Record block offset and not address.
+
+	* nscd/mem.c (gc): Fix test for stack overuse.
+
+	* nscd/aicache.c (addhstaiX): Fix a few small problems, cleanups,
+	more asserts.
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): If nscd reports no
+	entry is available, believe it.
+
+	* resolv/nss_dns/dns-host.c (gaih_getanswer_slice): If there are
+	no answers return NSS_STATUS_NOTFOUND.
+	(gaih_getanswer): Don't call gaih_getanswer_slice if the answer
+	buffer does not have any content.
+
 2008-05-16  Ulrich Drepper  <drepper@redhat.com>
 
 	* string/strcasestr.c (CMP_FUNC): Use __strncasecmp, not strncasecmp.
@@ -174,7 +428,7 @@
 	* nscd/hstcache.c: Likewise.
 	* nscd/initgrcache.c: Likewise.
 	* nscd/pwdcache.c: Likewise.
-	* nscd/servicecache.c: Likewise.
+	* nscd/servicescache.c: Likewise.
 
 2008-05-10  Roland McGrath  <roland@redhat.com>
 

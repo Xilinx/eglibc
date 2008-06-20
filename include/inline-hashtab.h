@@ -74,7 +74,7 @@ higher_prime_number (unsigned long n)
 
   while (low != high)
     {
-      const unsigned long *mid = low + (high - low) / 2;
+      const uint32_t *mid = low + (high - low) / 2;
       if (n > *mid)
 	low = mid + 1;
       else
@@ -142,8 +142,7 @@ htab_delete (struct hashtab *htab)
   int i;
 
   for (i = htab->size - 1; i >= 0; i--)
-    if (htab->entries[i])
-      free (htab->entries[i]);
+    free (htab->entries[i]);
 
   if (htab->free)
     htab->free (htab->entries);

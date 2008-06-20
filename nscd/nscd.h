@@ -73,6 +73,8 @@ struct database_dyn
 
   int enabled;
   int check_file;
+  int inotify_descr;
+  int clear_cache;
   int persistent;
   int shared;
   int propagate;
@@ -197,7 +199,7 @@ extern __thread struct mem_in_flight
   {
     int dbidx;
     nscd_ssize_t blocklen;
-    void *blockaddr;
+    nscd_ssize_t blockoff;
   } block[IDX_last];
 
   struct mem_in_flight *next;
@@ -231,7 +233,8 @@ extern struct datahead *cache_search (request_type, void *key, size_t len,
 				      uid_t owner);
 extern int cache_add (int type, const void *key, size_t len,
 		      struct datahead *packet, bool first,
-		      struct database_dyn *table, uid_t owner);
+		      struct database_dyn *table, uid_t owner,
+		      bool prune_wakeup);
 extern time_t prune_cache (struct database_dyn *table, time_t now, int fd);
 
 /* pwdcache.c */

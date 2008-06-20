@@ -231,7 +231,7 @@ addinitgroupsX (struct database_dyn *db, int fd, request_header *req,
 	      pthread_rwlock_rdlock (&db->lock);
 
 	      (void) cache_add (req->type, key_copy, req->key_len,
-				&dataset->head, true, db, uid);
+				&dataset->head, true, db, uid, he == NULL);
 
 	      pthread_rwlock_unlock (&db->lock);
 
@@ -246,7 +246,8 @@ addinitgroupsX (struct database_dyn *db, int fd, request_header *req,
   else
     {
 
-      written = total = sizeof (struct dataset) + start * sizeof (int32_t);
+      written = total = (offsetof (struct dataset, strdata)
+			 + start * sizeof (int32_t));
 
       /* If we refill the cache, first assume the reconrd did not
 	 change.  Allocate memory on the cache since it is likely
@@ -306,6 +307,9 @@ addinitgroupsX (struct database_dyn *db, int fd, request_header *req,
 
       /* Finally the user name.  */
       memcpy (cp, key, req->key_len);
+
+      assert (cp == dataset->strdata + total - offsetof (struct dataset,
+							 strdata));
 
       /* Now we can determine whether on refill we have to create a new
 	 record or not.  */
@@ -398,7 +402,7 @@ addinitgroupsX (struct database_dyn *db, int fd, request_header *req,
 	  pthread_rwlock_rdlock (&db->lock);
 
 	  (void) cache_add (INITGROUPS, cp, req->key_len, &dataset->head, true,
-			    db, uid);
+			    db, uid, he == NULL);
 
 	  pthread_rwlock_unlock (&db->lock);
 	}
