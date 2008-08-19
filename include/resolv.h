@@ -58,11 +58,11 @@ libc_hidden_proto (__res_randomid)
 libc_hidden_proto (__res_state)
 
 int __libc_res_nquery (res_state, const char *, int, int, u_char *, int,
-		       u_char **, u_char **, int *);
+		       u_char **, u_char **, int *, int *);
 int __libc_res_nsearch (res_state, const char *, int, int, u_char *, int,
-			u_char **, u_char **, int *);
+			u_char **, u_char **, int *, int *);
 int __libc_res_nsend (res_state, const u_char *, int, const u_char *, int,
-		      u_char *, int, u_char **, u_char **, int *)
+		      u_char *, int, u_char **, u_char **, int *, int *)
   attribute_hidden;
 
 libresolv_hidden_proto (_sethtent)
@@ -98,11 +98,9 @@ libresolv_hidden_proto (__res_nameinquery)
 libresolv_hidden_proto (__res_queriesmatch)
 libresolv_hidden_proto (__res_nsend)
 libresolv_hidden_proto (__b64_ntop)
-libresolv_hidden_proto (__ns_name_ntop)
-libresolv_hidden_proto (__ns_name_unpack)
-libresolv_hidden_proto (__ns_get16)
-libresolv_hidden_proto (__ns_get32)
 libresolv_hidden_proto (__res_nopt)
+libresolv_hidden_proto (__dn_count_labels)
+libresolv_hidden_proto (__p_secstodate)
 
 extern const char *_res_opcodes[];
 libresolv_hidden_proto (_res_opcodes)

@@ -61,7 +61,8 @@ _nss_dns_getcanonname_r (const char *name, char *buffer, size_t buflen,
   for (int i = 0; i < nqtypes; ++i)
     {
       int r = __libc_res_nquery (&_res, name, ns_c_in, qtypes[i],
-				 buf, sizeof (buf), &ansp.ptr, NULL, NULL);
+				 buf, sizeof (buf), &ansp.ptr, NULL, NULL,
+				 NULL);
       if (r > 0)
 	{
 	  /* We need to decode the response.  Just one question record.
@@ -133,14 +134,14 @@ _nss_dns_getcanonname_r (const char *name, char *buffer, size_t buflen,
 	      if (type != ns_t_cname)
 		goto unavail;
 
-	      if (ns_get16 (ptr) != ns_c_in)
+	      if (__ns_get16 (ptr) != ns_c_in)
 		goto unavail;
 
 	      /* Also skip over the TTL.  */
 	      ptr += sizeof (uint16_t) + sizeof (uint32_t);
 
 	      /* Skip over the data length and data.  */
-	      ptr += sizeof (uint16_t) + ns_get16 (ptr);
+	      ptr += sizeof (uint16_t) + __ns_get16 (ptr);
 	    }
 	}
     }

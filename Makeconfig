@@ -651,7 +651,7 @@ ifeq	"$(strip $(+cflags))" ""
 +cflags	:= $(default_cflags)
 endif	# $(+cflags) == ""
 
-+cflags += $(addprefix -mcpu=,$(with-cpu)) $(+gccwarn) $(+merge-constants)
++cflags += $(cflags-cpu) $(+gccwarn) $(+merge-constants)
 +gcc-nowarn := -w
 
 # Don't duplicate options if we inherited variables from the parent.
@@ -720,6 +720,10 @@ pic-ccflag = -fPIC
 # This one should always stay like this unless there is a very good reason.
 PIC-ccflag = -fPIC
 endif
+# This can be changed by a sysdep makefile
+pie-ccflag = -fpie
+# This one should always stay like this unless there is a very good reason.
+PIE-ccflag = -fPIE
 ifeq (yes,$(build-profile))
 # Under --enable-profile, we will build a static library of profiled objects.
 # The profiled object files are named foo.op.

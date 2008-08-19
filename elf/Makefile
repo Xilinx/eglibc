@@ -805,7 +805,7 @@ $(objpfx)tst-array5-static.out: $(objpfx)tst-array5-static
 	cmp $@ tst-array5-static.exp > /dev/null
 
 ifeq (yesyes,$(have-fpie)$(build-shared))
-CFLAGS-tst-pie1.c += -fpie
+CFLAGS-tst-pie1.c += $(pie-ccflag)
 
 $(objpfx)tst-pie1.out: $(objpfx)tst-pie1
 	$(cross-test-wrapper) \
@@ -847,8 +847,8 @@ $(objpfx)tst-dlmodcount: $(libdl)
 $(objpfx)tst-dlmodcount.out: $(test-modules)
 
 check-data := $(firstword $(wildcard \
-	        $(foreach D,$(add-ons) scripts/data,\
-	        	  $(patsubst %,$(..)$D/localplt-%.data,\
+	        $(foreach D,$(add-ons) scripts,\
+	        	  $(patsubst %,$(..)$D/data/localplt-%.data,\
 			   	     $(abi-name) \
 			   	     $(addsuffix -$(config-os),\
 				     		 $(config-machine) \
@@ -866,6 +866,8 @@ $(objpfx)check-localplt.out: $(objpfx)check-localplt \
 		    	     $(common-objpfx)math/libm.so $(thread-dso) \
 		    	     $(common-objpfx)rt/librt.so \
 		    	     $(common-objpfx)dlfcn/libdl.so \
+			     $(common-objpfx)resolv/libresolv.so \
+			     $(common-objpfx)crypt/libcrypt.so \
 			     $(check-data)
 	$(dir $<)$(notdir $<) $(filter-out $< $(check-data),$^) | \
 	  LC_ALL=C sort | \

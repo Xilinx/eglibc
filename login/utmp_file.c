@@ -1,4 +1,4 @@
-/* Copyright (C) 1996-2002, 2003, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 1996-2004, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>
    and Paul Janzen <pcj@primenet.com>, 1996.
@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -167,10 +168,11 @@ setutent_file (void)
 # ifdef O_CLOEXEC
 	      if (__have_o_cloexec == 0)
 		__have_o_cloexec = (result & FD_CLOEXEC) ? 1 : -1;
-# endif
 
-	      result = fcntl_not_cancel (file_fd, F_SETFD,
-					 result | FD_CLOEXEC);
+	      if (__have_o_cloexec < 0)
+# endif
+		result = fcntl_not_cancel (file_fd, F_SETFD,
+					   result | FD_CLOEXEC);
 	    }
 
 	  if (result == -1)
@@ -243,12 +245,16 @@ getutent_r_file (struct utmp *buffer, struct utmp **result)
 
 
 static int
-internal_getut_r (const struct utmp *id, struct utmp *buffer)
+internal_getut_r (const struct utmp *id, struct utmp *buffer,
+		  bool *lock_failed)
 {
   int result = -1;
 
   LOCK_FILE (file_fd, F_RDLCK)
-    LOCKING_FAILED ();
+    {
+      *lock_failed = true;
+      LOCKING_FAILED ();
+    }
 
 #if _HAVE_UT_TYPE - 0
   if (id->ut_type == RUN_LVL || id->ut_type == BOOT_TIME
@@ -319,7 +325,10 @@ getutid_r_file (const struct utmp *id, struct utmp *buffer,
       return -1;
     }
 
-  if (internal_getut_r (id, &last_entry) < 0)
+  /* We don't have to distinguish whether we can lock the file or
+     whether there is no entry.  */
+  bool lock_failed = false;
+  if (internal_getut_r (id, &last_entry, &lock_failed) < 0)
     {
       *result = NULL;
       return -1;
@@ -409,7 +418,16 @@ pututline_file (const struct utmp *data)
 	  __utmp_equal (&last_entry, data)))
     found = 1;
   else
-    found = internal_getut_r (data, &buffer);
+    {
+      bool lock_failed = false;
+      found = internal_getut_r (data, &buffer, &lock_failed);
+
+      if (__builtin_expect (lock_failed, false))
+	{
+	  __set_errno (EAGAIN);
+	  return NULL;
+	}
+    }
 
   LOCK_FILE (file_fd, F_WRLCK)
     {

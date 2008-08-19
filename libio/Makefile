@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2002,2003,2004,2006,2007 Free Software Foundation, Inc.
+# Copyright (C) 1995-2004,2006,2007,2008 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -67,7 +67,7 @@ tests = test-fmemopen tst-ext tst-ext2				\
 	tst-mmap2-eofsync tst-mmap-offend bug-fopena+		\
 	bug-ungetc2 bug-ungetc3 bug-ungetc4			\
 	tst-memstream1 tst-memstream2				\
-	bug-memstream1
+	bug-memstream1 tst-popen1
 tests-$(OPTION_EGLIBC_LOCALE_CODE)				\
      += tst-swscanf tst-fgetws tst-fopenloc tst-setvbuf1	\
 	tst-ungetwc1 tst-ungetwc2 bug-ftell bug-ungetwc2	\
