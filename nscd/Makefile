@@ -131,6 +131,7 @@ CFLAGS-servicescache.c += $(nscd-cflags)
 CFLAGS-getsrvbynm_r.c += $(nscd-cflags)
 CFLAGS-getsrvbypt_r.c += $(nscd-cflags)
 CFLAGS-res_hconf.c += $(nscd-cflags)
+CFLAGS-nis_hash.c += $(nscd-cflags)
 
 ifeq (yesyes,$(have-fpie)$(build-shared))
 relro-LDFLAGS += -Wl,-z,now

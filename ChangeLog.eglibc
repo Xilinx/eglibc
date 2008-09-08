@@ -1,3 +1,7 @@
+2008-09-08  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* nscd/Makefile (CFLAGS-nis_hash.c): Set to $(nscd-cflags).
+
 2008-06-17  Joseph Myers  <joseph@codesourcery.com>
 
 	* stdlib/tst-setcontext.c: Set back_in_main before exit if
