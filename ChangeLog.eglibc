@@ -1,3 +1,8 @@
+2008-09-08  Pete Eberlein  <eberlein@us.ibm.com>
+
+	* elf/ldd.bash.in: Make pipefail check more robust when using
+	non-bash shells.
+
 2008-09-08  Aurelien Jarno  <aurelien@aurel32.net>
 
 	* nscd/Makefile (CFLAGS-nis_hash.c): Set to $(nscd-cflags).
