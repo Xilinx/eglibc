@@ -1,3 +1,10 @@
+2008-09-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* csu/Makefile ($(objpfx)crti.S, $(objpfx)crtn.S): Remove .file
+	lines from generated .S file.
+	* nptl/Makefile ($(objpfx)crti.S, $(objpfx)crtn.S): Remove .file
+	lines from generated .S file.
+
 2008-09-08  Pete Eberlein  <eberlein@us.ibm.com>
 
 	* elf/ldd.bash.in: Make pipefail check more robust when using

@@ -564,11 +564,11 @@ $(objpfx)tst-cleanup0.out: /dev/null $(objpfx)tst-cleanup0
 # We only have one kind of startup code files.  Static binaries and
 # shared libraries are build using the PIC version.
 $(objpfx)crti.S: $(objpfx)pt-initfini.s
-	sed -n -e '1,/@HEADER_ENDS/p' \
+	sed -n -e '/^[ 	]*\.file[ 	]/d' -e '1,/@HEADER_ENDS/p' \
 	       -e '/@_.*_PROLOG_BEGINS/,/@_.*_PROLOG_ENDS/p' \
 	       -e '/@TRAILER_BEGINS/,$$p' $< > $@
 $(objpfx)crtn.S: $(objpfx)pt-initfini.s
-	sed -n -e '1,/@HEADER_ENDS/p' \
+	sed -n -e '/^[ 	]*\.file[ 	]/d' -e '1,/@HEADER_ENDS/p' \
 	       -e '/@_.*_EPILOG_BEGINS/,/@_.*_EPILOG_ENDS/p' \
 	       -e '/@TRAILER_BEGINS/,$$p' $< > $@
 
