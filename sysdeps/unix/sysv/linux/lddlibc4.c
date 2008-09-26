@@ -56,6 +56,25 @@ main (int argc, char *argv[])
   if (argc != 2)
     return 1;
 
+  if (!strcmp (argv[1], "--help"))
+    {
+      printf (gettext ("Usage: lddlibc4 FILE\n\
+\n\
+For bug reporting instructions, please see:\n\
+%s.\n"), REPORT_BUGS_TO);
+      return 0;
+    }
+  else if (!strcmp (argv[1], "--version"))
+    {
+      printf ("lddlibc4 %s%s\n", PKGVERSION, VERSION);
+      printf (gettext ("\
+Copyright (C) %s Free Software Foundation, Inc.\n\
+This is free software; see the source for copying conditions.  There is NO\n\
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
+"), "2008");
+      return 0;
+    }
+
   filename = argv[1];
 
   /* First see whether this is really an a.out binary.  */

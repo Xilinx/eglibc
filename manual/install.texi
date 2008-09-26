@@ -476,7 +476,8 @@ remain unfixed for all eternity, if not longer.
 
 It is a good idea to verify that the problem has not already been
 reported.  Bugs are documented in two places: The file @file{BUGS}
-describes a number of well known bugs and the bug tracking system has a
+describes a number of well known bugs and the upstream GNU C library
+bug tracking system has a
 WWW interface at
 @url{http://sources.redhat.com/bugzilla/}.  The WWW
 interface gives you access to open and closed reports.  A closed report
@@ -501,7 +502,7 @@ library, you really only need to narrow it down to one library
 function call, if possible.  This should not be too difficult.
 
 The final step when you have a simple test case is to report the bug.
-Do this using the WWW interface to the bug database.
+Do this at @value{REPORT_BUGS_TO}.
 
 If you are not sure how a function should behave, and this manual
 doesn't tell you, that's a bug in the manual.  Report that too!  If the

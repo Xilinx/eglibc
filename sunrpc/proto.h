@@ -70,4 +70,7 @@ extern char *stpcpy (char *, const char *);
 #define __GNU_LIBRARY__
 #endif
 
+#define REPORT_BUGS_TO ""
+#define PKGVERSION ""
+
 #endif

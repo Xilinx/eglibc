@@ -66,6 +66,10 @@ static char *more_help (int key, const char *text, void *input);
 /* Prototype for option handler.  */
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
 
+/* Name and version of program.  */
+static void print_version (FILE *stream, struct argp_state *state);
+void (*argp_program_version_hook) (FILE *, struct argp_state *) = print_version;
+
 /* Data structure to communicate with argp functions.  */
 static struct argp argp =
 {
@@ -197,15 +201,31 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static char *
 more_help (int key, const char *text, void *input)
 {
+  char *tp = NULL;
   switch (key)
     {
     case ARGP_KEY_HELP_EXTRA:
       /* We print some extra information.  */
-      return strdup (gettext ("\
+      if (asprintf (&tp, gettext ("\
 For bug reporting instructions, please see:\n\
-<http://www.gnu.org/software/libc/bugs.html>.\n"));
+%s.\n"), REPORT_BUGS_TO) < 0)
+	return NULL;
+      return tp;
     default:
       break;
     }
   return (char *) text;
+}
+
+/* Print the version information.  */
+static void
+print_version (FILE *stream, struct argp_state *state)
+{
+  fprintf (stream, "pcprofiledump %s%s\n", PKGVERSION, VERSION);
+  fprintf (stream, gettext ("\
+Copyright (C) %s Free Software Foundation, Inc.\n\
+This is free software; see the source for copying conditions.  There is NO\n\
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
+"), "2008");
+  fprintf (stream, gettext ("Written by %s.\n"), "Ulrich Drepper");
 }

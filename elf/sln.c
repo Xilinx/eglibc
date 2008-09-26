@@ -28,12 +28,15 @@
 #include <string.h>
 #include <limits.h>
 
+#include "../version.h"
+
 #if !defined S_ISDIR && defined S_IFDIR
 #define	S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
 static int makesymlink (const char *src, const char *dest);
 static int makesymlinks (const char *file);
+static void usage (void);
 
 int
 main (int argc, char **argv)
@@ -41,6 +44,13 @@ main (int argc, char **argv)
   switch (argc)
     {
     case 2:
+      if (!strcmp (argv[1], "--version")) {
+	printf ("sln %s%s\n", PKGVERSION, VERSION);
+	return 0;
+      } else if (!strcmp (argv[1], "--help")) {
+	usage ();
+	return 0;
+      }
       return makesymlinks (argv [1]);
       break;
 
@@ -49,10 +59,19 @@ main (int argc, char **argv)
       break;
 
     default:
-      printf ("Usage: %s src dest|file\n", argv [0]);
+      usage ();
       return 1;
       break;
     }
+}
+
+static void
+usage (void)
+{
+  printf ("Usage: sln src dest|file\n\
+\n\
+For bug reporting instructions, please see:\n\
+%s.\n", REPORT_BUGS_TO);
 }
 
 static int

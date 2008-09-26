@@ -62,7 +62,7 @@ static const struct argp_option args_options[] =
 /* Short description of program.  */
 static const char doc[] = N_("Get entries from administrative database.\v\
 For bug reporting instructions, please see:\n\
-<http://www.gnu.org/software/libc/bugs.html>.\n");
+"REPORT_BUGS_TO".\n");
 
 /* Prototype for option handler.  */
 static error_t parse_option (int key, char *arg, struct argp_state *state);
@@ -80,7 +80,7 @@ static struct argp argp =
 static void
 print_version (FILE *stream, struct argp_state *state)
 {
-  fprintf (stream, "getent (GNU %s) %s\n", PACKAGE, VERSION);
+  fprintf (stream, "getent %s%s\n", PKGVERSION, VERSION);
   fprintf (stream, gettext ("\
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\

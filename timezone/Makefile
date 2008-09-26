@@ -182,7 +182,7 @@ $(objpfx)zic: $(addprefix $(objpfx), $(zic-objs))
 
 $(addprefix $(objpfx)cross-,$(zic-objs)): $(objpfx)cross-%.o: %.c
 	gcc $< -c $(OUTPUT_OPTION) $(CFLAGS-$*.c) $(CPPFLAGS-$*) \
-		$(compile-mkdep-flags)
+		-DCROSS_ZIC $(compile-mkdep-flags)
 
 $(objpfx)cross-zic: $(addprefix $(objpfx)cross-,$(zic-objs))
 	gcc $(addprefix $(objpfx)cross-,$(zic-objs)) -o $@
@@ -244,7 +244,9 @@ $(testdata)/Asia/Tokyo: asia $(zic-deps)
 
 $(objpfx)tzselect: tzselect.ksh $(common-objpfx)config.make
 	sed -e 's%@KSH@%$(KSH)%g' \
-	    -e 's%@TZDIR@%$(zonedir)%g' < $< > $@.new
+	    -e 's%@TZDIR@%$(zonedir)%g' \
+	    -e 's%@PKGVERSION@%$(PKGVERSION)%g' \
+	    -e 's%@REPORT_BUGS_TO@%$(REPORT_BUGS_TO)%g' < $< > $@.new
 	chmod 555 $@.new
 	mv -f $@.new $@
 

@@ -1,3 +1,84 @@
+2008-09-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* aclocal.m4 (ACX_PKGVERSION, ACX_BUGURL): Define.
+	* configure.in: Use ACX_PKGVERSION and ACX_BUGURL.
+	* configure: Regenerate.
+	* config.h.in (PKGVERSION, REPORT_BUGS_TO): Undefine.
+	* config.make.in (PKGVERSION, REPORT_BUGS_TO): Define.
+	* catgets/gencat.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* csu/version.c (banner): Use PKGVERSION and REPORT_BUGS_TO.
+	* debug/Makefile ($(objpfx)catchsegv, $(objpfx)xtrace): Also
+	substitute PKGVERSION and REPORT_BUGS_TO.
+	* debug/catchsegv.sh: Use PKGVERSION and REPORT_BUGS_TO.
+	* debug/pcprofiledump.c (print_version,
+	argp_program_version_hook): New.
+	(more_help): Use REPORT_BUGS_TO.
+	* debug/xtrace.sh: Use PKGVERSION and REPORT_BUGS_TO.
+	* elf/Makefile (common-ldd-rewrite): Also substitute PKGVERSION
+	and REPORT_BUGS_TO.
+	* elf/dl-close.c (_dl_close_worker): Use REPORT_BUGS_TO.
+	* elf/ldconfig.c (doc): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* elf/ldd.bash.in: Use PKGVERSION and REPORT_BUGS_TO.
+	* elf/sln.c (usage): New.
+	(main): Support --help and --version.
+	* elf/sprof.c (doc): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* iconv/iconv_prog.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* iconv/iconvconfig.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* locale/programs/locale.c (doc): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* locale/programs/localedef.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* login/programs/pt_chown.c
+	* malloc/Makefile ($(objpfx)mtrace, $(objpfx)memusage): Also
+	substitute PKGVERSION and REPORT_BUGS_TO.
+	* malloc/memusage.sh: Use PKGVERSION and REPORT_BUGS_TO.
+	* malloc/memusagestat.c (print_version,
+	argp_program_version_hook): New.
+	(more_help): Use REPORT_BUGS_TO.
+	* malloc/mtrace.pl: Use PKGVERSION and REPORT_BUGS_TO.
+	* manual/Makefile (libc.dvi, libc.pdf, libc.info,
+	libc/index.html): Depend on pkgvers.texi.
+	(pkgvers.texi, stamp-pkgvers): New.
+	* manual/install.texi: Adjust bug database description.  Use
+	REPORT_BUGS_TO.
+	* manual/libc.texinfo: Include pkgvers.texi.  Use PKGVERSION.
+	* nscd/nscd.c (doc): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* nss/getent.c (doc): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* nss/makedb.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* posix/getconf.c (main): Send --version output to stdout.  Use
+	PKGVERSION.  Support --help.
+	* sunrpc/proto.h (REPORT_BUGS_TO, PKGVERSION): Define for
+	cross-rpcgen.
+	* sunrpc/rpc_main.c (usage, options_usage): Take STREAM and STATUS
+	arguments.  All callers changed.  Use REPORT_BUGS_TO
+	(print_version): New.
+	(parseargs): Support --help and --version.
+	* sunrpc/rpcinfo.c (usage): Take STREAM argument.  All callers
+	changed.  Use REPORT_BUGS_TO.
+	(print_version): New.
+	(main): Use getopt_long.  Support --help and --version.
+	* sysdeps/unix/sysv/linux/lddlibc4.c (main): Support --help and
+	--version.
+	* timezone/Makefile: Use -DCROSS_ZIC for cross-zic.
+	($(objpfx)tzselect): Also substitute PKGVERSION and
+	REPORT_BUGS_TO.
+	* timezone/tzselect.ksh: Support --help and --version.
+	* timezone/zdump.c (usage): New.
+	(main): Use it.  Support --help.  Print program name and
+	PKGVERSION in --version output.
+	* timezone/zic.c (usage): Take STREAM and STATUS arguments.  All
+	callers changed.  Use REPORT_BUGS_TO.
+	(main): Support --help.  Print program name and PKGVERSION in
+	--version output.
+
 2008-09-24  Joseph Myers  <joseph@codesourcery.com>
 
 	* csu/Makefile ($(objpfx)crti.S, $(objpfx)crtn.S): Remove .file

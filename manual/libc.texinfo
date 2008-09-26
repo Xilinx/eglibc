@@ -11,6 +11,8 @@
 @end direntry
 @include dir-add.texi
 
+@include pkgvers.texi
+
 @c This tells texinfo.tex to use the real section titles in xrefs in
 @c place of the node name, when no section title is explicitly given.
 @set xref-automatic-section-title
@@ -27,7 +29,8 @@
 This file documents the GNU C library.
 
 This is Edition @value{EDITION}, last updated @value{UPDATED},
-of @cite{The GNU C Library Reference Manual}, for version @value{VERSION}.
+of @cite{The GNU C Library Reference Manual}, for version
+@value{VERSION} @value{PKGVERSION}.
 
 Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001, 2002,
 2003, 2007, 2008 Free Software Foundation, Inc.
@@ -63,6 +66,8 @@ supports it in developing GNU and promoting software freedom.''
 @center last updated @value{UPDATED}
 @sp 1
 @center for version @value{VERSION}
+@sp 1
+@center @value{PKGVERSION}
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -87,6 +92,7 @@ by Etienne Suvasa.
 @top Main Menu
 This is Edition @value{EDITION}, last updated @value{UPDATED}, of
 @cite{The GNU C Library Reference Manual}, for Version @value{VERSION}
+@value{PKGVERSION}
 of the GNU C Library.
 @end ifnottex
 

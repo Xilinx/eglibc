@@ -254,6 +254,11 @@ AC_ARG_ENABLE([all-warnings],
 	      [])
 AC_SUBST(all_warnings)
 
+ACX_PKGVERSION([EGLIBC])
+ACX_BUGURL([http://www.eglibc.org/issues/])
+AC_DEFINE_UNQUOTED([PKGVERSION], ["$PKGVERSION"], [Additional package description])
+AC_DEFINE_UNQUOTED([REPORT_BUGS_TO], ["$REPORT_BUGS_TO"], [Bug reporting address])
+
 AC_CANONICAL_HOST
 
 # The way shlib-versions is used to generate soversions.mk uses a

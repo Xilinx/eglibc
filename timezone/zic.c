@@ -5,6 +5,12 @@
 
 static char	elsieid[] = "@(#)zic.c	8.17";
 
+#ifdef CROSS_ZIC
+#define REPORT_BUGS_TO ""
+#define PKGVERSION ""
+#else
+#include "config.h"
+#endif
 #include "private.h"
 #include "locale.h"
 #include "tzfile.h"
@@ -156,7 +162,7 @@ static void 	stringzone(char * result,
 			const struct zone * zp, int ntzones);
 static void	setboundaries(void);
 static zic_t	tadd(zic_t t1, long t2);
-static void	usage(void);
+static void	usage(FILE *stream, int status);
 static void	writezone(const char * name, const char * string);
 static int	yearistype(int year, const char * type);
 
@@ -454,13 +460,16 @@ const char * const	string;
 }
 
 static void
-usage(void)
+usage(FILE *stream, int status)
 {
-	(void) fprintf(stderr, _("%s: usage is %s \
-[ --version ] [ -v ] [ -l localtime ] [ -p posixrules ] \\\n\
-\t[ -d directory ] [ -L leapseconds ] [ -y yearistype ] [ filename ... ]\n"),
-		progname, progname);
-	exit(EXIT_FAILURE);
+	(void) fprintf(stream, _("%s: usage is %s \
+[ --version ] [ --help ] [ -v ] [ -l localtime ] [ -p posixrules ] \\\n\
+\t[ -d directory ] [ -L leapseconds ] [ -y yearistype ] [ filename ... ]\n\
+\n\
+For bug reporting instructions, please see:\n\
+%s.\n"),
+		       progname, progname, REPORT_BUGS_TO);
+	exit(status);
 }
 
 static const char *	psxrules;
@@ -496,13 +505,15 @@ char *	argv[];
 	}
 	for (i = 1; i < argc; ++i)
 		if (strcmp(argv[i], "--version") == 0) {
-			(void) printf("%s\n", elsieid);
+			(void) printf("zic %s%s\n", PKGVERSION, elsieid);
 			exit(EXIT_SUCCESS);
+		} else if (strcmp(argv[i], "--help") == 0) {
+			usage(stdout, EXIT_SUCCESS);
 		}
 	while ((c = getopt(argc, argv, "d:l:p:L:vsy:")) != EOF && c != -1)
 		switch (c) {
 			default:
-				usage();
+			  usage(stderr, EXIT_FAILURE);
 			case 'd':
 				if (directory == NULL)
 					directory = optarg;
@@ -561,7 +572,7 @@ _("%s: More than one -L option specified\n"),
 				break;
 		}
 	if (optind == argc - 1 && strcmp(argv[optind], "=") == 0)
-		usage();	/* usage message by request */
+		usage(stderr, EXIT_FAILURE);	/* usage message by request */
 	if (directory == NULL)
 		directory = TZDIR;
 	if (yitcommand == NULL)

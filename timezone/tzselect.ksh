@@ -1,6 +1,8 @@
 #! @KSH@
 
-# '@(#)tzselect.ksh	8.1'
+VERSION='@(#)tzselect.ksh	8.1'
+PKGVERSION='@PKGVERSION@'
+REPORT_BUGS_TO='@REPORT_BUGS_TO@'
 
 # Ask the user about the time zone, and output the resulting TZ value to stdout.
 # Interact with the user via stderr and stdin.
@@ -44,6 +46,22 @@
 	echo >&2 "$0: Sorry, your \`$AWK' program is not Posix compatible."
 	exit 1
 }
+
+if [ "$1" = "--help" ]; then
+    cat <<EOF
+Usage: tzselect
+Select a time zone interactively.
+
+For bug reporting instructions, please see:
+$REPORT_BUGS_TO.
+EOF
+    exit 0
+elif [ "$1" = "--version" ]; then
+    cat <<EOF
+tzselect $PKGVERSION$VERSION
+EOF
+    exit 0
+fi
 
 # Make sure the tables are readable.
 TZ_COUNTRY_TABLE=$TZDIR/iso3166.tab

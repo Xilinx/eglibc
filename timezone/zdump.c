@@ -6,6 +6,7 @@ static char	elsieid[] = "@(#)zdump.c	8.6";
 ** You can use this code to help in verifying other implementations.
 */
 
+#include "config.h"
 #include "stdio.h"	/* for stdout, stderr, perror */
 #include "string.h"	/* for strcpy */
 #include "sys/types.h"	/* for time_t */
@@ -230,6 +231,18 @@ const char * const	zone;
 	warned = TRUE;
 }
 
+static void
+usage(const char *progname, FILE *stream, int status)
+{
+	(void) fprintf(stream,
+_("%s: usage is %s [ --version ] [ --help ] [ -v ] [ -c [loyear,]hiyear ] zonename ...\n\
+\n\
+For bug reporting instructions, please see:\n\
+%s.\n"),
+		       progname, progname, REPORT_BUGS_TO);
+	exit(status);
+}
+
 int
 main(argc, argv)
 int	argc;
@@ -264,8 +277,10 @@ char *	argv[];
 	progname = argv[0];
 	for (i = 1; i < argc; ++i)
 		if (strcmp(argv[i], "--version") == 0) {
-			(void) printf("%s\n", elsieid);
+			(void) printf("zdump %s%s\n", PKGVERSION, elsieid);
 			exit(EXIT_SUCCESS);
+		} else if (strcmp(argv[i], "--help") == 0) {
+			usage(progname, stdout, EXIT_SUCCESS);
 		}
 	vflag = 0;
 	cutarg = NULL;
@@ -275,10 +290,7 @@ char *	argv[];
 		else	cutarg = optarg;
 	if ((c != EOF && c != -1) ||
 		(optind == argc - 1 && strcmp(argv[optind], "=") == 0)) {
-			(void) fprintf(stderr,
-_("%s: usage is %s [ --version ] [ -v ] [ -c [loyear,]hiyear ] zonename ...\n"),
-				progname, progname);
-			exit(EXIT_FAILURE);
+			usage(progname, stderr, EXIT_FAILURE);
 	}
 	if (vflag) {
 		if (cutarg != NULL) {

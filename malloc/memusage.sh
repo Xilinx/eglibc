@@ -36,7 +36,7 @@ do_missing_arg() {
 
 # Print help message
 do_help() {
-  echo $"Usage: memusage [OPTION]... PROGRAM [PROGRAMOPTION]...
+  printf $"Usage: memusage [OPTION]... PROGRAM [PROGRAMOPTION]...
 Profile memory usage of PROGRAM.
 
    -n,--progname=NAME     Name of the program file to profile
@@ -62,12 +62,13 @@ Mandatory arguments to long options are also mandatory for any corresponding
 short options.
 
 For bug reporting instructions, please see:
-<http://www.gnu.org/software/libc/bugs.html>."
+%s.
+" "@REPORT_BUGS_TO@"
   exit 0
 }
 
 do_version() {
-  echo 'memusage (GNU libc) @VERSION@'
+  echo 'memusage @PKGVERSION@@VERSION@'
   printf $"Copyright (C) %s Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

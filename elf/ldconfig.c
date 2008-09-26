@@ -153,7 +153,9 @@ static const struct argp_option options[] =
 #include <dl-procinfo.c>
 
 /* Short description of program.  */
-static const char doc[] = N_("Configure Dynamic Linker Run Time Bindings.");
+static const char doc[] = N_("Configure Dynamic Linker Run Time Bindings.\v\
+For bug reporting instructions, please see:\n\
+"REPORT_BUGS_TO".\n");
 
 /* Prototype for option handler.  */
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
@@ -292,7 +294,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static void
 print_version (FILE *stream, struct argp_state *state)
 {
-  fprintf (stream, "ldconfig (GNU %s) %s\n", PACKAGE, VERSION);
+  fprintf (stream, "ldconfig %s%s\n", PKGVERSION, VERSION);
   fprintf (stream, gettext ("\
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\

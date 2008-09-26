@@ -389,7 +389,7 @@ System's directory for character maps : %s\n\
 %s"),
 		    CHARMAP_PATH, REPERTOIREMAP_PATH, LOCALE_PATH, gettext ("\
 For bug reporting instructions, please see:\n\
-<http://www.gnu.org/software/libc/bugs.html>.\n")) < 0)
+"REPORT_BUGS_TO".\n")) < 0)
 	return NULL;
       return cp;
     default:
@@ -402,7 +402,7 @@ For bug reporting instructions, please see:\n\
 static void
 print_version (FILE *stream, struct argp_state *state)
 {
-  fprintf (stream, "localedef (GNU %s) %s\n", PACKAGE, VERSION);
+  fprintf (stream, "localedef %s%s\n", PKGVERSION, VERSION);
   fprintf (stream, gettext ("\
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\

@@ -109,7 +109,9 @@ static const struct argp_option options[] =
 };
 
 /* Short description of program.  */
-static const char doc[] = N_("Name Service Cache Daemon.");
+static const char doc[] = N_("Name Service Cache Daemon.\v\
+For bug reporting instructions, please see:\n\
+"REPORT_BUGS_TO".\n");
 
 /* Prototype for option handler.  */
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
@@ -402,7 +404,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static void
 print_version (FILE *stream, struct argp_state *state)
 {
-  fprintf (stream, "nscd (GNU %s) %s\n", PACKAGE, VERSION);
+  fprintf (stream, "nscd %s%s\n", PKGVERSION, VERSION);
   fprintf (stream, gettext ("\
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\

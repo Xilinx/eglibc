@@ -55,7 +55,7 @@ static struct argp argp =
 static void
 print_version (FILE *stream, struct argp_state *state)
 {
-  fprintf (stream, "pt_chown (GNU %s) %s\n", PACKAGE, VERSION);
+  fprintf (stream, "pt_chown %s%s\n", PKGVERSION, VERSION);
   fprintf (stream, gettext ("\
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
@@ -87,7 +87,7 @@ The owner is set to the current user, the group is set to `%s',\
 %s"),
 		TTY_GROUP, S_IRUSR|S_IWUSR|S_IWGRP, gettext ("\
 For bug reporting instructions, please see:\n\
-<http://www.gnu.org/software/libc/bugs.html>.\n"));
+"REPORT_BUGS_TO".\n"));
       return cp;
     default:
       break;
