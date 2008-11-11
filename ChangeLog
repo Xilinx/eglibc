@@ -1,3 +1,151 @@
+2008-11-03  Martin Schwidefsky  <schwidefsky@de.ibm.com>
+
+	* sysdeps/s390/s390-64/dl-trampoline.S (_dl_runtime_profile): Use the
+	correct instruction to remove the stack frame.
+
+2008-11-03  Michael Matz  <matz@suse.de>
+
+	* sysdeps/s390/bits/atomic.h (__arch_compare_and_exchange_val_32_acq,
+	__arch_compare_and_exchange_val_64_acq): Add "memory" clobber.
+
+2008-11-07  Jakub Jelinek  <jakub@redhat.com>
+
+	* include/stdio.h (__builtin_fwrite, __builtin_fwrite_unlocked):
+	Remove.
+
+	* bits/libc-tsd.h (__libc_tsd_define, __libc_tsd_address,
+	__libc_tsd_get, __libc_tsd_set): Add TYPE argument, use it as the type
+	of the thread variable instead of void *.
+	* sysdeps/mach/hurd/bits/libc-tsd.h (__libc_tsd_define,
+	__libc_tsd_address, __libc_tsd_get, __libc_tsd_set): Likewise.
+	* include/ctype.h (CTYPE_B, CTYPE_TOUPPER, CTYPE_TOLOWER): Adjust
+	__libc_tsd_define arguments.
+	(__ctype_b_loc, __ctype_toupper_loc, __ctype_tolower_loc): Adjust
+	__libc_tsd_address arguments.  Remove union hack.
+	* include/rpc/rpc.h (RPC_VARS): Adjust __libc_tsd_define arguments.
+	* sunrpc/rpc_thread.c (RPC_VARS): Likewise.
+	(__rpc_thread_destroy, rpc_thread_multi, __rpc_thread_variables):
+	Adjust __libc_tsd_{set,get} arguments.
+	* ctype/ctype-info.c (CTYPE_B, CTYPE_TOUPPER, CTYPE_TOLOWER): Adjust
+	__libc_tsd_define arguments.
+	* locale/uselocale.c (__uselocale): Adjust __libc_tsd_{set,get}
+	arguments.
+	* locale/lc-ctype.c (_nl_postload_ctype): Likewise.
+	* locale/global-locale.c (__libc_tsd_LOCALE): Adjust type.
+	(LOCALE): Adjust __libc_tsd_define arguments.
+	* locale/localeinfo.h (_NL_CURRENT_LOCALE): Adjust __libc_tsd_get
+	arguments.
+	(LOCALE): Adjust __libc_tsd_define arguments.
+	* sysdeps/mach/hurd/malloc-machine.h (MALLOC): Adjust __libc_tsd_define
+	arguments.
+	(tsd_setspecific, tsd_getspecific): Adjust __libc_tsd_{set,get}
+	arguments.
+
+2008-11-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c (public_rEALLOc): When new arena is used, copy
+	really all bytes.  Patch by Denys Vlasenko <dvlasenk@redhat.com>.
+
+2008-11-01  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #6966]
+	* misc/hsearch_r.c (hsearch_r): Fix secondary hash function.
+
+2008-10-24  Joseph Myers  <joseph@codesourcery.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+	* math/tgmath.h (__floating_type): Use __builtin_classify_type in
+	definition for GCC 3.1 and later.
+
+2008-10-31  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/dl-tls.c (__tls_get_addr): After calling _dl_update_slotinfo
+	refetch dtv, as it might have changed.
+	* elf/Makefile: Add rules to build and run tst-tls18.
+	* elf/tst-tls18.c: New test.
+	* elf/tst-tlsmod18a.c: New file.
+
+2008-09-09  Aurelien Jarno  <aurelien@aurel32.net>
+
+	[BZ #6875]
+	* iconvdata/gconv-modules: Add LATIN9 as an alias to ISO-8859-15.
+
+2008-10-31  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #6867]
+	* sysdeps/powerpc/elf/rtld-global-offsets.sym: Fix typo.
+
+	[BZ #6919]
+	* posix/spawnattr_getschedparam.c (posix_spawnattr_getschedparam):
+	Fix length of copy operation.
+
+2008-10-02  Pierre Habouzit <madcoder@debian.org>
+
+	* sysdeps/unix/sysv/linux/eventfd.c (eventfd): Use the eventfd2 syscall
+	and fix its calling convention.
+
+2008-10-07  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #6942]
+	* resolv/res_send.c (send_vc): Fix last change.
+	(send_dg): Align here as well.
+
+2008-10-31  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/ulimit.c (__ulimit): Handle UL_GETFSIZE
+	return value in case rlimit is RLIM_INFINITY.
+
+	[BZ #6947]
+	* sysdeps/unix/sysv/linux/ulimit.c (__ulimit): Fix return value
+	for UL_SETFSIZE.
+	* resource/Makefile (tests): Add bug-ulimit1.
+	* resource/bug-ulimit1.c: New file.
+
+	[BZ #6974]
+	* sunrpc/rpc_main.c (mkfile_output): Properly handle filename
+	without dot.  Properly terminate the string with a null byte.
+	Based on a patch by Aurelien Jarno <aurelien@aurel32.net>.
+
+	[BZ #6980]
+	* debug/getgroups_chk.c (__getgroups_chk): Return EINVAL error for
+	negative sizees.
+	* posix/bits/unistd.h (getgroups): Call __getgroups_chk for
+	negative __size.
+
+	[BZ #6995]
+	* sysdeps/powerpc/powerpc32/dl-machine.c: Fix typo in message.
+
+2008-10-30  Ulrich Drepper  <drepper@redhat.com>
+
+	* grp/initgroups.c (internal_getgrouplist): Don't prematurely
+	abort if there is no initgroups_dyn function.
+
+	* resolv/res_send.c (send_dg): On timeout, only return nonzero
+	result if any of the queries really provided an answer.
+
+2008-10-28  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/lt.po: Update from translation team.
+
+2008-10-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/id.po: Update from translation team.
+
+2008-10-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_query.c (__libc_res_nquery): Add a few casts.
+	Fix tests for existence of second reply.
+
+2008-10-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/id.po: New file.
+	Contributed by the Indonesian translation team.
+
+2008-10-22  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* misc/syslog.c (openlog_internal): Fix __have_sock_cloexec
+	initialization.
+
 2008-10-17  Jakub Jelinek  <jakub@redhat.com>
 
 	* elf/Makefile: Add rules to build and run tst-tls17.
