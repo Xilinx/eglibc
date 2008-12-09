@@ -254,25 +254,9 @@ regexec (preg, string, nmatch, pmatch, eflags)
   return err != REG_NOERROR;
 }
 
-#ifdef _LIBC
-# include <shlib-compat.h>
-versioned_symbol (libc, __regexec, regexec, GLIBC_2_3_4);
-
-# if SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_3_4)
-__typeof__ (__regexec) __compat_regexec;
-
-int
-attribute_compat_text_section
-__compat_regexec (const regex_t *__restrict preg,
-		  const char *__restrict string, size_t nmatch,
-		  regmatch_t pmatch[], int eflags)
-{
-  return regexec (preg, string, nmatch, pmatch,
-		  eflags & (REG_NOTBOL | REG_NOTEOL));
-}
-compat_symbol (libc, __compat_regexec, regexec, GLIBC_2_0);
-# endif
-#endif
+/* EGLIBC: The code that used to be here was move to a separate file
+   so that it can be shared with xregex.c.  */
+#include "regexec-compat.c"
 
 /* Entry points for GNU code.  */
 

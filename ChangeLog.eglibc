@@ -1,3 +1,18 @@
+2008-12-09  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Support smaller regex implementation.
+	
+	* option-groups.def (OPTION_POSIX_REGEXP_GLIBC): New option group.
+	* option-groups.defaults (OPTION_POSIX_REGEXP_GLIBC): Set default.
+	* posix/regexec.c: Move a piece of code to ...
+	* posix/regexec-compat.c: New file.
+	* posix/Makefile (tests): Same for runptests, bug-regex11,
+	bug-regex13, bug-regex16, tst-regex2, tst-rxspencer, tst-pcre,
+	tst-boost, tst-regex, bug-regex17, bug-regex18, bug-regex19,
+	bug-regex20, bug-regex22, bug-regex14-mem,
+	tst-rxspence-mem, tst-pcre-mem and tst-boost-mem.
+	* posix/xregex.c: New file ported from libiberty.
+
 2008-11-19  Nathan Sidwell  <nathan@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/sparc/bits/siginfo.h (struct sigevent):

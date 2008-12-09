@@ -61,7 +61,13 @@ routines :=								      \
 	get_child_max sched_cpucount sched_cpualloc sched_cpufree
 
 routines-$(OPTION_EGLIBC_INET) += getaddrinfo gai_strerror 
+
+ifeq (y,$(OPTION_POSIX_REGEXP_GLIBC))
 routines-$(OPTION_POSIX_REGEXP) += regex
+else
+routines-$(OPTION_POSIX_REGEXP) += xregex
+endif
+
 routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawn_faction_init spawn_faction_destroy spawn_faction_addclose	      \
 	spawn_faction_addopen spawn_faction_adddup2			      \
@@ -78,18 +84,18 @@ routines-$(OPTION_EGLIBC_BSD) += setlogin
 include ../Makeconfig
 
 aux		:= init-posix environ
-tests		:= tstgetopt testfnm runtests runptests	     \
+tests		:= tstgetopt testfnm runtests \
 		   tst-preadwrite tst-preadwrite64 test-vfork regexbug1 \
 		   tst-getlogin tst-mmap tst-truncate \
 		   tst-truncate64 tst-fork tst-dir \
 		   tst-chmod bug-regex2 bug-regex3 bug-regex4 \
 		   tst-gnuglob bug-regex6 bug-regex7 \
-		   bug-regex8 bug-regex9 bug-regex10 bug-regex11 bug-regex12 \
-		   bug-regex13 bug-regex14 bug-regex15 bug-regex16 \
+		   bug-regex8 bug-regex9 bug-regex10 bug-regex12 \
+		   bug-regex14 bug-regex15 \
 		   bug-regex21 bug-regex24 \
 		   bug-regex27 bug-regex28 \
-		   tst-nice tst-nanosleep tst-regex2 \
-		   transbug tst-rxspencer tst-pcre tst-boost \
+		   tst-nice tst-nanosleep \
+		   transbug \
 		   tst-vfork1 tst-vfork2 tst-vfork3 tst-waitid \
 		   bug-glob1 bug-glob2 tst-sysconf \
 		   tst-execvp1 tst-execvp2 tst-execlp1 tst-execlp2 \
@@ -98,12 +104,18 @@ tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-execvp3 tst-execvp4 \
 		   tst-fnmatch2 tst-cpucount tst-cpuset
 tests-$(OPTION_EGLIBC_LOCALE_CODE)					    \
-		+= tst-fnmatch tst-regex tst-regexloc bug-regex1 bug-regex5 \
-		   bug-regex17 bug-regex18 bug-regex19 bug-regex20	    \
-		   bug-regex22 bug-regex23 bug-regex25 bug-regex26
+		+= tst-fnmatch tst-regexloc bug-regex1 bug-regex5 \
+		   bug-regex23 bug-regex25
 tests-$(OPTION_EGLIBC_INET) \
 	        += tst-getaddrinfo bug-ga1 tst-getaddrinfo2 \
 		   tst-rfc3484 tst-rfc3484-2 tst-rfc3484-3 tst-getaddrinfo3
+tests-$(OPTION_POSIX_REGEXP_GLIBC) \
+		+= runptests bug-regex11 bug-regex13 bug-regex16 \
+		   tst-regex2 tst-rxspencer tst-pcre tst-boost
+ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_POSIX_REGEXP_GLIBC))
+tests           += tst-regex bug-regex17 bug-regex18 bug-regex19 bug-regex20 \
+		   bug-regex22 bug-regex26
+endif
 xtests-$(OPTION_EGLIBC_INET) += bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
@@ -242,10 +254,14 @@ endif
 # XXX Please note that for now we ignore the result of this test.
 tests: $(objpfx)annexc.out
 # eglibc: ifeq (no,$(cross-compiling))
-tests: $(objpfx)bug-regex2-mem $(objpfx)bug-regex14-mem \
-  $(objpfx)bug-regex21-mem $(objpfx)tst-rxspencer-mem \
-  $(objpfx)tst-pcre-mem $(objpfx)tst-boost-mem $(objpfx)tst-getconf.out \
+tests: $(objpfx)bug-regex2-mem \
+  $(objpfx)bug-regex21-mem \
+  $(objpfx)tst-getconf.out \
   $(objpfx)bug-glob2-mem $(objpfx)tst-vfork3-mem
+ifeq (y,($OPTION_POSIX_REGEXP_GLIBC))
+tests: $(objpfx)bug-regex14-mem $(objpfx)tst-rxspencer-mem \
+  $(objpfx)tst-pcre-mem $(objpfx)tst-boost-mem 
+endif
 xtests: $(objpfx)bug-ga2-mem
 # eglibc: endif
 

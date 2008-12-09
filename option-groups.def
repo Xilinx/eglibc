@@ -696,6 +696,17 @@ config OPTION_POSIX_REGEXP
         <regexp.h> header file, 'compile', 'step', and 'advance', is
         omitted.
 
+config OPTION_POSIX_REGEXP_GLIBC
+    bool "Regular expressions from GLIBC"
+    depends OPTION_POSIX_REGEXP
+    help
+	This option group specifies which regular expression
+        library to use.  The choice is between regex
+        implementation from GLIBC and regex implementation from
+        libiberty.  The GLIBC variant is fully POSIX conformant and
+        optimized for speed; regex from libiberty is more than twice
+        as small while still is enough for most practical purposes.
+
 config OPTION_POSIX_WIDE_CHAR_DEVICE_IO
     bool "Input and output functions for wide characters"
     depends OPTION_POSIX_C_LANG_WIDE_CHAR
