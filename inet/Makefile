@@ -59,7 +59,8 @@ routines-$(OPTION_EGLIBC_ADVANCED_INET6) \
 aux-$(OPTION_EGLIBC_INET) += check_pf check_native ifreq
 
 tests := htontest test_ifindex tst-ntoa tst-ether_aton tst-network \
-	 tst-gethnm test-ifaddrs bug-if1 tst-ether_line
+	 tst-gethnm test-ifaddrs bug-if1 tst-ether_line \
+	 tst-getni1 tst-getni2
 tests-$(OPTION_EGLIBC_ADVANCED_INET6) += test-inet6_opt
 
 include ../Rules
