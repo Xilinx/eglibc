@@ -455,8 +455,10 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 #endif
 
 #ifdef _LIBC
+#if __OPTION_EGLIBC_LOCALE_CODE
   __libc_rwlock_define (extern, __libc_setlocale_lock attribute_hidden)
   __libc_rwlock_rdlock (__libc_setlocale_lock);
+#endif
 #endif
 
   __libc_rwlock_rdlock (_nl_state_lock);
@@ -504,7 +506,9 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 	retval = (char *) (*foundp)->translation;
 
 # ifdef _LIBC
+#if __OPTION_EGLIBC_LOCALE_CODE
       __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 # endif
       __libc_rwlock_unlock (_nl_state_lock);
       return retval;
@@ -565,7 +569,9 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 	  /* We cannot get the current working directory.  Don't signal an
 	     error but simply return the default string.  */
 	  FREE_BLOCKS (block_list);
+#if __OPTION_EGLIBC_LOCALE_CODE
 	  __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 	  __libc_rwlock_unlock (_nl_state_lock);
 	  __set_errno (saved_errno);
 	  return (plural == 0
@@ -632,7 +638,9 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 	{
 	no_translation:
 	  FREE_BLOCKS (block_list);
+#if __OPTION_EGLIBC_LOCALE_CODE
 	  __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 	  __libc_rwlock_unlock (_nl_state_lock);
 	  __set_errno (saved_errno);
 	  return (plural == 0
@@ -746,7 +754,9 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 	      if (plural)
 		retval = plural_lookup (domain, n, retval, retlen);
 
+#if __OPTION_EGLIBC_LOCALE_CODE
 	      __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 	      __libc_rwlock_unlock (_nl_state_lock);
 	      return retval;
 	    }
