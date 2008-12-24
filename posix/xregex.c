@@ -51,7 +51,7 @@
 
 /* For platform which support the ISO C amendement 1 functionality we
    support user defined character classes.  */
-# if defined _LIBC || WIDE_CHAR_SUPPORT
+# if WIDE_CHAR_SUPPORT
 /* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.  */
 #  include <wchar.h>
 #  include <wctype.h>
@@ -2174,7 +2174,7 @@ typedef struct
   }
 
 # ifndef DEFINED_ONCE
-#  if defined _LIBC || WIDE_CHAR_SUPPORT
+#  if WIDE_CHAR_SUPPORT
 /* The GNU C library provides support for user-defined character classes
    and the functions from ISO C amendement 1.  */
 #   ifdef CHARCLASS_NAME_MAX
@@ -3223,7 +3223,7 @@ PREFIX(regex_compile) (const char *ARG_PREFIX(pattern),
                        the leading `:' and `[' (but set bits for them).  */
                     if (c == ':' && *p == ']')
                       {
-# if defined _LIBC || WIDE_CHAR_SUPPORT
+# if WIDE_CHAR_SUPPORT
                         boolean is_lower = STREQ (str, "lower");
                         boolean is_upper = STREQ (str, "upper");
 			wctype_t wt;

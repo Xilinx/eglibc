@@ -1,3 +1,7 @@
+2008-12-24  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* posix/xregex.c: Handle absence of wide char support.
+
 2008-12-15  Josh Boyer  <jwboyer@gmail.com>
 	    Maxim Kuvyrkov  <maxim@codesourcery.com>
 
