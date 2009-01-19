@@ -1,3 +1,60 @@
+2009-01-08  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/pthread/list.h (list_add): Initialize new element first.
+	(list_add_tail): Removed.
+
+2009-01-04  Ulrich Drepper  <drepper@redhat.com>
+
+	* init.c (__pthread_initialize_minimal_internal): Optimize test
+	FUTEX_CLOCK_REALTIME a bit.
+
+2009-01-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* init.c (__pthread_initialize_minimal_internal): Cheat a bit by
+	only passing five parameters to FUTEX_WAIT_BITSET call.
+
+	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+	(__lll_timedlock_wait): Use FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME
+	instead of computing relative timeout.
+
+2009-01-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* init.c (__pthread_initialize_minimal_internal): Check for
+	FUTEX_CLOCK_REALTIME flag.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S (__lll_timedlock_wait):
+	Use FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME instead of computing
+	relative timeout.
+
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h: Define
+	FUTEX_CLOCK_REALTIME and FUTEX_BITSET_MATCH_ANY.
+	* sysdeps/unix/sysv/linux/i386/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/lowlevellock.h: Likewise.
+
+2008-12-09  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/pthread/pthread.h (pthread_cleanup_pop): Use { } as empty
+	loop body instead of ; to avoid gcc warnings.
+	(pthread_cleanup_pop_restore_np): Likewise.
+	Patch by Caolán McNamara <caolanm@redhat.com>.
+
+2008-12-09  Jakub Jelinek  <jakub@redhat.com>
+
+	* pthread_mutex_lock.c (__pthread_mutex_lock): Handle only the
+	fast path here, for robust/PI/PP mutexes call
+	__pthread_mutex_lock_full.  Don't use switch, instead use a series
+	of ifs according to their probability.
+	(__pthread_mutex_lock_full): New function.
+	* pthread_mutex_unlock.c: Include assert.h.
+	(__pthread_mutex_unlock_usercnt): Handle only the
+	fast path here, for robust/PI/PP mutexes call
+	__pthread_mutex_unlock_full.  Don't use switch, instead use a series
+	of ifs according to their probability.
+	(__pthread_mutex_unlock_full): New function.
+	* sysdeps/unix/sysv/linux/pthread_mutex_cond_lock.c
+	(__pthread_mutex_lock_full): Define.
+
 2008-12-08  Ulrich Drepper  <drepper@redhat.com>
 
 	* sysdeps/x86_64/tls.h (tcbhead_t): Add fields reserved for TM

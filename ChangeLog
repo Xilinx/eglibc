@@ -1,3 +1,170 @@
+2009-01-10  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/generic/dl-osinfo.h (_dl_setup_stack_chk_guard): Take
+	one parameter.  If non-NULL use it to initialize return value.
+	(_dl_setup_pointer_guard): New function.
+	* sysdeps/unix/sysv/linux/dl-osinfo.h: Likewise.
+	* sysdeps/generic/ldsodefs.h: Declare _dl_random.
+	* elf/rtld.c (security_init): Pass _dl_random to
+	_dl_setup_stack_chk_guard.  Call _dl_setup_pointer_guard to initialize
+	pointer_chk_guard.
+	* elf/dl-sysdep.c (_dl_random): New variable.
+	(_dl_sysdep_start): Handle AT_RANDOM.
+	(_dl_show_auxv): Likewise.
+	* elf/dl-support.c (_dl_random): New variable.
+	(_dl_aux_init): Handle AT_RANDOM.
+	* csu/libc-start.c [!SHARED] (libc_start_main): Pass _dl_random
+	to _dl_setup_stack_chk_guard.
+
+	* elf/elf.h (AT_RANDOM): Define AT_BASE_PLATFORM and AT_RANDOM.
+
+2009-01-10  Roland McGrath  <roland@redhat.com>
+
+	* nscd/nscd.c (parse_opt): Use argp_error for bad -i argument.
+
+2009-01-08  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Adjust expm1 errors.
+
+	[BZ #9706]
+	* nss/nss_files/files-parse.c (strtou32): New function.
+	(INT_FIELD): Use strotu32 instead of strtoul to unify behavior
+	across 32-bit and 64-bit platforms.
+	(INT_FIELD_MAYBE_NULL): Likewise.
+
+2009-01-08  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #9720]
+	* sysdeps/unix/sysv/linux/bits/resource.h (enum __rusage_who): Avoid
+	comma after RUSAGE_CHILDREN if not -D_GNU_SOURCE.
+	* sysdeps/unix/sysv/linux/sparc/bits/resource.h (enum __rusage_who):
+	Likewise.
+
+2009-01-05  Paolo Bonzini  <bonzini@gnu.org>
+
+	[BZ #697]
+	* posix/regexec.c (prune_impossible_nodes): Handle sifted_states[0]
+	being NULL also if there are no backreferences.
+	* posix/rxspencer/tests: Add testcases.
+
+2009-01-04  Paolo Bonzini  <bonzini@gnu.org>
+
+	[BZ #9697]
+	* posix/bug-regex17.c: Add testcases.
+	* posix/regcomp.c (re_compile_fastmap_iter): Rewrite COMPLEX_BRACKET
+	handling.
+
+2009-01-05  Martin Schwidefsky  <schwidefsky@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/bits/libc-vdso.h: New file.
+	* sysdeps/unix/sysv/linux/s390/gettimeofday.c: New file.
+	* sysdeps/unix/sysv/linux/s390/init-first.c: New file.
+	* sysdeps/unix/sysv/linux/s390/Makefile (sysdep_routines): Add dl-vdso
+	for elf subdir.
+	* sysdeps/unix/sysv/linux/s390/s390-32/sysdep.h (INLINE_VSYSCALL,
+	INTERNAL_VSYSCALL, INTERNAL_VSYSCALL_NO_SYSCALL_FALLBACK,
+	INTERNAL_SYSCALL_NCS, HAVE_CLOCK_GETRES_VSYSCALL and
+	HAVE_CLOCK_GETTIME_VSYSCALL: Define.
+	* sysdeps/unix/sysv/linux/s390/s390-64/sysdep.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/Versions: New file.
+
+2008-12-31  Paolo Bonzini  <bonzini@gnu.org>
+
+	* posix/regcomp.c (re_compile_fastmap_iter): Use __mbrtowc.
+	* posix/regex_internal.c (build_wcs_buffer, build_wcs_upper_buffer,
+	re_string_skip_chars, re_string_reconstruct): Likewise.
+	* posix/regex_internal.h [!_LIBC] (__mbrtowc): New #define.
+
+2008-12-31  Rafael Avila de Espindola  <espindola@google.com>
+
+	* resolv/nss_dns/dns-host.c (_nss_dns_gethostbyaddr2_r): Check and
+	adjust the buffer alignment.
+
+>>>>>>> 1.11443
+2009-01-07  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/Makefile (sysdep_headers) [subdir=socket]:
+	Add net/ethernet.h net/if_arp.h net/if_ether.h net/if_ppp.h
+	net/route.h.
+
+	* hurd/report-wait.c (describe_number): Use __stpcpy to prepend
+	flavor to description only when flavor is not NULL.
+
+	* hurd/hurdsig.c (signal_allowed): Unlock _hurd_dtable_lock
+	mutex after SIGIO/SIGURG lookup loop.
+
+2009-01-03  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* bits/resource.h (PRIO_PROCESS, PRIO_PGRP, PRIO_USER): Add macros.
+
+2009-01-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/sysdep.h: Describe 6th argument
+	handling.
+
+2009-01-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_FUTEX_CLOCK_REALTIME): Define.
+
+	* wcsmbs/wcsnrtombs.c (__wcsnrtombs): Create temporary state object
+	if no output is written.
+
+	* version.h: Bump to 2.10 development.
+
+	* posix/getconf.c: Update copyright year.
+	* nss/getent.c: Likewise.
+	* iconv/iconvconfig.c: Likewise.
+	* iconv/iconv_prog.c: Likewise.
+	* elf/ldconfig.c: Likewise.
+	* catgets/gencat.c: Likewise.
+	* csu/version.c: Likewise.
+	* elf/ldd.bash.in: Likewise.
+	* elf/sprof.c (print_version): Likewise.
+	* locale/programs/locale.c: Likewise.
+	* locale/programs/localedef.c: Likewise.
+	* nscd/nscd.c (print_version): Likewise.
+	* debug/xtrace.sh: Likewise.
+	* malloc/memusage.sh: Likewise.
+	* malloc/mtrace.pl: Likewise.
+	* debug/catchsegv.sh: Likewise.
+
+2008-12-29  Mike Frysinger  <vapier@gentoo.org>
+
+	* iconvdata/Makefile (iconv-rules): Use LC_ALL=C when running awk
+	script.
+
+2008-12-29  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): When the
+	gethostbyname4_r function call succeeded, just leave the loop.
+
+	[BZ #9694]
+	* wcsmbs/wchar.h: Move undefs for local __need_* constants to the
+	very end.
+	* wctype/wctype.h: Get wint_t definition directly from <stddef.h>.
+	* wctype/Makefile (tests): Add bug-wctypeh.
+	* wctype/bug-wctypeh.c: New file.
+
+	* nscd/nscd_gethst_r.c (nscd_gethst_r): Don't use nscd if
+	LOCALDOMAIN is defined.
+	* nscd/nscd_getai.c (__nscd_getai): Likewise.
+
+	* sysdeps/x86_64/bits/select.h: New file.
+
+	* resolv/res_init.c (__res_vinit): Count all servers in	statp->nscount.
+
+2008-12-21  Bruno Haible  <bruno@clisp.org>
+
+	[BZ #9677]
+	* wcsmbs/mbsnrtowcs.c (__mbsnrtowcs): Create temporary state object
+	if no output is written.
+
+2008-12-13  Klaus Dittrich  <kladit@arcor.de>
+
+	* login/utmp_file.c (pututline_file): Replace call to dup2 with
+	libc internal symbol __dup2 to avoid access through the PLT.
+
 2008-12-08  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #6545]
