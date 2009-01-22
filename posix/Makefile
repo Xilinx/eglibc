@@ -341,11 +341,32 @@ $(inst_libexecdir)/getconf: $(inst_bindir)/getconf \
 	  mv -f $@/$$spec.new $@/$$spec; \
 	done < $(objpfx)getconf.speclist
 
-$(objpfx)getconf.speclist: $(objpfx)getconf
+# eglibc: If we are cross-compiling, build cross-getconf utility and use it
+# instead of getconf.
+
+# We moved a piece of confstr.c to confstr.inc to share the later with
+# cross-getconf.c.
+confstr.c: confstr.inc
+
 ifeq (no,$(cross-compiling))
-	LC_ALL=C GETCONF_DIR=/dev/null \
-	$(run-program-prefix) $< _POSIX_V6_WIDTH_RESTRICTED_ENVS > $@.new
+getconf-dep = $(objpfx)getconf
+getconf-cmd = $(run-program-prefix) $(objpfx)getconf
 else
-	> $@.new
+getconf-dep = $(objpfx)cross-getconf
+getconf-cmd = $(objpfx)cross-getconf
+
+# Get configuration defines for cross-getconf by preprocessing confstr.c.
+$(objpfx)cross-getconf.h: confstr.c
+	$(compile.c) -E -dM -o - | grep "define _POSIX_V6_ILP32_OFF32\|define _POSIX_V6_ILP32_OFFBIG\|define _POSIX_V6_LP64_OFF64\|define _POSIX_V6_LPBIG_OFFBIG" > $(objpfx)cross-getconf.h
+
+cross-getconf-CFLAGS = -O -I$(objpfx)
+
+$(objpfx)cross-getconf: cross-getconf.c $(objpfx)cross-getconf.h
+	$(native-compile)
 endif
+
+$(objpfx)getconf.speclist: $(getconf-dep)
+	LC_ALL=C GETCONF_DIR=/dev/null \
+		$(getconf-cmd) _POSIX_V6_WIDTH_RESTRICTED_ENVS > $@.new
 	mv -f $@.new $@
+# eglibc: end.

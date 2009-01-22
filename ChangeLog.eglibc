@@ -1,5 +1,17 @@
 2009-01-22  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
+	Cross-getconf.
+
+	* posix/confstr.c (confstr): Move code for case
+	_CS_V6_WIDTH_RESTRICTED_ENVS to ...
+	* posix/confstr.inc: New file.
+	* posix/cross-getconf.c: New utility to mimic getconf for the
+	purposes of cross-compiling EGLIBC.
+	* posix/Makefile: Build cross-getconf and use it when cross-building
+	EGLIBC.
+
+2009-01-22  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
 	* sysdeps/ieee754/ldbl-opt/Makefile (libnldbl-calls): Handle
 	WIDE_CHAR_DEVICE_IO option group.
 	* sysdeps/ieee754/ldbl-opt/nldbl-compat.c (__nldbl_vfwscanf)
