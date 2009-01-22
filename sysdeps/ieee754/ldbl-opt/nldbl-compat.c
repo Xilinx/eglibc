@@ -34,20 +34,14 @@ libc_hidden_proto (__nldbl_vfprintf)
 libc_hidden_proto (__nldbl_vsscanf)
 libc_hidden_proto (__nldbl_vsprintf)
 libc_hidden_proto (__nldbl_vfscanf)
-libc_hidden_proto (__nldbl_vfwscanf)
 libc_hidden_proto (__nldbl_vdprintf)
-libc_hidden_proto (__nldbl_vswscanf)
-libc_hidden_proto (__nldbl_vfwprintf)
-libc_hidden_proto (__nldbl_vswprintf)
 libc_hidden_proto (__nldbl_vsnprintf)
 libc_hidden_proto (__nldbl_vasprintf)
 libc_hidden_proto (__nldbl_obstack_vprintf)
-libc_hidden_proto (__nldbl___vfwprintf_chk)
 libc_hidden_proto (__nldbl___vsnprintf_chk)
 libc_hidden_proto (__nldbl___vfprintf_chk)
 libc_hidden_proto (__nldbl___vsyslog_chk)
 libc_hidden_proto (__nldbl___vsprintf_chk)
-libc_hidden_proto (__nldbl___vswprintf_chk)
 libc_hidden_proto (__nldbl___vasprintf_chk)
 libc_hidden_proto (__nldbl___vdprintf_chk)
 libc_hidden_proto (__nldbl___obstack_vprintf_chk)
@@ -55,8 +49,17 @@ libc_hidden_proto (__nldbl___vstrfmon)
 libc_hidden_proto (__nldbl___vstrfmon_l)
 libc_hidden_proto (__nldbl___isoc99_vsscanf)
 libc_hidden_proto (__nldbl___isoc99_vfscanf)
+
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
+libc_hidden_proto (__nldbl_vfwscanf)
+libc_hidden_proto (__nldbl_vswscanf)
+libc_hidden_proto (__nldbl_vfwprintf)
+libc_hidden_proto (__nldbl_vswprintf)
+libc_hidden_proto (__nldbl___vfwprintf_chk)
+libc_hidden_proto (__nldbl___vswprintf_chk)
 libc_hidden_proto (__nldbl___isoc99_vswscanf)
 libc_hidden_proto (__nldbl___isoc99_vfwscanf)
+#endif
 
 static void
 __nldbl_cleanup (void *arg)
@@ -118,6 +121,7 @@ __nldbl_fprintf (FILE *stream, const char *fmt, ...)
 }
 weak_alias (__nldbl_fprintf, __nldbl__IO_fprintf)
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section weak_function
 __nldbl_fwprintf (FILE *stream, const wchar_t *fmt, ...)
@@ -131,6 +135,7 @@ __nldbl_fwprintf (FILE *stream, const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -227,6 +232,7 @@ __nldbl_snprintf (char *s, size_t maxlen, const char *fmt, ...)
   return done;
 }
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl_swprintf (wchar_t *s, size_t n, const wchar_t *fmt, ...)
@@ -240,6 +246,7 @@ __nldbl_swprintf (wchar_t *s, size_t n, const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section weak_function
@@ -265,6 +272,7 @@ __nldbl_vdprintf (int d, const char *fmt, va_list arg)
 }
 libc_hidden_def (__nldbl_vdprintf)
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section weak_function
 __nldbl_vfwprintf (FILE *s, const wchar_t *fmt, va_list ap)
@@ -276,6 +284,7 @@ __nldbl_vfwprintf (FILE *s, const wchar_t *fmt, va_list ap)
   return res;
 }
 libc_hidden_def (__nldbl_vfwprintf)
+#endif
 
 int
 attribute_compat_text_section
@@ -298,6 +307,7 @@ __nldbl_vsnprintf (char *string, size_t maxlen, const char *fmt,
 libc_hidden_def (__nldbl_vsnprintf)
 weak_alias (__nldbl_vsnprintf, __nldbl___vsnprintf)
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section weak_function
 __nldbl_vswprintf (wchar_t *string, size_t maxlen, const wchar_t *fmt,
@@ -331,6 +341,7 @@ __nldbl_wprintf (const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -420,6 +431,7 @@ __nldbl_scanf (const char *fmt, ...)
   return done;
 }
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl_vfwscanf (FILE *s, const wchar_t *fmt, va_list ap)
@@ -492,6 +504,7 @@ __nldbl_wscanf (const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -507,6 +520,7 @@ __nldbl___fprintf_chk (FILE *stream, int flag, const char *fmt, ...)
   return done;
 }
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl___fwprintf_chk (FILE *stream, int flag, const wchar_t *fmt, ...)
@@ -520,6 +534,7 @@ __nldbl___fwprintf_chk (FILE *stream, int flag, const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -564,6 +579,7 @@ __nldbl___sprintf_chk (char *s, int flag, size_t slen, const char *fmt, ...)
   return done;
 }
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl___swprintf_chk (wchar_t *s, size_t n, int flag, size_t slen,
@@ -578,6 +594,7 @@ __nldbl___swprintf_chk (wchar_t *s, size_t n, int flag, size_t slen,
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -591,6 +608,7 @@ __nldbl___vfprintf_chk (FILE *s, int flag, const char *fmt, va_list ap)
 }
 libc_hidden_def (__nldbl___vfprintf_chk)
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl___vfwprintf_chk (FILE *s, int flag, const wchar_t *fmt, va_list ap)
@@ -602,6 +620,7 @@ __nldbl___vfwprintf_chk (FILE *s, int flag, const wchar_t *fmt, va_list ap)
   return res;
 }
 libc_hidden_def (__nldbl___vfwprintf_chk)
+#endif
 
 int
 attribute_compat_text_section
@@ -636,6 +655,7 @@ __nldbl___vsprintf_chk (char *string, int flag, size_t slen, const char *fmt,
 }
 libc_hidden_def (__nldbl___vsprintf_chk)
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl___vswprintf_chk (wchar_t *string, size_t maxlen, int flag, size_t slen,
@@ -669,6 +689,7 @@ __nldbl___wprintf_chk (int flag, const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 int
 attribute_compat_text_section
@@ -944,6 +965,7 @@ __nldbl___isoc99_scanf (const char *fmt, ...)
   return done;
 }
 
+#ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 int
 attribute_compat_text_section
 __nldbl___isoc99_vfwscanf (FILE *s, const wchar_t *fmt, va_list ap)
@@ -1017,6 +1039,7 @@ __nldbl___isoc99_wscanf (const wchar_t *fmt, ...)
 
   return done;
 }
+#endif
 
 #if LONG_DOUBLE_COMPAT(libc, GLIBC_2_0)
 compat_symbol (libc, __nldbl__IO_printf, _IO_printf, GLIBC_2_0);
@@ -1060,6 +1083,7 @@ compat_symbol (libc, __nldbl_printf_size, printf_size, GLIBC_2_1);
 compat_symbol (libc, __nldbl___strfmon_l, __strfmon_l, GLIBC_2_1);
 #endif
 #if LONG_DOUBLE_COMPAT(libc, GLIBC_2_2)
+# ifdef __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
 compat_symbol (libc, __nldbl_swprintf, swprintf, GLIBC_2_2);
 compat_symbol (libc, __nldbl_vwprintf, vwprintf, GLIBC_2_2);
 compat_symbol (libc, __nldbl_wprintf, wprintf, GLIBC_2_2);
@@ -1072,6 +1096,7 @@ compat_symbol (libc, __nldbl_vfwscanf, vfwscanf, GLIBC_2_2);
 compat_symbol (libc, __nldbl_vswscanf, vswscanf, GLIBC_2_2);
 compat_symbol (libc, __nldbl_vwscanf, vwscanf, GLIBC_2_2);
 compat_symbol (libc, __nldbl_wscanf, wscanf, GLIBC_2_2);
+# endif
 #endif
 #if LONG_DOUBLE_COMPAT(libc, GLIBC_2_3)
 compat_symbol (libc, __nldbl_strfmon_l, strfmon_l, GLIBC_2_3);

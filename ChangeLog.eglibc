@@ -1,3 +1,16 @@
+2009-01-22  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/ieee754/ldbl-opt/Makefile (libnldbl-calls): Handle
+	WIDE_CHAR_DEVICE_IO option group.
+	* sysdeps/ieee754/ldbl-opt/nldbl-compat.c (__nldbl_vfwscanf)
+	(__nldbl_vswscanf, __nldbl_vfwprintf, __nldbl_vswprintf)
+	(__nldbl___vfwprintf_chk, __nldbl___vswprintf_chk): Condition
+	declarations and defitions on WIDE_CHAR_DEVICE_IO option group.
+	* sysdeps/ieee754/ldbl-opt/nldbl-compat.h (__nldbl_vfwscanf)
+	(__nldbl_vfwprintf, __nldbl_vswprintf, __nldbl_vswscanf)
+	(__nldbl___vfwprintf_chk, __nldbl___vswprintf_chk):
+	Condition declarations on WIDE_CHAR_DEVICE_IO option group.
+
 2008-12-24  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* posix/xregex.c: Handle absence of wide char support.
