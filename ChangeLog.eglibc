@@ -1,3 +1,8 @@
+2009-01-26  Julian Brown  <julian@codesourcery.com>
+
+	* elf/Makefile ($(objpfx)ld.so): Add sed pattern to recognize text
+	segment defined with SEGMENT_START.
+
 2009-01-23  Joseph Myers  <joseph@codesourcery.com>
 
 	[BZ #7094]

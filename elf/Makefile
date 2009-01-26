@@ -306,6 +306,7 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 		  LC_ALL=C \
 		  sed -e '/^=========/,/^=========/!d;/^=========/d'	\
 		      -e 's/\. = 0 + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
+		      -e 's/\. = SEGMENT_START("text-segment", 0) + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
 		  > $@.lds
 	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
 		  $(LDFLAGS-rtld) -Wl,-z,defs $(z-now-$(bind-now))	\
