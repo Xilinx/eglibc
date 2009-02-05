@@ -454,8 +454,6 @@ print_networks (struct netent *net)
       putchar_unlocked (' ');
       fputs_unlocked (net->n_aliases[i], stdout);
       ++i;
-      if (net->n_aliases[i] != NULL)
-	putchar_unlocked (',');
     }
   putchar_unlocked ('\n');
 }

@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 1991-2006, 2007, 2009 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ endif
 gpl2lgpl := error.c error.h
 
 tests := tst-dirname tst-tsearch tst-fdset tst-efgcvt tst-mntent tst-hsearch \
-	 tst-pselect tst-insremque tst-mntent2
+	 tst-pselect tst-insremque tst-mntent2 bug-hsearch1
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) += tst-error1
 # eglibc: ifeq (no,$(cross-compiling))
 ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
