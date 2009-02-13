@@ -54,8 +54,10 @@ do_help() {
 Mandatory arguments to long options are also mandatory for any corresponding
 short options.
 
-For bug reporting instructions, please see:
-%s.\n" "@REPORT_BUGS_TO@"
+"
+  printf $"For bug reporting instructions, please see:
+%s.
+" "@REPORT_BUGS_TO@"
   exit 0
 }
 

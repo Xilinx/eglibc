@@ -20,15 +20,35 @@
 #include <string.h>
 
 /* Undefine macros that should be defined in cross-getconf.h.  */
+#undef _POSIX_V7_ILP32_OFF32
+#undef _POSIX_V7_ILP32_OFFBIG
+#undef _POSIX_V7_LP64_OFF64
+#undef _POSIX_V7_LPBIG_OFFBIG
 #undef _POSIX_V6_ILP32_OFF32
 #undef _POSIX_V6_ILP32_OFFBIG
 #undef _POSIX_V6_LP64_OFF64
 #undef _POSIX_V6_LPBIG_OFFBIG
+#undef _XBS5_ILP32_OFF32
+#undef _XBS5_ILP32_OFFBIG
+#undef _XBS5_LP64_OFF64
+#undef _XBS5_LPBIG_OFFBIG
 
 #include "cross-getconf.h"
 
 /* Define macros cross-getconf.h doesn't define to (-1).
    This will prevent using host's __sysconf in confstr.inc.  */
+#ifndef _POSIX_V7_ILP32_OFF32
+# define _POSIX_V7_ILP32_OFF32 (-1)
+#endif
+#ifndef _POSIX_V7_ILP32_OFFBIG
+# define _POSIX_V7_ILP32_OFFBIG (-1)
+#endif
+#ifndef _POSIX_V7_LP64_OFF64
+# define _POSIX_V7_LP64_OFF64 (-1)
+#endif
+#ifndef _POSIX_V7_LPBIG_OFFBIG
+# define _POSIX_V7_LPBIG_OFFBIG (-1)
+#endif
 #ifndef _POSIX_V6_ILP32_OFF32
 # define _POSIX_V6_ILP32_OFF32 (-1)
 #endif
@@ -41,18 +61,33 @@
 #ifndef _POSIX_V6_LPBIG_OFFBIG
 # define _POSIX_V6_LPBIG_OFFBIG (-1)
 #endif
+#ifndef _XBS5_ILP32_OFF32
+# define _XBS5_ILP32_OFF32 (-1)
+#endif
+#ifndef _XBS5_ILP32_OFFBIG
+# define _XBS5_ILP32_OFFBIG (-1)
+#endif
+#ifndef _XBS5_LP64_OFF64
+# define _XBS5_LP64_OFF64 (-1)
+#endif
+#ifndef _XBS5_LPBIG_OFFBIG
+# define _XBS5_LPBIG_OFFBIG (-1)
+#endif
 
 /* Cross-getconf is a very simple program that assumes fixed
    input and produces fixed output.  It handles only cases
    that are necessary to cross-compile EGLIBC.  */
 
 void
-cross_getconf (void)
+cross_getconf (int name)
 {
   const char *string = "";
   size_t string_len = 1;
 
+  switch (name)
+    {
 #include "confstr.inc"
+    }
 
   printf ("%.*s\n", (int) string_len, string);
 }
@@ -62,11 +97,10 @@ main (int argc, char *argv[])
 {
   const char *getconf_dir;
 
-  if (argc != 2 || strcmp (argv[1], "_POSIX_V6_WIDTH_RESTRICTED_ENVS") != 0)
+  if (argc != 2)
     {
       fprintf (stderr,
-	       "%s: the only supported argument value is "
-	       "_POSIX_V6_WIDTH_RESTRICTED_ENVS", argv[0]);
+	       "%s: must be called with exactly one argument\n", argv[0]);
       return 1;
     }
 
@@ -78,6 +112,20 @@ main (int argc, char *argv[])
       return 1;
     }
 
-  cross_getconf ();
+  if (strcmp (argv[1], "_POSIX_V7_WIDTH_RESTRICTED_ENVS") == 0)
+    cross_getconf (_CS_V7_WIDTH_RESTRICTED_ENVS);
+  else if (strcmp (argv[1], "_POSIX_V6_WIDTH_RESTRICTED_ENVS") == 0)
+    cross_getconf (_CS_V6_WIDTH_RESTRICTED_ENVS);
+  else if (strcmp (argv[1], "_XBS5_WIDTH_RESTRICTED_ENVS") == 0)
+    cross_getconf (_CS_V5_WIDTH_RESTRICTED_ENVS);
+  else
+    {
+      fprintf (stderr,
+	       "%s: the only supported arguments value are "
+	       "_POSIX_V7_WIDTH_RESTRICTED_ENVS, "
+	       "_POSIX_V6_WIDTH_RESTRICTED_ENVS, and "
+	       "_XBS5_WIDTH_RESTRICTED_ENVS\n", argv[0]);
+      return 1;
+    }
   return 0;
 }

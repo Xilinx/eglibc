@@ -61,7 +61,8 @@ Profile memory usage of PROGRAM.
 Mandatory arguments to long options are also mandatory for any corresponding
 short options.
 
-For bug reporting instructions, please see:
+"
+  printf $"For bug reporting instructions, please see:
 %s.
 " "@REPORT_BUGS_TO@"
   exit 0

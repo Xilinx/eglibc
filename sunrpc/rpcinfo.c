@@ -59,6 +59,7 @@ static char sccsid[] = "@(#)rpcinfo.c 1.22 87/08/12 SMI";
 #include <libintl.h>
 
 #include "../version.h"
+#define PACKAGE _libc_intl_domainname
 
 #define MAXHOSTLEN 256
 

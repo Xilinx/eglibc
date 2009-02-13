@@ -91,6 +91,9 @@ static int write_pid (const char *file);
 static void print_version (FILE *stream, struct argp_state *state);
 void (*argp_program_version_hook) (FILE *, struct argp_state *) = print_version;
 
+/* Function to print some extra text in the help message.  */
+static char *more_help (int key, const char *text, void *input);
+
 /* Definitions of arguments for argp functions.  */
 static const struct argp_option options[] =
 {
@@ -109,9 +112,7 @@ static const struct argp_option options[] =
 };
 
 /* Short description of program.  */
-static const char doc[] = N_("Name Service Cache Daemon.\v\
-For bug reporting instructions, please see:\n\
-"REPORT_BUGS_TO".\n");
+static const char doc[] = N_("Name Service Cache Daemon.");
 
 /* Prototype for option handler.  */
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
@@ -119,7 +120,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state);
 /* Data structure to communicate with argp functions.  */
 static struct argp argp =
 {
-  options, parse_opt, NULL, doc,
+  options, parse_opt, NULL, doc, NULL, more_help
 };
 
 /* True if only statistics are requested.  */
@@ -401,6 +402,26 @@ parse_opt (int key, char *arg, struct argp_state *state)
     }
 
   return 0;
+}
+
+/* Print bug-reporting information in the help message.  */
+static char *
+more_help (int key, const char *text, void *input)
+{
+  char *tp = NULL;
+  switch (key)
+    {
+    case ARGP_KEY_HELP_EXTRA:
+      /* We print some extra information.  */
+      if (asprintf (&tp, gettext ("\
+For bug reporting instructions, please see:\n\
+%s.\n"), REPORT_BUGS_TO) < 0)
+	return NULL;
+      return tp;
+    default:
+      break;
+    }
+  return (char *) text;
 }
 
 /* Print the version information.  */

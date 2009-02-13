@@ -1,5 +1,4 @@
-/* Copyright (C) 1991, 1996, 1997, 2000-2002, 2003, 2004
-   Free Software Foundation, Inc.
+/* Copyright (C) 1991,1996,1997,2000-2004,2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -46,19 +45,18 @@ confstr (name, buf, len)
       }
       break;
 
-    case _CS_V6_WIDTH_RESTRICTED_ENVS:
       /* eglibc: We share code in confstr.inc with cross-getconf.c.  */
 #include "confstr.inc"
       /* eglibc: end.  */
-      break;
 
     case _CS_XBS5_ILP32_OFF32_CFLAGS:
     case _CS_POSIX_V6_ILP32_OFF32_CFLAGS:
+    case _CS_POSIX_V7_ILP32_OFF32_CFLAGS:
 #ifdef __ILP32_OFF32_CFLAGS
-# if _POSIX_V6_ILP32_OFF32 == -1
+# if _POSIX_V7_ILP32_OFF32 == -1
 #  error "__ILP32_OFF32_CFLAGS should not be defined"
-# elif !defined _POSIX_V6_ILP32_OFF32
-      if (__sysconf (_SC_V6_ILP32_OFF32) < 0)
+# elif !defined _POSIX_V7_ILP32_OFF32
+      if (__sysconf (_SC_V7_ILP32_OFF32) < 0)
         break;
 # endif
       string = __ILP32_OFF32_CFLAGS;
@@ -68,11 +66,12 @@ confstr (name, buf, len)
 
     case _CS_XBS5_ILP32_OFFBIG_CFLAGS:
     case _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS:
+    case _CS_POSIX_V7_ILP32_OFFBIG_CFLAGS:
 #ifdef __ILP32_OFFBIG_CFLAGS
-# if _POSIX_V6_ILP32_OFFBIG == -1
+# if _POSIX_V7_ILP32_OFFBIG == -1
 #  error "__ILP32_OFFBIG_CFLAGS should not be defined"
-# elif !defined _POSIX_V6_ILP32_OFFBIG
-      if (__sysconf (_SC_V6_ILP32_OFFBIG) < 0)
+# elif !defined _POSIX_V7_ILP32_OFFBIG
+      if (__sysconf (_SC_V7_ILP32_OFFBIG) < 0)
         break;
 # endif
       string = __ILP32_OFFBIG_CFLAGS;
@@ -82,11 +81,12 @@ confstr (name, buf, len)
 
     case _CS_XBS5_LP64_OFF64_CFLAGS:
     case _CS_POSIX_V6_LP64_OFF64_CFLAGS:
+    case _CS_POSIX_V7_LP64_OFF64_CFLAGS:
 #ifdef __LP64_OFF64_CFLAGS
-# if _POSIX_V6_LP64_OFF64 == -1
+# if _POSIX_V7_LP64_OFF64 == -1
 #  error "__LP64_OFF64_CFLAGS should not be defined"
-# elif !defined _POSIX_V6_LP64_OFF64
-      if (__sysconf (_SC_V6_LP64_OFF64) < 0)
+# elif !defined _POSIX_V7_LP64_OFF64
+      if (__sysconf (_SC_V7_LP64_OFF64) < 0)
         break;
 # endif
       string = __LP64_OFF64_CFLAGS;
@@ -96,11 +96,12 @@ confstr (name, buf, len)
 
     case _CS_XBS5_ILP32_OFF32_LDFLAGS:
     case _CS_POSIX_V6_ILP32_OFF32_LDFLAGS:
+    case _CS_POSIX_V7_ILP32_OFF32_LDFLAGS:
 #ifdef __ILP32_OFF32_LDFLAGS
-# if _POSIX_V6_ILP32_OFF32 == -1
+# if _POSIX_V7_ILP32_OFF32 == -1
 #  error "__ILP32_OFF32_LDFLAGS should not be defined"
-# elif !defined _POSIX_V6_ILP32_OFF32
-      if (__sysconf (_SC_V6_ILP32_OFF32) < 0)
+# elif !defined _POSIX_V7_ILP32_OFF32
+      if (__sysconf (_SC_V7_ILP32_OFF32) < 0)
         break;
 # endif
       string = __ILP32_OFF32_LDFLAGS;
@@ -110,11 +111,12 @@ confstr (name, buf, len)
 
     case _CS_XBS5_ILP32_OFFBIG_LDFLAGS:
     case _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS:
+    case _CS_POSIX_V7_ILP32_OFFBIG_LDFLAGS:
 #ifdef __ILP32_OFFBIG_LDFLAGS
-# if _POSIX_V6_ILP32_OFFBIG == -1
+# if _POSIX_V7_ILP32_OFFBIG == -1
 #  error "__ILP32_OFFBIG_LDFLAGS should not be defined"
-# elif !defined _POSIX_V6_ILP32_OFFBIG
-      if (__sysconf (_SC_V6_ILP32_OFFBIG) < 0)
+# elif !defined _POSIX_V7_ILP32_OFFBIG
+      if (__sysconf (_SC_V7_ILP32_OFFBIG) < 0)
         break;
 # endif
       string = __ILP32_OFFBIG_LDFLAGS;
@@ -124,11 +126,12 @@ confstr (name, buf, len)
 
     case _CS_XBS5_LP64_OFF64_LDFLAGS:
     case _CS_POSIX_V6_LP64_OFF64_LDFLAGS:
+    case _CS_POSIX_V7_LP64_OFF64_LDFLAGS:
 #ifdef __LP64_OFF64_LDFLAGS
-# if _POSIX_V6_LP64_OFF64 == -1
+# if _POSIX_V7_LP64_OFF64 == -1
 #  error "__LP64_OFF64_LDFLAGS should not be defined"
-# elif !defined _POSIX_V6_LP64_OFF64
-      if (__sysconf (_SC_V6_LP64_OFF64) < 0)
+# elif !defined _POSIX_V7_LP64_OFF64
+      if (__sysconf (_SC_V7_LP64_OFF64) < 0)
         break;
 # endif
       string = __LP64_OFF64_LDFLAGS;
@@ -184,6 +187,17 @@ confstr (name, buf, len)
     case _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS:
     case _CS_POSIX_V6_LPBIG_OFFBIG_LIBS:
     case _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS:
+
+    case _CS_POSIX_V7_ILP32_OFF32_LIBS:
+    case _CS_POSIX_V7_ILP32_OFF32_LINTFLAGS:
+    case _CS_POSIX_V7_ILP32_OFFBIG_LIBS:
+    case _CS_POSIX_V7_ILP32_OFFBIG_LINTFLAGS:
+    case _CS_POSIX_V7_LP64_OFF64_LIBS:
+    case _CS_POSIX_V7_LP64_OFF64_LINTFLAGS:
+    case _CS_POSIX_V7_LPBIG_OFFBIG_CFLAGS:
+    case _CS_POSIX_V7_LPBIG_OFFBIG_LDFLAGS:
+    case _CS_POSIX_V7_LPBIG_OFFBIG_LIBS:
+    case _CS_POSIX_V7_LPBIG_OFFBIG_LINTFLAGS:
       /* GNU libc does not require special actions to use LFS functions.  */
       break;
 

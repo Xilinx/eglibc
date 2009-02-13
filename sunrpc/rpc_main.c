@@ -53,6 +53,7 @@
 #include "proto.h"
 
 #include "../version.h"
+#define PACKAGE _libc_intl_domainname
 
 #define EXTEND	1		/* alias for TRUE */
 #define DONT_EXTEND	0	/* alias for FALSE */
@@ -1221,9 +1222,9 @@ parseargs (int argc, const char *argv[], struct commandline *cmd)
 	    }
 	  cmd->infile = argv[i];
 	}
-      else if (!strcmp (argv[i], "--help"))
+      else if (strcmp (argv[i], "--help") == 0)
 	usage (stdout, 0);
-      else if (!strcmp (argv[i], "--version"))
+      else if (strcmp (argv[i], "--version") == 0)
 	print_version ();
       else
 	{
@@ -1465,30 +1466,30 @@ usage (FILE *stream, int status)
 static void
 options_usage (FILE *stream, int status)
 {
-  f_print (stream, "options:\n");
-  f_print (stream, "-a\t\tgenerate all files, including samples\n");
-  f_print (stream, "-b\t\tbackward compatibility mode (generates code for SunOS 4.1)\n");
-  f_print (stream, "-c\t\tgenerate XDR routines\n");
-  f_print (stream, "-C\t\tANSI C mode\n");
-  f_print (stream, "-Dname[=value]\tdefine a symbol (same as #define)\n");
-  f_print (stream, "-h\t\tgenerate header file\n");
-  f_print (stream, "-i size\t\tsize at which to start generating inline code\n");
-  f_print (stream, "-I\t\tgenerate code for inetd support in server (for SunOS 4.1)\n");
-  f_print (stream, "-K seconds\tserver exits after K seconds of inactivity\n");
-  f_print (stream, "-l\t\tgenerate client side stubs\n");
-  f_print (stream, "-L\t\tserver errors will be printed to syslog\n");
-  f_print (stream, "-m\t\tgenerate server side stubs\n");
-  f_print (stream, "-M\t\tgenerate MT-safe code\n");
-  f_print (stream, "-n netid\tgenerate server code that supports named netid\n");
-  f_print (stream, "-N\t\tsupports multiple arguments and call-by-value\n");
-  f_print (stream, "-o outfile\tname of the output file\n");
-  f_print (stream, "-s nettype\tgenerate server code that supports named nettype\n");
-  f_print (stream, "-Sc\t\tgenerate sample client code that uses remote procedures\n");
-  f_print (stream, "-Ss\t\tgenerate sample server code that defines remote procedures\n");
-  f_print (stream, "-Sm \t\tgenerate makefile template \n");
-  f_print (stream, "-t\t\tgenerate RPC dispatch table\n");
-  f_print (stream, "-T\t\tgenerate code to support RPC dispatch tables\n");
-  f_print (stream, "-Y path\t\tdirectory name to find C preprocessor (cpp)\n");
+  f_print (stream, _("options:\n"));
+  f_print (stream, _("-a\t\tgenerate all files, including samples\n"));
+  f_print (stream, _("-b\t\tbackward compatibility mode (generates code for SunOS 4.1)\n"));
+  f_print (stream, _("-c\t\tgenerate XDR routines\n"));
+  f_print (stream, _("-C\t\tANSI C mode\n"));
+  f_print (stream, _("-Dname[=value]\tdefine a symbol (same as #define)\n"));
+  f_print (stream, _("-h\t\tgenerate header file\n"));
+  f_print (stream, _("-i size\t\tsize at which to start generating inline code\n"));
+  f_print (stream, _("-I\t\tgenerate code for inetd support in server (for SunOS 4.1)\n"));
+  f_print (stream, _("-K seconds\tserver exits after K seconds of inactivity\n"));
+  f_print (stream, _("-l\t\tgenerate client side stubs\n"));
+  f_print (stream, _("-L\t\tserver errors will be printed to syslog\n"));
+  f_print (stream, _("-m\t\tgenerate server side stubs\n"));
+  f_print (stream, _("-M\t\tgenerate MT-safe code\n"));
+  f_print (stream, _("-n netid\tgenerate server code that supports named netid\n"));
+  f_print (stream, _("-N\t\tsupports multiple arguments and call-by-value\n"));
+  f_print (stream, _("-o outfile\tname of the output file\n"));
+  f_print (stream, _("-s nettype\tgenerate server code that supports named nettype\n"));
+  f_print (stream, _("-Sc\t\tgenerate sample client code that uses remote procedures\n"));
+  f_print (stream, _("-Ss\t\tgenerate sample server code that defines remote procedures\n"));
+  f_print (stream, _("-Sm \t\tgenerate makefile template \n"));
+  f_print (stream, _("-t\t\tgenerate RPC dispatch table\n"));
+  f_print (stream, _("-T\t\tgenerate code to support RPC dispatch tables\n"));
+  f_print (stream, _("-Y path\t\tdirectory name to find C preprocessor (cpp)\n"));
 
   f_print (stream, "\n\
 For bug reporting instructions, please see:\n\
