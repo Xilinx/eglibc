@@ -74,6 +74,15 @@
 # define _XBS5_LPBIG_OFFBIG (-1)
 #endif
 
+#undef _CS_V5_WIDTH_RESTRICTED_ENVS
+#define _CS_V5_WIDTH_RESTRICTED_ENVS 5
+
+#undef _CS_V6_WIDTH_RESTRICTED_ENVS
+#define _CS_V6_WIDTH_RESTRICTED_ENVS 6
+
+#undef _CS_V7_WIDTH_RESTRICTED_ENVS
+#define _CS_V7_WIDTH_RESTRICTED_ENVS 7
+
 /* Cross-getconf is a very simple program that assumes fixed
    input and produces fixed output.  It handles only cases
    that are necessary to cross-compile EGLIBC.  */

@@ -357,7 +357,7 @@ getconf-cmd = $(objpfx)cross-getconf
 
 # Get configuration defines for cross-getconf by preprocessing confstr.c.
 $(objpfx)cross-getconf.h: confstr.c
-	$(compile.c) -E -dM -o - | grep "define _POSIX_V7_ILP32_OFF32\|define _POSIX_V7_ILP32_OFFBIG\|define _POSIX_V7_LP64_OFF64\|define _POSIX_V7_LPBIG_OFFBIG|_POSIX_V6_ILP32_OFF32\|define _POSIX_V6_ILP32_OFFBIG\|define _POSIX_V6_LP64_OFF64\|define _POSIX_V6_LPBIG_OFFBIG|_XBS5_ILP32_OFF32\|define _XBS5_ILP32_OFFBIG\|define _XBS5_LP64_OFF64\|define _XBS5_LPBIG_OFFBIG" > $(objpfx)cross-getconf.h
+	$(compile.c) -E -dM -o - | grep "define _POSIX_V7_ILP32_OFF32\|define _POSIX_V7_ILP32_OFFBIG\|define _POSIX_V7_LP64_OFF64\|define _POSIX_V7_LPBIG_OFFBIG\|_POSIX_V6_ILP32_OFF32\|define _POSIX_V6_ILP32_OFFBIG\|define _POSIX_V6_LP64_OFF64\|define _POSIX_V6_LPBIG_OFFBIG\|_XBS5_ILP32_OFF32\|define _XBS5_ILP32_OFFBIG\|define _XBS5_LP64_OFF64\|define _XBS5_LPBIG_OFFBIG" > $(objpfx)cross-getconf.h
 
 cross-getconf-CFLAGS = -O -I$(objpfx)
 
