@@ -1,3 +1,8 @@
+2009-03-02  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* nptl/Makefile: Use exec shell command in tst-cancel7 to prevent
+	the shell forking. Fix a bashism in the call to tst-cleanup0.
+
 2009-02-14  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/sparc/sparc64/dl-machine.h (elf_machine_runtime_setup):

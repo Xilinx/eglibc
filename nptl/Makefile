@@ -447,7 +447,7 @@ CFLAGS-tst-initializers1-c99.c = $(CFLAGS-tst-initializers1-<)
 CFLAGS-tst-initializers1-gnu89.c = $(CFLAGS-tst-initializers1-<)
 CFLAGS-tst-initializers1-gnu99.c = $(CFLAGS-tst-initializers1-<)
 
-tst-cancel7-ARGS = --command "$(local-built-program-cmd)"
+tst-cancel7-ARGS = --command "exec $(local-built-program-cmd)"
 tst-cancelx7-ARGS = $(tst-cancel7-ARGS)
 tst-umask1-ARGS = $(objpfx)tst-umask1.temp
 
@@ -559,7 +559,7 @@ $(objpfx)pt-initfini.s: pt-initfini.c
 		$(patsubst -f%,-fno-%,$(exceptions)) -o $@
 
 $(objpfx)tst-cleanup0.out: /dev/null $(objpfx)tst-cleanup0
-	$(make-test-out) 2>&1 | cmp - tst-cleanup0.expect >& $@
+	$(make-test-out) 2>&1 | cmp - tst-cleanup0.expect > $@ 2>&1
 
 # We only have one kind of startup code files.  Static binaries and
 # shared libraries are build using the PIC version.
