@@ -202,10 +202,17 @@ CFLAGS-scheck.c = -Wno-strict-prototypes -DNOID -DHAVE_GETTEXT
 # Don't add leapseconds here since test-tz made checks that work only without
 # leapseconds.
 testdata = $(objpfx)testdata
+ifeq (no,$(cross-compiling))
 define build-testdata
 GCONV_PATH=${common-objpfx}iconvdata LANGUAGE=C LC_ALL=C \
   $(built-program-cmd) -d $(testdata) -y ./yearistype $<
 endef
+else
+define build-testdata
+LANGUAGE=C LC_ALL=C \
+  $(objpfx)cross-zic -d $(testdata) -y ./yearistype $<
+endef
+endif
 
 $(objpfx)test-tz.out: $(addprefix $(testdata)/, America/New_York Etc/UTC UTC)
 $(objpfx)tst-timezone.out: $(addprefix $(testdata)/, \

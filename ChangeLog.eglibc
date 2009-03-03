@@ -1,3 +1,8 @@
+2009-03-03  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* timezone/Makefile: Call cross-zic directly instead of using
+	the target ld.so while generating testdata.
+
 2009-03-02  Aurelien Jarno  <aurelien@aurel32.net>
 
 	* nptl/Makefile: Use exec shell command in tst-cancel7 to prevent
