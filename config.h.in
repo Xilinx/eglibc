@@ -195,6 +195,9 @@
 /* Bug reporting address.  */
 #undef REPORT_BUGS_TO
 
+/* Define if multi-arch DSOs should be generated.  */
+#undef USE_MULTIARCH
+
 /*
  */
 

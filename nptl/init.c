@@ -67,10 +67,10 @@ static const char nptl_version[] __attribute_used__ = VERSION;
 extern void __libc_setup_tls (size_t tcbsize, size_t tcbalign);
 #endif
 
+#ifdef SHARED
 static void nptl_freeres (void);
 
 
-#ifdef SHARED
 static const struct pthread_functions pthread_functions =
   {
     .ptr_pthread_attr_destroy = __pthread_attr_destroy,
@@ -138,16 +138,16 @@ static const struct pthread_functions pthread_functions =
 #endif
 
 
+#ifdef SHARED
 /* This function is called indirectly from the freeres code in libc.  */
 static void
 __libc_freeres_fn_section
 nptl_freeres (void)
 {
-#ifdef SHARED
   __unwind_freeres ();
-#endif
   __free_stacks (0);
 }
+#endif
 
 
 /* For asynchronous cancellation we use a signal.  This is the handler.  */
@@ -269,7 +269,7 @@ extern void **__libc_dl_error_tsd (void) __attribute__ ((const));
 
 
 /* This can be set by the debugger before initialization is complete.  */
-static bool __nptl_initial_report_events;
+static bool __nptl_initial_report_events __attribute_used__;
 
 void
 __pthread_initialize_minimal_internal (void)
