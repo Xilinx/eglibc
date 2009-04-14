@@ -29,6 +29,7 @@ routines	:=							      \
 	ctermid cuserid							      \
 	_itoa _itowa itoa-digits itoa-udigits itowa-digits		      \
 	vfprintf vprintf printf_fp reg-printf printf-prs printf_fphex	      \
+	reg-modifier reg-type						      \
 	printf_size fprintf printf snprintf sprintf asprintf dprintf	      \
 	vfscanf								      \
 	fscanf scanf sscanf						      \

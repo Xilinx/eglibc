@@ -1,3 +1,20 @@
+2009-04-07  Ulrich Drepper  <drepper@redhat.com>
+
+	* locales/ks_IN@devanagari: Replace duplicated information with copy.
+	Fix title.  Patch by Pravin Satpute <psatpute@redhat.com>.
+
+2009-04-06  Ulrich Drepper  <drepper@redhat.com>
+
+	* locales/ks_IN: New file.
+	Patch by Mohammad Nayeem <mohammad.nayeem@gmail.com> and
+	Pravin Satpute <psatpute@redhat.com>.
+
+2009-03-23  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #9985]
+	* charmaps/UTF-8: Fix encoding of <U1080>..<U109F>, <U12AF>.
+	Based on patch by Keith Stribley <devel@thanlwinsoft.org>.
+
 2009-03-15  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #9844]
