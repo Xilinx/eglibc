@@ -17,6 +17,15 @@
 
 	* elf/Makefile ($(objpfx)ld.so): Add sed pattern to recognize text
 	segment defined with SEGMENT_START.
+2009-04-20  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* option-groups.def (OPTION_EGLIBC_FCVT, OPTION_EGLIBC_FMTMSG):
+	Define new option groups.
+	(OPTION_EGLIBC_FTRAVERSE): Define new option group.
+	* option-groups.defaults: Set defaults for new option groups.
+	* misc/Makefile: Handle OPTION_EGLIBC_FCVT option group.
+	* stdlib/Makefile: Handle OPTION_EGLIBC_FMTMSG option group.
+	* io/Makefile: Handle OPTION_EGLIBC_FTRAVERSE option group.
 
 2009-01-23  Joseph Myers  <joseph@codesourcery.com>
 

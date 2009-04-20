@@ -51,7 +51,7 @@ routines-y	:=							      \
 	strtof_l strtod_l strtold_l					      \
 	system canonicalize						      \
 	a64l l64a							      \
-	getsubopt xpg_basename fmtmsg					      \
+	getsubopt xpg_basename						      \
 	strtoimax strtoumax						      \
 	getcontext setcontext makecontext swapcontext
 routines-$(OPTION_EGLIBC_LOCALE_CODE) +=				      \
@@ -62,6 +62,7 @@ routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) +=				      \
 ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_POSIX_REGEXP))
 routines-y += rpmatch
 endif
+routines-$(OPTION_EGLIBC_FMTMSG) += fmtmsg
 aux =	grouping groupingwc tens_in_limb
 
 # These routines will be omitted from the libc shared object.
@@ -71,7 +72,7 @@ static-only-routines = atexit at_quick_exit
 
 distribute	:= exit.h grouping.h abort-instr.h isomac.c tst-fmtmsg.sh   \
 		   allocalim.h
-test-srcs	:= tst-fmtmsg
+test-srcs-$(OPTION_EGLIBC_FMTMSG) := tst-fmtmsg
 tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   test-canon test-canon2 tst-strtoll tst-environ	    \
 		   tst-xpg-basename tst-random tst-random2 tst-bsearch	    \
@@ -137,7 +138,9 @@ testmb2-ENV = LOCPATH=$(common-objpfx)localedata
 tests: $(objpfx)isomac.out
 
 # eglibc: ifeq (no,$(cross-compiling))
+ifeq (y,$(OPTION_EGLIBC_FMTMSG))
 tests: $(objpfx)tst-fmtmsg.out
+endif
 # eglibc: endif
 
 $(objpfx)isomac.out: $(objpfx)isomac

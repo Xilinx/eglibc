@@ -60,7 +60,6 @@ routines := brk sbrk sstk ioctl \
 	    syslog syscall daemon \
 	    mmap mmap64 munmap mprotect msync madvise mincore remap_file_pages\
 	    mlock munlock mlockall munlockall \
-	    efgcvt efgcvt_r qefgcvt qefgcvt_r \
 	    hsearch hsearch_r tsearch lsearch \
 	    err error ustat \
 	    getsysstats dirname \
@@ -72,6 +71,7 @@ routines := brk sbrk sstk ioctl \
 routines-$(OPTION_POSIX_REGEXP) += regexp
 routines-$(OPTION_EGLIBC_FSTAB) += fstab
 routines-$(OPTION_EGLIBC_BSD) += chflags fchflags revoke 
+routines-$(OPTION_EGLIBC_FCVT) += efgcvt efgcvt_r qefgcvt qefgcvt_r
 
 distribute := device-nrs.h
 
@@ -85,9 +85,10 @@ install-lib := libbsd-compat.a libg.a
 endif
 gpl2lgpl := error.c error.h
 
-tests := tst-dirname tst-tsearch tst-fdset tst-efgcvt tst-mntent tst-hsearch \
+tests := tst-dirname tst-tsearch tst-fdset tst-mntent tst-hsearch \
 	 tst-pselect tst-insremque tst-mntent2 bug-hsearch1
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) += tst-error1
+tests-$(OPTION_EGLIBC_FCVT) += tst-efgcvt
 # eglibc: ifeq (no,$(cross-compiling))
 ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
 tests: $(objpfx)tst-error1-mem
