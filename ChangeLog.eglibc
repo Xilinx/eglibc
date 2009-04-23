@@ -1,3 +1,7 @@
+2009-04-23  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* stdio-common/_i18n_number.h (_i18n_number_rewrite): Update stub.
+
 2009-03-03  Aurelien Jarno  <aurelien@aurel32.net>
 
 	* timezone/Makefile: Call cross-zic directly instead of using

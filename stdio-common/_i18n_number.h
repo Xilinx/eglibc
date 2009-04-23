@@ -116,7 +116,7 @@ _i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr, CHAR_T *end)
 #else
 
 static CHAR_T *
-_i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr)
+_i18n_number_rewrite (CHAR_T *w, CHAR_T *rear_ptr, CHAR_T *end)
 {
   return w;
 }
