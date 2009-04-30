@@ -1,4 +1,4 @@
-# Copyright (C) 1996-1998,2000,2001,2002,2007 Free Software Foundation, Inc.
+# Copyright (C) 1996-1998,2000-2002,2007,2009 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ distribute		:= nsswitch.h XXX-lookup.c getXXbyYY.c getXXbyYY_r.c \
 # These are the databases that go through nss dispatch.
 # Caution: if you add a database here, you must add its real name
 # in databases.def, too.
-databases-y		= grp pwd spwd 
+databases-y		= grp pwd spwd sgrp
 databases-$(OPTION_EGLIBC_INET) \
 			+= proto service hosts network rpc ethers \
 			   netgrp key

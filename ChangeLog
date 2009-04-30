@@ -1,3 +1,336 @@
+2009-04-29  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/ifaddrs.c: Revert unintended 2008-08-12
+	comment change.
+
+2009-04-27  Jakub Jelinek  <jakub@redhat.com>
+
+	* locale/programs/locarchive.c (create_archive): Add MAP_PRIVATE
+	to MAP_ANON in PROT_NONE mmap64 call.
+	(open_archive): Likewise.
+	(file_data_available_p): Use mmap64 instead of mremap.
+	(enlarge_archive): Likewise.  Update head if ah->addr changed.
+	Attempt to reserve address space after mmap64 region.
+
+2009-04-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/s_expm1.c: Set errno for overflow.
+	* sysdeps/ieee754/flt-32/s_expm1f.c: Likewise.
+	* sysdeps/x86_64/fpu/s_expm1l.S: Likewise.
+
+	* sysdeps/ieee754/k_standard.c (__kernel_standard): Pole errors in
+	atanh should set ERANGE.
+
+	[BZ #10087]
+	* elf/dl-runtime.c (_dl_fixup): Use DL_FIXUP_VALUE_ADDR to access
+	result of lookup to make call to implement STT_GNU_IFUNC.
+	(_dl_profile_fixup): Likewise.
+	Patch by H.J. Lu <hjl.tools@gmail.com>.
+
+	* nscd/connections.c (send_ro_fd): Define temporary variable to avoid
+	warning.
+
+	* sysdeps/unix/sysv/linux/dl-osinfo.h (dl_fatal): Remove inline
+	from definition.
+
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela): Don't define
+	label if it is not used.
+
+	* elf/dl-profile.c (_dl_start_profile): Define real-type variant
+	of gmon_hist_hdr and gmon_hdr structures and use them.
+	* elf/sprof.c: Likewise.
+
+	* elf/dl-load.c (open_verify): Add temporary variable to avoid
+	warning.
+
+	* nscd/nscd_helper.c (get_mapping): Avoid casts to avoid warnings.
+
+	* sunrpc/clnt_raw.c (clntraw_private_s): Use union in definition
+	to avoid cast.
+
+	* inet/rexec.c (rexec_af): Make sa2 a union to avoid warnings.
+	* inet/rcmd.c (rcmd_af): Make from a union of the various needed types
+	to avoid warnings.
+	(iruserok_af): Use ss_family instead of casts.
+
+	* gmon/gmon.c (write_hist): Define real-type variant of
+	gmon_hist_hdr structure and use it.
+	(write_gmon): Likewise for gmon_hdr.
+
+	* sysdeps/unix/sysv/linux/readv.c: Avoid declaration of replacement
+	function if we are not going to define it.
+	* sysdeps/unix/sysv/linux/writev.c: Likewise.
+
+	* inet/inet6_option.c (option_alloc): Add temporary variable to
+	avoid warning.
+
+	* libio/strfile.h (struct _IO_streambuf): Use correct type and
+	name of VTable element.
+	* libio/iovsprintf.c: Avoid casts to avoid warnings.
+	* libio/iovsscanf.c: Likewise.
+	* libio/vasprintf.c: Likewise.
+	* libio/vsnprintf.c: Likewise.
+	* stdio-common/isoc99_vsscanf.c: Likewise.
+	* stdlib/strfmon_l.c: Likewise.
+	* debug/vasprintf_chk.c: Likewise.
+	* debug/vsnprintf_chk.c: Likewise.
+	* debug/vsprintf_chk.c: Likewise.
+
+	* nss/nsswitch.c (__nss_lookup_function): En/Decrypt cached
+	function pointers.
+
+2009-04-26  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/s_tan.c (tan): Fix -Wsequence-point warnings.
+
+2009-04-25  Ulrich Drepper  <drepper@redhat.com>
+
+	* posix/bits/posix1_lim.h: Cleanup namespace a bit.
+
+	* sysdeps/i386/fpu/s_tan.S: Set errno for ±Inf.
+	* sysdeps/i386/fpu/s_tanf.S: Likewise.
+	* sysdeps/i386/fpu/s_tanl.S: Likewise.
+	* sysdeps/ieee754/dbl-64/s_tan.c: Likewise.
+	* sysdeps/ieee754/flt-32/s_tanf.c: Likewise.
+	* sysdeps/x86_64/fpu/s_tanl.S: Likewise.
+	* math/libm-test.inc: Add tests for errno after tan calls with
+	±Inf.
+
+	* sysdeps/ieee754/k_standard.c (__kernel_standard): Use correct
+	errno value vor pow(+-0,neg).
+	* math/libm-test.inc (pow_test): Add tests for errno value for
+	pole errors.
+
+	* math/w_fmod.c: Also handle x=±Inf as error.
+	* math/w_fmodf.c: Likewise.
+	* math/w_fmodl.c: Likewise.
+	* math/libm-test.inc (fmod_test): Add tests for errno after calls for
+	x=±Inf or y=0.
+
+	* sysdeps/i386/fpu/s_cos.S: Set errno for ±Inf.
+	* sysdeps/i386/fpu/s_cosf.S: Likewise.
+	* sysdeps/i386/fpu/s_cosl.S: Likewise.
+	* sysdeps/i386/fpu/s_sin.S: Likewise.
+	* sysdeps/i386/fpu/s_sinf.S: Likewise.
+	* sysdeps/i386/fpu/s_sinl.S: Likewise.
+	* sysdeps/ieee754/dbl-64/s_sin.c: Likewise.
+	* sysdeps/ieee754/flt-32/s_cosf.c: Likewise.
+	* sysdeps/ieee754/flt-32/s_sinf.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/s_cosl.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/s_sinl.c: Likewise.
+	* sysdeps/x86_64/fpu/s_cosl.S: Likewise.
+	* sysdeps/x86_64/fpu/s_sinl.S: Likewise.
+	* math/libm-test.inc: Add tests for errno after sin/cos calls with
+	±Inf.
+
+	* stdlib/strtod_l.c (round_and_return): We have to set errno to
+	ERANGE for underflows.
+	* stdlib/tst-strtod.c (tests): Two tests should set errno to ERANGE.
+
+	* stdio-common/stdio_lim.h.in (L_cuserid): Not part of POSIX since
+	the 2001 revision.
+
+	* libio/tst-widetext.input: Remove surrogates.
+
+	* include/features.h: _POSIX_C_SOURCE >= 200112L implies C99.
+
+	* sysdeps/ieee754/k_standard.c (__kernel_standard): Pole errors
+	for lgamma should set errno to ERANGE, not EDOM.
+	* math/libm-test.inc (lgamma_test): Check errno for pole errors.
+
+2009-04-24  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10093]
+	* iconv/gconv_simple.c (BODY for UTF-8 to INTERNAL): Don't accept
+	UTF-16 surrogates.
+
+	* locale/programs/locarchive.c (enlarge_archive): Conserve address
+	space when temporarily mapping the whole content of the old file.
+
+	[BZ #10100]
+	* misc/hsearch_r.c (hsearch_r): Add back ensurance that hval is
+	not zero.
+
+2009-04-24  Jakub Jelinek  <jakub@redhat.com>
+
+	* iconvdata/sjis.c (BODY): Don't advance inptr before
+	STANDARD_FROM_LOOP_ERR_HANDLER (2) for 2 byte invalid input.
+	Use STANDARD_FROM_LOOP_ERR_HANDLER with 2 instead of 1 for
+	two byte chars.
+
+2009-04-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* locale/locarchive.h (struct locarhandle): Rename len field to
+	mmaped and add new reserved field.
+	* locale/programs/locarchive.c (RESERVE_MMAP_SIZE): Define.
+	(create_archive): Reserve address space and then map file into it.
+	(open_archive): Likewise.
+	(file_data_available_p): New function.
+	(compare_from_file): New function.
+	(close_archive): Adjust to member name changes.
+	(add_locale): Before comparing locale data, check it is mapped.
+	Otherwise fall back to reading from the file.
+
+2009-04-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* stdio-common/psiginfo.c: Include <errno.h>.
+
+2009-04-23  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #9920]
+	* stdlib/random_r.c (__srandom_r): Change type of word to int32_t
+	to get consistency between 32 and 64 bit architectures.
+
+	[BZ #10052]
+	* sysdeps/unix/make-syscalls.sh: Add rule to create target
+	directory for dummy syscall rules.
+	Patch by Chris Steinbroner <hesh@pobox.com>.
+
+2009-04-23  Aurelien Jarno  <aurelien@aurel32.net>
+
+	[BZ #10092]
+	* sysdeps/unix/sysv/linux/sys/mount.h: Define MNT_DETACH and
+	MNT_EXPIRE.
+
+2009-04-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/preadv.c: The kernel API changed.  Adjust.
+	* sysdeps/unix/sysv/linux/pwritev.c: Likewise.
+
+2009-04-23  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/posix/pwritev.c (PWRITEV): Fix up comment.  Copy
+	data from vector to temporary buffer and call PWRITEV after it
+	instead of vice versa.
+	* sysdeps/posix/preadv.c: Fix up comment.
+	* misc/preadv.c: Likewise.
+	* misc/preadv64.c: Likewise.
+	* misc/pwritev.c: Likewise.
+	* misc/pwritev64.c: Likewise.
+	* misc/sys/uio.h (preadv, pwritev, preadv64, pwritev64): Likewise.
+
+2009-04-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* shadow/sgetspent_r.c (__sgetspent_r): Recognize too small buffers.
+
+	* shadow/Makefile (tests): Add tst-shadow.
+	* shadow/tst-shadow.c: New file.
+
+	[BZ #9955]
+	* gshadow/Makefile: New file.
+	* gshadow/Versions: New file.
+	* gshadow/fgetsgent.c: New file.
+	* gshadow/fgetsgent_r.c: New file.
+	* gshadow/getsgent.c: New file.
+	* gshadow/getsgent_r.c: New file.
+	* gshadow/getsgnam.c: New file.
+	* gshadow/getsgnam_r.c: New file.
+	* gshadow/gshadow.h: New file.
+	* gshadow/putsgent.c: New file.
+	* gshadow/sgetsgent.c: New file.
+	* gshadow/sgetsgent_r.c: New file.
+	* gshadow/tst-gshadow.c: New file.
+	* include/gshadow.h: New file.
+	* Makeconfig (all-subdirs): Add gshadow.
+	* Makefile (installed-headers): Add gshadow/gshadow.h.
+	* nss/Makefile (databases): Add sgrp.
+	* nss/Versions: Add gshadow functions as private exports.
+	* nss/nsswitch.conf: Add gshadow entry.
+	* nss/sgrp-lookup.c: New file.
+	* nss/nss_files/files-parse.c: Add STRING_LIST macro.  Rewrite
+	parse_list to handle STRING_LIST and TRAILING_LIST_PARSER.
+	* nss/nss_files/files-sgrp.c: New file.
+	* sysdeps/generic/paths.h: Add _PATH_GSHADOW.
+	* sysdeps/unix/sysv/linux/paths.h: Likewise.
+
+2009-04-22  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdio-common/printf.h: Add missing const to register_printf_modifier.
+	* stdio-common/reg-modifier.c: Likewise.
+
+2009-04-22  Andrew Stubbs  <ams@codesourcery.com>
+
+	* sysdeps/sh/sh4/setjmp.S (__sigsetjmp): Adjust JB_SIZE when there
+	is no FPU.
+
+2009-04-20  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10086]
+	* sysdeps/unix/sysv/linux/sys/timex.h: Add definitions from kernel
+	headers up to 2.6.30.
+
+	* po/ca.po: Update from translation team.
+
+2009-04-19  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10069]
+	* elf/dl-open.c (dl_open_worker): We cannot guarantee that we can load
+	an object that uses static TLS if the TLS modid is higher than the
+	reserve we always allocate.  At least for multi-threaded code.
+
+2009-04-18  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdlib/strfmon_l.c (__vstrfmon_l): Don't wrap when computing width.
+	Numerically stable check for valid width.
+
+	* locale/programs/locarchive.c (open_archive): Map the entire file
+	and not just the administrative data.
+	(add_locale): When we find a hash sum match compare the content
+	to be sure.
+
+	* malloc/malloc.c (malloc_info): Output address space information.
+
+2009-04-17  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c (malloc_info): Also output system memory information.
+
+	* sysdeps/unix/sysv/linux/kernel-features.h: All supported
+	architectures have preadv/pwritev in 2.6.30.
+
+	* sysdeps/posix/preadv.c: Reading of zero bytes is no error.
+	* sysdeps/posix/readv.c: Likewise.
+	Reported by Markus Armbruster <armbru@redhat.com>.
+
+	* malloc/hooks.c (top_check): Force hook value into register.
+
+2009-04-16  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* elf/rtld.c (dl_main): Really call _dl_sysdep_start_cleanup after all
+	calls to _dl_relocate_object.
+
+2009-04-16  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #9957]
+	* malloc/malloc.c (force_reg): Define.
+	(sYSMALLOc): Load hook variable into variable
+	before test and force into register.
+	(sYSTRIm): Likewise.
+	(public_mALLOc): Force hook value into register.
+	(public_fREe): Likewise.
+	(public_rEALLOc): Likewise.
+	(public_mEMALIGn): Likewise.
+	(public_vALLOc): Likewise.
+	(public_pVALLOc): Likewise.
+	(public_cALLOc): Likewise.
+	(__posix_memalign): Likewise.
+	* malloc/arena.c (ptmalloc_init): Load hook variable into variable
+	before test and force into register.
+	* malloc/hooks.c (top_check): Likewise.
+	(public_sET_STATe): Pretty printing.
+
+	* resolv/res_send.c (send_dg): Don't just ignore the result we got
+	in case we only receive one reply in single-request mode.
+
+2009-04-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/dl-open.c (_dl_open): Bump GL(dl_nns) to 1 if no libraries
+	are dlopened in statically linked program even for __LM_ID_CALLER.
+
+2009-04-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_send.c (send_dg): Don't switch into single-request
+	mode if we already are in it.
+
 2009-04-15  Ulrich Drepper  <drepper@redhat.com>
 
 	* sysdeps/unix/sysv/linux/getsysstats.c (next_line): Make sure there

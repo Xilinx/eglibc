@@ -1,4 +1,4 @@
-/* Copyright (C) 1996-1999, 2001-2006, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 1996-1999, 2001-2007, 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -341,8 +341,11 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 
   found = __tsearch (&fct_name, &ni->known.tree, &known_compare);
   if (*found != &fct_name)
-    /* The search found an existing structure in the tree.  */
-    result = ((known_function *) *found)->fct_ptr;
+    {
+      /* The search found an existing structure in the tree.  */
+      result = ((known_function *) *found)->fct_ptr;
+      PTR_DEMANGLE (result);
+    }
   else
     {
       /* This name was not known before.  Now we have a node in the tree
@@ -465,6 +468,7 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 	  /* Remember function pointer for later calls.  Even if null, we
 	     record it so a second try needn't search the library again.  */
 	  known->fct_ptr = result;
+	  PTR_MANGLE (known->fct_ptr);
 	}
     }
 

@@ -1057,9 +1057,15 @@ send_dg(res_state statp,
 		       having received one answer switch to the mode
 		       where we send the second request only once we
 		       have received the first answer.  */
-		    single_request = true;
-		    *gotsomewhere = save_gotsomewhere;
-		    goto retry;
+		    if (!single_request)
+		      {
+			single_request = true;
+			*gotsomewhere = save_gotsomewhere;
+			goto retry;
+		      }
+
+		    *resplen2 = 1;
+		    return resplen;
 		  }
 
 		*gotsomewhere = 1;
