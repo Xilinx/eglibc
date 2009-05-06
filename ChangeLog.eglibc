@@ -1,3 +1,8 @@
+2009-05-06  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* Makerules (install-map): Don't install libhurduser.map and
+	libmachuser.map.
+
 2009-04-23  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* stdio-common/_i18n_number.h (_i18n_number_rewrite): Update stub.

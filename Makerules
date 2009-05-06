@@ -911,10 +911,12 @@ install-lib.so-unversioned := $(filter-out $(versioned), $(install-lib.so))
 # libpthread_pic.a breaks mklibs, so don't install it and its map.
 install-lib := $(install-lib) $(install-lib.so-versioned:%.so=%_pic.a)
 install-lib := $(filter-out libpthread_pic.a,$(install-lib))
+# Despite having a soname libhurduser and libmachuser do not use symbol
+# versioning, so don't install the corresponding .map files.
 ifeq ($(versioning),yes)
 install-map := $(patsubst %.so,%.map,\
 			$(foreach L,$(install-lib.so-versioned),$(notdir $L)))
-install-map := $(filter-out libpthread.map,$(install-map))
+install-map := $(filter-out libhurduser.map libmachuser.map libpthread.map,$(install-map))
 ifndef subdir
 install-map := $(install-map) libc.map
 endif
