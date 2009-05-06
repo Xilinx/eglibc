@@ -84,8 +84,8 @@ static const struct
 
 __libc_lock_define_initialized (static, lock)
 
-#define lock_nsswitch (__libc_lock_lock (lock))
-#define unlock_nsswitch (__libc_lock_unlock (lock))
+#define lock_nsswitch __libc_lock_lock (lock)
+#define unlock_nsswitch __libc_lock_unlock (lock)
 
 #if !defined DO_STATIC_NSS || defined SHARED
 /* String with revision number of the shared object files.  */

@@ -1,5 +1,9 @@
 2009-05-06  Aurelien Jarno  <aurelien@aurel32.net>
 
+	* nss/nsswitch.c (lock_nsswitch, unlock_nsswitch): Remove brackets.
+
+2009-05-06  Aurelien Jarno  <aurelien@aurel32.net>
+
 	* Makerules (install-map): Don't install libhurduser.map and
 	libmachuser.map.
 
