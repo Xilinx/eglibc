@@ -16,7 +16,7 @@
  */
 
 #if !defined(_LIBC) && !defined(lint)
-static const char rcsid[] = "$Id: ns_date.c,v 1.1 2008/08/01 17:15:09 drepper Exp $";
+static const char rcsid[] = "$Id$";
 #endif
 
 /* Import. */

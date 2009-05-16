@@ -1,3 +1,82 @@
+2009-05-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* nscd/nscd.h: Move Definition for BLOCK_ALIGN_LOG, BLOCK_ALIGN, and
+	BLOCK_ALIGN_M1 to ...
+	* nscd/nscd-client.h: ...here.
+	* nscd/nscd_helper.c (__nscd_cache_search): Introduce loop counter.
+	Use it if we absolutely cannot reach any more correct list elements
+	because that many do not fit into the currently mapped database.
+
+2009-05-14  Jakub Jelinek  <jakub@redhat.com>
+
+	* nscd/nscd_helper.c: Include stddef.h.
+	(__nscd_cache_search): Add datalen argument.  Use atomic_forced_read
+	in a couple of places.  Return NULL if trail is not less than
+	datasize, don't consider dataheads with length smaller than
+	offsetof (struct datahead, data) + datalen.
+	* nscd/nscd_client.h (__nscd_cache_search): Adjust prototype.
+	* nscd/nscd_gethst_r.c (nscd_gethst_r): Adjust callers.
+	* nscd/nscd_getpw_r.c (nscd_getpw_r): Likewise.
+	* nscd/nscd_getgr_r.c (nscd_getgr_r): Likewise.
+	* nscd/nscd_getai.c (__nscd_getai): Likewise.
+	* nscd/nscd_initgroups.c (__nscd_getgrouplist): Likewise.
+	* nscd/nscd_getserv_r.c (nscd_getserv_r): Likewise.
+
+	* sysdeps/unix/sysv/linux/i386/fallocate64.c (__fallocate64_l64):
+	Rename ...
+	(fallocate64): ... to this.
+	* sysdeps/unix/sysv/linux/fallocate64.c (__fallocate64_l64):
+	Rename ...
+	(fallocate64): ... to this.
+	* sysdeps/unix/sysv/linux/Versions (libc): Remove fallocate64.
+	* sysdeps/unix/sysv/linux/wordsize-64/Versions (libc): Add
+	fallocate64@@GLIBC_2.10.
+	* sysdeps/unix/sysv/linux/i386/Versions (libc): Add
+	fallocate64@@GLIBC_2.11.
+	* sysdeps/unix/sysv/linux/s390/s390-32/Versions (libc): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/Versions (libc): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/Versions (libc): Likewise.
+	* sysdeps/unix/sysv/linux/sh/Versions (libc): Likewise.
+
+	* nscd/selinux.c (nscd_avc_destroy): Removed.
+	* nscd/selinux.h (nscd_avc_destroy): Likewise.
+	* nscd/nscd.c (termination_handler): Don't call
+	nscd_avc_destroy.
+
+2009-05-12  Jakub Jelinek  <jakub@redhat.com>
+
+	* include/atomic.h: Formatting.
+	(catomic_compare_and_exchange_val_acq): Don't define if already
+	defined by bits/atomic.h.
+
+2009-05-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* math/libm-test.inc (expm1_test): Add test for range error.
+
+	* Versions.def: Add GLIBC_2.11 for libc.
+	* debug/Makefile (routines): Add longjmp_chk.
+	Add rules to build and run tst-longjmp_chk.
+	* debug/Versions: Export __longjmp_chk for GLIBC_2.11.
+	* debug/longjmp_chk.c: New file.
+	* debug/tst-longjmp_chk.c: New file.
+	* include/bits/setjmp2.: New file.
+	* include/stdio.h: Mark __fortify_fail as internal_function.
+	* setjmp/Makefile (headers): Add bits/setjmp2.h.
+	* setjmp/bits/setjmp2.h: New file.
+	* setjmp/longjmp.c: If __libc_siglongjmp is defined, don't define any
+	of the aliases.
+	* setjmp/setjmp.h: Include <bits/setjmp2.h> if _FORTIFY_SOURCE is
+	defined.
+	* sysdeps/i386/____longjmp_chk.S: New file.
+	* sysdeps/x86_64/____longjmp_chk.S: New file.
+	* sysdeps/i386/__longjmp.S: If CHECK_ESP is defined, use it.
+	* sysdeps/x86_64/__longjmp.S: Likewise.
+
+	* version.h: Bump for 2.11 development.
+
+	* elf/check-execstack.c: New file.
+	* elf/Makefile: Add rules to build and run check-execstack.
+
 2009-05-10  Ulrich Drepper  <drepper@redhat.com>
 
 	* version.h (VERSION): Bump to 2.10.1.

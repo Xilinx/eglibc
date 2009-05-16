@@ -1,4 +1,4 @@
-/* Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+/* Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,17 +16,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <fcntl.h>
-#include <sysdep.h>
+#include <setjmp.h>
 
+// XXX Should move to include/setjmp.h
+extern void ____longjmp_chk (__jmp_buf __env, int __val)
+     __attribute__ ((__noreturn__));
 
-extern int __call_fallocate (int fd, int mode, __off64_t offset, __off64_t len)
-     attribute_hidden;
+#define __longjmp ____longjmp_chk
+#define __libc_siglongjmp __longjmp_chk
 
-
-/* Reserve storage for the data of the file associated with FD.  */
-int
-fallocate64 (int fd, int mode, __off64_t offset, __off64_t len)
-{
-  return __call_fallocate (fd, mode, offset, len);
-}
+#include <setjmp/longjmp.c>

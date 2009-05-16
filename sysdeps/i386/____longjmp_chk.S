@@ -1,4 +1,4 @@
-/* Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+/* Copyright (C) 2001,2004,2005,2006,2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,17 +16,30 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <fcntl.h>
-#include <sysdep.h>
+	.section .rodata.str1.1,"aMS",@progbits,1
+	.type	longjmp_msg,@object
+longjmp_msg:
+	.string "longjmp causes uninitialized stack frame"
+	.size	longjmp_msg, .-longjmp_msg
 
 
-extern int __call_fallocate (int fd, int mode, __off64_t offset, __off64_t len)
-     attribute_hidden;
+#define __longjmp ____longjmp_chk
 
+#ifdef PIC
+# define CALL_FAIL	movl	%ebx, %ecx;				      \
+			cfi_register(%ebx,%ecx);			      \
+			LOAD_PIC_REG (bx);				      \
+			leal	longjmp_msg@GOTOFF(%ebx), %eax;		      \
+			call	__GI___fortify_fail@PLT
+#else
+# define CALL_FAIL	movl	$longjmp_msg, %eax;			      \
+			call	__fortify_fail
+#endif
 
-/* Reserve storage for the data of the file associated with FD.  */
-int
-fallocate64 (int fd, int mode, __off64_t offset, __off64_t len)
-{
-  return __call_fallocate (fd, mode, offset, len);
-}
+#define CHECK_ESP(reg) \
+	cmpl	reg, %esp;						      \
+	jbe	.Lok;							      \
+	CALL_FAIL;							      \
+.Lok:
+
+#include "__longjmp.S"

@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2001,2004-2008 Free Software Foundation, Inc.
+# Copyright (C) 1998-2001,2004-2008, 2009 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -39,6 +39,7 @@ routines  = noophooks \
 	    gethostname_chk getdomainname_chk \
 	    asprintf_chk vasprintf_chk dprintf_chk \
 	    vdprintf_chk obprintf_chk \
+	    longjmp_chk ____longjmp_chk \
 	    stack_chk_fail fortify_fail \
 	    $(static-only-routines)
 routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
@@ -89,6 +90,8 @@ CFLAGS-pread_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pread64_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recv_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recvfrom_chk.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-tst-longjmp_chk.c = -fexceptions -fasynchronous-unwind-tables \
+			   -D_FORTIFY_SOURCE=1
 
 # We know these tests have problems with format strings, this is what
 # we are testing.  Disable that warning.
@@ -123,7 +126,7 @@ LDFLAGS-tst-lfschk4 = -lstdc++
 LDFLAGS-tst-lfschk5 = -lstdc++
 LDFLAGS-tst-lfschk6 = -lstdc++
 
-tests = test-strcpy_chk test-stpcpy_chk
+tests = tst-longjmp_chk test-strcpy_chk test-stpcpy_chk
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-chk1 tst-chk2 tst-chk3 tst-lfschk1 tst-lfschk2 tst-lfschk3 
 tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst 
