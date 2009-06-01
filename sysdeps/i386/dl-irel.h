@@ -1,7 +1,7 @@
-/* Count bits in CPU set.  x86-64 multi-arch version.
+/* Machine-dependent ELF indirect relocation inline functions.
+   i386 version.
+   Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Copyright (C) 2008, 2009 Free Software Foundation, Inc.
-   Contributed by Ulrich Drepper <drepper@redhat.com>.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,20 +18,27 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sched.h>
-#include "init-arch.h"
+#ifndef _DL_IREL_H
+#define _DL_IREL_H
 
-#define __sched_cpucount static generic_cpucount
-#include <posix/sched_cpucount.c>
-#undef __sched_cpucount
+#include <unistd.h>
 
-#define POPCNT(l) \
-  ({ __cpu_mask r; \
-     asm ("popcntq %1, %0" : "=r" (r) : "0" (l));\
-     r; })
-#define __sched_cpucount static popcount_cpucount
-#include <posix/sched_cpucount.c>
-#undef __sched_cpucount
+#define ELF_MACHINE_IREL	1
 
-libc_ifunc (__sched_cpucount,
-	    HAS_POPCOUNT ? popcount_cpucount : generic_cpucount);
+static inline void
+__attribute ((always_inline))
+elf_irel (const Elf32_Rel *reloc)
+{
+  Elf32_Addr *const reloc_addr = (void *) reloc->r_offset;
+  const unsigned long int r_type = ELF32_R_TYPE (reloc->r_info);
+
+  if (__builtin_expect (r_type == R_386_IRELATIVE, 1))
+    {
+      Elf64_Addr value = ((Elf32_Addr (*) (void)) (*reloc_addr)) ();
+      *reloc_addr = value;
+    }
+  else
+    _exit (-1);
+}
+
+#endif /* dl-irel.h */

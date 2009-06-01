@@ -1,7 +1,6 @@
-/* Count bits in CPU set.  x86-64 multi-arch version.
+/* Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Copyright (C) 2008, 2009 Free Software Foundation, Inc.
-   Contributed by Ulrich Drepper <drepper@redhat.com>.
+   Contributed by Jakub Jelinek <jakub@redhat.com>.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,20 +17,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sched.h>
-#include "init-arch.h"
+#include <errno.h>
+#include <sysdep.h>
+#include <setjmp.h>
+#include <bits/setjmp.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
 
-#define __sched_cpucount static generic_cpucount
-#include <posix/sched_cpucount.c>
-#undef __sched_cpucount
+#define __longjmp ____longjmp_chk
 
-#define POPCNT(l) \
-  ({ __cpu_mask r; \
-     asm ("popcntq %1, %0" : "=r" (r) : "0" (l));\
-     r; })
-#define __sched_cpucount static popcount_cpucount
-#include <posix/sched_cpucount.c>
-#undef __sched_cpucount
+#define CHECK_SP(env, guard) \
+  do									\
+    {									\
+      uintptr_t cur_sp;							\
+      uintptr_t new_sp = env->__gregs[9];				\
+      __asm ("lgr %0, %%r15" : "=r" (cur_sp));				\
+      new_sp ^= guard;							\
+      if (new_sp < cur_sp)						\
+	__fortify_fail ("longjmp causes uninitialized stack frame");	\
+    } while (0)
 
-libc_ifunc (__sched_cpucount,
-	    HAS_POPCOUNT ? popcount_cpucount : generic_cpucount);
+#include "__longjmp.c"
