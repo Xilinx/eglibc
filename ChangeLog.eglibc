@@ -1,3 +1,7 @@
+2009-06-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* nptl/nptl-init.c: Restore local changes lost in upstream rename.
+
 2009-05-06  Aurelien Jarno  <aurelien@aurel32.net>
 
 	* nss/nsswitch.c (lock_nsswitch, unlock_nsswitch): Remove brackets.
