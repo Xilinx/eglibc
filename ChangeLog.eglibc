@@ -1,3 +1,8 @@
+2009-06-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* nptl/nptl-init.c (sighandler_setxid): Remove duplicate decrement
+	of __xidcmd->cntr.
+
 2009-06-01  Joseph Myers  <joseph@codesourcery.com>
 
 	* nptl/nptl-init.c: Restore local changes lost in upstream rename.
