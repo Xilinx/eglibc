@@ -3,7 +3,7 @@
 ** 2006-07-17 by Arthur David Olson.
 */
 
-static char	elsieid[] = "@(#)zic.c	8.17";
+static char	elsieid[] = "@(#)zic.c	8.19";
 
 #ifdef CROSS_ZIC
 #define REPORT_BUGS_TO ""
@@ -513,7 +513,7 @@ char *	argv[];
 	while ((c = getopt(argc, argv, "d:l:p:L:vsy:")) != EOF && c != -1)
 		switch (c) {
 			default:
-			  usage(stderr, EXIT_FAILURE);
+				usage(stderr, EXIT_FAILURE);
 			case 'd':
 				if (directory == NULL)
 					directory = optarg;
@@ -2002,7 +2002,7 @@ const int			zonecount;
 	min_year = max_year = EPOCH_YEAR;
 	if (leapseen) {
 		updateminmax(leapminyear);
-		updateminmax(leapmaxyear);
+		updateminmax(leapmaxyear + (leapmaxyear < INT_MAX));
 	}
 	for (i = 0; i < zonecount; ++i) {
 		zp = &zpfirst[i];

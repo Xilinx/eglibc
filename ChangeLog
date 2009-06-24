@@ -1,3 +1,369 @@
+2009-06-23  Andreas Schwab  <aschwab@redhat.com>
+
+	* time/tzfile.c (__tzfile_read): Don't use an empty TZ string.
+
+2009-06-22  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/id.po: Update from translation team.
+
+	* po/bg.po: Update from translation team.
+
+2009-06-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* string/strncmp.c (STRNCMP): New.  Defined to strncmp if not
+	defined.
+	(strncmp): Renamed to STRNCMP.
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines): Add
+	strncmp-c for string.
+	* sysdeps/x86_64/multiarch/init-arch.h (HAS_SSE4_2): Define.
+	* sysdeps/x86_64/multiarch/strcmp.S: New file.
+	* sysdeps/x86_64/multiarch/strncmp.S: New file.
+	* sysdeps/x86_64/multiarch/strncmp-c.c: New file.
+
+2009-06-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/Makefile (distribute): Add ifuncmain1staticpie.c,
+	ifuncmain5.c, ifuncmain5pic.c, ifuncmain5picstatic.c,
+	ifuncmain5pie.c, ifuncmain5static.c, ifuncmain5staticpic.c,
+	ifuncdep5.c, ifuncdep5pic.c, ifuncmod5.c, ifuncmain7.c,
+	ifuncmain7pic.c, ifuncmain7picstatic.c, ifuncmain7pie.c, and
+	ifuncmain7static.c.
+	(tests-static): Add ifuncmain5static, ifuncmain5picstatic,
+	ifuncmain7static, and ifuncmain7picstatic.
+	(tests): Also depend on $(objpfx)ifuncmain1staticpie.out,
+	$(objpfx)ifuncmain5pie.out, $(objpfx)ifuncmain6pie.out, and
+	$(objpfx)ifuncmain7pie.out.
+	(modules-names): Add ifuncmod5 ifuncmod6
+	(ifuncmod5.so-no-z-defs): Define.
+	(ifuncmod6.so-no-z-defs): Define.
+	(CFLAGS-ifuncmain5pic.c): Define.
+	(CFLAGS-ifuncmain5picstatic.c): Define.
+	(CFLAGS-ifuncmain5staticpic.c): Define.
+	(CFLAGS-ifuncdep5pic.c): Define.
+	(CFLAGS-ifuncmain7pic.c): Define.
+	(CFLAGS-ifuncmain7picstatic.c): Define.
+	(CFLAGS-ifuncmain1staticpie.c): Define.
+	(CFLAGS-ifuncmain5pie.c): Define.
+	(CFLAGS-ifuncmain6pie.c): Define.
+	(CFLAGS-ifuncmain7pie.c): Define.
+	($(objpfx)ifuncmain1staticpie.out): Define.
+	($(objpfx)ifuncmain1staticpie): Define.
+	($(objpfx)ifuncmain5pie.out): Define.
+	($(objpfx)ifuncmain5pie): Define.
+	($(objpfx)ifuncmain6pie.out): Define.
+	($(objpfx)ifuncmain6pie): Define.
+	($(objpfx)ifuncmain5): Define.
+	($(objpfx)ifuncmain5pic): Define.
+	($(objpfx)ifuncmain5static): Define.
+	($(objpfx)ifuncmain5staticpic): Define.
+	($(objpfx)ifuncmain5picstatic): Define.
+	(generated): Add ifuncmain1staticpie, ifuncmain1staticpie.out,
+	ifuncmain5pie, ifuncmain5pie.out, ifuncmain6pie, and
+	ifuncmain6pie.out.
+	* elf/b/elf/ifuncmain1staticpie.c: New file.
+	* elf/ifuncdep5.c: New file.
+	* elf/ifuncdep5pic.c: New file.
+	* elf/ifuncmain5.c: New file.
+	* elf/ifuncmain5pic.c: New file.
+	* elf/ifuncmain5picstatic.c: New file.
+	* elf/ifuncmain5pie.c: New file.
+	* elf/ifuncmain5static.c: New file.
+	* elf/ifuncmain5staticpic.c: New file.
+	* elf/ifuncmain6pie.c: New file.
+	* elf/ifuncmain7.c: New file.
+	* elf/ifuncmain7pic.c: New file.
+	* elf/ifuncmain7picstatic.c: New file.
+	* elf/ifuncmain7pie.c: New file.
+	* elf/ifuncmain7static.c: New file.
+	* elf/ifuncmod5.c: New file.
+	* elf/ifuncmod6.c: New file.
+
+2009-06-20  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10085]
+	* nis/nss_compat/compat-initgroups.c (nss_setgrent): New variable.
+	(nss_endgrent): New variable.
+	(struct ent_t): Add need_endgrent and skip_initgroups_dyn
+	fields. Change type of files to bool and adjust all users.
+	(init_nss_interface): Initialize nss_setgrent and nss_endgrent.
+	(internal_endgrent): Call nss_endgrent if necessary.
+	(add_group): New function.  Broken out of...
+	(check_and_add_group): ...here.
+	(getgrent_next_nss): Remove test that any callback is available.
+	Use skip_initgroups_dyn to determine whether to use initgroups_dyn
+	callback.  If there is no blacklist we can trust the results returned
+	by the initgroups_dyn callback.  In case there is a callback and we
+	find a group entry for the group ID but it doesn't contain the
+	correct member, switch to the slow mode and use getgrent_r.
+	(internal_getgrent_r): When we see a +: entry, determine whether
+	there is any callback and which we can use the initgroups_dyn
+	callback.
+
+2009-06-18  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c (_int_malloc): Add some consistency checks.
+	(_int_free): Likewise.
+
+	* sysdeps/unix/sysv/linux/bits/socket.h: Define PF_IEEE802154 and
+	AF_IEEE802154.
+	* sysdeps/unix/sysv/linux/sparc/bits/socket.h: Likewise.
+	* sysdeps/unix/sysv/linux/net/if_arp.h: Define ARPHRD_IEEE802154
+	and ARPHRD_IEEE802154_PHY.
+
+	* sysdeps/unix/sysv/linux/sparc/bits/socket.h: Add missing definitions
+	relative to generic Linux version.
+
+2009-06-17  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/Makefile ($(objpfx)ifuncmain1pie): Use $(+link-pie).
+	($(objpfx)ifuncmain1vispie): Likewise.
+
+2009-06-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* login/Makefile: Build pt_chown as PIE.
+
+2009-06-15  Andreas Schwab  <aschwab@redhat.com>
+
+	* debug/xtrace.sh (do_help): Don't treat bug reporting message as
+	a format string.
+	* elf/sln.c (usage): Likewise.
+	* malloc/memusage.sh (do_help): Likewise.
+	* nss/getent.c (more_help): Likewise.
+	* posix/getconf.c (main): Likewise.
+	* sunrpc/rpcinfo.c (usage): Likewise.
+	* sysdeps/unix/sysv/linux/lddlibc4.c (main): Likewise.
+
+2009-06-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* login/programs/pt_chown.c: Use libcap to drop privileges other than
+	those needed.
+	* login/Makefile: If necessary link pt_chown with -lcap.
+	* sysdeps/generic/pty-private.h: Define FAIL_ENOMEM.
+	* sysdeps/unix/grantpt.c: Handle FAIL_ENOMEM.
+
+2009-06-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/x86_64/memchr.S (memchr): Use unsigned instead of signed
+	comparisons.
+	* string/test-memchr.c (do_random_tests): Test very large lengths
+	as well.
+
+2009-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makeconfig (+link-pie): Define.
+	(+prectorS): Define.
+	(+postctorS): Define.
+	* elf/Makefile ($(objpfx)tst-pie1): Use $(+link-pie).
+	* nscd/Makefile ($(objpfx)nscd): Likewise.
+
+2009-04-22  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	[BZ #10107]
+	* sysdeps/powerpc/powerpc32/power6/memcpy.S (memcpy): Replace cmpldi
+	with cmplwi.
+	* sysdeps/powerpc/powerpc32/power6/memset.S (memset): Likewise.
+
+2009-06-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/grantpt.c: Remove file after folding changes
+	into ...
+	* sysdeps/unix/grantpt.c: ...here.
+
+2009-06-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/grantpt.c (grantpt): Only call chown and
+	chmod if it is necessary.
+
+	[BZ #10166]
+	* sysdeps/unix/sysv/linux/grantpt.c: Remove shortcut which was used
+	when the slave device is in devpts or devfs.
+
+	[BZ #10183]
+	* posix/tst-cpucount.c: Don't try more than CPU_SETSIZE bits.
+
+	[BZ #10195]
+	* inet/netinet/icmp6.h (struct nd_opt_home_agent_info): Change type
+	of nd_opt_home_agent_info_preference to uint16_t.
+	Patch by Arnaud Ebalard <arno@natisbad.org>.
+
+	[BZ #10207]
+	* nss/getent.c: Add support for printing gshadow data.
+
+	[BZ #10203]
+	* nis/nss_nis/nis-pwd.c (internal_nis_endpwent): Free all buffers,
+	not just the currently used one and those which follow.
+	Patch by Joe Landers <jlanders@vmware.com>.
+
+	[BZ #10196]
+	* libio/tst-fgetwc.c (do_test): Use de_DE.UTF-8 as locale name.
+	* libio/Makefile: Run tst-fgetwc with necessary envvar.
+	Patch by Bruce Dubbs <bdubbs@linuxfromscratch.org>.
+
+	[BZ #10217]
+	* stdlib/abort.c: Define variable __abort_msg.
+	* stdlib/Versions: Export __abort_msg with GLIBC_PRIVATE version.
+	* include/stdlib.h: Declare __abort_msg.
+	* assert/assert-perr.c: Don't free buffer for message immediately.
+	Store atomically in __abort_msg and free old buffer if necessary.
+	* assert/assert.c: Likewise.
+	* sysdeps/posix/libc_fatal.c: Allocate buffer for message, copy it,
+	store pointer in __abort_msg, and possibly free old string.
+	* sysdeps/unix/sysv/linux/libc_fatal.c: Likewise.
+
+	* time/tzfile.c (__tzfile_read): Correct computation of tzspec_len.
+
+	[BZ #10211]
+	* time/tzfile.c (__tzfile_compute): If we use the envvar format still
+	handle leap seconds if they are available.
+	Patch by Akinori Hattori <hattya@gentoo.org>.
+
+	* timezone/tzselect.ksh: Update from tzcode2009i.
+	* timezone/zdump.c: Likewise.
+	* timezone/zic.c: Likewise.
+
+	* timezone/africa: Update from tzdata2009i.
+	* timezone/antarctica: Likewise.
+	* timezone/asia: Likewise.
+	* timezone/australasia: Likewise.
+	* timezone/backward: Likewise.
+	* timezone/etcetera: Likewise.
+	* timezone/europe: Likewise.
+	* timezone/factory: Likewise.
+	* timezone/iso3166.tab: Likewise.
+	* timezone/leapseconds: Likewise.
+	* timezone/northamerica: Likewise.
+	* timezone/pacificnew: Likewise.
+	* timezone/solar87: Likewise.
+	* timezone/solar88: Likewise.
+	* timezone/solar89: Likewise.
+	* timezone/southamerica: Likewise.
+	* timezone/systemv: Likewise.
+	* timezone/yearistype: Likewise.
+	* timezone/zone.tab: Likewise.
+
+2009-06-15  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/dl-lookup.c (_dl_debug_bindings): When resolving to
+	STT_GNU_IFUNC symbol or in 8 into type_class.
+
+	* sysdeps/i386/dl-irel.h (elf_irel): Use Elf32_Addr type
+	instead of Elf64_Addr.
+
+2009-06-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/sv.po: Update from translation team.
+
+	[BZ #10229]
+	* misc/sys/select.h (__NFDBITS): Expression should have type int.
+	* sysdeps/x86_64/bits/select.h: Remove asm versions for __FD_SET,
+	__FD_CLR, and __FD_ISSET.  gcc nowadays generates better code from
+	the C version.
+
+2009-06-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* Versions.def: Add GLIBC_2.11 for libpthread.
+
+2009-06-11  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_send.c (send_dg): Remember we switched to
+	single-request mode.
+
+2009-06-09  Ulrich Drepper  <drepper@redhat.com>
+
+	* dlfcn/dlfcn.h: Remove comma at end of enum.
+	Patch by J.H.M. Dassen <rdassen@redhat.com>.
+
+	* libio/fileops.c (_IO_new_file_fopen): Don't prematurely stop
+	parsing mode string.
+
+2009-06-05  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/rawmemchr.S: Minor optimization.
+
+	* sysdeps/x86_64/multiarch/rawmemchr.S: New file.
+
+	* sysdeps/x86_64/multiarch/strlen.S: New file.
+	* sysdeps/x86_64/multiarch/ifunc-defines.sym: New file.
+	* sysdeps/x86_64/multiarch/Makefile: Add rule to build ifunc-defines.h.
+	* sysdeps/x86_64/multiarch/init-arch.h: Name structure with register
+	content.
+
+	* csu/elf-init.c: Only compile in IFUNC functionality if USE_MULTIARCH
+	is defined.
+
+2009-06-04  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/strlen.S: Minor optimizations.
+
+2009-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/Makefile (distribute): Add ifuncmain1.c, ifuncmain1pic.c,
+	ifuncmain1vis.c, ifuncmain1vispic.c, ifuncmain1static.c,
+	ifuncmain1staticpic.c, ifuncmain1picstatic.c, ifuncdep1.c,
+	ifuncdep1pic.c, ifuncmod1.c, ifuncmain1pie.c, ifuncmain1vispie.c,
+	ifuncmain2.c, ifuncmain2static.c, ifuncdep2.c,
+	funcmain2pic.c, ifuncmain2picstatic.c, ifuncdep2pic.c,
+	ifuncmain3.c, ifuncmod3.c,.
+	ifuncmain4.c, ifuncmain4static.c, ifuncmain4picstatic.c.
+	(tests-static): Add ifuncmain1static, ifuncmain1picstatic,
+	ifuncmain2static, ifuncmain2picstatic, ifuncmain4static,
+	ifuncmain4picstatic.
+	(tests): Add ifuncmain1, ifuncmain1pic, ifuncmain1vis,
+	ifuncmain1vispic, ifuncmain1staticpic, ifuncmain2, ifuncmain2pic,
+	ifuncmain3, ifuncmain4.
+	(tests): Depend on $(objpfx)ifuncmain1pie.out and
+	$(objpfx)ifuncmain1vispie.out.
+	(modules-names): Add ifuncmod1 ifuncmod3.
+	(generated): Add ifuncmain1pie ifuncmain1pie.out
+	ifuncmain1vispie ifuncmain1vispie.out.
+	Define rules to build and run the tests.
+	* elf/ifuncdep1.c: New file.
+	* elf/ifuncdep1pic.c: New file.
+	* elf/ifuncdep2.c: New file.
+	* elf/ifuncdep2pic.c: New file.
+	* elf/ifuncmain1.c: New file.
+	* elf/ifuncmain1pic.c: New file.
+	* elf/ifuncmain1picstatic.c: New file.
+	* elf/ifuncmain1pie.c: New file.
+	* elf/ifuncmain1static.c: New file.
+	* elf/ifuncmain1staticpic.c: New file.
+	* elf/ifuncmain1vis.c: New file..
+	* elf/ifuncmain1vispic.c: New file..
+	* elf/ifuncmain1vispie.c: New file.
+	* elf/ifuncmain2.c: New file.
+	* elf/ifuncmain2pic.c: New file.
+	* elf/ifuncmain2picstatic.c: New file.
+	* elf/ifuncmain2static.c: New file.
+	* elf/ifuncmain3.c: New file.
+	* elf/ifuncmain4.c: New file.
+	* elf/ifuncmain4picstatic.c: New file.
+	* elf/ifuncmain4static.c: New file.
+	* elf/ifuncmod1.c: New file.
+	* elf/ifuncmod3.c: New file.
+
+2009-06-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-sysdep.c (_dl_show_auxv): Terminate correct string.
+
+2009-06-02  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10221]
+	* posix/Makefile (routines): Add execvpe.
+	* posix/Versions: Export execvpe for GLIBC_2.11.
+	* posix/execvp.c: Now only a wrapper.  Move code to...
+	* posix/execvpe.c: ...here.  New file.
+	* posix/unistd.h: Declare execvpe.
+
+2009-06-01  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/i386/dl-machine.h (elf_machine_rel): Reorder conditions
+	for STT_GNU_IFUNC handling for efficiency.
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela): Likewise.
+
+	* sysdeps/i386/dl-irel.h (elf_irel): Use __libc_fatal instead of just
+	_exit.
+	* sysdeps/x86_64/dl-irel.h (elf_irela): Likewise.
+
 2009-05-31  Ulrich Drepper  <drepper@redhat.com>
 
 	* sysdeps/x86_64/multiarch/sched_cpucount.c: Also use optimized code

@@ -687,7 +687,8 @@ usage (FILE *stream)
   fputs (_("       rpcinfo -p [ host ]\n"), stream);
   fputs (_("       rpcinfo -b prognum versnum\n"), stream);
   fputs (_("       rpcinfo -d prognum versnum\n"), stream);
-  fprintf (stream, _("\n\
+  fputc ('\n', stream);
+  fprintf (stream, _("\
 For bug reporting instructions, please see:\n\
 %s.\n"), REPORT_BUGS_TO);
 }

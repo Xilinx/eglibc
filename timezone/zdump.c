@@ -1,4 +1,9 @@
-static char	elsieid[] = "@(#)zdump.c	8.6";
+/*
+** This file is in the public domain, so clarified as of
+** 2009-05-17 by Arthur David Olson.
+*/
+
+static char	elsieid[] = "@(#)zdump.c	8.9";
 
 /*
 ** This code has been made independent of the rest of the time
@@ -361,13 +366,9 @@ char *	argv[];
 			(void) strncpy(buf, abbr(&tm), (sizeof buf) - 1);
 		}
 		for ( ; ; ) {
-			if (t >= cuthitime)
+			if (t >= cuthitime || t >= cuthitime - SECSPERHOUR * 12)
 				break;
 			newt = t + SECSPERHOUR * 12;
-			if (newt >= cuthitime)
-				break;
-			if (newt <= t)
-				break;
 			newtmp = localtime(&newt);
 			if (newtmp != NULL)
 				newtm = *newtmp;

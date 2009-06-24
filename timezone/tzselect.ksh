@@ -1,6 +1,6 @@
 #! @KSH@
 
-VERSION='@(#)tzselect.ksh	8.1'
+VERSION='@(#)tzselect.ksh	8.2'
 PKGVERSION='@PKGVERSION@'
 REPORT_BUGS_TO='@REPORT_BUGS_TO@'
 

@@ -21,6 +21,7 @@
 #ifndef _DL_IREL_H
 #define _DL_IREL_H
 
+#include <stdio.h>
 #include <unistd.h>
 
 #define ELF_MACHINE_IREL	1
@@ -34,11 +35,11 @@ elf_irel (const Elf32_Rel *reloc)
 
   if (__builtin_expect (r_type == R_386_IRELATIVE, 1))
     {
-      Elf64_Addr value = ((Elf32_Addr (*) (void)) (*reloc_addr)) ();
+      Elf32_Addr value = ((Elf32_Addr (*) (void)) (*reloc_addr)) ();
       *reloc_addr = value;
     }
   else
-    _exit (-1);
+    __libc_fatal ("unexpected reloc type in static binary");
 }
 
 #endif /* dl-irel.h */
