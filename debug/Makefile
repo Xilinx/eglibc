@@ -126,10 +126,13 @@ LDFLAGS-tst-lfschk4 = -lstdc++
 LDFLAGS-tst-lfschk5 = -lstdc++
 LDFLAGS-tst-lfschk6 = -lstdc++
 
+# backtrace_symbols only works if we link with -rdynamic.
+LDFLAGS-tst-backtrace2 = -rdynamic
+
 tests = tst-longjmp_chk test-strcpy_chk test-stpcpy_chk
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-chk1 tst-chk2 tst-chk3 tst-lfschk1 tst-lfschk2 tst-lfschk3 
-tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst 
+tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst tst-backtrace2
 ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_EGLIBC_CXX_TESTS))
 tests += tst-chk4 tst-chk5 tst-chk6 tst-lfschk4 tst-lfschk5 tst-lfschk6
 endif
