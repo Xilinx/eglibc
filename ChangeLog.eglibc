@@ -1,3 +1,9 @@
+2009-06-25  Kazu Hirata  <kazu@codesourcery.com>
+
+	* sysdeps/i386/Makefile (CFLAGS-initfini.s): Add
+	-fno-asynchronous-unwind-tables and -fno-unwind-tables.
+	(CFLAGS-pt-initfini.s): New.
+
 2009-06-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* debug/Makefile (LDFLAGS-tst-backtrace2): Define.
