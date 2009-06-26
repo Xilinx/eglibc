@@ -39,5 +39,5 @@ hidden_ver (___isnanl, __isnanl)
 #ifndef IS_IN_libm
 weak_alias (___isnanl, ____isnanl)
 long_double_symbol (libc, ___isnanl, isnanl);
-long_double_symbol (libc, ____isnanl, __isnanl);
+long_double_symbol (libc, ____isnanl, __isnanl) versioned_weak;
 #endif

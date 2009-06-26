@@ -447,10 +447,31 @@ for linking")
      __asm__ (".symver " #real "," #name "@@" #version)
 #  endif
 # endif
-#else
+# define versioned_weak /* nothing */
+#else /* !DO_VERSIONING */
+
 # define symbol_version(real, name, version)
-# define default_symbol_version(real, name, version) \
-  strong_alias(real, name)
+# ifdef __ASSEMBLER__
+#  define default_symbol_version(real, name, version) \
+  strong_alias (real, name)
+# else
+/* We can't use simple strong_alias in C here due to
+   symbols defined with hidden_def and company.
+   As you see above, symbol versions are output in plain assembly,
+   so, to archieve the same effect, we use __asm__ (#name).
+
+   Define an alias to REAL with C name __FI_##NAME and
+   asm name NAME.  We use __FI_* namespace to fill a gap
+   between __EI_* and __GI_* namespaces.  */
+#  define default_symbol_version(real, name, version) \
+  extern __typeof (real) __FI_##name __asm__ (#name); \
+  extern __typeof (real) __FI_##name __attribute__((alias (#real)))
+# endif
+/* When not using symbol versioning we use an equivalent of
+   strong_alias to define a symbol; hence add __attribute__((weak))
+   to make it weak instead.  When using .symver, this is not necessary
+   as .symver handles weakness properly.  */
+# define versioned_weak __attribute__((weak))
 #endif
 
 #if defined SHARED || defined LIBC_NONSHARED
@@ -561,7 +582,7 @@ for linking")
    versioned_symbol (libc, __real_foo, foo, GLIBC_2_1);
    libc_hidden_ver (__real_foo, foo)  */
 
-#if defined SHARED && defined DO_VERSIONING && !defined NO_HIDDEN
+#if defined SHARED && !defined NO_HIDDEN
 # ifndef __ASSEMBLER__
 #  define __hidden_proto_hiddenattr(attrs...) \
   __attribute__ ((visibility ("hidden"), ##attrs))

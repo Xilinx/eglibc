@@ -298,8 +298,13 @@ tests += tst-cancelx2 tst-cancelx3 tst-cancelx4 tst-cancelx5 \
 	 tst-oncex3 tst-oncex4
 endif
 ifeq ($(build-shared),yes)
-tests += tst-atfork2 tst-tls3 tst-tls4 tst-tls5 tst-_res1 tst-fini1 \
+tests += tst-atfork2 tst-tls3 tst-tls4 tst-tls5 tst-fini1 \
 	 tst-stackguard1
+ifeq ($(versioning),yes)
+# struct __res_state _res is only available with
+# symbol versioning after GLIBC_2.2.
+tests += tst-_res1
+endif
 tests-nolibpthread += tst-fini1
 ifeq ($(have-z-execstack),yes)
 tests += tst-execstack

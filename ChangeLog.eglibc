@@ -1,3 +1,40 @@
+2009-06-26  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Make --disable-versioning work.
+
+	* scripts/versions.awk (versioning): New parameter, don't output
+	version information if it is defined to 'no'.
+	* include/shlib-compat.h (IS_IN_libc, versioned_symbol),
+	(versioned_symbol_1): Define when !DO_VERSIONING.
+	(invisible_compat_symbol): Define, instead of compat_symbol when
+	appropriate.
+	* include/libc-symbols.h (default_symbol_version): Define when
+	!DO_VERSIONING.
+	(versioned_weak): Define.
+	* Makerules: Generate version maps when !DO_VERSIONING to properly
+	set symbol binding.
+	(abi_versions_file): Define, use instead of abi-versions.h.
+	(libc_gcclibs): Define, link against libgcc_eh when !DO_VERSIONING.
+	* extra-lib.mk, elf/Makefile: Update, handle --disable-versioning.
+	* elf/do-rel.h: Handle !DO_VERSIONING.
+
+	* sysdeps/powerpc/powerpc32/dl-machine.c: Don't error when
+	!DO_VERSIONING.
+	* sysdeps/ieee754/ldbl-opt/math_ldbl_opt.h: Define stuff when
+	!DO_VERSIONING.
+	* nptl/pthread_kill_other_threads.c (compat_symbol): Surround with
+	ifdef DO_VERSIONING.
+	* sysdeps/wordsize-32/divdi3.c: Use invisible_compat_symbol.
+	* nptl/Makefile (tst-_res1): Disable test when !DO_VERSIONING.
+	
+	* sysdeps/powerpc/longjmp.c (_longjmp, longjmp, siglongjmp): Update.
+	* sysdeps/ieee754/ldbl-opt/math_ldbl_opt.h (ldbl_weak_alias): Update.
+	* sysdeps/ieee754/ldbl-128ibm/s_isinfl.c (__isinfl): Update.
+	* sysdeps/ieee754/ldbl-128ibm/s_finitel.c (finitel): Update.
+	* sysdeps/ieee754/ldbl-128ibm/s_isnanl.c (__isnanl): Update.
+	* sysdeps/ieee754/ldbl-128ibm/strtold_l.c (wcstold_l, strtold_l):
+	Update.
+	
 2009-06-25  Kazu Hirata  <kazu@codesourcery.com>
 
 	* sysdeps/i386/Makefile (CFLAGS-initfini.s): Add

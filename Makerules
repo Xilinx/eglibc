@@ -106,6 +106,7 @@ $(common-objpfx)%.latest: $(common-objpfx)abi-versions.h
 	sed -n '/ VERSION_$*_/{s/^.*_\([A-Z0-9_]*\).*$$/\1/;h;};$${g;p;}' \
 	    $(common-objpfx)abi-versions.h > $@T
 	mv -f $@T $@
+abi_versions_file := $(common-objpfx)abi-versions.h
 endif # avoid-generated
 endif # $(versioning) = yes
 
@@ -304,7 +305,9 @@ endif
 
 # Generate version maps, but wait until sysdep-subdirs is known
 ifeq ($(sysd-sorted-done),t)
-ifeq ($(versioning),yes)
+# eglibc: Even when not using symbol versioning we still need to generate
+# eglibc: version maps to make all the necessary symbols global.
+# eglibc: ifeq ($(versioning),yes)
 -include $(common-objpfx)sysd-versions
 $(addprefix $(common-objpfx),$(version-maps)): $(common-objpfx)sysd-versions
 common-generated += $(version-maps)
@@ -332,7 +335,7 @@ $(common-objpfx)Versions.all: $(..)scripts/firstversions.awk \
 # See %.v/%.v.i implicit rules in Makeconfig.
 $(common-objpfx)Versions.v.i: $(wildcard $(subdirs:%=$(..)%/Versions)) \
 			      $(wildcard $(sysdirs:%=%/Versions)) \
-			      $(common-objpfx)abi-versions.h \
+			      $(abi_versions_file) \
 			      $(sysd-versions-force)
 $(common-objpfx)sysd-versions: $(common-objpfx)Versions.all \
 			       $(common-objpfx)Versions.v \
@@ -341,11 +344,12 @@ $(common-objpfx)sysd-versions: $(common-objpfx)Versions.all \
 	  cat $(word 2,$^) \
 	  | LC_ALL=C $(AWK) -v buildroot=$(common-objpfx) -v defsfile=$< \
 			    -v move_if_change='$(move-if-change)' \
+			    -v versioning=$(versioning) \
 			    -f $(word 3,$^); \
 	) > $@T
 	mv -f $@T $@
 endif # avoid-generated
-endif # $(versioning) = yes
+# eglibc: endif # $(versioning) = yes
 endif # sysd-sorted-done
 
 # Generate .dT files as we compile.
@@ -439,12 +443,12 @@ ifeq (yes,$(build-shared))
 
 # Reference map file only when versioning is selected and a map file name
 # is given.
-ifeq ($(versioning),yes)
+# eglibc: ifeq ($(versioning),yes)
 map-file = $(firstword $($(@F:.so=-map)) \
 		       $(addprefix $(common-objpfx), \
 				   $(filter $(@F:.so=.map),$(version-maps))))
 load-map-file = $(map-file:%=-Wl,--version-script=%)
-endif
+# eglibc: endif
 
 # Pattern rule to build a shared object from an archive of PIC objects.
 # This must come after the installation rules so Make doesn't try to
@@ -615,16 +619,22 @@ ifeq ($(elf),yes)
 $(common-objpfx)libc_pic.os: $(common-objpfx)libc_pic.a
 	$(LINK.o) -nostdlib -nostartfiles -r -o $@ \
 	$(LDFLAGS-c_pic.os) -Wl,-d -Wl,--whole-archive $^
+ifneq ($(versioning),yes)
+# When EGLIBC is built without symbol versioning, local copy of
+# unwind-dw2-fde-glibc.c is not compiled, so we need to link against
+# libgcc_eh to get _Unwind_Find_FDE.
+libc_gcclibs := -lgcc_eh
+endif
 # Use our own special initializer and finalizer files for libc.so.
 $(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
 			 $(common-objpfx)libc_pic.os \
 			 $(elfobjdir)/sofini.os \
 			 $(elfobjdir)/interp.os $(elfobjdir)/ld.so \
 			 $(common-objpfx)shlib.lds
-	$(build-shlib)
-ifeq ($(versioning),yes)
+	$(build-shlib) $(libc_gcclibs)
+# eglibc: ifeq ($(versioning),yes)
 $(common-objpfx)libc.so: $(common-objpfx)libc.map
-endif
+# eglibc: endif
 common-generated += libc.so libc_pic.os
 ifndef subdir
 install-extras := soinit.o sofini.o

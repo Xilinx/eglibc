@@ -127,9 +127,9 @@ before-compile  = $(objpfx)trusted-dirs.h
 generated	:= trusted-dirs.h trusted-dirs.st for-renamed/renamed.so
 generated-dirs	:= for-renamed
 
-ifeq ($(versioning),yes)
+# eglibc: ifeq ($(versioning),yes)
 ld-map		= $(common-objpfx)ld.map
-endif
+# eglibc: endif
 
 ifeq (yes,$(build-shared))
 extra-objs	= $(all-rtld-routines:%=%.os) soinit.os sofini.os interp.os

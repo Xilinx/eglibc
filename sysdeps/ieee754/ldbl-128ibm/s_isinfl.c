@@ -31,5 +31,5 @@ hidden_ver (___isinfl, __isinfl)
 #ifndef IS_IN_libm
 weak_alias (___isinfl, ____isinfl)
 long_double_symbol (libc, ___isinfl, isinfl);
-long_double_symbol (libc, ____isinfl, __isinfl);
+long_double_symbol (libc, ____isinfl, __isinfl) versioned_weak;
 #endif

@@ -6,6 +6,7 @@
 # defsfile		name of Versions.def file
 # buildroot		name of build directory with trailing slash
 # move_if_change	move-if-change command
+# versioning            "yes", if symbol versioning is being used
 
 # Read definitions for the versions.
 BEGIN {
@@ -67,7 +68,10 @@ BEGIN {
   sortver=actver
   # Ensure GLIBC_ versions come always first
   sub(/^GLIBC_/," GLIBC_",sortver)
-  printf("%s %s %s\n", actlib, sortver, $0) | sort;
+  if (versioning == "yes") printf("%s %s %s\n", actlib, sortver, $0) | sort;
+  # When not using symbol versioning, assign all symbols non-existent GLIBC
+  # version 1.1; this will allow us to make all necessary symbols global.
+  else printf("%s GLIBC_1.1 %s\n", actlib, $0) | sort;
 }
 
 
@@ -81,7 +85,7 @@ function closeversion(name, oldname) {
   # or FOO_x and FOO_y but not GLIBC_x and FOO_y.
   pfx = oldname;
   sub(/[0-9.]+/,".+",pfx);
-  if (oldname == "" || name !~ pfx) print "};" > outfile;
+  if (oldname == "" || name !~ pfx || versioning != "yes") print "};" > outfile;
   else printf("} %s;\n", oldname) > outfile;
 }
 
@@ -121,7 +125,10 @@ END {
 	closeversion(oldver, veryoldver);
 	veryoldver = oldver;
       }
-      printf("%s {\n  global:\n", $2) > outfile;
+      if (versioning == "yes") printf("%s {\n  global:\n", $2) > outfile;
+      # When not using symbol versioning, just output which symbols should be
+      # made global.
+      else print "{\n  global:\n" > outfile;
       oldver = $2;
     }
     printf("   ") > outfile;
