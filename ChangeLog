@@ -1,3 +1,29 @@
+2009-06-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/ifunc-defines.sym (FAMILIY_OFFSET): Define.
+	(MODEL_OFFSET): Define.
+	* sysdeps/x86_64/multiarch/init-arch.h (cpu_features): Add
+	family and model.
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features): Break
+	out common code into new function get_common_indeces. Determine
+	extended family and model for Intel processors.
+
+2009-06-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/resolv.h: Define RES_SNGLKUPREOP.
+	* resolv/res_init.c (res_setoptions): Recognize single-request-reopen
+	option.
+	* resolv/res_send.c (reopen): New function.  Broken out of...
+	(send_dg): ... here.  Recognize RES_SNGLKUPREOP.  Implement second
+	fallback mechanism.  If single-request fails switch to
+	single-request-reopen mode which opens a new socket for the second
+	request.
+
+2009-06-25  Andreas Schwab  <aschwab@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/____longjmp_chk.S (LOAD_ARG): Define.
+	(CHECK_SP): Use it.
+
 2009-06-24  Andreas Schwab  <aschwab@redhat.com>
 
 	* sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S: Fix cfa offset
