@@ -85,6 +85,14 @@ config OPTION_EGLIBC_BACKTRACE
          backtrace_symbols
          backtrace_symbols_fd
 
+config OPTION_EGLIBC_BIG_MACROS
+   bool "Use extensive inline code"
+   help
+       This option group specifies whether certain pieces of code
+       should be inlined to achieve maximum speed.  If this option
+       group is not selected, function calls will be used instead,
+       hence reducing the library footprint.
+
 config OPTION_EGLIBC_BSD
    bool "BSD-specific functions, and their compatibility stubs"
    help

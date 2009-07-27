@@ -1,3 +1,21 @@
+2009-07-27  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Add BIG_MACROS option group.
+
+	* option-groups.def (OPTION_EGLIBC_BIG_MACROS): Define new option
+	group.
+	* option-groups.defaults (OPTION_EGLIBC_BIG_MACROS): Define default.
+	* nptl/sysdeps/pthread/small-macros-fns.c: New file.  Define wrappers.
+	* nptl/sysdeps/pthread/Makefile (nptl/sysdep_routines): Add
+	small-macros-fns.
+	* nptl/sysdeps/pthread/bits/libc-lock.h (gnu/option-groups.h): Include.
+	(errno.h): Include, make implicit dependency explicit.
+	(__libc_lock_lock, __libc_lock_lock_recursive),
+	(__libc_lock_trylock, __libc_lock_trylock_recursive),
+	(__libc_lock_unlock, __libc_lock_unlock_recursive):
+	If OPTION_EGLIBC_BIG_MACROS, define to macro;
+	define to function call	otherwise.
+
 2009-06-26  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	Make --disable-versioning work.
