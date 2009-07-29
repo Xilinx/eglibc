@@ -52,3 +52,28 @@ if test $libc_cv_cpp_asm_debuginfo = yes; then
 _ACEOF
 
 fi
+
+echo "$as_me:$LINENO: checking for SSE4 support" >&5
+echo $ECHO_N "checking for SSE4 support... $ECHO_C" >&6
+if test "${libc_cv_cc_sse4+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if { ac_try='${CC-cc} -msse4 -xc /dev/null -S -o /dev/null'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  libc_cv_cc_sse4=yes
+else
+  libc_cv_cc_sse4=no
+fi
+fi
+echo "$as_me:$LINENO: result: $libc_cv_cc_sse4" >&5
+echo "${ECHO_T}$libc_cv_cc_sse4" >&6
+if test $libc_cv_cc_sse4 = yes; then
+  cat >>confdefs.h <<\_ACEOF
+#define HAVE_SSE4_SUPPORT 1
+_ACEOF
+
+fi
