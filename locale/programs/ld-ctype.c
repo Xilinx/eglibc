@@ -1058,8 +1058,7 @@ ctype_output (struct localedef_t *locale, const struct charmap_t *charmap,
 
 	  CTYPE_UINT32 (_NL_CTYPE_MAP_TO_NONASCII, ctype->to_nonascii);
 
-	  CTYPE_DATA (_NL_CTYPE_NONASCII_CASE,
-		      &ctype->nonascii_case, sizeof (uint32_t));
+	  CTYPE_UINT32 (_NL_CTYPE_NONASCII_CASE, ctype->nonascii_case);
 
 	  case _NL_ITEM_INDEX (_NL_CTYPE_INDIGITS_MB_LEN):
 	    add_locale_uint32 (&file, ctype->mbdigits_act / 10);
