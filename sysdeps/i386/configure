@@ -33,6 +33,51 @@ fi
 # This file is generated from configure.in by Autoconf.  DO NOT EDIT!
  # Local configure fragment for sysdeps/i386.
 
+
+{ $as_echo "$as_me:$LINENO: checking if gcc provides <cpuid.h>" >&5
+$as_echo_n "checking if gcc provides <cpuid.h>... " >&6; }
+if test "${libc_cv_gcc_cpuid+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#include <cpuid.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  libc_cv_gcc_cpuid=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	libc_cv_gcc_cpuid=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $libc_cv_gcc_cpuid" >&5
+$as_echo "$libc_cv_gcc_cpuid" >&6; }
+if test $libc_cv_gcc_cpuid != yes; then
+  { { $as_echo "$as_me:$LINENO: error: gcc must provide the <cpuid.h> header" >&5
+$as_echo "$as_me: error: gcc must provide the <cpuid.h> header" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 { $as_echo "$as_me:$LINENO: checking if -g produces usable source locations for assembler-with-cpp" >&5
 $as_echo_n "checking if -g produces usable source locations for assembler-with-cpp... " >&6; }
 if test "${libc_cv_cpp_asm_debuginfo+set}" = set; then

@@ -92,6 +92,8 @@ CFLAGS-recv_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recvfrom_chk.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-tst-longjmp_chk.c = -fexceptions -fasynchronous-unwind-tables \
 			   -D_FORTIFY_SOURCE=1
+CFLAGS-tst-longjmp_chk2.c = -fexceptions -fasynchronous-unwind-tables \
+			    -D_FORTIFY_SOURCE=1
 
 # We know these tests have problems with format strings, this is what
 # we are testing.  Disable that warning.
@@ -129,7 +131,7 @@ LDFLAGS-tst-lfschk6 = -lstdc++
 # backtrace_symbols only works if we link with -rdynamic.
 LDFLAGS-tst-backtrace2 = -rdynamic
 
-tests = tst-longjmp_chk test-strcpy_chk test-stpcpy_chk
+tests = tst-longjmp_chk test-strcpy_chk test-stpcpy_chk tst-longjmp_chk2
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-chk1 tst-chk2 tst-chk3 tst-lfschk1 tst-lfschk2 tst-lfschk3 
 tests-$(OPTION_EGLIBC_BACKTRACE) += backtrace-tst tst-backtrace2
