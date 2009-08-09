@@ -361,10 +361,9 @@ endif
 
 .PHONY: TAGS
 TAGS:
-	scripts/list-sources.sh \
-        | sed -n -e '/Makefile/p;' \
-		 -e '$(foreach S,[chsSyl] cxx sh bash pl,\
-		               $(subst .,\.,/.$S\(.in\)*$$/p;))' \
+	scripts/list-sources.sh | sed -n -e '/Makefile/p' \
+	  $(foreach S,[chsSyl] cxx sh bash pl,\
+		    $(subst .,\.,-e '/.$S\(.in\)*$$/p')) \
 	| $(ETAGS) -o $@ -
 
 # Make the distribution tarfile.
