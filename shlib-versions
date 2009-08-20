@@ -134,3 +134,8 @@ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
 
 # The asynchronous name lookup library.
 .*-.*-.*		libanl=1
+
+# The GCC support library.
+# We don't really provide this one as the part of GLIBC,
+# but we declare it here to produce LIBGCC_S_SO macro in gnu/lib-names.h.
+.*-.*-.*                libgcc_s=1

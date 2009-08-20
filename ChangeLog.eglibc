@@ -1,3 +1,14 @@
+2009-08-20  Maxim Kuvyrkov  <maxim@codesourcery.com>
+	    Carlos O'Donell  <carlos@codesourcery.com>
+
+	Allow ports to define the version of the libgcc_s.so library.
+
+	* shlib-versions: Add line for libgcc_s, set version to 1.
+	* sysdeps/generic/framestate.c: Include gnu/lib-names.h,
+	use LIBGCC_S_SO instead of hardcoded string.
+	* nptl/sysdeps/pthread/unwind-resume.c: Same.
+	* nptl/sysdeps/pthread/unwind-forceunwind.c: Same.
+
 2009-08-03  Joseph Myers  <joseph@codesourcery.com>
 
 	* locale/programs/ld-ctype.c (ctype_output): Correct merge error.

@@ -20,6 +20,7 @@
 
 #include <dlfcn.h>
 #include <stdlib.h>
+#include <gnu/lib-names.h>
 #define STATIC static
 #define __frame_state_for fallback_frame_state_for
 #include <unwind-dw2.c>
@@ -36,7 +37,7 @@ __frame_state_for (void *pc, struct frame_state *frame_state)
 
   if (frame_state_for == NULL)
     {
-      void *handle = __libc_dlopen ("libgcc_s.so.1");
+      void *handle = __libc_dlopen (LIBGCC_S_SO);
 
       if (handle == NULL
 	  || (frame_state_for
