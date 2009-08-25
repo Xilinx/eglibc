@@ -185,6 +185,7 @@ __printf_fphex (FILE *fp,
       /* Check for special values: not a number or infinity.  */
       if (__isnanl (fpnum.ldbl.d))
 	{
+	  negative = fpnum.ldbl.ieee.negative != 0;
 	  if (isupper (info->spec))
 	    {
 	      special = "NAN";
@@ -195,7 +196,6 @@ __printf_fphex (FILE *fp,
 	      special = "nan";
 	      wspecial = L"nan";
 	    }
-	  negative = 0;
 	}
       else
 	{
@@ -224,6 +224,7 @@ __printf_fphex (FILE *fp,
       /* Check for special values: not a number or infinity.  */
       if (__isnan (fpnum.dbl.d))
 	{
+	  negative = fpnum.dbl.ieee.negative != 0;
 	  if (isupper (info->spec))
 	    {
 	      special = "NAN";
@@ -234,7 +235,6 @@ __printf_fphex (FILE *fp,
 	      special = "nan";
 	      wspecial = L"nan";
 	    }
-	  negative = 0;
 	}
       else
 	{
