@@ -1,4 +1,4 @@
-/* Return positive difference between arguments.
+/* Round double value to long int.
    Copyright (C) 1997, 2004, 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
@@ -18,27 +18,50 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
 #include <math.h>
 
-long double
-__fdiml (long double x, long double y)
+#include "math_private.h"
+
+
+long int
+__lround (double x)
 {
-  int clsx = fpclassify (x);
-  int clsy = fpclassify (y);
+  int32_t j0;
+  int64_t i0;
+  long int result;
+  int sign;
 
-  if (clsx == FP_NAN || clsy == FP_NAN
-      || (y < 0 && clsx == FP_INFINITE && clsy == FP_INFINITE))
-    /* Raise invalid flag.  */
-    return x - y;
+  EXTRACT_WORDS64 (i0, x);
+  j0 = ((i0 >> 52) & 0x7ff) - 0x3ff;
+  sign = i0 < 0 ? -1 : 1;
+  i0 &= UINT64_C(0xfffffffffffff);
+  i0 |= UINT64_C(0x10000000000000);
 
-  if (x <= y)
-    return 0.0f;
+  if (j0 < (int32_t) (8 * sizeof (long int)) - 1)
+    {
+      if (j0 < 0)
+	return j0 < -1 ? 0 : sign;
+      else if (j0 >= 52)
+	result = i0 << (j0 - 52);
+      else
+	{
+	  i0 += UINT64_C(0x8000000000000) >> j0;
 
-  long double r = x - y;
-  if (fpclassify (r) == FP_INFINITE)
-    __set_errno (ERANGE);
+	  result = i0 >> (52 - j0);
+	}
+    }
+  else
+    {
+      /* The number is too large.  It is left implementation defined
+	 what happens.  */
+      return (long int) x;
+    }
 
-  return r;
+  return sign * result;
 }
-weak_alias (__fdiml, fdiml)
+
+weak_alias (__lround, lround)
+#ifdef NO_LONG_DOUBLE
+strong_alias (__lround, __lroundl)
+weak_alias (__lround, lroundl)
+#endif
