@@ -62,8 +62,9 @@ add-chapters = $(wildcard $(foreach d, $(add-ons), ../$d/$d.texi))
 appendices = lang.texi header.texi install.texi maint.texi contrib.texi \
 	     freemanuals.texi
 
--include texis
-texis: texis.awk $(chapters) $(add-chapters) $(appendices) lesser.texi fdl.texi
+-include $(objpfx)texis
+$(objpfx)texis: texis.awk $(chapters) $(add-chapters) $(appendices) lesser.texi fdl.texi
+	$(make-target-directory)
 	$(AWK) -f $^ > $@.T
 	mv -f $@.T $@
 
