@@ -1,3 +1,95 @@
+2009-09-28  Andreas Schwab  <schwab@redhat.com>
+
+	* stdio-common/printf_fp.c: Check for and avoid integer overflows.
+	* stdio-common/vfprintf.c: Likewise.
+
+2009-09-27  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/mkdirat.c: Include <hurd/fd.h>.
+	(mkdirat): Call __directory_name_split_at instead of
+	__directory_name_split.
+
+2009-09-28  Ulrich Drepper  <drepper@redhat.com>
+
+	* locale/programs/locale-spec.c (locale_special): If nothing matches
+	fail with an appropriate message.
+
+2009-09-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* configure.in: Exclude binutils 2.X.  Support binutils 2.100
+	and XX.
+
+2009-09-25  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-reloc.c (RESOLVE_MAP): Always pass
+	DL_LOOKUP_ADD_DEPENDENCY to _dl_lookup_symbol_x.
+
+2009-09-28  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* bits/termios.h [__USE_UNIX98] (IXANY): Define macro.
+
+2009-09-20  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* iconvdata/iso646.c (gconv_init): Correctly initialize the
+	character size elements in step data.
+
+2009-09-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* po/hu.po: Update from translation team.
+	* po/vi.po: Likewise.
+
+2009-09-19  Roland McGrath  <roland@redhat.com>
+
+	* libio/wfileops.c (_IO_wfile_seekoff): Remove unused variables.
+
+2009-09-15  Roland McGrath  <roland@redhat.com>
+
+	* aclocal.m4 (GLIBC_PROVIDES): Add _AS_ECHO_PREPARE.
+	* nptl/sysdeps/pthread/configure: Regenerated.
+	* nptl/sysdeps/x86_64/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/configure: Regenerated.
+	* sysdeps/x86_64/elf/configure: Regenerated.
+
+	* Makefile (autoconf-it): Set execute bit only on top-level configure.
+
+	* configure.in: Let add-ons set $libc_add_on_config_subdirs to have
+	the effect of AC_CONFIG_SUBDIRS relative to the add-on directory.
+	* aclocal.m4 (GLIBC_PROVIDES): Add AC_CONFIG_SUBDIRS.
+	* configure: Regenerated.
+
+2009-09-09  Ulrich Drepper  <drepper@redhat.com>
+
+	* posix/getconf.c (main): Handle -- on command line.
+
+2009-09-05  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* configure.in: Support binutils 2.100 and 3.0.
+
+2009-09-08  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/s390/s390-32/____longjmp_chk.c: Removed.
+	* sysdeps/s390/s390-64/____longjmp_chk.c: Removed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/____longjmp_chk.c: New file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/____longjmp_chk.c: New file.
+
+2009-09-07  Ulrich Drepper  <drepper@redhat.com>
+
+	* locale/programs/ld-collate.c (struct locale_collate_t): Add
+	unnamed_section_defined field.
+	(collate_read): Test and set unnamed_section_defined.
+
+	* posix/getconf.c (vars): Handle POSIX2_LINE_MAX in addition to
+	_POSIX2_LINE_MAX.
+
+2009-09-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* configure.in: Support binutils 2.20.
+
+2009-09-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/i386/i686/multiarch/strstr-c.c (__strstr_sse42,
+	__strstr_ia32): Add attribute_hidden.
+
 2009-09-01  Andreas Schwab  <schwab@redhat.com>
 
 	* hesiod/nss_hesiod/hesiod-grp.c (internal_gid_from_group): Fix

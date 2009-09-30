@@ -1,4 +1,4 @@
-/* Copyright (C) 1995-2003, 2005-2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 1995-2003, 2005-2008, 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@gnu.org>, 1995.
 
@@ -207,6 +207,8 @@ struct locale_collate_t
   struct section_list *current_section;
   /* There always can be an unnamed section.  */
   struct section_list unnamed_section;
+  /* Flag whether the unnamed section has been defined.  */
+  bool unnamed_section_defined;
   /* To make handling of errors easier we have another section.  */
   struct section_list error_section;
   /* Sometimes we are defining the values for collating symbols before
@@ -641,7 +643,7 @@ find_element (struct linereader *ldfile, struct locale_collate_t *collate,
   if (find_entry (&collate->seq_table, str, len, &result) != 0)
     {
       /* Nope, not define yet.  So we see whether it is a
-         collation symbol.  */
+	 collation symbol.  */
       void *ptr;
 
       if (find_entry (&collate->sym_table, str, len, &ptr) == 0)
@@ -795,7 +797,7 @@ insert_weights (struct linereader *ldfile, struct element_t *elem,
 	      if (*cp == '<')
 		{
 		  /* Ahh, it's a bsymbol or an UCS4 value.  If it's
-                     the latter we have to unify the name.  */
+		     the latter we have to unify the name.  */
 		  const char *startp = ++cp;
 		  size_t len;
 
@@ -1309,8 +1311,8 @@ order for `%.*s' already defined at %s:%Zu"),
       else
 	{
 	  /* Determine the range.  To do so we have to determine the
-             common prefix of the both names and then the numeric
-             values of both ends.  */
+	     common prefix of the both names and then the numeric
+	     values of both ends.  */
 	  size_t lenfrom = strlen (startp->name);
 	  size_t lento = strlen (endp->name);
 	  char buf[lento + 1];
@@ -2185,14 +2187,14 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
     else
       {
 	/* The entries in the list are sorted by length and then
-           alphabetically.  This is the order in which we will add the
-           elements to the collation table.  This allows simply walking
+	   alphabetically.  This is the order in which we will add the
+	   elements to the collation table.  This allows simply walking
 	   the table in sequence and stopping at the first matching
-           entry.  Since the longer sequences are coming first in the
-           list they have the possibility to match first, just as it
-           has to be.  In the worst case we are walking to the end of
-           the list where we put, if no singlebyte sequence is defined
-           in the locale definition, the weights for UNDEFINED.
+	   entry.  Since the longer sequences are coming first in the
+	   list they have the possibility to match first, just as it
+	   has to be.  In the worst case we are walking to the end of
+	   the list where we put, if no singlebyte sequence is defined
+	   in the locale definition, the weights for UNDEFINED.
 
 	   To reduce the length of the search list we compress them a bit.
 	   This happens by collecting sequences of consecutive byte
@@ -2259,7 +2261,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		  obstack_1grow_fast (&extrapool, curp->mbs[i]);
 
 		/* Now find the end of the consecutive sequence and
-                   add all the indeces in the indirect pool.  */
+		   add all the indeces in the indirect pool.  */
 		do
 		  {
 		    weightidx = output_weight (&weightpool, collate, curp);
@@ -2274,7 +2276,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 		obstack_int32_grow (&indirectpool, weightidx);
 
 		/* And add the end byte sequence.  Without length this
-                   time.  */
+		   time.  */
 		for (i = 1; i < curp->nmbs; ++i)
 		  obstack_1grow_fast (&extrapool, curp->mbs[i]);
 	      }
@@ -2316,7 +2318,7 @@ collate_output (struct localedef_t *locale, const struct charmap_t *charmap,
 	assert ((obstack_object_size (&extrapool) & uint32_align_mask) == 0);
 
 	/* If the final entry in the list is not a single character we
-           add an UNDEFINED entry here.  */
+	   add an UNDEFINED entry here.  */
 	if (lastp->nmbs != 1)
 	  {
 	    int added = ((sizeof (int32_t) + 1 + 1 + uint32_align_mask)
@@ -3149,7 +3151,7 @@ error while adding equivalent collating symbol"));
 	      else
 		{
 		  /* One should not be allowed to open the same
-                     section twice.  */
+		     section twice.  */
 		  if (sp->first != NULL)
 		    lr_error (ldfile, _("\
 %s: multiple order definitions for section `%s'"),
@@ -3205,7 +3207,7 @@ error while adding equivalent collating symbol"));
 		 section.  */
 	      collate->current_section = &collate->unnamed_section;
 
-	      if (collate->unnamed_section.first != NULL)
+	      if (collate->unnamed_section_defined)
 		lr_error (ldfile, _("\
 %s: multiple order definitions for unnamed section"),
 			  "LC_COLLATE");
@@ -3215,6 +3217,7 @@ error while adding equivalent collating symbol"));
 		     the collate->sections list.  */
 		  collate->unnamed_section.next = collate->sections;
 		  collate->sections = &collate->unnamed_section;
+		  collate->unnamed_section_defined = true;
 		}
 	    }
 
@@ -3435,9 +3438,9 @@ error while adding equivalent collating symbol"));
 	      else
 		{
 		  /* This is bad.  The section after which we have to
-                     reorder does not exist.  Therefore we cannot
-                     process the whole rest of this reorder
-                     specification.  */
+		     reorder does not exist.  Therefore we cannot
+		     process the whole rest of this reorder
+		     specification.  */
 		  lr_error (ldfile, _("%s: section `%.*s' not known"),
 			    "LC_COLLATE", (int) arg->val.str.lenmb,
 			    arg->val.str.startmb);
@@ -3513,9 +3516,9 @@ error while adding equivalent collating symbol"));
 	  if (state == 0)
 	    {
 	      /* We are outside an `order_start' region.  This means
-                 we must only accept definitions of values for
-                 collation symbols since these are purely abstract
-                 values and don't need directions associated.  */
+		 we must only accept definitions of values for
+		 collation symbols since these are purely abstract
+		 values and don't need directions associated.  */
 	      void *ptr;
 
 	      if (find_entry (&collate->seq_table, symstr, symlen, &ptr) == 0)
@@ -3597,7 +3600,7 @@ error while adding equivalent collating symbol"));
 		    seqp->next->last = seqp->last;
 
 		  /* We also have to check whether this entry is the
-                     first or last of a section.  */
+		     first or last of a section.  */
 		  if (seqp->section->first == seqp)
 		    {
 		      if (seqp->section->first == seqp->section->last)
@@ -3654,7 +3657,7 @@ error while adding equivalent collating symbol"));
 		    }
 
 		  /* Process the rest of the line which might change
-                     the collation rules.  */
+		     the collation rules.  */
 		  arg = lr_token (ldfile, charmap, result, repertoire,
 				  verbose);
 		  if (arg->tok != tok_eof && arg->tok != tok_eol)
@@ -3666,8 +3669,8 @@ error while adding equivalent collating symbol"));
 	  else if (was_ellipsis != tok_none)
 	    {
 	      /* Using the information in the `ellipsis_weight'
-                 element and this and the last value we have to handle
-                 the ellipsis now.  */
+		 element and this and the last value we have to handle
+		 the ellipsis now.  */
 	      assert (state == 1);
 
 	      handle_ellipsis (ldfile, symstr, symlen, was_ellipsis, charmap,
@@ -3727,7 +3730,7 @@ error while adding equivalent collating symbol"));
 	case tok_ellipsis3: /* absolute ellipsis */
 	case tok_ellipsis4: /* symbolic decimal ellipsis */
 	  /* This is the symbolic (decimal or hexadecimal) or absolute
-             ellipsis.  */
+	     ellipsis.  */
 	  if (was_ellipsis != tok_none)
 	    goto err_label;
 
