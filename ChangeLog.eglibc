@@ -1,3 +1,8 @@
+2009-10-18  Michael Schroeder  <mls@suse.de>
+
+	* resolv/res_libc.c (__res_maybe_init): Re-initialize if
+	_PATH_RESCONF has been modified since last init.
+
 2009-09-03  Peter Seebach  <peter.seebach@windriver.com>
 
 	* manual/Makefile (texis): Change to $(objpfx)texis.  Use

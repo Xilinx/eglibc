@@ -22,7 +22,7 @@
 #include <arpa/nameser.h>
 #include <resolv.h>
 #include <bits/libc-lock.h>
-
+#include <sys/stat.h>
 
 /* The following bit is copied from res_data.c (where it is #ifdef'ed
    out) since res_init() should go into libc.so but the rest of that
@@ -94,8 +94,16 @@ res_init(void) {
 int
 __res_maybe_init (res_state resp, int preinit)
 {
+	static time_t last_mtime;
+	struct stat statbuf;
+	int ret;
+
 	if (resp->options & RES_INIT) {
-		if (__res_initstamp != resp->_u._ext.initstamp) {
+		ret = stat (_PATH_RESCONF, &statbuf);
+		if ((__res_initstamp != resp->_u._ext.initstamp)
+		    || ((ret == 0) && (last_mtime != statbuf.st_mtime))) {
+			if (ret == 0)
+				last_mtime = statbuf.st_mtime;
 			if (resp->nscount > 0)
 				__res_iclose (resp, true);
 			return __res_vinit (resp, 1);
