@@ -1,3 +1,75 @@
+2009-10-21  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-sym.c (do_sym): Resolve STT_GNU_IFUNC symbols.
+
+2009-10-19  Andreas Schwab  <schwab@redhat.com>
+
+	* include/math.h: Add hidden protos for __exp/__expf/__expl.
+	* sysdeps/ieee754/dbl-64/w_exp.c: Add hidden alias.
+	* sysdeps/ieee754/flt-32/w_expf.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/w_expl.c: Likewise.
+	* sysdeps/i386/fpu/s_expm1.S: Call __exp to handle overflow.
+	* sysdeps/i386/fpu/s_expm1f.S: Call __expf to handle overflow.
+	* sysdeps/i386/fpu/s_expm1l.S: Call __expl instead of
+	__ieee751_expl to handle overflow.
+
+2009-10-14  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/____longjmp_chk.S: New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/____longjmp_chk.S: New file.
+
+2009-10-13  Andreas Schwab  <schwab@redhat.com>
+
+	* csu/elf-init.c (__libc_csu_init): Run preinit array even if
+	!USE_MULTIARCH.
+
+2009-10-08  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10730]
+	* stdlib/random_r.c (__initstate_r): Remove duplicate __set-errno.
+	Patch in part by Steve Ward <planet36@gmail.com>.
+
+	[BZ #10731]
+	* stdlib/rand_r.c: Fix typo.
+
+	* po/cs.po: Update from translation team.
+
+2009-10-06  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-load.c (_dl_map_object_from_fd): Close fd before
+	returning if RTLD_NOLOAD.
+
+2009-10-06  Roland McGrath  <roland@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strstr-c.c
+	[! SHARED]: Omit libc_hidden_builtin_def fiddling.
+
+	* sysdeps/x86_64/multiarch/strcasestr-c.c: Remove
+	libc_hidden_builtin_def fiddling, does not apply to strcasestr at all.
+
+	* sysdeps/x86_64/multiarch/init-arch.h
+	[NOT_IN_libc] (__get_cpu_features): Define it as a macro.
+	(HAS_CPU_FEATURE): New macro.
+	(HAS_SSE2, HAS_POPCOUNT, HAS_SSE4_2, HAS_FMA): Use it.
+	* sysdeps/x86_64/multiarch/init-arch.c
+	(__get_cpu_features): #undef it before definition.
+
+2009-10-05  Andreas Schwab  <schwab@redhat.com>
+
+	* locale/C-time.c: Revert week-1stday back to 19971130 and set
+	first_weekday to 1 and first_workday to 2.
+
+2009-10-01  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sh/bits/fcntl.h: Define F_SETOWN_EX and
+	F_GETOWN_EX.
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h: Likewise.
+
 2009-09-28  Andreas Schwab  <schwab@redhat.com>
 
 	* stdio-common/printf_fp.c: Check for and avoid integer overflows.
