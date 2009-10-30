@@ -49,7 +49,7 @@ routines := brk sbrk sstk ioctl \
 	    gethostid sethostid \
 	    vhangup \
 	    swapon swapoff mktemp mkstemp mkstemp64 mkdtemp \
-	    mkostemp mkostemp64 \
+	    mkostemp mkostemp64 mkstemps mkstemps64 mkostemps mkostemps64 \
 	    ualarm usleep \
 	    gtty stty \
 	    ptrace \

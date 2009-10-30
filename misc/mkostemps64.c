@@ -16,18 +16,26 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Generate a unique temporary file name from TEMPLATE.
-   The last six characters of TEMPLATE must be "XXXXXX";
-   they are replaced with a string that makes the filename unique.
-   Then open the file and return a fd. */
+/* Generate a unique temporary file name from TEMPLATE.  The last six
+   characters before a suffix of length SUFFIXLEN of TEMPLATE must be
+   "XXXXXX"; they are replaced with a string that makes the filename
+   unique.  Then open the file and return a fd. */
 int
-mkostemp64 (template, flags)
+mkostemps64 (template, suffixlen, flags)
      char *template;
+     int suffixlen;
      int flags;
 {
-  return __gen_tempname (template, 0, flags | O_LARGEFILE, __GT_FILE);
+  if (suffixlen < 0)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
+  return __gen_tempname (template, suffixlen, flags | O_LARGEFILE, __GT_FILE);
 }

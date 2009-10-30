@@ -1,4 +1,6 @@
-/* Copyright (C) 2000, 2007, 2009 Free Software Foundation, Inc.
+/* Machine-dependent ELF indirect relocation inline functions.
+   PowerPC version.
+   Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,18 +18,28 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _DL_IREL_H
+#define _DL_IREL_H
 
-/* Generate a unique temporary file name from TEMPLATE.
-   The last six characters of TEMPLATE must be "XXXXXX";
-   they are replaced with a string that makes the filename unique.
-   Then open the file and return a fd. */
-int
-mkostemp64 (template, flags)
-     char *template;
-     int flags;
+#include <stdio.h>
+#include <unistd.h>
+
+#define ELF_MACHINE_IRELA	1
+
+static inline void
+__attribute ((always_inline))
+elf_irela (const Elf32_Rela *reloc)
 {
-  return __gen_tempname (template, 0, flags | O_LARGEFILE, __GT_FILE);
+  unsigned int r_type = ELF32_R_TYPE (reloc->r_info);
+
+  if (__builtin_expect (r_type == R_PPC_IRELATIVE, 1))
+    {
+      Elf32_Addr *const reloc_addr = (void *) reloc->r_offset;
+      Elf32_Addr value = ((Elf32_Addr (*) (void)) reloc->r_addend) ();
+      *reloc_addr = value;
+    }
+  else
+    __libc_fatal ("unexpected reloc type in static binary");
 }
+
+#endif /* dl-irel.h */
