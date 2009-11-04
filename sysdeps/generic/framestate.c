@@ -20,11 +20,11 @@
 
 #include <dlfcn.h>
 #include <stdlib.h>
-#include <gnu/lib-names.h>
 #define STATIC static
 #define __frame_state_for fallback_frame_state_for
 #include <unwind-dw2.c>
 #undef __frame_state_for
+#include <libgcc_s.h>
 
 typedef struct frame_state * (*framesf)(void *pc, struct frame_state *);
 struct frame_state *__frame_state_for (void *pc,

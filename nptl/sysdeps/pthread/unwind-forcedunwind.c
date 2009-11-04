@@ -22,7 +22,7 @@
 #include <unwind.h>
 #include <pthreadP.h>
 #include <sysdep.h>
-#include <gnu/lib-names.h>
+#include <libgcc_s.h>
 
 static void *libgcc_s_handle;
 static void (*libgcc_s_resume) (struct _Unwind_Exception *exc);

@@ -20,7 +20,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 #include <unwind.h>
-#include <gnu/lib-names.h>
+#include <libgcc_s.h>
 
 static void (*libgcc_s_resume) (struct _Unwind_Exception *exc);
 static _Unwind_Reason_Code (*libgcc_s_personality)
