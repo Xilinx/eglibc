@@ -1,4 +1,10 @@
 2009-11-09  Maxim Kuvyrkov  <maxim@codesourcery.com>
+	    Peter Seebach  <peter.seebach@windriver.com>
+
+	* configure.in (AC_PROG_AWK): Require GNU `awk'.
+	* configure: Regenerate.
+
+2009-11-09  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* libio/fileops.c, libio/iosetbuffer.c,
 	* nptl/sysdeps/pthread/small-macros-fns.c, posix/fnmatch_loop.c,

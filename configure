@@ -5708,6 +5708,12 @@ fi
   test -n "$AWK" && break
 done
 
+if test "x$AWK" != "xgawk"; then
+  { { $as_echo "$as_me:$LINENO: error: GLIBC requires GNU awk." >&5
+$as_echo "$as_me: error: GLIBC requires GNU awk." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 # Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
