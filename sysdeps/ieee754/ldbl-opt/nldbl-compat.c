@@ -27,6 +27,7 @@
 #include <locale/localeinfo.h>
 #include <sys/syslog.h>
 #include <bits/libc-lock.h>
+#include <gnu/option-groups.h>
 
 #include "nldbl-compat.h"
 

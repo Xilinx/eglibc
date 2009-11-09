@@ -40,6 +40,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <gnu/option-groups.h>
 #ifdef __STDC__
 #include <stdlib.h>
 #endif

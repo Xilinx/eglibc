@@ -1,3 +1,12 @@
+2009-11-09  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* libio/fileops.c, libio/iosetbuffer.c,
+	* nptl/sysdeps/pthread/small-macros-fns.c, posix/fnmatch_loop.c,
+        * posix/regcomp.c, posix/regexec.c, stdio-common/tst-sprintf.c,
+	* stdio-common/tstdiomisc.c, sysdeps/ieee754/ldbl-opt/nldbl-compat.c,
+	* sysdeps/ieee754/ldbl-opt/nldbl-compat.h: Explicitly include
+	<gnu/option-groups.h>.
+
 2009-10-18  Michael Schroeder  <mls@suse.de>
 
 	* resolv/res_libc.c (__res_maybe_init): Re-initialize if

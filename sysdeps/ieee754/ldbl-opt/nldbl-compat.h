@@ -31,6 +31,7 @@
 #include <math.h>
 #include <monetary.h>
 #include <sys/syslog.h>
+#include <gnu/option-groups.h>
 
 
 /* Declare the __nldbl_NAME function the wrappers call that's in libc.so.  */

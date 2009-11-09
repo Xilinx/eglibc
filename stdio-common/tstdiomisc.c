@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+#include <gnu/option-groups.h>
 
 static int
 t1 (void)

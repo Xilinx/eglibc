@@ -26,6 +26,8 @@
    This exception applies to code released by its copyright holders
    in files containing the exception.  */
 
+#include <gnu/option-groups.h>
+
 #include "libioP.h"
 
 void
