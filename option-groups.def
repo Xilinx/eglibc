@@ -465,6 +465,25 @@ config OPTION_EGLIBC_LOCALE_CODE
        group; if you disable OPTION_EGLIBC_LOCALE_CODE, you must also
        disable OPTION_EGLIBC_CATGETS.
 
+config OPTION_EGLIBC_MEMUSAGE
+   bool "Memory profiling library"
+   help
+       This option group includes the `libmemusage' library and
+       the `memusage' and `memusagestat' utilities.
+       These components provide memory profiling functions.
+
+     OPTION_EGLIBC_MEMUSAGE_DEFAULT_BUFFER_SIZE
+
+       Libmemusage library buffers the profiling data in memory
+       before writing it out to disk.  By default, the library
+       allocates 1.5M buffer, which can be substantial for some
+       systems.  OPTION_EGLIBC_MEMUSAGE_DEFAULT_BUFFER_SIZE option
+       allows to change the default buffer size.  It specifies
+       the number of entries the buffer should have.
+       On most architectures one buffer entry amounts to 48 bytes,
+       so setting this option to the value of 512 will reduce the size of
+       the memory buffer to 24K.
+
 config OPTION_EGLIBC_NIS
    bool "Support for NIS, NIS+, and the special 'compat' services."
    depends OPTION_EGLIBC_INET

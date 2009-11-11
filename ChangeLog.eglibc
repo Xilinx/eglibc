@@ -1,3 +1,16 @@
+2009-11-11  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	Add OPTION_EGLIBC_MEMUSAGE option group and
+	OPTION_EGLIBC_MEMUSAGE_DEFAULT_BUFFER_SIZE option.
+
+	* option-groups.def (OPTION_EGLIBC_MEMUSAGE): Define new option group.
+	(OPTION_EGLIBC_MEMUSAGE_DEFAULT_BUFFER_SIZE): Document option.
+	* option-groups.defaults (OPTION_EGLIBC_MEMUSAGE): Add.
+	* malloc/Makefile (libmemusage): Build if option group is selected.
+	(memusage): Update CPPFLAGS.
+	(memusagestat): Don't build without OPTION_EGLIBC_MEMUSAGE.
+	* malloc/memusage.c (DEFAULT_BUFFER_SIZE): Allow overriding the default.
+
 2009-11-09  Maxim Kuvyrkov  <maxim@codesourcery.com>
 	    Peter Seebach  <peter.seebach@windriver.com>
 
