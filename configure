@@ -6890,12 +6890,8 @@ $as_echo_n "checking for -fstack-protector... " >&6; }
 if test "${libc_cv_ssp+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  cat > conftest.c <<EOF
-int foo;
-main () { return 0;}
-EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -Werror -fstack-protector
-			    -o conftest conftest.c 1>&5'
+  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS -Werror -fstack-protector
+			    -o /dev/null -c -x c /dev/null 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
@@ -6906,7 +6902,6 @@ then
 else
   libc_cv_ssp=no
 fi
-rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_ssp" >&5
 $as_echo "$libc_cv_ssp" >&6; }

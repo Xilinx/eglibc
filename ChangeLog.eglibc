@@ -1,3 +1,9 @@
+2009-11-11  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* configure.in (libc_cv_ssp): Make this a compile-time check.  Avoid
+	creating temporary files.
+	* configure: Regenerate.
+
 2009-11-11  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	Add OPTION_EGLIBC_MEMUSAGE option group and
