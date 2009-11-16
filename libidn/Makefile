@@ -25,8 +25,8 @@ distribute := punycode.h stringprep.h idna.h iconvme.h
 
 routines = idn-stub
 
-extra-libs		= libcidn
-extra-libs-others	= $(extra-libs)
+extra-libs-$(OPTION_EGLIBC_IDN) = libcidn
+extra-libs-others-y = $(extra-libs-y)
 
 libcidn-routines := punycode toutf8 nfkc stringprep rfc3454 profiles idna \
 		    iconvme

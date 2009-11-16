@@ -291,6 +291,12 @@ config OPTION_EGLIBC_GETLOGIN
        fall back on 'getlogin' to find the user's login name for tilde
        expansion when the 'HOME' environment variable is not set.
 
+config OPTION_EGLIBC_IDN
+   bool "International domain names support"
+   help
+       This option group includes the `libcidn' library which
+       provides support for international domain names.
+
 config OPTION_EGLIBC_INET
    bool "Networking support"
    help

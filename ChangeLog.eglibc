@@ -1,3 +1,11 @@
+2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	OPTION_EGLIBC_IDN
+
+	* option-groups.def (OPTION_EGLIBC_IDN): New option group.
+	* option-groups.default (OPTION_EGLIBC_IDN): Set the default.
+	* libidn/Makefile (libcidn): Handle OPTION_EGLIBC_IDN.
+
 2009-11-11  Thomas Schwinge  <thomas@codesourcery.com>
 
 	* configure.in (libc_cv_ssp): Make this a compile-time check.  Avoid
