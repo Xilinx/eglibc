@@ -306,7 +306,6 @@ config OPTION_EGLIBC_INET
 
        - The following libraries are not installed:
 
-         libanl
          libnsl
          libnss_compat
          libnss_dns
@@ -421,6 +420,13 @@ config OPTION_EGLIBC_INET
        communication mechanisms.  For example, the 'syslog' routines
        use Unix-domain sockets to communicate with the syslog daemon;
        syslog is valuable in non-networked contexts.
+
+config OPTION_EGLIBC_INET_ANL
+   bool "Asynchronous name lookup"
+   depends OPTION_EGLIBC_INET
+   help
+       This option group includes the `libanl' library which
+       provides support for asynchronous name lookup.
 
 config OPTION_EGLIBC_LIBM
    bool "libm (math library)"

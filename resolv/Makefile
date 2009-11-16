@@ -43,7 +43,7 @@ include ../Makeconfig
 
 extra-libs-$(OPTION_EGLIBC_INET) += libresolv libnss_dns
 ifeq ($(have-thread-library),yes)
-extra-libs-$(OPTION_EGLIBC_INET) += libanl
+extra-libs-$(OPTION_EGLIBC_INET_ANL) += libanl
 routines-$(OPTION_EGLIBC_INET) += gai_sigqueue
 endif
 extra-libs-others-y += $(extra-libs-y)
@@ -64,7 +64,7 @@ ifneq ($(build-static-nss),yes)
 libnss_dns-inhibit-o	= $(filter-out .os,$(object-suffixes))
 endif
 
-ifeq (yesyesy,$(build-shared)$(have-thread-library)$(OPTION_EGLIBC_INET))
+ifeq (yesyesy,$(build-shared)$(have-thread-library)$(OPTION_EGLIBC_INET_ANL))
 tests: $(objpfx)ga_test
 endif
 

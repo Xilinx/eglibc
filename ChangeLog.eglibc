@@ -1,5 +1,14 @@
 2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
+	OPTION_EGLIBC_INET_ANL
+
+	* option-groups.def (OPTION_EGLIBC_INET_ANL): New option group.
+	* option-groups.default (OPTION_EGLIBC_INET_ANL): Set the default.
+	* libidn/Makefile (libanl): Handle OPTION_EGLIBC_INET_ANL.
+	(ga_test): Don't run without OPTION_EGLIBC_INET_ANL.
+
+2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
 	OPTION_EGLIBC_IDN
 
 	* option-groups.def (OPTION_EGLIBC_IDN): New option group.
