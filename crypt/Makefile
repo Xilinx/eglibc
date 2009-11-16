@@ -19,24 +19,28 @@
 #
 #	Sub-makefile for crypt() portion of the library.
 #
+include ../option-groups.mak
+
 subdir	:= crypt
 
 headers := crypt.h
 
-extra-libs := libcrypt
-extra-libs-others := $(extra-libs)
+extra-libs-$(OPTION_EGLIBC_CRYPT) := libcrypt
+extra-libs-others-y := $(extra-libs-y)
 
-libcrypt-routines := crypt-entry md5-crypt sha256-crypt sha512-crypt crypt \
-		     crypt_util
+libcrypt-routines := crypt-entry md5-crypt sha256-crypt sha512-crypt
+libcrypt-routines-$(OPTION_EGLIBC_CRYPT_UFC) := crypt_util crypt
+libcrypt-routines += $(libcrypt-routines-y)
 
-tests := cert md5c-test sha256c-test sha512c-test
+tests-$(OPTION_EGLIBC_CRYPT) := md5c-test sha256c-test sha512c-test
+tests-$(OPTION_EGLIBC_CRYPT_UFC) += cert
 
 distribute := ufc-crypt.h crypt-private.h ufc.c speeds.c README.ufc-crypt \
 	      Banner md5.h sha256.h sha512.h
 
 include ../Makeconfig
 
-ifeq ($(crypt-in-libc),yes)
+ifeq ($(crypt-in-libc)$(OPTION_EGLIBC_CRYPT),yesy)
 routines += $(libcrypt-routines)
 endif
 
@@ -48,7 +52,7 @@ LDLIBS-crypt.so = -lfreebl3
 else
 libcrypt-routines += md5 sha256 sha512
 
-tests += md5test sha256test sha512test
+tests-$(OPTION_EGLIBC_CRYPT) += md5test sha256test sha512test
 
 $(objpfx)md5test: $(objpfx)md5.o
 $(objpfx)sha256test: $(objpfx)sha256.o
@@ -57,6 +61,7 @@ endif
 
 include ../Rules
 
+ifeq ($(OPTION_EGLIBC_CRYPT),y)
 ifeq (yes,$(build-shared))
 $(addprefix $(objpfx),$(tests)): $(objpfx)libcrypt.so
 else
@@ -65,6 +70,7 @@ endif
 ifeq (yes,$(build-bounded))
 $(tests:%=$(objpfx)%-bp): $(objpfx)libcrypt_b.a
 endif
+endif # eglibc: OPTION_EGLIBC_CRYPT
 
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
 # This ensures they will load libc.so for needed symbols if loaded by

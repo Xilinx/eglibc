@@ -28,6 +28,8 @@
 #include <stdio.h>
 #endif
 #include <string.h>
+#include <gnu/option-groups.h>
+#include <errno.h>
 
 #ifndef STATIC
 #define STATIC static
@@ -87,9 +89,11 @@ __crypt_r (key, salt, data)
      const char *salt;
      struct crypt_data * __restrict data;
 {
+#if __OPTION_EGLIBC_CRYPT_UFC
   ufc_long res[4];
   char ktab[9];
   ufc_long xx = 25; /* to cope with GCC long long compiler bugs */
+#endif /*__OPTION_EGLIBC_CRYPT_UFC*/
 
 #ifdef _LIBC
   /* Try to find out whether we have to use MD5 encryption replacement.  */
@@ -108,6 +112,7 @@ __crypt_r (key, salt, data)
 			     sizeof (struct crypt_data));
 #endif
 
+#if __OPTION_EGLIBC_CRYPT_UFC
   /*
    * Hack DES tables according to salt
    */
@@ -136,6 +141,10 @@ __crypt_r (key, salt, data)
    */
   _ufc_output_conversion_r (res[0], res[1], salt, data);
   return data->crypt_3_buf;
+#else /* __OPTION_EGLIBC_CRYPT_UFC */
+  __set_errno (ENOSYS);
+  return NULL;
+#endif /* __OPTION_EGLIBC_CRYPT_UFC */
 }
 weak_alias (__crypt_r, crypt_r)
 
@@ -158,7 +167,12 @@ crypt (key, salt)
     return __sha512_crypt (key, salt);
 #endif
 
+#if __OPTION_EGLIBC_CRYPT_UFC
   return __crypt_r (key, salt, &_ufc_foobar);
+#else /* __OPTION_EGLIBC_CRYPT_UFC */
+  __set_errno (ENOSYS);
+  return NULL;
+#endif /* __OPTION_EGLIBC_CRYPT_UFC */
 }
 
 

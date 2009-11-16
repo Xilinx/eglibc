@@ -198,6 +198,24 @@ config OPTION_EGLIBC_CHARSETS
           WCHAR_T           - EGLIBC's internal form (target-endian,
                               32-bit ISO 10646)
 
+config OPTION_EGLIBC_CRYPT
+   bool "Encryption library"
+   help
+       This option group includes the `libcrypt' library which
+       provides functions for one-way encryption.  Supported
+       encryption algorithms include MD5, SHA-256, SHA-512 and DES.
+
+config OPTION_EGLIBC_CRYPT_UFC
+   bool "Ultra fast `crypt' implementation"
+   depends OPTION_EGLIBC_CRYPT
+   help
+       This option group provides ultra fast DES-based implementation of
+       the `crypt' function.  When this option group is disabled,
+       (a) the library will not provide the setkey[_r] and encrypt[_r]
+       functions and (b) the crypt[_r] function will return NULL and set the
+       errno to ENOSYS if /salt/ passed does not correspond to either MD5,
+       SHA-256 or SHA-512 algorithm.
+
 config OPTION_EGLIBC_DB_ALIASES
    bool "Functions for accessing the mail aliases database"
    help

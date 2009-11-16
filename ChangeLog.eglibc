@@ -1,5 +1,18 @@
 2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
+	OPTION_EGLIBC_CRYPT and OPTION_EGLIBC_CRYPT_UFC.
+	
+	* option-groups.def: Describe new option groups.
+	* option-groups.defaults: Set defaults.
+	* crypt/Makefile: Don't build libcrypt if OPTION_EGLIBC_CRYPT is not
+	selected, don't compile UFC implementation if OPTION_EGLIBC_CRYPT_UFC
+	is not selected; adjust tests accordingly.
+	* crypt/crypt-entry.c: Include <gnu/option-groups.h> and <errno.h>.
+	(__crypt_r, crypt): Handle OPTION_EGLIBC_CRYPT_UFC, fail if DES
+	is not available.
+
+2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
 	OPTION_EGLIBC_INET_ANL
 
 	* option-groups.def (OPTION_EGLIBC_INET_ANL): New option group.
