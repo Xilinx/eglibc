@@ -1,4 +1,4 @@
-# Copyright (C) 1991,1992,1995-2003,2005 Free Software Foundation, Inc.
+# Copyright (C) 1991,1992,1995-2003,2005,2009 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ routines-$(OPTION_EGLIBC_LOCALE_CODE) \
 ifneq (y,$(OPTION_EGLIBC_LOCALE_CODE))
 routines-y	+= dummy-setlocale
 endif
-tests-$(OPTION_EGLIBC_LOCALE_CODE) += tst-C-locale
+tests-$(OPTION_EGLIBC_LOCALE_CODE) += tst-C-locale tst-locname tst-duplocale
 categories	= ctype messages monetary numeric time paper name \
 		  address telephone measurement identification collate
 # C-messages belongs in an intl option group.
@@ -123,7 +123,7 @@ endif
 
 # This makes sure -DNOT_IN_libc is passed for all these modules.
 cpp-srcs-left := $(addsuffix .c,$(localedef-modules) $(localedef-aux) \
-			        $(locale-modules) $(lib-modules))
+				$(locale-modules) $(lib-modules))
 lib := nonlib
 include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 

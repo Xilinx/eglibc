@@ -1,3 +1,61 @@
+2009-11-17  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10969]
+	* locale/duplocale.c (__duplocale): Handle LC_GLOBAL_LOCALE special.
+	* locale/tst-duplocale.c: New file.
+	* locale/Makefile (tests): Add tst-duplocale.
+
+	[BZ #10968]
+	* locale/langinfo.h (_NL_LOCALE_NAME): Correct definition.
+	Patch by Bruno Haible <bruno@clisp.org>.
+	* locale/tst-locname.c: New file.
+	* locale/Makefile (tests): Add tst-locname.
+
+	[BZ #10972]
+	* sysdeps/unix/sysv/linux/powerpc/bits/mman.h: Add new MADV_*
+	constants from recent kernels.
+	* sysdeps/unix/sysv/linux/i386/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/mman.h: Likewise.
+
+2009-11-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #10162]
+	* sysdeps/ia64/memchr.S: Use a simple loop on data shorter than
+	software pipeline.
+
+2009-11-09  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/i386/fallocate.c: Include errno.h.
+	(fallocate): Return ENOSYS if __NR_fallocate is not defined.
+	* sysdeps/unix/sysv/linux/i386/fallocate64.c: Likewise.
+
+2009-11-06  Mike Frysinger  <vapier@gentoo.org>
+
+	* posix/bug-regex29.c: Include stdio.h.
+
+2009-11-14  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #10939]
+	* Versions.def: Define GLIBC_2.12 for libc.
+	* manual/errno.texi: Add ERFKILL entry.
+	* sysdeps/unix/sysv/linux/Versions: Add new errlist compat entries
+	for 2.12.
+	* sysdeps/unix/sysv/linux/bits/errno.h: Define ERFKILL is not done.
+	* sysdeps/unix/sysv/linux/sparc/bits/errno.h: Likewise.
+
+	* sysdeps/unix/sysv/linux/sh/bits/fcntl.h: Update F_SETOWN_EX and
+	F_GETOWN_EX definitions according to corrected kernel definitions.
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h: Likewise.
+
 2009-11-12  Ulrich Drepper  <drepper@redhat.com>
 
 	* version.h: Bump for 2.12 development.
