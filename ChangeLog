@@ -1,5 +1,32 @@
 2009-11-17  Ulrich Drepper  <drepper@redhat.com>
 
+	* sysdeps/unix/sysv/linux/sh/bits/fcntl.h: Change misleading names
+	of parameters of sync_file_range.
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h: Likewise.
+
+2009-11-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sync_file_range.c (sync_file_range):
+	Implement using sync_file_range2 syscall if __NR_sync_file_range2
+	is defined.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/sync_file_range.c: New
+	file.
+
+2009-11-17  Paolo Bonzini  <bonzini@gnu.org>
+
+	* posix/bug-regex30.c: New file.
+	* posix/Makefile: Add rules to build and run bug-regex30.
+	* posix/regcomp.c (re_compile_fastmap_iter): Add all multibyte
+	character lead bytes when there is a range in a COMPLEX_BRACKET.
+	Reported by Oleg Bylatov.
+
+2009-11-17  Ulrich Drepper  <drepper@redhat.com>
+
 	[BZ #10969]
 	* locale/duplocale.c (__duplocale): Handle LC_GLOBAL_LOCALE special.
 	* locale/tst-duplocale.c: New file.

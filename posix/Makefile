@@ -93,7 +93,7 @@ tests		:= tstgetopt testfnm runtests \
 		   bug-regex8 bug-regex9 bug-regex10 bug-regex12 \
 		   bug-regex14 bug-regex15 \
 		   bug-regex21 bug-regex24 \
-		   bug-regex27 bug-regex28 bug-regex29 \
+		   bug-regex27 bug-regex28 bug-regex29 bug-regex30 \
 		   tst-nice tst-nanosleep \
 		   transbug \
 		   tst-vfork1 tst-vfork2 tst-vfork3 tst-waitid \
@@ -226,6 +226,7 @@ bug-regex22-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex23-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex25-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex26-ENV = LOCPATH=$(common-objpfx)localedata
+bug-regex30-ENV = LOCPATH=$(common-objpfx)localedata
 tst-rxspencer-ARGS = rxspencer/tests
 ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
 tst-rxspencer-ARGS += --utf8 
