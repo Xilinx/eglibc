@@ -1,3 +1,48 @@
+2009-11-19  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* option-groups.def (OPTION_EGLIBC_LIBM_BIG): New option group.
+	* option-groups.defaults (OPTION_EGLIBC_LIBM_BIG): Set.
+	* configure.in: Handle OPTION_EGLIBC_LIBM_BIG.
+	* configure: Regenerate.
+
+	* math/Makefile (tests: atest-*): Condition on OPTION_EGLIBC_LIBM_BIG.
+	(libm-test.stmt): Override default result checking precision.
+	* math/gen-libm-test.pl (default_ulp): New variable.  Use it to
+	override default precision with which test results are checked.
+	* math/libm-test.inc (MANT_DIG): Handle [l]dbl-wrap math.
+	* math/test-dbl-wrap: New test.
+
+	* sysdeps/ieee754/ldbl-128/s_erfl.c,
+	* sysdeps/ieee754/ldbl-128/s_log1pl.c,
+	* sysdeps/ieee754/ldbl-128ibm/s_erfl.c,
+	* sysdeps/ieee754/ldbl-128ibm/s_log1pl.c,
+	* sysdeps/ieee754/ldbl-96/s_erfl.c,
+	* sysdeps/ieee754/ldbl-opt/s_atan.c,
+	* sysdeps/ieee754/ldbl-opt/s_sin.c,
+	* sysdeps/ieee754/ldbl-opt/s_tan.c: Handle !OPTION_EGLIBC_LIBM_BIG.
+
+	* sysdeps/ieee754/dbl-wrap/dbl-wrap.h,
+	* sysdeps/ieee754/dbl-wrap/dosincos.c,
+	* sysdeps/ieee754/dbl-wrap/e_asin.c,
+	* sysdeps/ieee754/dbl-wrap/e_atan2.c,
+	* sysdeps/ieee754/dbl-wrap/e_exp.c,
+	* sysdeps/ieee754/dbl-wrap/e_exp2.c,
+	* sysdeps/ieee754/dbl-wrap/e_log.c,
+	* sysdeps/ieee754/dbl-wrap/e_pow.c,
+	* sysdeps/ieee754/dbl-wrap/s_atan.c,
+	* sysdeps/ieee754/dbl-wrap/s_sin.c,
+	* sysdeps/ieee754/dbl-wrap/s_tan.c,
+	* sysdeps/ieee754/ldbl-wrap/e_acosl.c,
+	* sysdeps/ieee754/ldbl-wrap/e_asinl.c,
+	* sysdeps/ieee754/ldbl-wrap/e_expl.c,
+	* sysdeps/ieee754/ldbl-wrap/e_j0l.c,
+	* sysdeps/ieee754/ldbl-wrap/e_j1l.c,
+	* sysdeps/ieee754/ldbl-wrap/e_lgammal_r.c,
+	* sysdeps/ieee754/ldbl-wrap/e_powl.c,
+	* sysdeps/ieee754/ldbl-wrap/ldbl-wrap.h,
+	* sysdeps/ieee754/ldbl-wrap/s_erfl.c,
+	* sysdeps/ieee754/ldbl-wrap/s_log1pl.c: New files.
+
 2009-11-16  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	OPTION_EGLIBC_CRYPT and OPTION_EGLIBC_CRYPT_UFC.

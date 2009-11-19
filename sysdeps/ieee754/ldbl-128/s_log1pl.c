@@ -55,6 +55,9 @@
 
 #include "math.h"
 #include "math_private.h"
+#include <gnu/option-groups.h>
+
+#if __OPTION_EGLIBC_LIBM_BIG
 
 /* Coefficients for log(1+x) = x - x^2 / 2 + x^3 P(x)/Q(x)
  * 1/sqrt(2) <= 1+x < sqrt(2)
@@ -245,5 +248,9 @@ __log1pl (long double xm1)
   z = z + e * C1;
   return (z);
 }
+
+#else /* !__OPTION_EGLIBC_LIBM_BIG */
+# include <sysdeps/ieee754/ldbl-wrap/s_log1pl-wrap.c>
+#endif /* __OPTION_EGLIBC_LIBM_BIG */
 
 weak_alias (__log1pl, log1pl)

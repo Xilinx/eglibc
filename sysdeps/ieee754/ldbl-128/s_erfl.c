@@ -98,6 +98,9 @@
 
 #include "math.h"
 #include "math_private.h"
+#include <gnu/option-groups.h>
+
+#if __OPTION_EGLIBC_LIBM_BIG
 
 /* Evaluate P[n] x^n  +  P[n-1] x^(n-1)  +  ...  +  P[0] */
 
@@ -947,5 +950,10 @@ weak_alias (__erfl, erfl)
 	return two - tiny;
     }
 }
+
+#else /* !__OPTION_EGLIBC_LIBM_BIG */
+# include <sysdeps/ieee754/ldbl-wrap/s_erfl-wrap.c>
+weak_alias (__erfl, erfl)
+#endif /* __OPTION_EGLIBC_LIBM_BIG */
 
 weak_alias (__erfcl, erfcl)

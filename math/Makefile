@@ -90,9 +90,11 @@ long-c-yes = $(calls:=l)
 distribute += $(filter-out $(generated),$(long-m-yes:=.c) $(long-c-yes:=.c))
 
 # Rules for the test suite.
-tests = test-matherr test-fenv atest-exp atest-sincos atest-exp2 basic-test \
+tests = test-matherr test-fenv basic-test \
 	test-misc test-fpucw tst-definitions test-tgmath test-tgmath-ret \
-	bug-nextafter bug-nexttoward bug-tgmath1 test-tgmath-int test-tgmath2
+	bug-nextafter bug-nexttoward bug-tgmath1 test-tgmath-int test-tgmath2 \
+	test-dbl-wrap
+tests-$(OPTION_EGLIBC_LIBM_BIG) += atest-exp atest-sincos atest-exp2
 # We do the `long double' tests only if this data type is available and
 # distinct from `double'.
 test-longdouble-yes = test-ldouble test-ildoubl
@@ -114,9 +116,12 @@ ulps-file = $(firstword $(wildcard $(sysdirs:%=%/libm-test-ulps)))
 
 $(addprefix $(objpfx), $(libm-tests-generated)): $(objpfx)libm-test.stmp
 
+ifeq (n,$(OPTION_EGLIBC_LIBM_BIG))
+default_ulp = -d 1
+endif
 $(objpfx)libm-test.stmp: $(ulps-file) libm-test.inc gen-libm-test.pl
 	$(make-target-directory)
-	$(PERL) gen-libm-test.pl -u $< -o "$(objpfx)"
+	$(PERL) gen-libm-test.pl -u $< $(default_ulp) -o "$(objpfx)"
 	@echo > $@
 
 $(objpfx)test-float.o: $(objpfx)libm-test.stmp
