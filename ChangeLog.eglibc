@@ -1,3 +1,12 @@
+2009-11-20  Jakub Jelinek  <jakub@redhat.com>
+
+	PR libc/10103
+
+	* math/math.h: Provide *l long double prototypes redirecting
+	to double functions even when __NO_LONG_DOUBLE_MATH and not
+	__LDBL_COMPAT.
+	* math/complex.h: Likewise.
+
 2009-11-19  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* option-groups.def (OPTION_EGLIBC_LIBM_BIG): New option group.
