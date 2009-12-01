@@ -85,8 +85,8 @@ endif
 $(inst_includedir)/bits/syscall.h: $(objpfx)syscall-list.h $(+force)
 	$(make-target-directory)
 	if test -r $@ && cmp -s $< $@; \
-        then echo 'bits/syscall.h unchanged'; \
-        else $(INSTALL_DATA) $< $@; fi
+	then echo 'bits/syscall.h unchanged'; \
+	else $(INSTALL_DATA) $< $@; fi
 
 ifndef no_deps
 # Get the generated list of dependencies (probably /usr/include/asm/unistd.h).
@@ -98,7 +98,7 @@ endif
 ifeq ($(subdir),time)
 sysdep_headers += sys/timex.h
 
-sysdep_routines += ntp_gettime
+sysdep_routines += ntp_gettime ntp_gettimex
 endif
 
 ifeq ($(subdir),socket)

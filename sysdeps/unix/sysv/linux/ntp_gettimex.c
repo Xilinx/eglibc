@@ -1,5 +1,4 @@
-/* System-specific settings for dynamic linker code.  i386 version.
-   Copyright (C) 2002,2003,2008,2009 Free Software Foundation, Inc.
+/* Copyright (C) 1999, 2002, 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,12 +16,31 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _DL_SYSDEP_H
-# include "i686/dl-sysdep.h"
+#include <sys/timex.h>
 
-/* sysenter/syscall is not useful on i386 through i586, but the dynamic
-   linker and dl code in libc.a has to be able to load i686 compiled
-   libraries.  */
-# undef USE_DL_SYSINFO
+#ifndef MOD_OFFSET
+# define modes mode
+#endif
 
-#endif	/* dl-sysdep.h */
+
+extern int INTUSE(__adjtimex) (struct timex *__ntx);
+
+
+int
+ntp_gettimex (struct ntptimeval *ntv)
+{
+  struct timex tntx;
+  int result;
+
+  tntx.modes = 0;
+  result = INTUSE(__adjtimex) (&tntx);
+  ntv->time = tntx.time;
+  ntv->maxerror = tntx.maxerror;
+  ntv->esterror = tntx.esterror;
+  ntv->tai = tntx.tai;
+  ntv->__unused1 = 0;
+  ntv->__unused2 = 0;
+  ntv->__unused3 = 0;
+  ntv->__unused4 = 0;
+  return result;
+}
