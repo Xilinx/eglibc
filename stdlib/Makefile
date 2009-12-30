@@ -80,7 +80,7 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   test-a64l tst-qsort tst-system bug-strtod2		    \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
 		   tst-makecontext tst-qsort2 tst-makecontext2 tst-strtod6  \
-		   tst-unsetenv1
+		   tst-unsetenv1 tst-makecontext3
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
