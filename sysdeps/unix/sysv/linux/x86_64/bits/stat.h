@@ -1,4 +1,4 @@
-/* Copyright (C) 1999,2000,2001,2002,2003,2009 Free Software Foundation, Inc.
+/* Copyright (C) 1999-2003,2009,2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,9 +16,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_STAT_H
+#if !defined _SYS_STAT_H && !defined _FCNTL_H
 # error "Never include <bits/stat.h> directly; use <sys/stat.h> instead."
 #endif
+
+#ifndef _BITS_STAT_H
+#define _BITS_STAT_H	1
 
 /* Versions of the `struct stat' data structure.  */
 #define _STAT_VER_KERNEL	0
@@ -206,3 +209,5 @@ struct stat64
 # define UTIME_NOW	((1l << 30) - 1l)
 # define UTIME_OMIT	((1l << 30) - 2l)
 #endif
+
+#endif	/* bits/stat.h */

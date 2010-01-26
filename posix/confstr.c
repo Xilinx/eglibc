@@ -1,4 +1,5 @@
-/* Copyright (C) 1991,1996,1997,2000-2004,2009 Free Software Foundation, Inc.
+/* Copyright (C) 1991,1996,1997,2000-2004,2009,2010 Free
+   Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -57,7 +58,7 @@ confstr (name, buf, len)
 #  error "__ILP32_OFF32_CFLAGS should not be defined"
 # elif !defined _POSIX_V7_ILP32_OFF32
       if (__sysconf (_SC_V7_ILP32_OFF32) < 0)
-        break;
+	break;
 # endif
       string = __ILP32_OFF32_CFLAGS;
       string_len = sizeof (__ILP32_OFF32_CFLAGS);
@@ -72,7 +73,7 @@ confstr (name, buf, len)
 #  error "__ILP32_OFFBIG_CFLAGS should not be defined"
 # elif !defined _POSIX_V7_ILP32_OFFBIG
       if (__sysconf (_SC_V7_ILP32_OFFBIG) < 0)
-        break;
+	break;
 # endif
       string = __ILP32_OFFBIG_CFLAGS;
       string_len = sizeof (__ILP32_OFFBIG_CFLAGS);
@@ -87,7 +88,7 @@ confstr (name, buf, len)
 #  error "__LP64_OFF64_CFLAGS should not be defined"
 # elif !defined _POSIX_V7_LP64_OFF64
       if (__sysconf (_SC_V7_LP64_OFF64) < 0)
-        break;
+	break;
 # endif
       string = __LP64_OFF64_CFLAGS;
       string_len = sizeof (__LP64_OFF64_CFLAGS);
@@ -102,7 +103,7 @@ confstr (name, buf, len)
 #  error "__ILP32_OFF32_LDFLAGS should not be defined"
 # elif !defined _POSIX_V7_ILP32_OFF32
       if (__sysconf (_SC_V7_ILP32_OFF32) < 0)
-        break;
+	break;
 # endif
       string = __ILP32_OFF32_LDFLAGS;
       string_len = sizeof (__ILP32_OFF32_LDFLAGS);
@@ -117,7 +118,7 @@ confstr (name, buf, len)
 #  error "__ILP32_OFFBIG_LDFLAGS should not be defined"
 # elif !defined _POSIX_V7_ILP32_OFFBIG
       if (__sysconf (_SC_V7_ILP32_OFFBIG) < 0)
-        break;
+	break;
 # endif
       string = __ILP32_OFFBIG_LDFLAGS;
       string_len = sizeof (__ILP32_OFFBIG_LDFLAGS);
@@ -132,7 +133,7 @@ confstr (name, buf, len)
 #  error "__LP64_OFF64_LDFLAGS should not be defined"
 # elif !defined _POSIX_V7_LP64_OFF64
       if (__sysconf (_SC_V7_LP64_OFF64) < 0)
-        break;
+	break;
 # endif
       string = __LP64_OFF64_LDFLAGS;
       string_len = sizeof (__LP64_OFF64_LDFLAGS);
@@ -216,6 +217,13 @@ confstr (name, buf, len)
       __set_errno (EINVAL);
       return 0;
 #endif
+
+    case _CS_V6_ENV:
+    case _CS_V7_ENV:
+      /* Maybe something else is needed in future.  */
+      string = "POSIXLY_CORRECT=1";
+      string_len = sizeof ("POSIXLY_CORRECT=1");
+      break;
 
     default:
       __set_errno (EINVAL);

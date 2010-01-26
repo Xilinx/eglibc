@@ -1,5 +1,6 @@
 /* Operating system support for run-time dynamic linker.  Generic Unix version.
-   Copyright (C) 1995-1998, 2000-2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1995-1998,2000-2008,2009,2010
+	Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -84,7 +85,7 @@ void *_dl_random attribute_relro = NULL;
 ElfW(Addr)
 _dl_sysdep_start (void **start_argptr,
 		  void (*dl_main) (const ElfW(Phdr) *phdr, ElfW(Word) phnum,
-				   ElfW(Addr) *user_entry))
+				   ElfW(Addr) *user_entry, ElfW(auxv_t) *auxv))
 {
   const ElfW(Phdr) *phdr = NULL;
   ElfW(Word) phnum = 0;
@@ -240,7 +241,7 @@ _dl_sysdep_start (void **start_argptr,
   if (__builtin_expect (INTUSE(__libc_enable_secure), 0))
     __libc_check_standard_fds ();
 
-  (*dl_main) (phdr, phnum, &user_entry);
+  (*dl_main) (phdr, phnum, &user_entry, _dl_auxv);
   return user_entry;
 }
 
@@ -390,7 +391,7 @@ _dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
 	    while ((ElfW(Addr)) (note + 1) - start < phdr[i].p_memsz)
 	      {
 #define ROUND(len) (((len) + sizeof (ElfW(Word)) - 1) & -sizeof (ElfW(Word)))
-		if (note->type == 2
+		if (note->type == NT_GNU_HWCAP
 		    && note->vendorlen == sizeof "GNU"
 		    && !memcmp ((note + 1), "GNU", sizeof "GNU")
 		    && note->datalen > 2 * sizeof (ElfW(Word)) + 2)
@@ -510,9 +511,9 @@ _dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
   /* Fill in the information.  This follows the following scheme
      (indeces from TEMP for four strings):
 	entry #0: 0, 1, 2, 3	binary: 1111
-	      #1: 0, 1, 3	        1101
-	      #2: 0, 2, 3	        1011
-	      #3: 0, 3		        1001
+	      #1: 0, 1, 3		1101
+	      #2: 0, 2, 3		1011
+	      #3: 0, 3			1001
      This allows the representation of all possible combinations of
      capability names in the string.  First generate the strings.  */
   result[1].str = result[0].str = cp = (char *) (result + *sz);

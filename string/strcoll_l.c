@@ -1,4 +1,4 @@
-/* Copyright (C) 1995,96,97,2002, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 1995-1997,2002,2004,2007,2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Ulrich Drepper <drepper@gnu.org>, 1995.
 
@@ -49,7 +49,7 @@ STRCOLL (s1, s2, l)
      const STRING_TYPE *s2;
      __locale_t l;
 {
-  struct locale_data *current = l->__locales[LC_COLLATE];
+  struct __locale_data *current = l->__locales[LC_COLLATE];
 #if __OPTION_EGLIBC_LOCALE_CODE
   uint_fast32_t nrules = current->values[_NL_ITEM_INDEX (_NL_COLLATE_NRULES)].word;
 #else

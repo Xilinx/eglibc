@@ -1,3 +1,34 @@
+2010-01-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S:
+	Fix unwind info.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S: Likewise.
+
+2010-01-15  Michal Schmidt  <mschmidt@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S:
+	Fix pthread_cond_timedwait with requeue-PI.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S:
+	Fix pthread_cond_wait with requeue-PI.
+
+2010-01-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* Versions: Add pthread_mutex_consistent, pthread_mutexattr_getrobust,
+	and pthread_mutexattr_setrobust for GLIBC_2.12.
+	* pthread_mutex_consistent.c: Define alias pthread_mutex_consistent.
+	* pthread_mutexattr_getrobust.c: Define alias
+	pthread_mutexattr_getrobust.
+	* pthread_mutexattr_setrobust.c: Define alias
+	pthread_mutexattr_setrobust.
+
+2010-01-12  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/pthread/pthread.h: Cleanup.  Fix up for XPG7.
+
+2010-01-08  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/pthread/pthread.h: Fix pthread_mutex_consistent declaration.
+
 2009-12-18  Thomas Schwinge  <thomas@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/s390/s390-32/pt-initfini.c (_init): Don't

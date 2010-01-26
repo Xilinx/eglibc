@@ -1,4 +1,5 @@
-/* Copyright (C) 1992,93,94,96,97,99,2000,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1992-1994,1996,1997,1999,2000,2005,2010
+   Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,9 +17,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_STAT_H
+#if !defined _SYS_STAT_H && !defined _FCNTL_H
 # error "Never include <bits/stat.h> directly; use <sys/stat.h> instead."
 #endif
+
+#ifndef _BITS_STAT_H
+#define _BITS_STAT_H	1
 
 #include <bits/types.h>
 
@@ -192,5 +196,7 @@ struct stat64
 
 /* Default file creation mask (umask).  */
 #ifdef	__USE_BSD
-#define	CMASK		0022
+# define CMASK		0022
 #endif
+
+#endif	/* bits/stat.h */

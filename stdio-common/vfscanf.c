@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2006, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2006, 2007, 2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -223,7 +223,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
   int errval = 0;
 #ifndef COMPILE_WSCANF
   __locale_t loc = _NL_CURRENT_LOCALE;
-  struct locale_data *const curctype = loc->__locales[LC_CTYPE];
+  struct __locale_data *const curctype = loc->__locales[LC_CTYPE];
 #endif
 
   /* Errno of last failed inchar call.  */
@@ -301,7 +301,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 
  {
 #if __OPTION_EGLIBC_LOCALE_CODE && !defined (COMPILE_WSCANF)
-   struct locale_data *const curnumeric = loc->__locales[LC_NUMERIC];
+   struct __locale_data *const curnumeric = loc->__locales[LC_NUMERIC];
 #endif
 
 #if __OPTION_EGLIBC_LOCALE_CODE
@@ -1420,7 +1420,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 		    {
 #ifdef COMPILE_WSCANF
 		      wcdigits[n] = (const wchar_t *)
-                        _NL_CURRENT (LC_CTYPE, _NL_CTYPE_INDIGITS0_WC + n);
+			_NL_CURRENT (LC_CTYPE, _NL_CTYPE_INDIGITS0_WC + n);
 
 		      wchar_t *wc_extended = (wchar_t *)
 			alloca ((to_level + 2) * sizeof (wchar_t));
@@ -1430,7 +1430,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 		      wcdigits_extended[n] = wc_extended;
 #else
 		      mbdigits[n]
-                        = curctype->values[_NL_CTYPE_INDIGITS0_MB + n].string;
+			= curctype->values[_NL_CTYPE_INDIGITS0_MB + n].string;
 
 		      /*  Get the equivalent wide char in map.  */
 		      wint_t extra_wcdigit = __towctrans (L'0' + n, map);
@@ -2079,9 +2079,9 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 	      wcdigits[11] = __towctrans (L'.', map);
 
 	      /* If we have not read any character or have just read
-	         locale decimal point which matches the decimal point
-	         for localized FP numbers, then we may have localized
-	         digits.  Note, we test GOT_DOT above.  */
+		 locale decimal point which matches the decimal point
+		 for localized FP numbers, then we may have localized
+		 digits.  Note, we test GOT_DOT above.  */
 #ifdef COMPILE_WSCANF
 	      if (wpsize == 0 || (wpsize == 1 && wcdigits[11] == decimal))
 #else
@@ -2118,7 +2118,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 		  bool have_locthousands = (flags & GROUP) != 0;
 
 		  /* Now get the digits and the thousands-sep equivalents.  */
-	          for (int n = 0; n < 11; ++n)
+		  for (int n = 0; n < 11; ++n)
 		    {
 		      if (n < 10)
 			wcdigits[n] = __towctrans (L'0' + n, map);
@@ -2422,7 +2422,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 			  if (wc <= runp[1] && not_in)
 			    {
 			      /* The current character is not in the
-                                 scanset.  */
+				 scanset.  */
 			      ungetc (c, s);
 			      goto out;
 			    }
@@ -2648,7 +2648,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 			  if (wc <= runp[1] && not_in)
 			    {
 			      /* The current character is not in the
-                                 scanset.  */
+				 scanset.  */
 			      ungetc (c, s);
 			      goto out2;
 			    }
