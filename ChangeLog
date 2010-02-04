@@ -1,3 +1,28 @@
+2010-02-03  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #11235]
+	* sysdeps/unix/sysv/linux/sys/mount.h: Remove S_WRITE, S_APPEND,
+	S_IMMUTABLE.  Add MS_DIRSYNC, MS_MOVE, MS_SILENT, MS_REC,
+	MS_POSIXACL, MS_UNBINDABLE, MS_PRIVATE, MS_SLAVE, MS_SHARED,
+	MS_RELATIME, MS_KERNMOUNT, MS_I_VERSION, MS_STRICTATIME,
+	MS_ACTIVE, and MS_NOUSER.
+	(MS_RMT_MASK): Update according to current kernels.
+
+	[BZ #11242]
+	* misc/getusershell.c (initshells): Allocate one more byte in input
+	buffer so that fgets doesn't loop undefinitely.
+
+2010-02-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* stdlib/setenv.c (__add_to_environ): Don't use alloca if
+	__libc_use_alloca tells us not to.  Fix memory leak in an error
+	situation.  Based partially on patch by Jim Meyering.
+
+2010-01-26  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/getsysstats.c (get_nprocs_conf, get_nprocs,
+	get_phys_pages, get_avphys_pages): Add weak aliases.
+
 2010-01-25  Andreas Schwab  <schwab@redhat.com>
 
 	* iconv/iconv_prog.c (write_output): Fix check for open failure.
