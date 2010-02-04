@@ -225,7 +225,7 @@ _dl_fini (void)
 		  || l->l_info[DT_FINI] != NULL)
 		{
 		  /* When debugging print a message first.  */
-		  if (__builtin_expect (GLRO(dl_debug_mask)
+		  if (__builtin_expect (GLRO_dl_debug_mask
 					& DL_DEBUG_IMPCALLS, 0))
 		    _dl_debug_printf ("\ncalling fini: %s [%lu]\n\n",
 				      l->l_name[0] ? l->l_name : rtld_progname,
@@ -277,7 +277,7 @@ _dl_fini (void)
       goto again;
     }
 
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_STATISTICS, 0))
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_STATISTICS, 0))
     _dl_debug_printf ("\nruntime linker statistics:\n"
 		      "           final number of relocations: %lu\n"
 		      "final number of relocations from cache: %lu\n",

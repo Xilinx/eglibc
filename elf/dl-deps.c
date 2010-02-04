@@ -129,7 +129,7 @@ empty dynamic string token substitution"));				      \
 	    else							      \
 	      {								      \
 		/* This is for DT_AUXILIARY.  */			      \
-		if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS, 0))\
+		if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_LIBS, 0))\
 		  _dl_debug_printf (N_("\
 cannot load auxiliary `%s' because of empty dynamic string token "	      \
 					    "substitution\n"), __str);	      \
@@ -298,7 +298,7 @@ _dl_map_object_deps (struct link_map *map,
 		if (d->d_tag == DT_AUXILIARY)
 		  {
 		    /* Say that we are about to load an auxiliary library.  */
-		    if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS,
+		    if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_LIBS,
 					  0))
 		      _dl_debug_printf ("load auxiliary object=%s"
 					" requested by file=%s\n",
@@ -325,7 +325,7 @@ _dl_map_object_deps (struct link_map *map,
 		else
 		  {
 		    /* Say that we are about to load an auxiliary library.  */
-		    if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS,
+		    if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_LIBS,
 					  0))
 		      _dl_debug_printf ("load filtered object=%s"
 					" requested by file=%s\n",
@@ -526,7 +526,7 @@ _dl_map_object_deps (struct link_map *map,
       runp->map->l_reserved = 0;
     }
 
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK, 0) != 0
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_PRELINK, 0) != 0
       && map == GL(dl_ns)[LM_ID_BASE]._ns_loaded)
     {
       /* If we are to compute conflicts, we have to build local scope

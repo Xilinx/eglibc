@@ -1,3 +1,25 @@
+2010-02-04  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	EGLIBC_RTLD_DEBUG option group
+
+	* option-groups.def (OPTION_EGLIBC_RTLD_DEBUG): Define new option
+	group.
+	* option-groups.defaults: Set the default.
+	* sysdeps/generic/ldsodefs.h (GLRO_dl_debug_mask): Define to either
+	`GLRO(dl_debug_mask)' or to `0' depending on RTLD_DEBUG option group.
+	(_dl_debug_mask): Declare only if RTLD_DEBUG is enabled.
+	* elf/dl-support.c (_dl_debug_mask): Define only if RTLD_DEBUG is
+	enabled.
+	* elf/rtld.c: Replace GLRO(dl_debug_mask) with GLRO_dl_debug_mask
+	throughout the file.
+	(process_dl_debug): Compile only if RTLD_DEBUG is enabled.
+	(process_envvars): Update.
+	* csu/libc-start.c, elf/dl-cache.c, elf/dl-close.c, elf/dl-conflict.c,
+	* elf/dl-deps.c, elf/dl-error.c, elf/dl-fini.c, elf/dl-init.c,
+	* elf/dl-load.c, elf/dl-lookup.c, elf/dl-object.c, elf/dl-open.c,
+	* elf/dl-reloc.c, elf/dl-version.c: Replace GLRO(dl_debug_mask) with
+	GLRO_dl_debug_mask throughout the file.
+
 2009-11-20  Jakub Jelinek  <jakub@redhat.com>
 
 	PR libc/10103

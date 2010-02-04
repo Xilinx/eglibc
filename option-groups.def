@@ -635,6 +635,17 @@ config OPTION_EGLIBC_RCMD
         rresvport       ruserpass
         rresvport_af
         
+config OPTION_EGLIBC_RTLD_DEBUG
+   bool "Runtime linker debug print outs"
+   help
+      This option group enables debug output of the runtime linker
+      which is activated via LD_DEBUG and LD_TRACE_PRELINKING
+      environment variables.  Disabling this option group yields
+      a smaller runtime linker binary.
+      BEWARE: Disabling this option group is likely to break
+      the `ldd' utility which may also be used by the prelinker.
+      In particular, the `--unused' ldd option will not work correctly.
+
 config OPTION_EGLIBC_SPAWN
    bool "Support for POSIX posix_spawn functions"
    help

@@ -186,7 +186,7 @@ _dl_relocate_object (struct link_map *l, struct r_scope_elem *scope[],
       && __builtin_expect (l->l_info[DT_BIND_NOW] != NULL, 0))
     lazy = 0;
 
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_RELOC, 0))
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_RELOC, 0))
     _dl_debug_printf ("\nrelocation processing: %s%s\n",
 		      l->l_name[0] ? l->l_name : rtld_progname,
 		      lazy ? " (lazy)" : "");

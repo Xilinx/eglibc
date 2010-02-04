@@ -40,7 +40,9 @@ char **_dl_argv = &__progname;	/* This is checked for some error messages.  */
 const char *_dl_platform;
 size_t _dl_platformlen;
 
+#if __OPTION_EGLIBC_RTLD_DEBUG
 int _dl_debug_mask;
+#endif
 int _dl_lazy;
 ElfW(Addr) _dl_use_load_bias = -2;
 int _dl_dynamic_weak;

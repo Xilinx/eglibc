@@ -33,7 +33,7 @@ _dl_resolve_conflicts (struct link_map *l, ElfW(Rela) *conflict,
 		       ElfW(Rela) *conflictend)
 {
 #if ! ELF_MACHINE_NO_RELA
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_RELOC, 0))
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_RELOC, 0))
     _dl_debug_printf ("\nconflict processing: %s\n",
 		      l->l_name[0] ? l->l_name : rtld_progname);
 

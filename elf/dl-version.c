@@ -88,7 +88,7 @@ match_symbol (const char *name, Lmid_t ns, ElfW(Word) hash, const char *string,
   int result = 0;
 
   /* Display information about what we are doing while debugging.  */
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_VERSIONS, 0))
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_VERSIONS, 0))
     _dl_debug_printf ("\
 checking for version `%s' in file %s [%lu] required by file %s [%lu]\n",
 		      string, map->l_name[0] ? map->l_name : rtld_progname,

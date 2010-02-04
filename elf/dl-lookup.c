@@ -110,7 +110,7 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
 	continue;
 
       /* Print some debugging info if wanted.  */
-      if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_SYMBOLS, 0))
+      if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_SYMBOLS, 0))
 	_dl_debug_printf ("symbol=%s;  lookup in file=%s [%lu]\n",
 			  undef_name,
 			  map->l_name[0] ? map->l_name : rtld_progname,
@@ -646,7 +646,7 @@ add_dependency (struct link_map *undef_map, struct link_map *map, int flags)
 	}
 
       /* Display information if we are debugging.  */
-      if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_FILES, 0))
+      if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_FILES, 0))
 	_dl_debug_printf ("\
 \nfile=%s [%lu];  needed by %s [%lu] (relocation dependency)\n\n",
 			  map->l_name[0] ? map->l_name : rtld_progname,
@@ -825,7 +825,7 @@ _dl_lookup_symbol_x (const char *undef_name, struct link_map *undef_map,
   if (__builtin_expect (current_value.m->l_used == 0, 0))
     current_value.m->l_used = 1;
 
-  if (__builtin_expect (GLRO(dl_debug_mask)
+  if (__builtin_expect (GLRO_dl_debug_mask
 			& (DL_DEBUG_BINDINGS|DL_DEBUG_PRELINK), 0))
     _dl_debug_bindings (undef_name, undef_map, ref,
 			&current_value, version, type_class, protected);
@@ -890,7 +890,7 @@ _dl_debug_bindings (const char *undef_name, struct link_map *undef_map,
 {
   const char *reference_name = undef_map->l_name;
 
-  if (GLRO(dl_debug_mask) & DL_DEBUG_BINDINGS)
+  if (GLRO_dl_debug_mask & DL_DEBUG_BINDINGS)
     {
       _dl_debug_printf ("binding file %s [%lu] to %s [%lu]: %s symbol `%s'",
 			(reference_name[0]
@@ -906,7 +906,7 @@ _dl_debug_bindings (const char *undef_name, struct link_map *undef_map,
 	_dl_debug_printf_c ("\n");
     }
 #ifdef SHARED
-  if (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK)
+  if (GLRO_dl_debug_mask & DL_DEBUG_PRELINK)
     {
       int conflict = 0;
       struct sym_val val = { NULL, NULL };

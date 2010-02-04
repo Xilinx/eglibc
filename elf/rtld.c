@@ -346,7 +346,7 @@ _dl_start_final (void *arg, struct dl_start_final_info *info)
     }
 #endif
 
-  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_STATISTICS, 0))
+  if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_STATISTICS, 0))
     {
 #ifndef HP_TIMING_NONAVAIL
       print_statistics (&rtld_total_time);
@@ -1888,7 +1888,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 	 after relocation.  */
       struct link_map *l;
 
-      if (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK)
+      if (GLRO_dl_debug_mask & DL_DEBUG_PRELINK)
 	{
 	  struct r_scope_elem *scope = &main_map->l_searchlist;
 
@@ -1920,7 +1920,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 		_dl_printf ("\n");
 	    }
 	}
-      else if (GLRO(dl_debug_mask) & DL_DEBUG_UNUSED)
+      else if (GLRO_dl_debug_mask & DL_DEBUG_UNUSED)
 	{
 	  /* Look through the dependencies of the main executable
 	     and determine which of them is not actually
@@ -2024,7 +2024,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 		}
 	      while (l != NULL);
 
-	      if ((GLRO(dl_debug_mask) & DL_DEBUG_PRELINK)
+	      if ((GLRO_dl_debug_mask & DL_DEBUG_PRELINK)
 		  && rtld_multiple_ref)
 		{
 		  /* Mark the link map as not yet relocated again.  */
@@ -2158,7 +2158,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
       if (r_list == r_listend && liblist == liblistend)
 	prelinked = true;
 
-      if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS, 0))
+      if (__builtin_expect (GLRO_dl_debug_mask & DL_DEBUG_LIBS, 0))
 	_dl_debug_printf ("\nprelink checking: %s\n",
 			  prelinked ? "ok" : "failed");
     }
@@ -2377,6 +2377,7 @@ print_missing_version (int errcode __attribute__ ((unused)),
 		    objname, errstring);
 }
 
+#if __OPTION_EGLIBC_RTLD_DEBUG
 /* Nonzero if any of the debugging options is enabled.  */
 static int any_debug attribute_relro;
 
@@ -2436,7 +2437,7 @@ process_dl_debug (const char *dl_debug)
 	    if (debopts[cnt].len == len
 		&& memcmp (dl_debug, debopts[cnt].name, len) == 0)
 	      {
-		GLRO(dl_debug_mask) |= debopts[cnt].mask;
+		GLRO_dl_debug_mask |= debopts[cnt].mask;
 		any_debug = 1;
 		break;
 	      }
@@ -2457,7 +2458,7 @@ warning: debug option `%s' unknown; try LD_DEBUG=help\n", copy);
       ++dl_debug;
     }
 
-  if (GLRO(dl_debug_mask) & DL_DEBUG_HELP)
+  if (GLRO_dl_debug_mask & DL_DEBUG_HELP)
     {
       size_t cnt;
 
@@ -2475,6 +2476,7 @@ a filename can be specified using the LD_DEBUG_OUTPUT environment variable.\n");
       _exit (0);
     }
 }
+#endif /* __OPTION_EGLIBC_RTLD_DEBUG */
 
 static void
 process_dl_audit (char *str)
@@ -2542,12 +2544,14 @@ process_envvars (enum mode *modep)
 	  break;
 
 	case 5:
+#if __OPTION_EGLIBC_RTLD_DEBUG
 	  /* Debugging of the dynamic linker?  */
 	  if (memcmp (envline, "DEBUG", 5) == 0)
 	    {
 	      process_dl_debug (&envline[6]);
 	      break;
 	    }
+#endif
 	  if (memcmp (envline, "AUDIT", 5) == 0)
 	    process_dl_audit (&envline[6]);
 	  break;
@@ -2656,7 +2660,9 @@ process_envvars (enum mode *modep)
 	    {
 	      mode = trace;
 	      GLRO(dl_verbose) = 1;
-	      GLRO(dl_debug_mask) |= DL_DEBUG_PRELINK;
+#if __OPTION_EGLIBC_RTLD_DEBUG
+	      GLRO_dl_debug_mask |= DL_DEBUG_PRELINK;
+#endif
 	      GLRO(dl_trace_prelink) = &envline[17];
 	    }
 	  break;
@@ -2703,12 +2709,15 @@ process_envvars (enum mode *modep)
       if (__access ("/etc/suid-debug", F_OK) != 0)
 	{
 	  unsetenv ("MALLOC_CHECK_");
-	  GLRO(dl_debug_mask) = 0;
+#if __OPTION_EGLIBC_RTLD_DEBUG
+	  GLRO_dl_debug_mask = 0;
+#endif
 	}
 
       if (mode != normal)
 	_exit (5);
     }
+#if __OPTION_EGLIBC_RTLD_DEBUG
   /* If we have to run the dynamic linker in debugging mode and the
      LD_DEBUG_OUTPUT environment variable is given, we write the debug
      messages to this file.  */
@@ -2733,6 +2742,7 @@ process_envvars (enum mode *modep)
 	/* We use standard output if opening the file failed.  */
 	GLRO(dl_debug_fd) = STDOUT_FILENO;
     }
+#endif /* __OPTION_EGLIBC_RTLD_DEBUG */
 }
 
 
