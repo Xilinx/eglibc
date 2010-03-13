@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2007,2008,2009 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2007,2008,2009,2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -241,6 +241,10 @@ start_thread (void *arg)
   /* Initialize resolver state pointer.  */
   __resp = &pd->res;
 #endif
+
+  /* Allow setxid from now onwards.  */
+  if (__builtin_expect (atomic_exchange_acq (&pd->setxid_futex, 0) == -2, 0))
+    lll_futex_wake (&pd->setxid_futex, 1, LLL_PRIVATE);
 
 #ifdef __NR_set_robust_list
 # ifndef __ASSUME_SET_ROBUST_LIST
@@ -538,33 +542,23 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
       if (pd->schedparam.sched_priority < minprio
 	  || pd->schedparam.sched_priority > maxprio)
 	{
-	  err = EINVAL;
-	  goto errout;
+	  /* Perhaps a thread wants to change the IDs and if waiting
+	     for this stillborn thread.  */
+	  if (__builtin_expect (atomic_exchange_acq (&pd->setxid_futex, 0)
+				== -2, 0))
+	    lll_futex_wake (&pd->setxid_futex, 1, LLL_PRIVATE);
+
+	  __deallocate_stack (pd);
+
+	  return EINVAL;
 	}
     }
 
   /* Pass the descriptor to the caller.  */
   *newthread = (pthread_t) pd;
 
-  /* Remember whether the thread is detached or not.  In case of an
-     error we have to free the stacks of non-detached stillborn
-     threads.  */
-  bool is_detached = IS_DETACHED (pd);
-
   /* Start the thread.  */
-  err = create_thread (pd, iattr, STACK_VARIABLES_ARGS);
-  if (err != 0)
-    {
-      /* Something went wrong.  Free the resources.  */
-      if (!is_detached)
-	{
-	errout:
-	  __deallocate_stack (pd);
-	}
-      return err;
-    }
-
-  return 0;
+  return create_thread (pd, iattr, STACK_VARIABLES_ARGS);
 }
 versioned_symbol (libpthread, __pthread_create_2_1, pthread_create, GLIBC_2_1);
 
