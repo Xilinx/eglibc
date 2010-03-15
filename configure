@@ -4490,8 +4490,13 @@ if test "$elf" = yes; then
   elf_dirs=
   for d in $add_ons_pfx ''; do
     for m in $mach; do
-      if test -d $srcdir/${d}sysdeps$m/elf; then
-	elf_dirs="$elf_dirs ${d}sysdeps$m/elf"
+      try="${d}sysdeps$m/elf"
+      case $d in
+	/*) try_srcdir= ;;
+	*) try_srcdir=$srcdir/ ;;
+      esac
+      if test -d $try_srcdir$try; then
+	elf_dirs="$elf_dirs $try"
       fi
     done
   done

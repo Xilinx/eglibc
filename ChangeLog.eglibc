@@ -1,3 +1,10 @@
+2010-03-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* configure.in: Don't prepend $srcdir to absolute path to elf
+	sysdeps directory from add-ons.  Issue reported by c1de0x
+	<c1de0x@gmail.com>.
+	* configure: Regenerate.
+
 2010-02-04  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	EGLIBC_RTLD_DEBUG option group
