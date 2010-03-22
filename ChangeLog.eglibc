@@ -1,3 +1,11 @@
+2010-03-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/Makefile (tst-audit3-ENV, tst-audit4-ENV, tst-audit5-ENV,
+	tst-audit6-ENV, tst-audit7-ENV): Use EGLIBC_TEST_LD_AUDIT instead
+	of LD_AUDIT.
+	(tst-audit3-WRAPPER, tst-audit4-WRAPPER, tst-audit5-WRAPPER,
+	tst-audit6-WRAPPER, tst-audit7-WRAPPER): Define.
+
 2010-03-15  Joseph Myers  <joseph@codesourcery.com>
 
 	* configure.in: Don't prepend $srcdir to absolute path to elf

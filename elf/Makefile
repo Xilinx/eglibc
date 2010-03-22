@@ -992,24 +992,29 @@ tst-audit2-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit3: $(objpfx)tst-auditmod3a.so
 $(objpfx)tst-audit3.out: $(objpfx)tst-auditmod3b.so
-tst-audit3-ENV = LD_AUDIT=$(objpfx)tst-auditmod3b.so
+tst-audit3-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod3b.so
+tst-audit3-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit4: $(objpfx)tst-auditmod4a.so
 $(objpfx)tst-audit4.out: $(objpfx)tst-auditmod4b.so
-tst-audit4-ENV = LD_AUDIT=$(objpfx)tst-auditmod4b.so
+tst-audit4-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod4b.so
+tst-audit4-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit5: $(objpfx)tst-auditmod5a.so
 $(objpfx)tst-audit5.out: $(objpfx)tst-auditmod5b.so
-tst-audit5-ENV = LD_AUDIT=$(objpfx)tst-auditmod5b.so
+tst-audit5-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod5b.so
+tst-audit5-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit6: $(objpfx)tst-auditmod6a.so
 $(objpfx)tst-audit6.out: $(objpfx)tst-auditmod6b.so \
 			 $(objpfx)tst-auditmod6c.so
-tst-audit6-ENV = LD_AUDIT=$(objpfx)tst-auditmod6b.so:$(objpfx)tst-auditmod6c.so
+tst-audit6-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod6b.so:$(objpfx)tst-auditmod6c.so
+tst-audit6-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-audit7: $(objpfx)tst-auditmod7a.so
 $(objpfx)tst-audit7.out: $(objpfx)tst-auditmod7b.so
-tst-audit7-ENV = LD_AUDIT=$(objpfx)tst-auditmod7b.so
+tst-audit7-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod7b.so
+tst-audit7-WRAPPER = $(..)scripts/run-with-env.sh
 
 $(objpfx)tst-global1: $(libdl)
 $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
