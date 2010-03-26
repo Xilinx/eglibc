@@ -1,3 +1,180 @@
+2010-03-26  Richard Henderson  <rth@redhat.com>
+
+	* sysdeps/generic/ldsodefs.h (_dl_random): Mark attribute_relro;
+
+	* stdio-common/psiginfo.c (psiginfo): Fix printf format
+	warning for si_band.
+
+	* locale/setlocale.c (free_category): Finish renaming
+	struct locale_data to __locale_data.
+
+	* csu/gmon-start.c (ENTRY_POINT, etext): Declare as char[], not void.
+	* elf/dl-sysdep.c (_end): Likewise.
+	* sysdeps/unix/sysv/dl-sysdep.c (frob_brk): Likewise with locally
+	declared _end, and associated variables.
+
+2010-03-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Don't assume success always
+	means aborting the loop over the NSS methods.
+
+2010-03-25  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Reset no_data before
+	each action.
+
+2010-03-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* malloc/malloc.c: Remove stale reference to website.
+
+2010-03-24  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #11389]
+	* bits/time.h: Define CLOCK_MONOTONIC_RAW, CLOCK_REALTIME_COARSE, and
+	CLOCK_MONOTONIC_COARSE.
+	* sysdeps/unix/sysv/linux/clock_getres.c: Handle CLOCK_MONOTONIC_RAW,
+	CLOCK_REALTIME_COARSE, and CLOCK_MONOTONIC_COARSE.
+	* sysdeps/unix/sysv/linux/clock_gettime.c: Likewise.
+	* sysdeps/unix/sysv/linux/clock_settime.c: Likewise.
+
+2010-03-25  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/cuserid.c: Fix typo.
+
+2010-03-16  Chris Demetriou  <cgd@google.com>
+
+	[BZ #11394]
+	* locale/programs/simple-hash.c: Include inttypes.h.
+	(hashval_t): Defined to be uint32_t.
+	* locale/programs/simple_hash.h: Include inttypes.h.
+	(compute_hashval): Change return type to uint32_t.
+
+2010-03-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/getlogin_r.c: New file.
+	* sysdeps/unix/sysv/linux/getlogin.c: New file.
+	* sysdeps/unix/getlogin_r.c: Allow compiling getlogin as static
+	function.
+	* sysdeps/unix/getlogin.c: Likewise.  Move name variable to toplevel.
+	* include/unistd.h: Declare __getlogin_r_loginuid.
+
+	[BZ #11397]
+	* sysdeps/posix/cuserid.c (cuserid): Make sure the returned string
+	is NUL terminated.
+	Patch by Jonathan Geisler <jgeisler@cse.taylor.edu>.
+
+	* sysdeps/unix/sysv/linux/mmap64.c: Allow variable shift values.
+
+2010-03-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/strpbrk-c.c: Define only if SHARED
+	is defined.
+
+2010-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* string/test-memcmp.c (check_result): New function.
+	(do_one_test): Use it.
+	(check1): New function.
+	(test_main): Use it.
+
+2010-03-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* posix/tst-gnuglob.c: Add tests with empty patterns.  For this
+	rewrite the tests to add support for failing glob calls.
+	Some other minor cleanups.
+	* posix/bug-glob3.c: New file.
+	* posix/Makefile (tests): Add bug-glob3.
+
+2010-03-24  Ulrich Drepper  <drepper@redhat.com>
+	    Andreas Schwab  <andreas@redhat.com>
+
+	* posix/glob.c (glob): Clean up gl_pathc and gl_pathv earlier.
+	If pattern is "" bail out early
+
+2010-03-23  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf/dl-lookup.c (do_lookup_x): If tab->entries is NULL,
+	but tab->size != 0, just unlock and goto success, without
+	allocating anything or entering anything into the hash table.
+	(_dl_debug_bindings): Temporarily set tab->entries to NULL
+	around do_lookup_x in undef_map->l_local_scope[0].  If
+	undef_map->l_symbolic_in_local_scope, lookup also in
+	symbolic_searchlist of following libraries in l_local_scope
+	that have DT_SYMBOLIC set.
+	* elf/dl-deps.c (_dl_map_object_deps): Compute
+	l_symbolic_in_local_scope.
+	* include/link.h (struct link_map): Add l_symbolic_in_local_scope
+	bitfield.
+
+2010-03-24  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #11410]
+	* wctype/wctype.h: Use <wchar.h> to get the wint_t definition.
+
+	* wcsmbs/wchar.h: Correct preprocessor directive indentation.  Move
+	C++ prototype handling to a better place.
+
+2010-03-18  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-load.c (open_verify): Extend expected to the full size of the
+	e_ident array.  When loading, check that the fields in e_ident we don't
+	know are zero to allow future extensions.
+
+2010-03-18  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/multiarch/memcmp-ssse3.S: Update %xmm3
+	when exit from loop.
+
+2010-03-16  Andreas Schwab  <schwab@redhat.com>
+
+	* resolv/res_send.c (__libc_res_nsend): Fix printing of server
+	address in debug statement.
+	(send_dg): Pass correct buffer pointer to DprintQ.
+
+2010-03-17  Ulrich Drepper  <drepper@redhat.com>
+
+	* libc-abis: Add a few more entries.
+
+2010-03-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/dl-load.c (VALID_ELF_ABIVERSION): Add additional osabi parameter.
+	Not used here.
+	(open_verify): Modify for extended VALID_ELF_ABIVERSION macro
+	interface.
+	* sysdeps/unix/sysv/linux/ldsodefs.h (VALID_ELF_ABIVERSION): Add
+	additional osabi parameter.  Only acceept nonzero ABI versions if osabi
+	is Linux.
+	Fix includes.
+	(expected2): Don't explicitly initialize EI_ABIVERSION byte.
+
+	* sysdeps/unix/sysv/linux/ldsodefs.h (VALID_ELF_ABIVERSION): Update
+	definition to follow generic code.
+
+2010-03-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* posix/getconf.c: Update copyright year.
+	* nss/getent.c: Likewise.
+	* iconv/iconvconfig.c: Likewise.
+	* iconv/iconv_prog.c: Likewise.
+	* elf/ldconfig.c: Likewise.
+	* catgets/gencat.c: Likewise.
+	* csu/version.c: Likewise.
+	* elf/ldd.bash.in: Likewise.
+	* elf/sprof.c (print_version): Likewise.
+	* locale/programs/locale.c: Likewise.
+	* locale/programs/localedef.c: Likewise.
+	* nscd/nscd.c (print_version): Likewise.
+	* debug/xtrace.sh: Likewise.
+	* malloc/memusage.sh: Likewise.
+	* malloc/mtrace.pl: Likewise.
+	* debug/catchsegv.sh: Likewise.
+
+	* Makerules: Add rule for libc-abis.h.
+	* csu/version.c: Use LIBC_ABIS_STRING string if available.
+	* elf/dl-load.c (VALID_ELF_ABIVERSION): Check using LIBC_ABI_MAX.
+	(open_verify): Only check EI_ABIVERSION bytes using VALID_ELF_HEADER.
+	Add extra call to VALID_ELF_ABIVERSION.
+
 2010-03-12  Ulrich Drepper  <drepper@redhat.com>
 
 	* sysdeps/unix/sysv/linux/sys/mount.h (UMOUNT_NOFOLLOW): Define.

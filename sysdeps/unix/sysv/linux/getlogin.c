@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1996, 1998, 1999, 2001, 2010 Free Software Foundation, Inc.
+/* Copyright (C) 2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,33 +17,23 @@
    02111-1307 USA.  */
 
 #include <pwd.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <not-cancel.h>
 
-/* Return the username of the caller.
-   If S is not NULL, it points to a buffer of at least L_cuserid bytes
-   into which the name is copied; otherwise, a static buffer is used.  */
+#define STATIC static
+#define getlogin getlogin_fd0
+#include <sysdeps/unix/getlogin.c>
+#undef getlogin
+
+
+/* Return the login name of the user, or NULL if it can't be determined.
+   The returned pointer, if not NULL, is good only until the next call.  */
+
 char *
-cuserid (s)
-     char *s;
+getlogin (void)
 {
-  static char name[L_cuserid];
-  char buf[NSS_BUFLEN_PASSWD];
-  struct passwd pwent;
-  struct passwd *pwptr;
+  if (__getlogin_r_loginuid (name, sizeof (name)) == 0)
+    return name;
 
-  if (__getpwuid_r (__geteuid (), &pwent, buf, sizeof (buf), &pwptr)
-      || pwptr == NULL)
-    {
-      if (s != NULL)
-	s[0] = '\0';
-      return s;
-    }
-
-  if (s == NULL)
-    s = name;
-  s[L_cuserid - 1] = '\0';
-  return strncpy (s, pwptr->pw_name, L_cuserid - 1);
+  return getlogin_fd0 ();
 }
