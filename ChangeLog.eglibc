@@ -1,3 +1,7 @@
+2010-03-28  Joseph Myers  <joseph@codesourcery.com>
+
+	* csu/Makefile: Include option-groups.mak.
+
 2010-03-22  Joseph Myers  <joseph@codesourcery.com>
 
 	* elf/Makefile (tst-audit3-ENV, tst-audit4-ENV, tst-audit5-ENV,

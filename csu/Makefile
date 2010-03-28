@@ -24,6 +24,8 @@
 # to make the .init and .fini sections work right; both these files are
 # built (in an arcane manner) from initfini.c.
 
+include ../option-groups.mak
+
 subdir := csu
 
 routines = init-first libc-start $(libc-init) sysdep version check_fds \
