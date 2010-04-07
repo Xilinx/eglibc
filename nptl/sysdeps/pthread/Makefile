@@ -1,4 +1,4 @@
-# Copyright (C) 2002,2003,2004,2006 Free Software Foundation, Inc.
+# Copyright (C) 2002,2003,2004,2006,2010 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 # Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -17,12 +17,6 @@
 # Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 # 02111-1307 USA.
 
-ifeq ($(subdir),csu)
-routines += unwind-resume
-shared-only-routines += unwind-resume
-CFLAGS-unwind-resume.c += -fexceptions -fasynchronous-unwind-tables
-endif
-
 ifeq ($(subdir),nptl)
 libpthread-sysdep_routines += errno-loc
 ifeq ($(OPTION_EGLIBC_BIG_MACROS),n)
@@ -31,10 +25,8 @@ endif
 endif
 
 ifeq ($(subdir),rt)
-librt-sysdep_routines += timer_routines librt-cancellation rt-unwind-resume
-librt-shared-only-routines += rt-unwind-resume
+librt-sysdep_routines += timer_routines librt-cancellation
 CFLAGS-librt-cancellation.c += -fexceptions -fasynchronous-unwind-tables
-CFLAGS-rt-unwind-resume.c += -fexceptions -fasynchronous-unwind-tables
 
 ifeq (yes,$(build-shared))
 $(objpfx)tst-timer: $(objpfx)librt.so $(shared-thread-library)
