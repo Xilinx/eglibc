@@ -102,7 +102,9 @@ tests		:= tstgetopt testfnm runtests \
 		   tst-execv1 tst-execv2 tst-execl1 tst-execl2 \
 		   tst-execve1 tst-execve2 tst-execle1 tst-execle2 \
 		   tst-execvp3 tst-execvp4 \
-		   tst-fnmatch2 tst-cpucount tst-cpuset
+		   tst-fnmatch2 tst-cpucount tst-cpuset \
+		   bug-getopt1 bug-getopt2 bug-getopt3 bug-getopt4 \
+		   bug-getopt5
 tests-$(OPTION_EGLIBC_LOCALE_CODE)					    \
 		+= tst-fnmatch tst-regexloc bug-regex1 bug-regex5 \
 		   bug-regex23 bug-regex25
@@ -208,7 +210,7 @@ tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 tst-exec-ARGS = -- $(local-built-program-cmd)
 tst-spawn-ARGS = -- $(local-built-program-cmd)
 tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); pwd` $(objpfx)tst-dir
-tst-chmod-ARGS = `pwd`
+tst-chmod-ARGS = $(objdir)
 tst-vfork3-ARGS = --test-dir=$(objpfx)
 
 tst-fnmatch-ENV = LOCPATH=$(common-objpfx)localedata
