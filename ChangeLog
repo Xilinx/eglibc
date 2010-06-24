@@ -1,3 +1,63 @@
+2010-06-21  Andreas Schwab <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/getlogin_r.c (__getlogin_r_loginuid):
+	Restore proper fallback handling.
+
+2010-06-19  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #11701]
+	* posix/group_member.c (__group_member): Correct checking loop.
+
+	* sysdeps/unix/sysv/linux/getlogin_r.c (__getlogin_r_loginuid): Handle
+	OOM in getpwuid_r correctly.  Return error number when the caller
+	should return, otherwise -1.
+	(getlogin_r): Adjust to return also for result of __getlogin_r_loginuid
+	call returning > 0 value.
+	* sysdeps/unix/sysv/linux/getlogin.c (getlogin): Likewise.
+
+2010-06-07  Andreas Schwab  <schwab@redhat.com>
+
+	* dlfcn/Makefile: Remove explicit dependencies on libc.so and
+	libc_nonshared.a from targets in modules-names.
+
+2010-06-02  Kirill A. Shutemov  <kirill@shutemov.name>
+
+	* elf/dl-reloc.c: Flush cache after solving TEXTRELs if arch
+	requires it.
+
+2010-06-10  Luis Machado  <luisgpm@br.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power7/memcmp.S: New file
+	* sysdeps/powerpc/powerpc64/power7/memcmp.S: New file.
+	* sysdeps/powerpc/powerpc32/power7/strncmp.S: New file.
+	* sysdeps/powerpc/powerpc64/power7/strncmp.S: New file.
+
+2010-06-02  Andreas Schwab  <schwab@redhat.com>
+
+	* nis/nss_nis/nis-initgroups.c (get_uid): Properly resize buffer.
+
+2010-06-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h: Define F_SETPIPE_SZ
+	and F_GETPIPE_SZ.
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/fcntl.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/fcntl.h: Likewise
+
+2010-06-14  Roland McGrath  <roland@redhat.com>
+
+	* manual/libc.texinfo (@copying): Change to GFDL v1.3.
+
+2010-06-07  Jakub Jelinek  <jakub@redhat.com>
+
+	* libio/stdio.h (sscanf, vsscanf): Use __REDIRECT_NTH instead of
+	__REDIRECT followed by __THROW.
+	* wcsmbs/wchar.h (swscanf, vswscanf): Likewise.
+	* posix/getopt.h (getopt): Likewise.
+
 2010-06-02  Emilio Pozuelo Monfort  <pochu27@gmail.com>
 
 	* hurd/lookup-at.c (__file_name_lookup_at): Accept
