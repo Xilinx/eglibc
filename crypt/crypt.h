@@ -38,7 +38,7 @@ extern void setkey (__const char *__key) __THROW __nonnull ((1));
 
 /* Encrypt data in BLOCK in place if EDFLAG is zero; otherwise decrypt
    block in place.  */
-extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
+extern void encrypt (char *__libc_block, int __edflag) __THROW __nonnull ((1));
 
 #ifdef __USE_GNU
 /* Reentrant versions of the functions above.  The additional argument
@@ -65,7 +65,7 @@ extern void setkey_r (__const char *__key,
 		      struct crypt_data * __restrict __data)
      __THROW __nonnull ((1, 2));
 
-extern void encrypt_r (char *__block, int __edflag,
+extern void encrypt_r (char *__libc_block, int __edflag,
 		       struct crypt_data * __restrict __data)
      __THROW __nonnull ((1, 3));
 #endif

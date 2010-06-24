@@ -1,3 +1,8 @@
+2010-06-24  Mark Heily  <mark@heily.com>
+
+	* crypt/crypt.h, posix/unistd.h: Use __libc_block instead of
+	__block.
+
 2010-03-31  Joseph Myers  <joseph@codesourcery.com>
 
 	* manual/Makefile (stamp-pkgvers): Substitute @@ for @ in

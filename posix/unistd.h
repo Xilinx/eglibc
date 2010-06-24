@@ -1132,7 +1132,7 @@ extern char *crypt (__const char *__key, __const char *__salt)
 
 /* Encrypt data in BLOCK in place if EDFLAG is zero; otherwise decrypt
    block in place.  */
-extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
+extern void encrypt (char *__libc_block, int __edflag) __THROW __nonnull ((1));
 
 
 /* Swab pairs bytes in the first N bytes of the area pointed to by
