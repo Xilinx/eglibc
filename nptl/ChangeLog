@@ -1,3 +1,40 @@
+2010-07-06  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/pthread_getname.c (pthread_getname_np):
+	Fix type mismatch.
+
+2010-07-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-abstime.c (do_test): Some more cleanups
+
+2010-07-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-abstime.c: Correct testing and add test for sem_timedwait.
+
+2010-07-01  Andreas Schwab  <schwab@redhat.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+	* Makefile (tests): Add tst-abstime.
+	* tst-abstime.c: New file.
+	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+	(__lll_timedlock_wait): Check for timestamp before the Epoch.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+	(__lll_timedlock_wait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+	(__lll_robust_timedlock_wait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+	(pthread_rwlock_timedrdlock): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+	(pthread_rwlock_timedwrlock): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S (sem_timedwait):
+	Likewise.
+
+2010-07-01  Ulrich Drepper  <drepper@redhat.com>
+
+	* Makefile (tst-_res1): Add tst-_res1mod1 to dependency list.
+
 2010-06-01  Takashi Yoshii  <takashi.yoshii.zj@renesas.com>
 
 	* sysdeps/unix/sysv/linux/sh/lowlevellock.S: Fix incorrect

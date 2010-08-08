@@ -259,6 +259,7 @@ tests = tst-typesizes \
 	tst-context1 \
 	tst-sched1 \
 	tst-oddstacklimit \
+	tst-abstime \
 	tst-vfork1 tst-vfork2 tst-vfork1x tst-vfork2x \
 	tst-getpid1 tst-getpid2 tst-getpid3 \
 	tst-initializers1 $(patsubst %,tst-initializers1-%,c89 gnu89 c99 gnu99)
@@ -511,7 +512,8 @@ $(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.so
 $(objpfx)tst-_res1mod2.so: $(objpfx)tst-_res1mod1.so
 LDFLAGS-tst-_res1mod1.so = -Wl,-soname,tst-_res1mod1.so
 LDFLAGS-tst-_res1mod2.so = -Wl,-soname,tst-_res1mod2.so
-$(objpfx)tst-_res1: $(objpfx)tst-_res1mod2.so $(shared-thread-library)
+$(objpfx)tst-_res1: $(objpfx)tst-_res1mod1.so $(objpfx)tst-_res1mod2.so \
+		    $(shared-thread-library)
 else
 $(objpfx)tst-cond11: $(common-objpfx)rt/librt.a
 $(objpfx)tst-cond19: $(common-objpfx)rt/librt.a
