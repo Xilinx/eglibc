@@ -1,4 +1,5 @@
-# Copyright (C) 1996-1998,2000-2002,2007,2009 Free Software Foundation, Inc.
+# Copyright (C) 1996-1998,2000-2002,2007,2009,2010
+# Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -46,6 +47,7 @@ routines-$(OPTION_EGLIBC_INET) += digits_dots
 others                  := getent
 install-bin             := getent
 
+tests			= tst-nss-test1
 tests-$(OPTION_EGLIBC_INET) += test-netdb
 xtests-$(OPTION_EGLIBC_INET) += bug-erange
 
@@ -130,3 +132,14 @@ endif
 # a statically-linked program that hasn't already loaded it.
 $(services:%=$(objpfx)libnss_%.so): $(common-objpfx)libc.so \
 				    $(common-objpfx)libc_nonshared.a
+
+
+distribute		+= nss_test1.c
+
+CFLAGS-nss_test1.c = -DNOT_IN_libc=1
+$(objpfx)/libnss_test1.so: $(objpfx)nss_test1.os $(common-objpfx)libc.so \
+			   $(common-objpfx)libc_nonshared.a
+	$(build-module)
+$(objpfx)/libnss_test1.so$(libnss_test1.so-version): $(objpfx)/libnss_test1.so
+	$(make-link)
+$(objpfx)tst-nss-test1.out: $(objpfx)/libnss_test1.so$(libnss_test1.so-version)
