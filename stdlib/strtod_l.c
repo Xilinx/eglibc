@@ -1504,7 +1504,9 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
 			  register int i;
 			  (void) __mpn_lshift (&retval[used
 						       / BITS_PER_MP_LIMB],
-					       retval, RETURN_LIMB_SIZE,
+					       retval,
+					       (RETURN_LIMB_SIZE
+						- used / BITS_PER_MP_LIMB),
 					       used % BITS_PER_MP_LIMB);
 			  for (i = used / BITS_PER_MP_LIMB - 1; i >= 0; --i)
 			    retval[i] = 0;
