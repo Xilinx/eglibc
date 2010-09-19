@@ -1,3 +1,9 @@
+2010-09-19  Aurelien Jarno  <aurelien@aurel32.net>
+ 
+	* resolv/res_libc (__res_maybe_init): Ask other threads to
+	to re-initialize their resolver states when _PATH_RESCONF
+	changes.
+
 2010-06-24  Mark Heily  <mark@heily.com>
 
 	* crypt/crypt.h, posix/unistd.h: Use __libc_block instead of
