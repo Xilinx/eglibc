@@ -45,8 +45,14 @@ typedef unsigned int fpu_control_t;
 #define _FPU_GETCW(cw) __asm__ ("sts fpscr,%0" : "=r" (cw))
 
 #if defined __GNUC__
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* GCC provides this function.  */
 extern void __set_fpscr (unsigned long);
+#ifdef __cplusplus
+}
+#endif  /* C++ */
 #define _FPU_SETCW(cw) __set_fpscr ((cw))
 #else
 #define _FPU_SETCW(cw) __asm__ ("lds %0,fpscr" : : "r" (cw))

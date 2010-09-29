@@ -1,3 +1,12 @@
+2010-09-29  Nobuhiro Iwamatsu  <iwamatsu@nigauri.org>
+	    Andrew Stubbs  <ams@codesourcery.com>
+
+	Resolve SH's __fpscr_values to symbol in libc.so.
+
+	* sysdeps/sh/sh4/fpu/fpu_control.h: Add C++ __set_fpscr prototype.
+	* sysdeps/unix/sysv/linux/sh/Versions (GLIBC_2.2): Add __fpscr_values.
+	* sysdeps/unix/sysv/linux/sh/sysdep.S (___fpscr_values): New constant.
+
 2010-09-19  Aurelien Jarno  <aurelien@aurel32.net>
  
 	* resolv/res_libc (__res_maybe_init): Ask other threads to
