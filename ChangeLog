@@ -1,3 +1,179 @@
+2010-10-12  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #12078]
+	* posix/regcomp.c (parse_branch): One more memory leak plugged.
+	* posix/bug-regex31.input: Add test case.
+
+2010-10-11  Ulrich Drepper  <drepper@gmail.com>
+
+	* posix/bug-regex31.c: Rewrite to run multiple tests from stdin.
+	* posix/bug-regex31.input: New file.
+
+	[BZ #12078]
+	* posix/regcomp.c (parse_branch): Free memory when allocation failed.
+	(parse_sub_exp): Fix last change, use postorder.
+
+	* posix/bug-regex31.c: New file.
+	* posix/Makefile: Add rules to build and run bug-regex31.
+
+	* posix/regcomp.c (parse_bracket_exp): Add missing re_free calls.
+
+	[BZ #12078]
+	* posix/regcomp.c (parse_sub_exp): Free tree data when it is not used.
+
+	[BZ #12108]
+	* stdio-common/psiginfo.c (psiginfo): Don't expext SIGRTMIN..SIGRTMAX
+	to have entries in sys_siglist.
+
+	[BZ #12093]
+	* sysdeps/unix/sysv/linux/check_pf.c (__check_pf): ->ifa_addr might
+	be NULL.
+
+2010-10-07  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Add 2 fmaf tests.
+	* sysdeps/ieee754/dbl-64/s_fmaf.c: New file.
+	* sysdeps/i386/i686/multiarch/s_fmaf.c: Include
+	sysdeps/ieee754/dbl-64/s_fmaf.c instead of math/s_fmaf.c.
+	* sysdeps/x86_64/multiarch/s_fmaf.c: Likewise.
+	* include/fenv.h (feupdateenv, fetestexcept): Add libm_hidden_proto.
+	* math/feupdateenv.c (feupdateenv): Add libm_hidden_ver.
+	* sysdeps/i386/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/powerpc/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/x86_64/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sparc/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/ia64/fpu/feupdateenv.c (feupdateenv): Add libm_hidden_def.
+	* sysdeps/s390/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* math/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/ia64/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/i386/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/s390/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/powerpc/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/x86_64/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/sparc/fpu/ftestexcept.c (fetestexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/ftestexcept.c (fetestexcept): Likewise.
+
+2010-10-11  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12107]
+	* stdio-common/psiginfo.c (psiginfo): Terminate all strings with
+	newline.
+
+2010-10-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* string/bug-strstr1.c: New file.
+	* string/Makefile: Add rules to build and run bug-strstr1.
+
+2010-10-05  Eric Blake  <eblake@redhat.com>
+
+	[BZ #12092]
+	* string/str-two-way.h (two_way_long_needle): Always clear memory
+	when skipping input due to the shift table.
+
+2010-10-03  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12005]
+	* malloc/mcheck.c: Handle large requests.
+
+	[BZ #12077]
+	* sysdeps/x86_64/strcmp.S: Fix handling of remaining bytes in buffer
+	for strncmp and strncasecmp.
+	* string/stratcliff.c: Add tests for strcmp and strncmp.
+	* wcsmbs/wcsatcliff.c: Adjust for stratcliff change.
+
+2010-09-28  Nobuhiro Iwamatsu  <iwamatsu@nigauri.org>
+
+	* sysdeps/sh/sh4/fpu/fpu_control.h: Add 'extern "C"' protection to
+	__set_fpscr.
+
+2010-09-30  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux_fsinfo.h (BTRFS_SUPER_MAGIC): Define.
+	(CGROUP_SUPER_MAGIC): Define.
+	* sysdeps/unix/sysv/linux/internal_statvfs.c (__statvfs_getflags):
+	Handle btrfs and cgroup file systems.
+	* sysdeps/unix/sysv/linux/pathconf.c (__statfs_filesize_max):
+	Likewise.
+
+2010-09-27  Luis Machado  <luisgpm@br.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/rtld-memset.c: New file.
+	* sysdeps/powerpc/powerpc64/rtld-memset.c: New file.
+
+2010-09-29  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	[BZ #12067]
+	* sysdeps/s390/s390-32/elf/start.S: Fix address calculation when
+	trying to locate the ELF header.
+
+2010-09-27  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #11611]
+	* sysdeps/unix/sysv/linux/internal_statvfs.c (INTERNAL_STATVFS):
+	Mask out sign-bit copies when constructing f_fsid.
+
+2010-09-24  Petr Baudis <pasky@suse.cz>
+
+	* debug/stack_chk_fail_local.c: Add missing licence exception.
+	* debug/warning-nop.c: Likewise.
+
+2010-09-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/getdents.c (__GETDENTS): When
+	implementing getdents64 using getdents syscall, set d_type if
+	__ASSUME_GETDENTS32_D_TYPE.
+
+2010-09-16  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-close.c (free_slotinfo, free_mem): Move to...
+	* elf/dl-libc.c (free_slotinfo, free_mem): ... here.
+
+2010-09-21  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #12037]
+	* posix/unistd.h: Undo change of feature selection for ftruncate from
+	2010-01-11.
+
+2010-09-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/strcmp.S: Fix another typo in x86-64 strncasecmp limit
+	detection.
+
+2010-09-20  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/syscalls.list: Add
+	fanotify_mark.
+	* sysdeps/unix/sysv/linux/s390/s390-32/syscalls.list: Likewise.
+
+2010-09-14  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/s390/s390-32/__longjmp.c (__longjmp): Define register
+	variables after CHECK_SP call.
+	* sysdeps/s390/s390-64/__longjmp.c (__longjmp): Likewise.
+
+2010-09-13  Andreas Schwab  <schwab@redhat.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+	* elf/rtld.c (dl_main): Set GLRO(dl_init_all_dirs) just before
+	re-relocationg ld.so.
+	* elf/dl-support.c (_dl_non_dynamic_init): And here after the
+	_dl_init_paths call.
+	* elf/dl-load.c (_dl_init_paths).  Don't set GLRO(dl_init_all_dirs)
+	here anymore.
+
+2010-09-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* resolv/res_init.c (__res_vinit): Count the default server we added.
+
+2010-09-08  Chung-Lin Tang  <cltang@codesourcery.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #11968]
+	* sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S
+	(____longjmp_chk): Use %ebx for saving value across system call.
+	Add unwind info.
+
 2010-09-06  Andreas Schwab  <schwab@redhat.com>
 
 	* manual/Makefile: Don't mix pattern rules with normal rules.

@@ -59,7 +59,7 @@ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
 		   tst-strtok tst-strfry	\
 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
-		   tst-strxfrm2 tst-endian tst-svc2
+		   tst-strxfrm2 tst-endian tst-svc2 bug-strstr1
 tests-$(OPTION_EGLIBC_ENVZ) += bug-envz1 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strxfrm bug-strcoll1
@@ -82,6 +82,7 @@ CFLAGS-tst-strlen.c = -fno-builtin
 CFLAGS-stratcliff.c = -fno-builtin
 CFLAGS-test-ffs.c = -fno-builtin
 CFLAGS-tst-inlcall.c = -fno-builtin
+CFLAGS-bug-strstr1.c = -fno-builtin
 
 # eglibc: ifeq ($(cross-compiling),no)
 tests: $(objpfx)tst-svc.out
