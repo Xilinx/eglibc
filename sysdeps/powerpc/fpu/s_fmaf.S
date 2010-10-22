@@ -1,7 +1,6 @@
-/* Compute (X * Y) + Z as ternary operation.
-   Copyright (C) 1997 Free Software Foundation, Inc.
+/* Compute x * y + z as ternary operation.  PowerPC version.
+   Copyright (C) 2010 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -20,12 +19,10 @@
 
 #include <sysdep.h>
 
-	.text
 ENTRY(__fmaf)
-	flds	4(%esp)		// x
-	fmuls	8(%esp)		// x * y
-	flds	12(%esp)	// z : x * y
-	faddp			// (x * y) + z
-	ret
+/* float [f1] fmaf (float [f1] x, float [f2] y, float [f3] z); */
+	fmadds	fp1,fp1,fp2,fp3
+	blr
 END(__fmaf)
-weak_alias (__fmaf, fmaf)
+
+weak_alias (__fmaf,fmaf)

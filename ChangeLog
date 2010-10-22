@@ -1,3 +1,91 @@
+2010-10-19  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/bits/mathdef.h (FP_FAST_FMA): If the GCC 4.6 port has
+	fast fma builtins, define the macros in the C99 standard.
+	(FP_FAST_FMAF): Likewise.
+	(FP_FAST_FMAL): Likewise.
+	* sysdeps/x86_64/bits/mathdef.h: Likewise.
+
+	* bits/mathdef.h: Update copyright year.
+	* sysdeps/powerpc/bits/mathdef.h: Likewise.
+
+2010-10-19  Michael Meissner  <meissner@linux.vnet.ibm.com>
+
+	* bits/mathdef.h (FP_FAST_FMA): If the GCC 4.6 port has fast fma
+	builtins, define the macros in the C99 standard.
+	(FP_FAST_FMAF): Likewise.
+	(FP_FAST_FMAL): Likewise.
+	* sysdeps/powerpc/bits/mathdef.h (FP_FAST_FMA): Define, ppc as
+	multiply/add.
+	(FP_FAST_FMAF): Likewise.
+
+2010-10-15  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Some new testcases.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c: New file.
+	* sysdeps/ieee754/ldbl-96/s_fma.c (__fma): Fix fma with finite x and
+	y and infinite z.  Do multiplication by C already in long double.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c: New file.
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Fix fma with finite x and
+	y and infinite z.  Do bitwise or of inexact bit into u.d.
+	* sysdeps/ieee754/ldbl-64-128/s_fmal.c: New file.
+	* sysdeps/i386/fpu/s_fmaf.S: Removed.
+	* sysdeps/i386/fpu/s_fma.S: Removed.
+	* sysdeps/i386/fpu/s_fmal.S: Removed.
+
+2010-10-16  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Add IEEE quad long double fmal tests.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Ensure a1 + u.d
+	computation is not scheduled after fetestexcept.  Fix value
+	of minimum denormal long double.
+
+2010-10-14  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Add some more tests.
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Handle underflows
+	correctly.
+
+2010-10-15  Andreas Schwab  <schwab@redhat.com>
+
+	* scripts/data/localplt-s390-linux-gnu.data: New file.
+	* scripts/data/localplt-s390x-linux-gnu.data: New file.
+
+2010-10-13  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Some more fmaf and fma tests.
+	* sysdeps/i386/i686/multiarch/s_fma.c: Include ldbl-96 version
+	instead of dbl-64.
+	* sysdeps/i386/fpu/bits/mathinline.h (fma, fmaf, fmal): Remove
+	inlines.
+	* sysdeps/ieee754/ldbl-96/s_fma.c: New file.
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Fix exponent adjustment
+	if one of x and y is very large and the other is subnormal.
+	* sysdeps/s390/fpu/s_fmaf.c: New file.
+	* sysdeps/s390/fpu/s_fma.c: New file.
+	* sysdeps/powerpc/fpu/s_fmaf.S: New file.
+	* sysdeps/powerpc/fpu/s_fma.S: New file.
+	* sysdeps/powerpc/powerpc32/fpu/s_fma.S: New file.
+	* sysdeps/powerpc/powerpc64/fpu/s_fma.S: New file.
+	* sysdeps/unix/sysv/linux/s390/fpu/s_fma.c: New file.
+
+2010-10-12  Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #3268]
+	* math/libm-test.inc (fma_test): Add some more fmaf tests, add
+	fma tests.
+	* sysdeps/ieee754/dbl-64/s_fmaf.c (__fmaf): Fix Inf/Nan check.
+	* sysdeps/ieee754/dbl-64/s_fma.c: New file.
+	* sysdeps/i386/i686/multiarch/s_fma.c: Include
+	sysdeps/ieee754/dbl-64/s_fma.c instead of math/s_fma.c.
+	* sysdeps/x86_64/multiarch/s_fma.c: Likewise.
+	* sysdeps/ieee754/ldbl-opt/s_fma.c: Likewise.
+	* sysdeps/ieee754/ldbl-128/s_fma.c: New file.
+
 2010-10-12  Ulrich Drepper  <drepper@redhat.com>
 
 	[BZ #12078]
