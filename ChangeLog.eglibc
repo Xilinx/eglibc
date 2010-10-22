@@ -1,3 +1,8 @@
+2010-10-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/powerpc/bits/mathdef.h (FP_FAST_FMA, FP_FAST_FMAF): Do
+	not define if __NO_FPRS__.
+
 2010-09-29  Nobuhiro Iwamatsu  <iwamatsu@nigauri.org>
 	    Andrew Stubbs  <ams@codesourcery.com>
 
