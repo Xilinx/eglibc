@@ -832,11 +832,9 @@ extern void _dl_receive_error (receiver_fct fct, void (*operate) (void *),
 
 /* Open the shared object NAME and map in its segments.
    LOADER's DT_RPATH is used in searching for NAME.
-   If the object is already opened, returns its existing map.
-   For preloaded shared objects PRELOADED is set to a non-zero
-   value to allow additional security checks.  */
+   If the object is already opened, returns its existing map.  */
 extern struct link_map *_dl_map_object (struct link_map *loader,
-					const char *name, int preloaded,
+					const char *name,
 					int type, int trace_mode, int mode,
 					Lmid_t nsid)
      internal_function attribute_hidden;
@@ -901,8 +899,11 @@ extern lookup_t _dl_lookup_symbol_x (const char *undef,
 extern ElfW(Addr) _dl_symbol_value (struct link_map *map, const char *name)
      internal_function;
 
-/* Allocate a `struct link_map' for a new object being loaded,
-   and enter it into the _dl_main_map list.  */
+/* Add the new link_map NEW to the end of the namespace list.  */
+extern void _dl_add_to_namespace_list (struct link_map *new, Lmid_t nsid)
+     internal_function attribute_hidden;
+
+/* Allocate a `struct link_map' for a new object being loaded.  */
 extern struct link_map *_dl_new_object (char *realname, const char *libname,
 					int type, struct link_map *loader,
 					int mode, Lmid_t nsid)

@@ -798,22 +798,7 @@ lose (int code, int fd, const char *name, char *realname, struct link_map *l,
   /* The file might already be closed.  */
   if (fd != -1)
     (void) __close (fd);
-  if (l != NULL)
-    {
-      /* We modify the list of loaded objects.  */
-      __rtld_lock_lock_recursive (GL(dl_load_write_lock));
-      /* Remove the stillborn object from the list and free it.  */
-      assert (l->l_next == NULL);
-      if (l->l_prev == NULL)
-	/* No other module loaded. This happens only in the static library,
-	   or in rtld under --verify.  */
-	GL(dl_ns)[l->l_ns]._ns_loaded = NULL;
-      else
-	l->l_prev->l_next = NULL;
-      --GL(dl_ns)[l->l_ns]._ns_nloaded;
-      free (l);
-      __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
-    }
+  free (l);
   free (realname);
 
   if (r != NULL)
@@ -897,6 +882,9 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
       /* No need to bump the refcount of the real object, ld.so will
 	 never be unloaded.  */
       __close (fd);
+
+      /* Add the map for the mirrored object to the object list.  */
+      _dl_add_to_namespace_list (l, nsid);
 
       return l;
     }
@@ -1492,6 +1480,9 @@ cannot enable executable stack as shared object requires");
     add_name_to_object (l, ((const char *) D_PTR (l, l_info[DT_STRTAB])
 			    + l->l_info[DT_SONAME]->d_un.d_val));
 
+  /* Now that the object is fully initialized add it to the object list.  */
+  _dl_add_to_namespace_list (l, nsid);
+
 #ifdef SHARED
   /* Auditing checkpoint: we have a new object.  */
   if (__builtin_expect (GLRO(dl_naudit) > 0, 0)
@@ -1812,7 +1803,7 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
    if MAY_FREE_DIRS is true.  */
 
 static int
-open_path (const char *name, size_t namelen, int preloaded,
+open_path (const char *name, size_t namelen, int secure,
 	   struct r_search_path_struct *sps, char **realname,
 	   struct filebuf *fbp, struct link_map *loader, int whatcode,
 	   bool *found_other_class)
@@ -1894,7 +1885,7 @@ open_path (const char *name, size_t namelen, int preloaded,
 	  /* Remember whether we found any existing directory.  */
 	  here_any |= this_dir->status[cnt] != nonexisting;
 
-	  if (fd != -1 && __builtin_expect (preloaded, 0)
+	  if (fd != -1 && __builtin_expect (secure, 0)
 	      && INTUSE(__libc_enable_secure))
 	    {
 	      /* This is an extra security effort to make sure nobody can
@@ -1963,7 +1954,7 @@ open_path (const char *name, size_t namelen, int preloaded,
 
 struct link_map *
 internal_function
-_dl_map_object (struct link_map *loader, const char *name, int preloaded,
+_dl_map_object (struct link_map *loader, const char *name,
 		int type, int trace_mode, int mode, Lmid_t nsid)
 {
   int fd;
@@ -2067,7 +2058,8 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	  for (l = loader; l; l = l->l_loader)
 	    if (cache_rpath (l, &l->l_rpath_dirs, DT_RPATH, "RPATH"))
 	      {
-		fd = open_path (name, namelen, preloaded, &l->l_rpath_dirs,
+		fd = open_path (name, namelen, mode & __RTLD_SECURE,
+				&l->l_rpath_dirs,
 				&realname, &fb, loader, LA_SER_RUNPATH,
 				&found_other_class);
 		if (fd != -1)
@@ -2082,14 +2074,15 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	      && main_map != NULL && main_map->l_type != lt_loaded
 	      && cache_rpath (main_map, &main_map->l_rpath_dirs, DT_RPATH,
 			      "RPATH"))
-	    fd = open_path (name, namelen, preloaded, &main_map->l_rpath_dirs,
+	    fd = open_path (name, namelen, mode & __RTLD_SECURE,
+			    &main_map->l_rpath_dirs,
 			    &realname, &fb, loader ?: main_map, LA_SER_RUNPATH,
 			    &found_other_class);
 	}
 
       /* Try the LD_LIBRARY_PATH environment variable.  */
       if (fd == -1 && env_path_list.dirs != (void *) -1)
-	fd = open_path (name, namelen, preloaded, &env_path_list,
+	fd = open_path (name, namelen, mode & __RTLD_SECURE, &env_path_list,
 			&realname, &fb,
 			loader ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded,
 			LA_SER_LIBPATH, &found_other_class);
@@ -2098,12 +2091,12 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
       if (fd == -1 && loader != NULL
 	  && cache_rpath (loader, &loader->l_runpath_dirs,
 			  DT_RUNPATH, "RUNPATH"))
-	fd = open_path (name, namelen, preloaded,
+	fd = open_path (name, namelen, mode & __RTLD_SECURE,
 			&loader->l_runpath_dirs, &realname, &fb, loader,
 			LA_SER_RUNPATH, &found_other_class);
 
       if (fd == -1
-	  && (__builtin_expect (! preloaded, 1)
+	  && (__builtin_expect (! (mode & __RTLD_SECURE), 1)
 	      || ! INTUSE(__libc_enable_secure)))
 	{
 	  /* Check the list of libraries in the file /etc/ld.so.cache,
@@ -2169,7 +2162,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	  && ((l = loader ?: GL(dl_ns)[nsid]._ns_loaded) == NULL
 	      || __builtin_expect (!(l->l_flags_1 & DF_1_NODEFLIB), 1))
 	  && rtld_search_dirs.dirs != (void *) -1)
-	fd = open_path (name, namelen, preloaded, &rtld_search_dirs,
+	fd = open_path (name, namelen, mode & __RTLD_SECURE, &rtld_search_dirs,
 			&realname, &fb, l, LA_SER_DEFAULT, &found_other_class);
 
       /* Add another newline when we are tracing the library loading.  */
@@ -2214,7 +2207,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	     have.  */
 	  static const Elf_Symndx dummy_bucket = STN_UNDEF;
 
-	  /* Enter the new object in the list of loaded objects.  */
+	  /* Allocate a new object map.  */
 	  if ((name_copy = local_strdup (name)) == NULL
 	      || (l = _dl_new_object (name_copy, name, type, loader,
 				      mode, nsid)) == NULL)
@@ -2231,6 +2224,9 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	  l->l_buckets = &dummy_bucket;
 	  l->l_nbuckets = 1;
 	  l->l_relocated = 1;
+
+	  /* Enter the object in the object list.  */
+	  _dl_add_to_namespace_list (l, nsid);
 
 	  return l;
 	}

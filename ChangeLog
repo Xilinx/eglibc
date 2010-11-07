@@ -1,3 +1,110 @@
+2010-11-04  Luis Machado  <luisgpm@br.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power7/mempcpy.S: New file.
+	* sysdeps/powerpc/powerpc64/power7/mempcpy.S: New file.
+
+2010-11-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #12191]
+	* sysdeps/i386/i686/cacheinfo.c (__x86_64_raw_data_cache_size): New.
+	(__x86_64_raw_data_cache_size_half): Likewise.
+	(__x86_64_raw_shared_cache_size): Likewise.
+	(__x86_64_raw_shared_cache_size_half): Likewise.
+
+	* sysdeps/x86_64/cacheinfo.c (__x86_64_raw_data_cache_size): New.
+	(__x86_64_raw_data_cache_size_half): Likewise.
+	(__x86_64_raw_shared_cache_size): Likewise.
+	(__x86_64_raw_shared_cache_size_half): Likewise.
+	(init_cacheinfo): Set __x86_64_raw_data_cache_size,
+	__x86_64_raw_data_cache_size_half, __x86_64_raw_shared_cache_size
+	and __x86_64_raw_shared_cache_size_half.  Round
+	__x86_64_data_cache_size_half, __x86_64_data_cache_size
+	__x86_64_shared_cache_size_half and __x86_64_shared_cache_size,
+	to multiple of 256 bytes.
+
+2010-11-03  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12167]
+	* sysdeps/unix/sysv/linux/ttyname.c (ttyname): Recognize new mangling
+	of inacessible symlinks.  Verify result of symlink before returning it.
+	* sysdeps/unix/sysv/linux/ttyname_r.c (__ttyname_r): Likewise.
+	Patch mostly by Miklos Szeredi <miklos@szeredi.hu>.
+
+2010-10-28  Erich Ritz  <erichritz@gmail.com>
+
+	* math/math.h (isinf): Fix typo in comment.
+
+2010-11-01  Ulrich Drepper  <drepper@gmail.com>
+
+	* po/da.po: Update from translation team.
+
+2010-10-26  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/rtld.c (dl_main): Move assertion after the point where rtld map
+	is added to the list.
+
+2010-10-20  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+	    Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-object.c (_dl_new_object): Don't append the new object to
+	the global list here.  Move code to...
+	(_dl_add_to_namespace_list): ...here.  New function.
+	* elf/rtld.c (dl_main): Invoke _dl_add_to_namespace_list.
+	* sysdeps/generic/ldsodefs.h (_dl_add_to_namespace_list): Declare.
+	* elf/dl-load.c (lose): Don't remove the element from the list.
+	(_dl_map_object_from_fd): Invoke _dl_add_to_namespace_list.
+	(_dl_map_object): Likewise.
+
+2010-10-25  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12159]
+	* sysdeps/x86_64/multiarch/strchr.S: Fix propagation of search byte
+	into all bytes of SSE register.
+	Patch by Richard Li <richardpku@gmail.com>.
+
+2010-10-24  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12140]
+	* malloc/malloc.c (_int_free): Fill correct number of bytes when
+	perturbing.
+
+2010-10-20  Michael B. Brutman  <brutman@us.ibm.com>
+
+	* sysdeps/powerpc/dl-procinfo.c: Add support for ppca2 platform
+	* sysdeps/powerpc/dl-procinfo.h: Add support for ppca2 platform
+	* sysdeps/powerpc/powerpc32/a2/memcpy.S: New file.
+	* sysdeps/powerpc/powerpc64/a2/memcpy.S: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/a2/Implies: New
+	submachine.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/a2/Implies: Likewise.
+
+2010-10-22  Andreas Schwab  <schwab@redhat.com>
+
+	* include/dlfcn.h (__RTLD_SECURE): Define.
+	* elf/dl-load.c (_dl_map_object): Remove preloaded parameter.  Use
+	mode & __RTLD_SECURE instead.
+	(open_path): Rename preloaded parameter to secure.
+	* sysdeps/generic/ldsodefs.h (_dl_map_object): Adjust declaration.
+	* elf/dl-open.c (dl_open_worker): Adjust call to _dl_map_object.
+	* elf/dl-deps.c (openaux): Likewise.
+	* elf/rtld.c (struct map_args): Remove is_preloaded.
+	(map_doit): Don't use it.
+	(dl_main): Likewise.
+	(do_preload): Use __RTLD_SECURE instead of is_preloaded.
+	(dlmopen_doit): Add __RTLD_SECURE to mode bits.
+
+2010-09-09  Andreas Schwab  <schwab@redhat.com>
+
+	* Makeconfig (sysd-rules-patterns): Add rtld-%:rtld-%.
+	(sysd-rules-targets): Remove duplicates.
+	* elf/rtld-Rules ($(objpfx)rtld-%.os): Add pattern rules with
+	rtld-%.$o dependency.
+
+2010-10-18  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-open.c (dl_open_worker): Don't expand DST here, let
+	_dl_map_object do it.
+
 2010-10-19  Ulrich Drepper  <drepper@gmail.com>
 
 	* sysdeps/i386/bits/mathdef.h (FP_FAST_FMA): If the GCC 4.6 port has
