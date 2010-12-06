@@ -1,3 +1,105 @@
+2010-12-03  Ulrich Drepper  <drepper@gmail.com>
+
+	* po/it.po: Update from translation team.
+
+2010-12-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/multiarch/strcmp-ssse3.S (STRCMP): Remove
+	unused codes.
+
+2010-11-30  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Relax ynf(10,0.75) test expectations.
+
+2010-11-24  Andreas Schwab  <schwab@redhat.com>
+
+	* resolv/nss_dns/dns-host.c (getanswer_r): Don't handle ttl == 0
+	specially.
+	(gaih_getanswer_slice): Likewise.
+
+2010-10-20  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Fix up inline asm.
+
+2010-05-31  Petr Baudis  <pasky@suse.cz>
+
+	[BZ #11149]
+	* elf/ldconfig.c (main): Allow aux_cache_file open()ing to fail
+	silently even in the chroot mode.
+
+2010-11-22  Ulrich Drepper  <drepper@gmail.com>
+
+	* nis/nss_compat/compat-initgroups.c (internal_getgrent_r): Optimize
+	last patch a bit.  Pretty printing
+
+2010-05-31  Petr Baudis <pasky@suse.cz>
+
+	[BZ #10085]
+	* nis/nss_compat/compat-initgroups.c (internal_getgrent_r): Fix
+	initialization of skip_initgroups_dyn.
+
+2010-11-19  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/i386/bits/mman.h: Define MAP_HUGETLB.
+	* sysdeps/unix/sysv/linux/x86_64/bits/mman.h: Likewise.
+
+2010-11-16  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/sys/swap.h (SWAP_FLAG_DISCARD): Define.
+
+2010-11-11  Andreas Schwab  <schwab@redhat.com>
+
+	* posix/fnmatch_loop.c (NEW_PATTERN): Fix use of alloca.
+	* posix/Makefile (tests): Add $(objpfx)tst-fnmatch-mem.
+	(tst-fnmatch-ENV): Set MALLOC_TRACE.
+	($(objpfx)tst-fnmatch-mem): New rule.
+	(generated): Add tst-fnmatch-mem and tst-fnmatch.mtrace.
+	* posix/tst-fnmatch.c (main): Call mtrace.
+
+2010-11-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Support Intel processor model 6 and model 0x2c.
+
+2010-11-10  Luis Machado  <luisgpm@br.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c (__ieee754_sqrtl): Force
+	  signed comparison.
+
+2010-11-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #12205]
+	* string/test-strncasecmp.c (check_result): New function.
+	(do_one_test): Use it.
+	(check1): New function.
+	(test_main): Use it.
+	* sysdeps/i386/i686/multiarch/strcmp.S (nibble_ashr_use_sse4_2_exit):
+	Support strcasecmp and strncasecmp.
+
+2010-11-08  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12194]
+	* sysdeps/i386/bits/byteswap.h: Avoid warning in __bswap_16.
+	* sysdeps/x86_64/bits/byteswap.h: Likewise.
+
+2010-11-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/memset.S: Check USE_MULTIARCH and USE_SSE2 for
+	IFUNC support.
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines): Add
+	memset-x86-64.
+	* sysdeps/x86_64/multiarch/bzero.S: New file.
+	* sysdeps/x86_64/multiarch/cacheinfo.c: New file.
+	* sysdeps/x86_64/multiarch/memset-x86-64.S: New file.
+	* sysdeps/x86_64/multiarch/memset.S: New file.
+	* sysdeps/x86_64/multiarch/memset_chk.S: New file.
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Set bit_Prefer_SSE_for_memop for Intel processors.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_Prefer_SSE_for_memop):
+	Define.
+	(index_Prefer_SSE_for_memop): Define.
+	(HAS_PREFER_SSE_FOR_MEMOP): Define.
+
 2010-11-04  Luis Machado  <luisgpm@br.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power7/mempcpy.S: New file.
