@@ -1,3 +1,28 @@
+2010-12-14  Ulrich Drepper  <dreper@gmail.com>
+
+	* sysdeps/i386/i686/multiarch/strcmp.S: Undo accident checkin.
+
+2010-12-10  Andreas Schwab  <schwab@redhat.com>
+
+	* wcsmbs/wchar.h (wcpcpy, wcpncpy): Only declare under
+	_GNU_SOURCE.
+
+	* wcsmbs/wchar.h (wcpcpy, wcpncpy): Add __restrict.
+	* wcsmbs/bits/wchar2.h (__wmemmove_chk_warn, wmemmove, wmemset):
+	Remove __restrict.
+	(wcscpy, __wcpcpy_chk, __wcpcpy_alias, wcpcpy, wcsncpy, wcpncpy)
+	(wcscat, wcsncat, __wcrtomb_chk, wcrtomb): Add __restrict.
+
+2010-12-09  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11655]
+	* stdlib/msort.c (qsort_r): Make sure both phys_pages and pagesize
+	are initialized.
+
+2010-12-09  Jakub Jelinek  <jakub@redhat.com>
+
+	* string/bits/string3.h (memmove, bcopy): Remove __restrict.
+
 2010-12-03  Ulrich Drepper  <drepper@gmail.com>
 
 	* po/it.po: Update from translation team.
