@@ -1,3 +1,8 @@
+2010-12-19  Gordon Schumacher  <whiplash@pobox.com>
+
+	* locale/xlocale.x (DEFINE_CATEGORY): Fix merge issue.
+	* wcsmbs/wcsmbsload.c (wcsmbs_load_conv): Same.
+
 2010-10-21  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/powerpc/bits/mathdef.h (FP_FAST_FMA, FP_FAST_FMAF): Do

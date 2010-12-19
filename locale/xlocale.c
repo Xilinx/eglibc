@@ -84,7 +84,7 @@ const struct __locale_struct _nl_C_locobj attribute_hidden =
    pointers here.  */
 #if defined (NL_CURRENT_INDIRECT)
 #define DEFINE_CATEGORY(category, category_name, items, a)      \
-  __thread struct locale_data * const *_nl_current_##category   \
+  __thread struct __locale_data * const *_nl_current_##category   \
   attribute_hidden = &_nl_C_locobj.__locales[category];
 #include "categories.def"
 #undef DEFINE_CATEGORY

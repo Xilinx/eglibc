@@ -218,7 +218,7 @@ __wcsmbs_load_conv (struct __locale_data *new_category)
 #else
 void
 internal_function
-__wcsmbs_load_conv (struct locale_data *new_category)
+__wcsmbs_load_conv (struct __locale_data *new_category)
 {
   /* When OPTION_EGLIBC_LOCALE_CODE is disabled, we should never reach
      this point: there is no way to change locales, so every locale
