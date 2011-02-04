@@ -1,3 +1,56 @@
+2011-02-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #12460]
+	* config.make.in (config-cflags-novzeroupper): Define.
+	* configure.in: Substitute libc_cv_cc_novzeroupper.
+	* elf/Makefile (AVX-CFLAGS): Define.
+	(CFLAGS-tst-audit4.c): Replace -mavx with $(AVX-CFLAGS).
+	(CFLAGS-tst-auditmod4a.c): Likewise.
+	(CFLAGS-tst-auditmod4b.c): Likewise.
+	(CFLAGS-tst-auditmod6b.c): Likewise.
+	(CFLAGS-tst-auditmod6c.c): Likewise.
+	(CFLAGS-tst-auditmod7b.c): Likewise.
+	* sysdeps/i386/configure.in: Check -mno-vzeroupper.
+
+2011-02-02  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-runtime.c (_dl_call_pltexit): Pass correct address of the
+	function to the callback.
+	Patch partly by Jiri Olsa <jolsa@redhat.com>.
+
+2011-02-02  Andreas Schwab  <schwab@redhat.com>
+
+	* shadow/sgetspent.c: Check return value of __sgetspent_r instead
+	of errno.
+
+2011-01-19  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11724]
+	* elf/dl-deps.c (_dl_map_object_deps): Rewrite sorting determining order
+	of constructors.
+	* elf/dl-fini.c (_dl_sort_fini): Rewrite sorting determining order
+	of destructors.
+	(_dl_fini): Don't call _dl_sort_fini if there is only one object.
+
+	[BZ #11724]
+	* elf/Makefile: Add rules to build and run new test.
+	* elf/tst-initorder.c: New file.
+	* elf/tst-initorder.exp: New file.
+	* elf/tst-initordera1.c: New file.
+	* elf/tst-initordera2.c: New file.
+	* elf/tst-initordera3.c: New file.
+	* elf/tst-initordera4.c: New file.
+	* elf/tst-initorderb1.c: New file.
+	* elf/tst-initorderb2.c: New file.
+	* elf/tst-order-a1.c: New file.
+	* elf/tst-order-a2.c: New file.
+	* elf/tst-order-a3.c: New file.
+	* elf/tst-order-a4.c: New file.
+	* elf/tst-order-b1.c: New file.
+	* elf/tst-order-b2.c: New file.
+	* elf/tst-order-main.c: New file.
+	New test case by George Gensure <werkt0@gmail.com>.
+
 2010-10-01  Andreas Schwab  <schwab@redhat.com>
 
 	* sysdeps/posix/getaddrinfo.c (gaih_inet): Don't discard result of
