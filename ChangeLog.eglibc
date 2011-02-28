@@ -1,3 +1,7 @@
+2011-02-28  Denis Zaitceff  <zaitceff@gmail.com>
+
+	* elf/dl-lookup.c (GLRO_dl_debug_mask): Apply the forgotten one.
+
 2010-12-19  Gordon Schumacher  <whiplash@pobox.com>
 
 	* locale/xlocale.x (DEFINE_CATEGORY): Fix merge issue.

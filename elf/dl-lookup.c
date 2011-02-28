@@ -423,7 +423,7 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
 		     hash table.  */
 		  if (__builtin_expect (tab->size, 0))
 		    {
-		      assert (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK);
+		      assert (GLRO_dl_debug_mask & DL_DEBUG_PRELINK);
 		      __rtld_lock_unlock_recursive (tab->lock);
 		      goto success;
 		    }
