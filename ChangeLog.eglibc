@@ -1,3 +1,9 @@
+2011-02-28  Pierre Ynard  <linkfanel@yahoo.fr>
+
+	[BZ #12492]
+	* elf/dl-load.c (_dl_map_object_from_fd): Add gracious error path for
+	the case when mprotect() fails.
+
 2011-02-28  Denis Zaitceff  <zaitceff@gmail.com>
 
 	* elf/dl-lookup.c (GLRO_dl_debug_mask): Apply the forgotten one.
