@@ -46,3 +46,5 @@ fi
 cat >>confdefs.h <<\_ACEOF
 #define PI_STATIC_AND_HIDDEN 1
 _ACEOF
+
+# work around problem with autoconf and empty lines at the end of files
