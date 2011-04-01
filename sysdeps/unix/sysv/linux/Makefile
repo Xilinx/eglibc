@@ -96,7 +96,7 @@ generated += syscall-list.h syscall-list.d
 endif
 
 ifeq ($(subdir),time)
-sysdep_headers += sys/timex.h
+sysdep_headers += sys/timex.h bits/timex.h
 
 sysdep_routines += ntp_gettime ntp_gettimex
 endif
