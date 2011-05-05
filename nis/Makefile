@@ -1,4 +1,4 @@
-# Copyright (C) 1996,1997,1998,2001,2004,2006 Free Software Foundation, Inc.
+# Copyright (C) 1996-1998,2001,2004,2006,2011 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -54,9 +54,9 @@ subdir-dirs = $(services-y:%=nss_%)
 vpath %.c $(subdir-dirs)
 
 libnsl-routines = yp_xdr ypclnt ypupdate_xdr \
-                  nis_subr nis_local_names nis_free nis_file \
-                  nis_print nis_error nis_call nis_lookup\
-                  nis_table nis_xdr nis_server nis_ping \
+		  nis_subr nis_local_names nis_free nis_file \
+		  nis_print nis_error nis_call nis_lookup\
+		  nis_table nis_xdr nis_server nis_ping \
 		  nis_checkpoint nis_mkdir nis_rmdir nis_getservlist\
 		  nis_verifygroup nis_ismember nis_addmember nis_util\
 		  nis_removemember nis_creategroup nis_destroygroup\
@@ -87,8 +87,9 @@ $(objpfx)libnss_nisplus.so: $(objpfx)libnsl.so$(libnsl.so-version)
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
 # This ensures they will load libc.so for needed symbols if loaded by
 # a statically-linked program that hasn't already loaded it.
+libnsl-libc = $(common-objpfx)linkobj/libc.so
 $(services-y:%=$(objpfx)libnss_%.so) $(objpfx)libnsl.so: \
-	$(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a
+	$(libnsl-libc) $(common-objpfx)libc_nonshared.a
 
 
 ifeq ($(build-shared),yes)

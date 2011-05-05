@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+# Copyright (C) 1991-2009, 2011 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -80,7 +80,7 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   test-a64l tst-qsort tst-system bug-strtod2		    \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
 		   tst-makecontext tst-qsort2 tst-makecontext2 tst-strtod6  \
-		   tst-unsetenv1 tst-makecontext3
+		   tst-unsetenv1 tst-makecontext3 bug-getcontext
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
@@ -159,3 +159,10 @@ $(objpfx)tst-putenv: $(objpfx)tst-putenvmod.so
 $(objpfx)tst-putenvmod.so: $(objpfx)tst-putenvmod.os
 	$(build-module)
 CFLAGS-tst-putenvmod.c = -DNOT_IN_libc=1
+
+ifeq ($(build-shared),yes)
+link-libm = $(common-objpfx)math/libm.so
+else
+link-libm = $(common-objpfx)math/libm.a
+endif
+$(objpfx)bug-getcontext: $(link-libm)
