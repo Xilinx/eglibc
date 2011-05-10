@@ -436,7 +436,6 @@ construct_output_path (char *path)
 	 contains a reference to the codeset.  This should be
 	 normalized.  */
       char *startp;
-      size_t n;
 
       startp = path;
       /* We must be prepared for finding a CEN name or a location of
@@ -460,6 +459,7 @@ construct_output_path (char *path)
       /* We put an additional '\0' at the end of the string because at
 	 the end of the function we need another byte for the trailing
 	 '/'.  */
+      ssize_t n;
       if (normal == NULL)
 	n = asprintf (&result, "%s%s/%s%c",
 		      output_prefix ?: "", LOCALEDIR, path, '\0');
