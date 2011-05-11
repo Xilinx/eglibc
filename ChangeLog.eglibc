@@ -1,3 +1,7 @@
+2011-05-11  Nathan Sidwell  <nathan@codesourcery.com>
+
+	* malloc/Makefile (libmemusage.so): Add libc_nonshared.a dependency.
+
 2011-02-28  Pierre Ynard  <linkfanel@yahoo.fr>
 
 	[BZ #12492]

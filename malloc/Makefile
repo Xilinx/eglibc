@@ -159,7 +159,8 @@ $(objpfx)memusage: memusage.sh
 
 
 # The implementation uses `dlsym'
-$(objpfx)libmemusage.so: $(common-objpfx)dlfcn/libdl.so $(elfobjdir)/ld.so
+$(objpfx)libmemusage.so: $(common-objpfx)dlfcn/libdl.so $(elfobjdir)/ld.so \
+			$(common-objpfx)libc_nonshared.a
 
 # Extra dependencies
 $(foreach o,$(all-object-suffixes),$(objpfx)malloc$(o)): arena.c hooks.c
