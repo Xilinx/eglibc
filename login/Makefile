@@ -34,6 +34,7 @@ CFLAGS-grantpt.c = -DLIBEXECDIR='"$(libexecdir)"'
 
 others = pt_chown
 others-$(OPTION_EGLIBC_UTMP) += utmpdump
+others-pie = pt_chown
 install-others-programs = $(inst_libexecdir)/pt_chown
 
 distribute := utmp-private.h utmp-equal.h pty-private.h
@@ -71,9 +72,6 @@ CFLAGS-pt_chown.c = $(pt_chown-cflags)
 LDLIBS-pt_chown = $(libcap)
 ifeq (yesyes,$(have-fpie)$(build-shared))
 LDFLAGS-pt_chown = -Wl,-z,now
-
-$(objpfx)pt_chown: $(objpfx)pt_chown.o
-	$(+link-pie)
 endif
 
 # pt_chown needs to be setuid root.

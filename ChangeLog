@@ -1,3 +1,85 @@
+2011-05-15  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11901]
+	* include/stdlib.h: Move include protection to the right place.
+	Define abort_msg_s.  Declare __abort_msg with it.
+	* stdlib/abort.c (__abort_msg): Adjust type.
+	* assert/assert.c (__assert_fail_base): New function.  Majority
+	of code from __assert_fail.  Allocate memory for __abort_msg with
+	mmap.
+	(__assert_fail): Now call __assert_fail_base.
+	* assert/assert-perr.c: Remove bulk of implementation.  Use
+	__assert_fail_base.
+	* include/assert.hL Declare __assert_fail_base.
+	* sysdeps/posix/libc_fatal.c: Allocate memory for __abort_msg with
+	mmap.
+	* sysdeps/unix/sysv/linux/libc_fatal.c: Likewise.
+
+2011-05-14  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11952]
+	[BZ #12453]
+	* elf/dl-open.c (dl_open_worker): Delay calls to _dl_update_slotinfo
+	until all modules are registered in the DTV.
+	* elf/Makefile: Add rules to build and run tst-tls19.
+	* elf/tst-tls19.c: New file.
+	* elf/tst-tls19mod1.c: New file.
+	* elf/tst-tls19mod2.c: New file.
+	* elf/tst-tls19mod3.c: New file.
+	Patch mostly by Martin von Gagern <Martin.vGagern@gmx.net>.
+
+	[BZ #12083]
+	* sysdeps/pthread/aio_misc.c (__aio_init): Compute optim.aio_num
+	correctly.
+
+	[BZ #12601]
+	* iconvdata/cp932.c (BODY to UCS4): Fix incrementing inptr in case of
+	two-byte sequence errors.
+	* iconvdata/Makefile (tests): Add bug-iconv8.
+	* iconvdata/bug-iconv8.c: New file.
+
+	[BZ #12626]
+	* sysdeps/generic/elf/backtracesymsfd.c (__backtrace_symbols_fd): Move
+	buf2 definition.
+
+	* libio/fileops.c (_IO_new_file_close_it): Initialize write_status.
+
+	[BZ #12432]
+	* sysdeps/ia64/backtrace.c (struct trace_reg): Add cfa element.
+	(dummy_getcfa): New function.
+	(init): Get _Unwind_GetCFA address, use dummy if not found.
+	(backtrace_helper): In recursion check, also check whether CFA changes.
+	(__backtrace): Completely initialize arg.
+
+	* iconv/loop.c (SINGLE) [STORE_REST]: Add input bytes to bytebuf before
+	storing incomplete byte sequence in state object.  Avoid testing for
+	guaranteed too small input if we know there is enough data available.
+
+2011-05-11  Andreas Schwab  <schwab@redhat.com>
+
+	* Makeconfig (+link-pie): Indent.
+	* Rules (binaries-pie): Define if $(have-fpie) and
+	$(build-shared).
+	(binaries-shared): Also filter out $(binaries-pie).
+	($(addprefix $(objpfx),$(binaries-pie))): New rule.
+	* nscd/Makefile (others-pie): Add nscd.
+	(LDFLAGS-nscd): Set this instead of relro-LDFLAGS.
+	($(objpfx)nscd): Remove command override.
+	* login/Makefile (others-pie): Add pt_chown.
+	($(objpfx)pt_chown): Remove command override.
+	* elf/Makefile: Add PIE tests to tests and tests-pie variables and
+	remove command overrides.
+
+2011-05-13  Ulrich Drepper  <drepper@gmail.com>
+
+	* libio/tst_putwc.c: Fix error messages.
+
+	[BZ #12724]
+	* libio/fileops.c (_IO_new_file_close_it): Always flush when
+	currently writing and seek to current position when not.
+	* libio/Makefile (tests): Add bug-fclose1.
+	* libio/bug-fclose1.c: New file.
+
 2011-05-12  Ulrich Drepper  <drepper@gmail.com>
 
 	[BZ #12511]
