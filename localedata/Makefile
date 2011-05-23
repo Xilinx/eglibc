@@ -1,4 +1,4 @@
-# Copyright (C) 1996-2003,2005,2007,2008,2009 Free Software Foundation, Inc.
+# Copyright (C) 1996-2003,2005,2007,2008,2009,2011 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -109,7 +109,7 @@ locale_test_suite := tst_iswalnum tst_iswalpha tst_iswcntrl            \
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
      += $(locale_test_suite) tst-digits tst-setlocale bug-iconv-trans \
 	tst-leaks tst-mbswcs6 tst-xlocale1 tst-xlocale2 bug-usesetlocale \
-	tst-strfmon1 tst-sscanf tst-strptime
+	tst-strfmon1 tst-sscanf tst-strptime bug-setlocale1
 ifeq (yesy,$(build-shared)$(OPTION_EGLIBC_LOCALE_CODE))
 ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-leaks
@@ -329,6 +329,9 @@ tst-leaks-ENV = MALLOC_TRACE=$(objpfx)tst-leaks.mtrace \
 		LOCPATH=$(common-objpfx)localedata
 $(objpfx)mtrace-tst-leaks: $(objpfx)tst-leaks.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-leaks.mtrace > $@
+
+bug-setlocale1-ENV = LOCPATH=$(common-objpfx)localedata
+bug-setlocale1-ARGS = $(common-objpfx)
 
 $(objdir)/iconvdata/gconv-modules:
 	$(MAKE) -C ../iconvdata subdir=iconvdata $@
