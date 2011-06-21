@@ -1,3 +1,8 @@
+2011-06-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/sotruss.ksh: Use PKGVERSION and REPORT_BUGS_TO.
+	* elf/Makefile ($(objpfx)sotruss): Substitute them in sotruss.
+
 2011-05-11  Nathan Sidwell  <nathan@codesourcery.com>
 
 	* malloc/Makefile (libmemusage.so): Add libc_nonshared.a dependency.
