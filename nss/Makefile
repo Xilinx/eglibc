@@ -44,8 +44,10 @@ routines-y		+= nsswitch getnssent getnssent_r \
 			  $(addsuffix -lookup,$(databases-y))
 routines-$(OPTION_EGLIBC_INET) += digits_dots
 
-others                  := getent
-install-bin             := getent
+others                  := getent makedb
+install-bin             := getent makedb
+makedb-modules = xmalloc hash-string
+extra-objs		+= $(makedb-modules:=.o)
 
 tests			= tst-nss-test1
 tests-$(OPTION_EGLIBC_INET) += test-netdb
@@ -59,7 +61,7 @@ otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \
 endif
 
 # Specify rules for the nss_* modules.  We have some services.
-services		:= files
+services		:= files db
 
 extra-libs		= $(services:%=libnss_%)
 # These libraries will be built in the `others' pass rather than
@@ -68,17 +70,28 @@ extra-libs-others	= $(extra-libs)
 
 # The sources are found in the appropriate subdir.
 subdir-dirs = $(services:%=nss_%)
-vpath %.c $(subdir-dirs)
+vpath %.c $(subdir-dirs) ../locale/programs ../intl
 
 
 libnss_files-routines	:= $(addprefix files-,$(databases-y)) \
 			   files-initgroups files-have_o_cloexec
 distribute		+= files-XXX.c files-parse.c
 
+libnss_db-dbs		:= $(addprefix db-,\
+				       $(filter-out hosts network key alias,\
+						    $(databases))) \
+			   db-initgroups
+libnss_db-routines	:= $(libnss_db-dbs) db-open hash-string
+generated		+= $(filter-out db-alias.c db-netgrp.c, \
+					$(addsuffix .c,$(libnss_db-dbs)))
+distribute		+= $(addprefix nss_db/, db-XXX.c nss_db.h)
+
+install-others		+= $(inst_vardbdir)/Makefile
 
 # Build static module if requested
 ifneq ($(build-static-nss),yes)
 libnss_files-inhibit-o	= $(filter-out .os,$(object-suffixes))
+libnss_db-inhibit-o	= $(filter-out .os,$(object-suffixes))
 endif
 
 ifneq ($(OPTION_EGLIBC_NSSWITCH),y)
@@ -127,6 +140,10 @@ ifeq (yes,$(build-static-nss))
 $(objpfx)getent: $(objpfx)libnss_files.a
 endif
 
+ifeq (yes,$(have-selinux))
+LDLIBS-makedb		:= -lselinux
+endif
+
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
 # This ensures they will load libc.so for needed symbols if loaded by
 # a statically-linked program that hasn't already loaded it.
@@ -134,6 +151,20 @@ libnss-libc = $(common-objpfx)linkobj/libc.so
 $(services:%=$(objpfx)libnss_%.so): $(libnss-libc) \
 				    $(common-objpfx)libc_nonshared.a
 
+$(objpfx)libnss_db.so: $(objpfx)libnss_files.so
+
+$(libnss_db-dbs:%=$(objpfx)%.c): $(objpfx)db-%.c: nss_files/files-%.c
+	@rm -f $@.new
+	(echo '#define EXTERN_PARSER';\
+	 echo '#define GENERIC "../nss_db/db-XXX.c"';\
+	 echo '#include "$<"') > $@.new
+	mv -f $@.new $@
+
+
+$(objpfx)makedb: $(makedb-modules:%=$(objpfx)%.o)
+
+$(inst_vardbdir)/Makefile: db-Makefile $(+force)
+	$(do-install)
 
 distribute		+= nss_test1.c
 

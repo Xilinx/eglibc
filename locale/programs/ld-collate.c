@@ -1992,7 +1992,6 @@ add_to_tablewc (uint32_t ch, struct element_t *runp)
     {
       /* As for the singlebyte table, we recognize sequences and
 	 compress them.  */
-      struct element_t *lastp;
 
       collidx_table_add (atwc.tablewc, ch,
 			 -(obstack_object_size (atwc.extrapool)
@@ -2092,7 +2091,6 @@ add_to_tablewc (uint32_t ch, struct element_t *runp)
 	    }
 
 	  /* Next entry.  */
-	  lastp = runp;
 	  runp = runp->wcnext;
 	}
       while (runp != NULL);

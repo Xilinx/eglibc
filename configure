@@ -3896,10 +3896,22 @@ $as_echo "$as_me: error: cannot find include directory with nss-config" >&2;}
   CFLAGS="$CFLAGS $nss_includes"
 
 cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
 typedef int PRBool;
 #include <hasht.h>
 #include <nsslowhash.h>
 void f (void) { NSSLOW_Init (); }
+int
+main ()
+{
+
+  ;
+  return 0;
+}
 _ACEOF
 rm -f conftest.$ac_objext
 if { (ac_try="$ac_compile"

@@ -1,5 +1,10 @@
 2011-06-21  Joseph Myers  <joseph@codesourcery.com>
 
+	* elf/pldd.c (argp_program_bug_address): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+
+2011-06-21  Joseph Myers  <joseph@codesourcery.com>
+
 	* elf/sotruss.ksh: Use PKGVERSION and REPORT_BUGS_TO.
 	* elf/Makefile ($(objpfx)sotruss): Substitute them in sotruss.
 

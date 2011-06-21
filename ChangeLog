@@ -1,3 +1,167 @@
+2011-06-20  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/dl-plt.h: Protect against multiple
+	inclusions.
+	* sysdeps/sparc/sparc64/dl-plt.h: Likewise.
+
+	* sysdeps/i386/dl-irel.h (elf_ifunc_invoke): New.
+	(elf_irel): Use it.
+	* sysdeps/powerpc/powerpc32/dl-irel.h: Likewise.
+	* sysdeps/powerpc/powerpc64/dl-irel.h: Likewise.
+	* sysdeps/sparc/sparc32/dl-irel.h: Likewise.
+	* sysdeps/sparc/sparc64/dl-irel.h: Likewise.
+	* sysdeps/x86_64/dl-irel.h: Likewise.
+
+	* elf/dl-runtime.c: Use elf_ifunc_invoke.
+	* elf/dl-sym.c: Likewise.
+
+2011-06-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* resolv/res_send.c (__libc_res_nsend): Fix typos in last patch.  We
+	need to dereference resplen2.
+
+2011-06-14  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/wordsize-64/dl-fxstatat64.c: New file.
+
+2011-06-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* Makeconfig: Define vardbdir and inst_vardbdir.
+	* nss/Makefile: Add rules to install db-Makefile.
+
+	* nss/nss_db/db-XXX.c: Cleanup.
+
+	* nss/Makefile (libnss_db-dbs): Add db-initgroups.
+	* nss/Versions [libnss_db]: Add _nss_db_initgroups_dyn for
+	GLIBC_PRIVATE.
+	* nss/db-Makefile (groups.db): Emit entries for initgroups lookups.
+	* nss/makedb.c: Implement -g option to specify that value strings
+	are generated and should not be added to table iterated over for
+	get*ent calls.
+	* nss/nss_db/db-initgroups.c: New file.
+
+	* nss/getent.c: Add support for initgroups lookups through getgrouplist
+	interface.
+
+	* grp/initgroups.c (__nss_initgroups_database): Renamed and exported.
+	(internal_getgrouplist): Adjust to name change.
+	Update use_initgroups_entry if this is not the first call.
+	* nss/databases.def: Add initgroups entry.
+
+	* nss/makedb.c (compute_tables): Check result of multiple hash table
+	sizes to minimize maximum chain length.
+
+2011-06-14  Ulrich Drepper  <drepper@gmail.com>
+
+	* Versions.def: Add entry for libnss_db.
+	* shlib-versions: Likewise.
+	* nss/Makefile: Add rules to build libnss_db.
+	* nss/Versions: Add libnss_db information.  Organize libnss_files
+	entries better.
+	* nss/db-Makefile: Add gshadow support.  Change rules for the new
+	makedb progra.  Some minor improvements to generate smaller files.
+	* nss/nss_db/nss_db.h: Move NSS database header data structures to
+	here from...
+	* nss/makedb.c: ...here.
+	Improve database format to be smaller and require less memory at
+	runtime.
+	* nss/nss_db/db-XXX.x: Adjust for new database format.  Don't use
+	db anymore.
+	* nss/nss_db/db-netgrp.c: Likewise.
+	* nss/nss_db/db-open.c: Likewise.
+	* nss/nss_files/flies-XXX.x: Adjust comments.
+	* nss/nss_files/files-ethers.c: Adjust for new DB_LOOKUP definition.
+	* nss/nss_files/files-grp.c: Likewise.
+	* nss/nss_files/files-hosts.c: Likewise.
+	* nss/nss_files/files-network.c: Likewise.
+	* nss/nss_files/files-proto.c: Likewise.
+	* nss/nss_files/files-pwd.c: Likewise.
+	* nss/nss_files/files-rpc.c: Likewise.
+	* nss/nss_files/files-service.c: Likewise.
+	* nss/nss_files/files-sgrp.c: Likewise.
+	* nss/nss_files/files-spwd.c: Likewise.
+	* nss/nss_db/db-alias.c: Removed.
+	* nss/nss_db/dummy-db.h: Removed.
+
+2011-06-02  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/makedb.c: Rewritten to not use database library.
+	* nss/Makefile: Update to build new makedb program.
+
+2011-06-14  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/check_native.c: Include <string.h> for
+	memset declaration.
+
+2011-06-10  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Fix logic allocating
+	tmpbuf.
+
+2011-06-10  Roland McGrath  <roland@hack.frob.com>
+
+	* Makerules (shlib.lds): Fail if the linker script comes out empty.
+	* elf/Makefile ($(objpfx)ld.so): Likewise.
+
+	* Makefile ($(common-objpfx)linkobj/libc.so): Break long lines with \.
+	Don't list ld.so twice in dependencies.
+
+	* posix/bug-regex31.c: Include <stdlib.h>.
+
+	* nscd/hstcache.c (cache_addhst): Remove unused variable.
+
+	* nis/nss_compat/compat-spwd.c
+	(getspent_next_nss_netgr): Remove unused variable.
+	* nis/nss_compat/compat-pwd.c (getpwent_next_nss_netgr): Likewise.
+
+	* nis/nis_print_group_entry.c (nis_print_group_entry): Fix "Implicit
+	nonmembers" output to use the right array.
+
+	* resolv/nss_dns/dns-network.c (getanswer_r): Remove unused variable.
+
+	* elf/dl-open.c (_dl_open): Quash warnings when DL_NNS==1.
+
+	* locale/programs/ld-ctype.c (ctype_read): Remove unused variable.
+	* locale/programs/ld-collate.c (add_to_tablewc): Likewise.
+	* catgets/gencat.c (read_input_file): Likewise.
+	* locale/programs/locarchive.c (enlarge_archive): Likewise.
+
+	* sunrpc/clnt_udp.c (__libc_clntudp_bufcreate): Move DONTBLOCK
+	variable definition inside #if's controlling its use.
+
+	* inet/getnetgrent_r.c (innetgr): Remove unused variable.
+
+	* resolv/res_hconf.c (_res_hconf_reorder_addrs): Fix errno restoration.
+
+	* misc/syslog.c (__vsyslog_chk): Remove unused variable.
+
+	* io/fts.c (fts_build): Use if (0 && ...) rather than #if 0 for
+	unreachable code.
+
+	* stdio-common/printf_fp.c (___printf_fp): Remove unused variable.
+
+	* configure.in (nss-crypt check): Use AC_LANG_PROGRAM.
+	* configure: Regenerated.
+
+	* Makerules: Revert last change.
+	* elf/Makefile: Likewise.
+
+2011-06-09  Roland McGrath  <roland@hack.frob.com>
+
+	* Makerules ($(common-objpfx)libc_pic.os): Use -Wl, before -r.
+	* elf/Makefile ($(objpfx)librtld.os): Likewise.
+	(reloc-link): Likewise.
+
+2011-06-09  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/Makefile: Add rules to build pldd.
+	* elf/pldd.c: New file.
+	* elf/pldd-xx.c: New file.
+
+2011-06-07  Ulrich Drepper  <drepper@gmail.com>
+
+	* version.h: Update for 2.15 development version.
+
 2011-06-07  David S. Miller  <davem@davemloft.net>
 
 	* sysdeps/sparc/sparc32/dl-irel.h (elf_irela): Pass dl_hwcap to

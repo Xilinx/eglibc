@@ -507,6 +507,38 @@ netgroup_keys (int number, char *key[])
   return result;
 }
 
+/* This is for initgroups */
+static int
+initgroups_keys (int number, char *key[])
+{
+  int ngrps = 100;
+  size_t grpslen = ngrps * sizeof (gid_t);
+  gid_t *grps = alloca (grpslen);
+
+  for (int i = 0; i < number; ++i)
+    {
+      int no = ngrps;
+      int n;
+      while ((n = getgrouplist (key[i], -1, grps, &no)) == -1
+	     && no > ngrps)
+	{
+	  grps = extend_alloca (grps, grpslen, no * sizeof (gid_t));
+	  ngrps = no;
+	}
+
+      if (n == -1)
+	return 1;
+
+      printf ("%-21s", key[i]);
+      for (int j = 0; j < n; ++j)
+	if (grps[j] != -1)
+	  printf (" %ld", (long int) grps[j]);
+      putchar_unlocked ('\n');
+    }
+
+  return 0;
+}
+
 /* This is for networks */
 static void
 print_networks (struct netent *net)
@@ -851,6 +883,7 @@ DN(ethers)
 D(group)
 D(gshadow)
 DN(hosts)
+D(initgroups)
 DN(netgroup)
 DN(networks)
 D(passwd)
