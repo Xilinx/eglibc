@@ -1,3 +1,8 @@
+2011-07-06  Sebastan Andrzej Siewior  <bigeasy@linutronix.de>
+
+	* sysdeps/powerpc/powerpc32/dl-trampoline.S: Put __NO_FPRS__
+	around floating point opcodes.
+
 2011-06-23  Paul Pluzhnikov  <ppluzhnikov@google.com>
 
 	* resolv/res_libc.c (__res_initstamp): Declare unconditionally.
