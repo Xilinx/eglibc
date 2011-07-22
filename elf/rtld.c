@@ -17,6 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <gnu/option-groups.h>
 #include <errno.h>
 #include <dlfcn.h>
 #include <fcntl.h>

@@ -1,5 +1,9 @@
 2011-07-22  Denis Zaitceff  <zaitceff@gmail.com>
 
+	* elf/dl-support.c, elf/rtld.c: Include <gnu/option-groups.h>.
+
+2011-07-22  Denis Zaitceff  <zaitceff@gmail.com>
+
 	* Makerules (others-pie): Involve this new variable into EGLIBC's
 	build system.
 	* nscd/Makefile: Ditto.

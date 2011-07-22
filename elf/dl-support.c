@@ -20,6 +20,7 @@
 /* This file defines some things that for the dynamic linker are defined in
    rtld.c and dl-sysdep.c in ways appropriate to bootstrap dynamic linking.  */
 
+#include <gnu/option-groups.h>
 #include <errno.h>
 #include <libintl.h>
 #include <stdlib.h>
