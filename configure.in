@@ -114,6 +114,13 @@ AC_ARG_WITH([headers],
 	    [sysheaders=$withval],
 	    [sysheaders=''])
 
+AC_SUBST(use_default_link)
+AC_ARG_WITH([default-link],
+	    AC_HELP_STRING([--with-default-link],
+			   [do not use explicit linker scripts]),
+	    [use_default_link=$withval],
+	    [use_default_link=default])
+
 AC_ARG_ENABLE([sanity-checks],
 	      AC_HELP_STRING([--disable-sanity-checks],
 			     [really do not use threads (should not be used except in special situations) @<:@default=yes@:>@]),
@@ -278,13 +285,6 @@ AC_ARG_ENABLE([multi-arch],
 			     [enable single DSO with optimizations for multiple architectures]),
 	      [multi_arch=$enableval],
 	      [multi_arch=default])
-
-AC_ARG_ENABLE([experimental-malloc],
-	      AC_HELP_STRING([--enable-experimental-malloc],
-			     [enable experimental malloc features]),
-	      [experimental_malloc=$enableval],
-	      [])
-AC_SUBST(experimental_malloc)
 
 AC_ARG_ENABLE([nss-crypt],
 	      AC_HELP_STRING([--enable-nss-crypt],
@@ -1078,6 +1078,8 @@ AC_CHECK_PROG_VER(SED, sed, --version,
   [3.0[2-9]*|3.[1-9]*|[4-9]*],
   SED=: aux_missing="$aux_missing sed")
 
+AC_CHECK_TOOL(READELF, readelf, false)
+
 AC_CHECK_PROGS(AUTOCONF, autoconf, no)
 case "x$AUTOCONF" in
 xno|x|x:) AUTOCONF=no ;;
@@ -1506,7 +1508,7 @@ EOF
   if AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest conftest.c
 		     -static -nostartfiles -nostdlib 1>&AS_MESSAGE_LOG_FD])
   then
-    if readelf -S conftest | fgrep INIT_ARRAY > /dev/null; then
+    if $READELF -S conftest | fgrep INIT_ARRAY > /dev/null; then
       libc_cv_initfini_array=yes
     else
       libc_cv_initfini_array=no
@@ -1517,7 +1519,35 @@ EOF
   rm -f conftest*])
   if test $libc_cv_initfini_array != yes; then
     AC_MSG_ERROR([Need linker with .init_array/.fini_array support.])
-  elif AC_TRY_COMMAND([${CC-cc} -Wl,--verbose 2>&1|grep SORT_BY_INIT_PRIORITY 1>&AS_MESSAGE_LOG_FD]); then
+  fi
+
+  AC_CACHE_CHECK(whether to use .ctors/.dtors header and trailer,
+		 libc_cv_ctors_header, [dnl
+    libc_cv_ctors_header=yes
+    AC_TRY_LINK([], [
+__attribute__ ((constructor)) void ctor (void) { puts("ctor"); }
+__attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
+],
+		[dnl
+      AS_IF([$READELF -WS conftest$ac_exeext | $AWK '
+        { gsub(/\@<:@ */, "@<:@") }
+	$2 == ".ctors" || $2 == ".dtors" {
+	  size = strtonum("0x" $6)
+	  align = strtonum("0x" $NF)
+	  seen@<:@$2@:>@ = 1
+	  stub@<:@$2@:>@ = size == align * 2
+        }
+	END {
+	  ctors_ok = !seen@<:@".ctors"@:>@ || stub@<:@".ctors"@:>@
+	  dtors_ok = !seen@<:@".dtors"@:>@ || stub@<:@".dtors"@:>@
+	  exit ((ctors_ok && dtors_ok) ? 0 : 1)
+	}
+      '], [libc_cv_ctors_header=no])
+    ], [dnl
+      AC_MSG_ERROR([missing __attribute__ ((constructor)) support??])
+    ])
+  ])
+  if test $libc_cv_ctors_header = no; then
     AC_DEFINE(NO_CTORS_DTORS_SECTIONS)
   fi
 
@@ -1586,26 +1616,79 @@ EOF
   fi
   rm -f conftest*])
 
+  # Add-on fragments can set these for other machines.
+  libc_commonpagesize=${libc_commonpagesize:-no}
+  libc_relro_required=${libc_relro_required:-no}
   case "$base_machine" in
-changequote(,)dnl
-    i[34567]86 | x86_64 | powerpc* | s390* | sparc* | alpha*)
-changequote([,])dnl
-      AC_CACHE_CHECK(for -z relro option,
-		     libc_cv_z_relro, [dnl
-  libc_cv_z_relro=no
-  if AC_TRY_COMMAND([${CC-cc} -v --help 2>&1|grep "z relro" 1>&AS_MESSAGE_LOG_FD])
-  then
-    if AC_TRY_COMMAND([${CC-cc} -Wl,--verbose 2>&1|grep DATA_SEGMENT_RELRO_END 1>&AS_MESSAGE_LOG_FD])
-    then
-      libc_cv_z_relro=yes
-    fi
-  fi])
-      if test "$libc_cv_z_relro" = no; then
-	AC_MSG_ERROR(linker with -z relro support required)
-      fi
+    i[[34567]]86 | x86_64 | powerpc* | s390*)
+      libc_commonpagesize=0x1000
+      libc_relro_required=yes
       ;;
-    *) ;;
-   esac
+    sparc*)
+      libc_commonpagesize=0x2000
+      libc_relro_required=yes
+      ;;
+    ia64*)
+      libc_commonpagesize=0x4000
+      ;;
+    alpha*)
+      libc_commonpagesize=0x10000
+      libc_relro_required=yes
+      ;;
+  esac
+
+  if test $libc_commonpagesize != no; then
+    AC_CACHE_CHECK(for -z relro option,
+		   libc_cv_z_relro, [dnl
+    libc_cv_z_relro=no
+    AC_LANG_CONFTEST([AC_LANG_SOURCE([[
+int _start (void) { return 42; }
+extern void _exit (int);
+/* Since these pointers are const, they should go in rodata.
+   Since they refer to functions that have to be resolved by
+   dynamic linking, they should instead go in RELRO data.  */
+const void *const relro[] = { &_start, &_exit, 0 };
+/* GNU ld fails to produce RELRO data when it's very small and there is no
+   normal writable data following it, or if only uninitialized (.bss) data
+   follows it, or only very small writable data.  */
+int data[0x10000] = { 1, };
+]])])
+    cat > conftest.awk <<\EOF
+BEGIN {
+  result = "no"
+  commonpagesize = strtonum(commonpagesize)
+}
+{ print "LINE:", $0 > "/dev/stderr" }
+$1 == "GNU_RELRO" {
+  vaddr = strtonum($3)
+  memsz = strtonum($6)
+  end = vaddr + memsz
+  printf "vaddr %#x memsz %#x end %#x commonpagesize %#x\n", \
+    vaddr, memsz, end, commonpagesize > "/dev/stderr"
+  result = (end % commonpagesize == 0) ? "yes" : "broken"
+}
+END { print result }
+EOF
+    AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+		    -fPIC -shared -o conftest.so conftest.c
+		    -nostartfiles -nostdlib
+		    -Wl,-z,relro 1>&AS_MESSAGE_LOG_FD]) &&
+    AC_TRY_COMMAND([$READELF -Wl conftest.so > conftest.ph]) &&
+    AC_TRY_COMMAND([
+      $AWK -v commonpagesize=$libc_commonpagesize -f conftest.awk
+	   conftest.ph > conftest.cps
+    ]) &&
+    libc_cv_z_relro=`cat conftest.cps 2>&AS_MESSAGE_LOG_FD`
+    rm -f conftest*])
+    if { test "x$libc_relro_required" = xyes &&
+	 test "x$libc_cv_z_relro" != xyes
+       }
+    then
+      AC_MSG_ERROR(linker with -z relro support required)
+    fi
+  else
+    AC_MSG_WARN([missing architecture parameter to check for working -z relro])
+  fi
 
   AC_CACHE_CHECK(for -Bgroup option,
 		 libc_cv_Bgroup, [dnl
@@ -1693,7 +1776,7 @@ dnl cross-platform since the gcc used can be a cross compiler.  Without
 dnl introducing new options this is not easily doable.  Instead use a tool
 dnl which always is cross-platform: readelf.  To detect whether -z combreloc
 dnl look for a section named .rel.dyn.
-    if readelf -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
+    if $READELF -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
       libc_cv_z_combreloc=yes
     else
       libc_cv_z_combreloc=no
@@ -1746,7 +1829,71 @@ EOF
   fi
   rm -f conftest*])
   AC_SUBST(libc_cv_hashstyle)
+
+  # The linker's default -shared behavior is good enough if it
+  # does these things that our custom linker scripts ensure that
+  # all allocated NOTE sections come first.
+  if test "$use_default_link" = default; then
+    AC_CACHE_CHECK([for sufficient default -shared layout],
+		   libc_cv_use_default_link, [dnl
+    libc_cv_use_default_link=no
+    cat > conftest.s <<\EOF
+	  .section .note.a,"a",%note
+	  .balign 4
+	  .long 4,4,9
+	  .string "GNU"
+	  .string "foo"
+	  .section .note.b,"a",%note
+	  .balign 4
+	  .long 4,4,9
+	  .string "GNU"
+	  .string "bar"
+EOF
+    if AC_TRY_COMMAND([dnl
+  ${CC-cc} $ASFLAGS -shared -o conftest.so conftest.s 1>&AS_MESSAGE_LOG_FD]) &&
+       ac_try=`$READELF -S conftest.so | sed -n \
+	 ['${x;p;}
+	  s/^ *\[ *[1-9][0-9]*\]  *\([^ ][^ ]*\)  *\([^ ][^ ]*\) .*$/\2 \1/
+	  t a
+	  b
+	  : a
+	  H']`
+    then
+      libc_seen_a=no libc_seen_b=no
+      set -- $ac_try
+      while test $# -ge 2 -a "$1" = NOTE; do
+	case "$2" in
+	.note.a) libc_seen_a=yes ;;
+	.note.b) libc_seen_b=yes ;;
+	esac
+	shift 2
+      done
+      case "$libc_seen_a$libc_seen_b" in
+      yesyes)
+	libc_cv_use_default_link=yes
+	;;
+      *)
+	echo >&AS_MESSAGE_LOG_FD "\
+$libc_seen_a$libc_seen_b from:
+$ac_try"
+	;;
+      esac
+    fi
+    rm -f conftest*])
+    use_default_link=$libc_cv_use_default_link
+  fi
 fi
+
+AC_CACHE_CHECK(linker output format, libc_cv_output_format, [dnl
+if libc_cv_output_format=`
+${CC-cc} -nostartfiles -nostdlib -Wl,--print-output-format 2>&AS_MESSAGE_LOG_FD`
+then
+  :
+else
+  libc_cv_output_format=
+fi
+test -n "$libc_cv_output_format" || libc_cv_output_format=unknown])
+AC_SUBST(libc_cv_output_format)
 
 AC_CACHE_CHECK(for -fno-toplevel-reorder -fno-section-anchors, libc_cv_fno_toplevel_reorder, [dnl
 cat > conftest.c <<EOF

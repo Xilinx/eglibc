@@ -5,7 +5,7 @@ version = @VERSION@
 release = @RELEASE@
 
 # Installation prefixes.
-install_root =
+install_root = $(DESTDIR)
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 datadir = @datadir@
@@ -69,6 +69,8 @@ have-cc-with-libunwind = @libc_cv_cc_with_libunwind@
 fno-unit-at-a-time = @fno_unit_at_a_time@
 bind-now = @bindnow@
 have-hash-style = @libc_cv_hashstyle@
+use-default-link = @use_default_link@
+output-format = @libc_cv_output_format@
 
 static-libgcc = @libc_cv_gcc_static_libgcc@
 
@@ -84,8 +86,6 @@ have-bash2 = @libc_cv_have_bash2@
 have-ksh = @libc_cv_have_ksh@
 
 sizeof-long-double = @sizeof_long_double@
-
-experimental-malloc = @experimental_malloc@
 
 nss-crypt = @libc_cv_nss_crypt@
 
@@ -118,6 +118,7 @@ PWD_P = @PWD_P@
 BISON = @BISON@
 AUTOCONF = @AUTOCONF@
 OBJDUMP = @OBJDUMP@
+OBJCOPY = @OBJCOPY@
 
 # Installation tools.
 INSTALL = @INSTALL@

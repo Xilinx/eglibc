@@ -1,6 +1,6 @@
 /* Declaration of functions and data types used for SHA512 sum computing
    library functions.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -24,6 +24,8 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <endian.h>
+#include <bits/wordsize.h>
 
 
 /* Structure to save state of computation between the single steps.  */
@@ -31,9 +33,22 @@ struct sha512_ctx
 {
   uint64_t H[8];
 
-  uint64_t total[2];
+  union
+  {
+#if defined __GNUC__ && __WORDSIZE == 64
+# define USE_TOTAL128
+    unsigned int total128 __attribute__ ((__mode__ (TI)));
+#endif
+#define TOTAL128_low (1 - (BYTE_ORDER == LITTLE_ENDIAN))
+#define TOTAL128_high (BYTE_ORDER == LITTLE_ENDIAN)
+    uint64_t total[2];
+  };
   uint64_t buflen;
-  char buffer[256] __attribute__ ((__aligned__ (__alignof__ (uint64_t))));
+  union
+  {
+    char buffer[256];
+    uint64_t buffer64[32];
+  };
 };
 
 /* Initialize structure containing state of computation.

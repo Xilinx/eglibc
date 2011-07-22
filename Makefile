@@ -152,7 +152,7 @@ $(common-objpfx)linkobj/libc.so: $(elfobjdir)/soinit.os \
 				 $(elfobjdir)/sofini.os \
 				 $(elfobjdir)/interp.os \
 				 $(elfobjdir)/ld.so \
-				 $(common-objpfx)shlib.lds
+				 $(shlib-lds)
 	$(build-shlib)
 
 $(common-objpfx)linkobj/libc_pic.a: $(common-objpfx)libc_pic.a \
@@ -172,8 +172,10 @@ endif
 $(common-objpfx)testrun.sh: $(common-objpfx)config.make \
 			    $(..)Makeconfig $(..)Makefile
 	(echo '#!/bin/sh'; \
-	 echo "GCONV_PATH='$(common-objpfx)iconvdata' \\"; \
-	 echo 'exec $(run-program-prefix) $${1+"$$@"}'; \
+	 echo 'builddir=`dirname "$$0"`'; \
+	 echo 'GCONV_PATH="$${builddir}/iconvdata" \'; \
+	 echo 'exec $(subst $(common-objdir),"$${builddir}",\
+			    $(run-program-prefix)) $${1+"$$@"}'; \
 	) > $@T
 	chmod a+x $@T
 	mv -f $@T $@
@@ -304,7 +306,8 @@ endif
 endif
 
 $(objpfx)check-local-headers.out: scripts/check-local-headers.sh
-	scripts/check-local-headers.sh "$(includedir)" "$(objpfx)" > $@
+	AWK='$(AWK)' scripts/check-local-headers.sh \
+	  "$(includedir)" "$(objpfx)" > $@
 
 ifneq ($(PERL),no)
 installed-headers = argp/argp.h assert/assert.h catgets/nl_types.h \

@@ -1,6 +1,6 @@
 /* Functions to compute SHA512 message digest of files or memory blocks.
    according to the definition of SHA512 in FIPS 180-2.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -121,9 +121,13 @@ sha512_process_block (const void *buffer, size_t len, struct sha512_ctx *ctx)
   /* First increment the byte count.  FIPS 180-2 specifies the possible
      length of the file up to 2^128 bits.  Here we only compute the
      number of bytes.  Do a double word increment.  */
-  ctx->total[0] += len;
-  if (ctx->total[0] < len)
-    ++ctx->total[1];
+#ifdef USE_TOTAL128
+  ctx->total128 += len;
+#else
+  ctx->total[TOTAL128_low] += len;
+  if (ctx->total[TOTAL128_low] < len)
+    ++ctx->total[TOTAL128_high];
+#endif
 
   /* Process all bytes in the buffer with 128 bytes in each round of
      the loop.  */
@@ -237,17 +241,21 @@ __sha512_finish_ctx (ctx, resbuf)
   size_t pad;
 
   /* Now count remaining bytes.  */
-  ctx->total[0] += bytes;
-  if (ctx->total[0] < bytes)
-    ++ctx->total[1];
+#ifdef USE_TOTAL128
+  ctx->total128 += bytes;
+#else
+  ctx->total[TOTAL128_low] += bytes;
+  if (ctx->total[TOTAL128_low] < bytes)
+    ++ctx->total[TOTAL128_high];
+#endif
 
   pad = bytes >= 112 ? 128 + 112 - bytes : 112 - bytes;
   memcpy (&ctx->buffer[bytes], fillbuf, pad);
 
   /* Put the 128-bit file length in *bits* at the end of the buffer.  */
-  *(uint64_t *) &ctx->buffer[bytes + pad + 8] = SWAP (ctx->total[0] << 3);
-  *(uint64_t *) &ctx->buffer[bytes + pad] = SWAP ((ctx->total[1] << 3) |
-						  (ctx->total[0] >> 61));
+  ctx->buffer64[(bytes + pad + 8) / 8] = SWAP (ctx->total[TOTAL128_low] << 3);
+  ctx->buffer64[(bytes + pad) / 8] = SWAP ((ctx->total[TOTAL128_high] << 3) |
+					   (ctx->total[TOTAL128_low] >> 61));
 
   /* Process last bytes.  */
   sha512_process_block (ctx->buffer, bytes + pad + 16, ctx);

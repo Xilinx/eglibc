@@ -23,6 +23,7 @@ sysdep_routines += sysctl clone llseek umount umount2 readahead \
 
 
 CFLAGS-gethostid.c = -fexceptions
+CFLAGS-tst-writev.c += -DARTIFICIAL_LIMIT=0x7ffff000
 
 sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
 		  sys/klog.h sys/kdaemon.h \
@@ -161,11 +162,6 @@ CFLAGS-mq_receive.c += -fexceptions
 endif
 
 ifeq ($(subdir),nscd)
-CFLAGS-connections.c += -DHAVE_EPOLL -DHAVE_SENDFILE -DHAVE_INOTIFY
-CFLAGS-pwdcache.c += -DHAVE_SENDFILE
-CFLAGS-grpcache.c += -DHAVE_SENDFILE
-CFLAGS-hstcache.c += -DHAVE_SENDFILE
-CFLAGS-aicache.c += -DHAVE_SENDFILE
-CFLAGS-initgrcache.c += -DHAVE_SENDFILE
+sysdep-CFLAGS += -DHAVE_EPOLL -DHAVE_SENDFILE -DHAVE_INOTIFY
 CFLAGS-gai.c += -DNEED_NETLINK
 endif

@@ -1,5 +1,5 @@
 /* Determine various system internal values, Linux version.
-   Copyright (C) 1996-2003,2006,2007,2009,2010 Free Software Foundation, Inc.
+   Copyright (C) 1996-2003,2006,2007,2009,2010,2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -35,6 +35,16 @@
 
 #include <atomic.h>
 #include <not-cancel.h>
+#include <kernel-features.h>
+
+#ifndef HAVE_CLOCK_GETTIME_VSYSCALL
+# undef INTERNAL_VSYSCALL
+# define INTERNAL_VSYSCALL INTERNAL_SYSCALL
+# undef INLINE_VSYSCALL
+# define INLINE_VSYSCALL INLINE_SYSCALL
+#else
+# include <bits/libc-vdso.h>
+#endif
 
 
 /* How we can determine the number of available processors depends on
@@ -128,6 +138,22 @@ next_line (int fd, char *const buffer, char **cp, char **re,
 int
 __get_nprocs ()
 {
+  static int cached_result;
+  static time_t timestamp;
+
+#ifdef __ASSUME_POSIX_TIMERS
+  struct timespec ts;
+  INTERNAL_SYSCALL_DECL (err);
+  INTERNAL_VSYSCALL (clock_gettime, err, 2, CLOCK_REALTIME, &ts);
+#else
+  struct timeval ts;
+  __gettimeofday (&ts, NULL);
+#endif
+  time_t prev = timestamp;
+  atomic_read_barrier ();
+  if (ts.tv_sec == prev)
+    return cached_result;
+
   /* XXX Here will come a test for the new system call.  */
 
   const size_t buffer_size = __libc_use_alloca (8192) ? 8192 : 512;
@@ -135,20 +161,65 @@ __get_nprocs ()
   char *buffer_end = buffer + buffer_size;
   char *cp = buffer_end;
   char *re = buffer_end;
-  int result = 1;
 
 #ifdef O_CLOEXEC
   const int flags = O_RDONLY | O_CLOEXEC;
 #else
   const int flags = O_RDONLY;
 #endif
+  int fd = open_not_cancel_2 ("/sys/devices/system/cpu/online", flags);
+  char *l;
+  int result = 0;
+  if (fd != -1)
+    {
+      l = next_line (fd, buffer, &cp, &re, buffer_end);
+      if (l != NULL)
+	do
+	  {
+	    char *endp;
+	    unsigned long int n = strtoul (l, &endp, 10);
+	    if (l == endp)
+	      {
+		result = 0;
+		break;
+	      }
+
+	    unsigned long int m = n;
+	    if (*endp == '-')
+	      {
+		l = endp + 1;
+		m = strtoul (l, &endp, 10);
+		if (l == endp)
+		  {
+		    result = 0;
+		    break;
+		  }
+	      }
+
+	    result += m - n + 1;
+
+	    l = endp;
+	    while (l < re && isspace (*l))
+	      ++l;
+	  }
+	while (l < re);
+
+      close_not_cancel_no_status (fd);
+
+      if (result > 0)
+	goto out;
+    }
+
+  cp = buffer_end;
+  re = buffer_end;
+  result = 1;
+
   /* The /proc/stat format is more uniform, use it by default.  */
-  int fd = open_not_cancel_2 ("/proc/stat", flags);
+  fd = open_not_cancel_2 ("/proc/stat", flags);
   if (fd != -1)
     {
       result = 0;
 
-      char *l;
       while ((l = next_line (fd, buffer, &cp, &re, buffer_end)) != NULL)
 	/* The current format of /proc/stat has all the cpu* entries
 	   at the front.  We assume here that stays this way.  */
@@ -168,6 +239,11 @@ __get_nprocs ()
 	  close_not_cancel_no_status (fd);
 	}
     }
+
+ out:
+  cached_result = result;
+  atomic_write_barrier ();
+  timestamp = ts.tv_sec;
 
   return result;
 }

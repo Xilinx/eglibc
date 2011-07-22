@@ -683,6 +683,7 @@ libc_cv_have_initfini
 gnu89_inline
 libc_cv_ssp
 fno_unit_at_a_time
+libc_cv_output_format
 libc_cv_hashstyle
 libc_cv_fpie
 libc_cv_z_execstack
@@ -705,6 +706,7 @@ libc_cv_gcc_static_libgcc
 CXX_SYSINCLUDES
 SYSINCLUDES
 AUTOCONF
+READELF
 SED
 MAKEINFO
 MSGFMT
@@ -713,6 +715,7 @@ PWD_P
 LD
 AS
 MIG
+OBJCOPY
 OBJDUMP
 NM
 AR
@@ -728,7 +731,6 @@ base_machine
 add_on_subdirs
 add_ons
 libc_cv_nss_crypt
-experimental_malloc
 REPORT_BUGS_TEXI
 REPORT_BUGS_TO
 PKGVERSION
@@ -737,6 +739,7 @@ force_install
 bindnow
 oldest_abi
 enable_check_abi
+use_default_link
 with_cvs
 with_fp
 ac_ct_CXX
@@ -810,6 +813,7 @@ with_selinux
 with_xcoff
 with_cvs
 with_headers
+with_default_link
 enable_sanity_checks
 enable_check_abi
 enable_shared
@@ -831,7 +835,6 @@ enable_all_warnings
 with_pkgversion
 with_bugurl
 enable_multi_arch
-enable_experimental_malloc
 enable_nss_crypt
 with_cpu
 '
@@ -1501,8 +1504,6 @@ Optional Features:
   --enable-all-warnings   enable all useful warnings gcc can issue
   --enable-multi-arch     enable single DSO with optimizations for multiple
                           architectures
-  --enable-experimental-malloc
-                          enable experimental malloc features
   --enable-nss-crypt      enable libcrypt to use nss
 
 Optional Packages:
@@ -1519,6 +1520,7 @@ Optional Packages:
   --without-cvs           if CVS should not be used
   --with-headers=PATH     location of system headers to use (for example
                           /usr/src/linux/include) [default=compiler default]
+  --with-default-link     do not use explicit linker scripts
   --with-tls              enable support for TLS
   --without-__thread      do not use TLS features even when supporting them
   --with-pkgversion=PKG   Use PKG in the version string in place of "EGLIBC"
@@ -3624,6 +3626,16 @@ else
 fi
 
 
+
+
+# Check whether --with-default-link was given.
+if test "${with_default_link+set}" = set; then
+  withval=$with_default_link; use_default_link=$withval
+else
+  use_default_link=default
+fi
+
+
 # Check whether --enable-sanity-checks was given.
 if test "${enable_sanity_checks+set}" = set; then
   enableval=$enable_sanity_checks; enable_sanity=$enableval
@@ -3869,13 +3881,6 @@ if test "${enable_multi_arch+set}" = set; then
 else
   multi_arch=default
 fi
-
-
-# Check whether --enable-experimental-malloc was given.
-if test "${enable_experimental_malloc+set}" = set; then
-  enableval=$enable_experimental_malloc; experimental_malloc=$enableval
-fi
-
 
 
 # Check whether --enable-nss-crypt was given.
@@ -4920,6 +4925,8 @@ NM=`$CC -print-prog-name=nm`
 
 OBJDUMP=`$CC -print-prog-name=objdump`
 
+OBJCOPY=`$CC -print-prog-name=objcopy`
+
 
 # Determine whether we are using GNU binutils.
 { $as_echo "$as_me:$LINENO: checking whether $AS is GNU as" >&5
@@ -5457,6 +5464,99 @@ $as_echo "$ac_prog_version" >&6; }
 fi
 if test $ac_verc_fail = yes; then
   SED=: aux_missing="$aux_missing sed"
+fi
+
+
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}readelf", so it can be a program name with args.
+set dummy ${ac_tool_prefix}readelf; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_READELF+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$READELF"; then
+  ac_cv_prog_READELF="$READELF" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_READELF="${ac_tool_prefix}readelf"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+READELF=$ac_cv_prog_READELF
+if test -n "$READELF"; then
+  { $as_echo "$as_me:$LINENO: result: $READELF" >&5
+$as_echo "$READELF" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_READELF"; then
+  ac_ct_READELF=$READELF
+  # Extract the first word of "readelf", so it can be a program name with args.
+set dummy readelf; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_READELF+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_READELF"; then
+  ac_cv_prog_ac_ct_READELF="$ac_ct_READELF" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_READELF="readelf"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_READELF=$ac_cv_prog_ac_ct_READELF
+if test -n "$ac_ct_READELF"; then
+  { $as_echo "$as_me:$LINENO: result: $ac_ct_READELF" >&5
+$as_echo "$ac_ct_READELF" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_READELF" = x; then
+    READELF="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:$LINENO: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    READELF=$ac_ct_READELF
+  fi
+else
+  READELF="$ac_cv_prog_READELF"
 fi
 
 
@@ -6396,7 +6496,7 @@ EOF
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
   then
-    if readelf -S conftest | fgrep INIT_ARRAY > /dev/null; then
+    if $READELF -S conftest | fgrep INIT_ARRAY > /dev/null; then
       libc_cv_initfini_array=yes
     else
       libc_cv_initfini_array=no
@@ -6412,12 +6512,89 @@ $as_echo "$libc_cv_initfini_array" >&6; }
     { { $as_echo "$as_me:$LINENO: error: Need linker with .init_array/.fini_array support." >&5
 $as_echo "$as_me: error: Need linker with .init_array/.fini_array support." >&2;}
    { (exit 1); exit 1; }; }
-  elif { ac_try='${CC-cc} -Wl,--verbose 2>&1|grep SORT_BY_INIT_PRIORITY 1>&5'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
+  fi
+
+  { $as_echo "$as_me:$LINENO: checking whether to use .ctors/.dtors header and trailer" >&5
+$as_echo_n "checking whether to use .ctors/.dtors header and trailer... " >&6; }
+if test "${libc_cv_ctors_header+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+      libc_cv_ctors_header=yes
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+__attribute__ ((constructor)) void ctor (void) { puts("ctor"); }
+__attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
   ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+        if $READELF -WS conftest$ac_exeext | $AWK '
+        { gsub(/\[ */, "[") }
+	$2 == ".ctors" || $2 == ".dtors" {
+	  size = strtonum("0x" $6)
+	  align = strtonum("0x" $NF)
+	  seen[$2] = 1
+	  stub[$2] = size == align * 2
+        }
+	END {
+	  ctors_ok = !seen[".ctors"] || stub[".ctors"]
+	  dtors_ok = !seen[".dtors"] || stub[".dtors"]
+	  exit ((ctors_ok && dtors_ok) ? 0 : 1)
+	}
+      '; then
+  libc_cv_ctors_header=no
+fi
+
+
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	      { { $as_echo "$as_me:$LINENO: error: missing __attribute__ ((constructor)) support??" >&5
+$as_echo "$as_me: error: missing __attribute__ ((constructor)) support??" >&2;}
+   { (exit 1); exit 1; }; }
+
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:$LINENO: result: $libc_cv_ctors_header" >&5
+$as_echo "$libc_cv_ctors_header" >&6; }
+  if test $libc_cv_ctors_header = no; then
     cat >>confdefs.h <<\_ACEOF
 #define NO_CTORS_DTORS_SECTIONS 1
 _ACEOF
@@ -6538,42 +6715,110 @@ fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_initfirst" >&5
 $as_echo "$libc_cv_z_initfirst" >&6; }
 
+  # Add-on fragments can set these for other machines.
+  libc_commonpagesize=${libc_commonpagesize:-no}
+  libc_relro_required=${libc_relro_required:-no}
   case "$base_machine" in
-    i[34567]86 | x86_64 | powerpc* | s390* | sparc* | alpha*)
-      { $as_echo "$as_me:$LINENO: checking for -z relro option" >&5
+    i[34567]86 | x86_64 | powerpc* | s390*)
+      libc_commonpagesize=0x1000
+      libc_relro_required=yes
+      ;;
+    sparc*)
+      libc_commonpagesize=0x2000
+      libc_relro_required=yes
+      ;;
+    ia64*)
+      libc_commonpagesize=0x4000
+      ;;
+    alpha*)
+      libc_commonpagesize=0x10000
+      libc_relro_required=yes
+      ;;
+  esac
+
+  if test $libc_commonpagesize != no; then
+    { $as_echo "$as_me:$LINENO: checking for -z relro option" >&5
 $as_echo_n "checking for -z relro option... " >&6; }
 if test "${libc_cv_z_relro+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    libc_cv_z_relro=no
-  if { ac_try='${CC-cc} -v --help 2>&1|grep "z relro" 1>&5'
+      libc_cv_z_relro=no
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int _start (void) { return 42; }
+extern void _exit (int);
+/* Since these pointers are const, they should go in rodata.
+   Since they refer to functions that have to be resolved by
+   dynamic linking, they should instead go in RELRO data.  */
+const void *const relro[] = { &_start, &_exit, 0 };
+/* GNU ld fails to produce RELRO data when it's very small and there is no
+   normal writable data following it, or if only uninitialized (.bss) data
+   follows it, or only very small writable data.  */
+int data[0x10000] = { 1, };
+
+_ACEOF
+    cat > conftest.awk <<\EOF
+BEGIN {
+  result = "no"
+  commonpagesize = strtonum(commonpagesize)
+}
+{ print "LINE:", $0 > "/dev/stderr" }
+$1 == "GNU_RELRO" {
+  vaddr = strtonum($3)
+  memsz = strtonum($6)
+  end = vaddr + memsz
+  printf "vaddr %#x memsz %#x end %#x commonpagesize %#x\n", \
+    vaddr, memsz, end, commonpagesize > "/dev/stderr"
+  result = (end % commonpagesize == 0) ? "yes" : "broken"
+}
+END { print result }
+EOF
+    { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+		    -fPIC -shared -o conftest.so conftest.c
+		    -nostartfiles -nostdlib
+		    -Wl,-z,relro 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }
-  then
-    if { ac_try='${CC-cc} -Wl,--verbose 2>&1|grep DATA_SEGMENT_RELRO_END 1>&5'
+  (exit $ac_status); }; } &&
+    { ac_try='$READELF -Wl conftest.so > conftest.ph'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }
-    then
-      libc_cv_z_relro=yes
-    fi
-  fi
+  (exit $ac_status); }; } &&
+    { ac_try='
+      $AWK -v commonpagesize=$libc_commonpagesize -f conftest.awk
+	   conftest.ph > conftest.cps
+    '
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+    libc_cv_z_relro=`cat conftest.cps 2>&5`
+    rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_relro" >&5
 $as_echo "$libc_cv_z_relro" >&6; }
-      if test "$libc_cv_z_relro" = no; then
-	{ { $as_echo "$as_me:$LINENO: error: linker with -z relro support required" >&5
+    if { test "x$libc_relro_required" = xyes &&
+	 test "x$libc_cv_z_relro" != xyes
+       }
+    then
+      { { $as_echo "$as_me:$LINENO: error: linker with -z relro support required" >&5
 $as_echo "$as_me: error: linker with -z relro support required" >&2;}
    { (exit 1); exit 1; }; }
-      fi
-      ;;
-    *) ;;
-   esac
+    fi
+  else
+    { $as_echo "$as_me:$LINENO: WARNING: missing architecture parameter to check for working -z relro" >&5
+$as_echo "$as_me: WARNING: missing architecture parameter to check for working -z relro" >&2;}
+  fi
 
   { $as_echo "$as_me:$LINENO: checking for -Bgroup option" >&5
 $as_echo_n "checking for -Bgroup option... " >&6; }
@@ -6706,7 +6951,7 @@ EOF
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
   then
-    if readelf -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
+    if $READELF -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
       libc_cv_z_combreloc=yes
     else
       libc_cv_z_combreloc=no
@@ -6783,7 +7028,88 @@ fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_hashstyle" >&5
 $as_echo "$libc_cv_hashstyle" >&6; }
 
+
+  # The linker's default -shared behavior is good enough if it
+  # does these things that our custom linker scripts ensure that
+  # all allocated NOTE sections come first.
+  if test "$use_default_link" = default; then
+    { $as_echo "$as_me:$LINENO: checking for sufficient default -shared layout" >&5
+$as_echo_n "checking for sufficient default -shared layout... " >&6; }
+if test "${libc_cv_use_default_link+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+      libc_cv_use_default_link=no
+    cat > conftest.s <<\EOF
+	  .section .note.a,"a",%note
+	  .balign 4
+	  .long 4,4,9
+	  .string "GNU"
+	  .string "foo"
+	  .section .note.b,"a",%note
+	  .balign 4
+	  .long 4,4,9
+	  .string "GNU"
+	  .string "bar"
+EOF
+    if { ac_try='  ${CC-cc} $ASFLAGS -shared -o conftest.so conftest.s 1>&5'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+       ac_try=`$READELF -S conftest.so | sed -n \
+	 '${x;p;}
+	  s/^ *\[ *[1-9][0-9]*\]  *\([^ ][^ ]*\)  *\([^ ][^ ]*\) .*$/\2 \1/
+	  t a
+	  b
+	  : a
+	  H'`
+    then
+      libc_seen_a=no libc_seen_b=no
+      set -- $ac_try
+      while test $# -ge 2 -a "$1" = NOTE; do
+	case "$2" in
+	.note.a) libc_seen_a=yes ;;
+	.note.b) libc_seen_b=yes ;;
+	esac
+	shift 2
+      done
+      case "$libc_seen_a$libc_seen_b" in
+      yesyes)
+	libc_cv_use_default_link=yes
+	;;
+      *)
+	echo >&5 "\
+$libc_seen_a$libc_seen_b from:
+$ac_try"
+	;;
+      esac
+    fi
+    rm -f conftest*
 fi
+{ $as_echo "$as_me:$LINENO: result: $libc_cv_use_default_link" >&5
+$as_echo "$libc_cv_use_default_link" >&6; }
+    use_default_link=$libc_cv_use_default_link
+  fi
+fi
+
+{ $as_echo "$as_me:$LINENO: checking linker output format" >&5
+$as_echo_n "checking linker output format... " >&6; }
+if test "${libc_cv_output_format+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if libc_cv_output_format=`
+${CC-cc} -nostartfiles -nostdlib -Wl,--print-output-format 2>&5`
+then
+  :
+else
+  libc_cv_output_format=
+fi
+test -n "$libc_cv_output_format" || libc_cv_output_format=unknown
+fi
+{ $as_echo "$as_me:$LINENO: result: $libc_cv_output_format" >&5
+$as_echo "$libc_cv_output_format" >&6; }
+
 
 { $as_echo "$as_me:$LINENO: checking for -fno-toplevel-reorder -fno-section-anchors" >&5
 $as_echo_n "checking for -fno-toplevel-reorder -fno-section-anchors... " >&6; }

@@ -565,7 +565,6 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	     IPv6 scope ids. */
 	  if (req->ai_family == AF_INET)
 	    {
-	      int family = req->ai_family;
 	      size_t tmpbuflen = 512;
 	      assert (tmpbuf == NULL);
 	      tmpbuf = alloca_account (tmpbuflen, alloca_used);
@@ -576,7 +575,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
 
 	      while (1)
 		{
-		  rc = __gethostbyname2_r (name, family, &th, tmpbuf,
+		  rc = __gethostbyname2_r (name, AF_INET, &th, tmpbuf,
 					   tmpbuflen, &h, &herrno);
 		  if (rc != ERANGE || herrno != NETDB_INTERNAL)
 		    break;
@@ -638,18 +637,9 @@ gaih_inet (const char *name, const struct gaih_service *service,
 			      (*pat)->scopeid = 0;
 			    }
 			  (*pat)->next = NULL;
-			  (*pat)->family = req->ai_family;
-			  if (family == req->ai_family)
-			    memcpy ((*pat)->addr, h->h_addr_list[i],
-				    h->h_length);
-			  else
-			    {
-			      uint32_t *addr = (uint32_t *) (*pat)->addr;
-			      addr[3] = *(uint32_t *) h->h_addr_list[i];
-			      addr[2] = htonl (0xffff);
-			      addr[1] = 0;
-			      addr[0] = 0;
-			    }
+			  (*pat)->family = AF_INET;
+			  memcpy ((*pat)->addr, h->h_addr_list[i],
+				  h->h_length);
 			  pat = &((*pat)->next);
 			}
 		    }
@@ -828,6 +818,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	      tmpbuf = malloc (tmpbuflen);
 	      if (tmpbuf == NULL)
 		{
+		  _res.options |= old_res_options & RES_USE_INET6;
 		  result = -EAI_MEMORY;
 		  goto free_and_return;
 		}
@@ -872,6 +863,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
 						2 * tmpbuflen);
 			  if (newp == NULL)
 			    {
+			      _res.options |= old_res_options & RES_USE_INET6;
 			      result = -EAI_MEMORY;
 			      goto free_and_return;
 			    }
@@ -881,16 +873,44 @@ gaih_inet (const char *name, const struct gaih_service *service,
 			}
 		    }
 
-		  no_inet6_data = no_data;
-
 		  if (status == NSS_STATUS_SUCCESS)
 		    {
+		      assert (!no_data);
+		      no_data = 1;
+
 		      if ((req->ai_flags & AI_CANONNAME) != 0 && canon == NULL)
 			canon = (*pat)->name;
 
 		      while (*pat != NULL)
-			pat = &((*pat)->next);
+			{
+			  if ((*pat)->family == AF_INET
+			      && req->ai_family == AF_INET6
+			      && (req->ai_flags & AI_V4MAPPED) != 0)
+			    {
+			      uint32_t *pataddr = (*pat)->addr;
+			      (*pat)->family = AF_INET6;
+			      pataddr[3] = pataddr[0];
+			      pataddr[2] = htonl (0xffff);
+			      pataddr[1] = 0;
+			      pataddr[0] = 0;
+			      pat = &((*pat)->next);
+			      no_data = 0;
+			    }
+			  else if (req->ai_family == AF_UNSPEC
+				   || (*pat)->family == req->ai_family)
+			    {
+			      pat = &((*pat)->next);
+
+			      no_data = 0;
+			      if (req->ai_family == AF_INET6)
+				got_ipv6 = true;
+			    }
+			  else
+			    *pat = ((*pat)->next);
+			}
 		    }
+
+		  no_inet6_data = no_data;
 		}
 	      else
 		{
@@ -963,6 +983,8 @@ gaih_inet (const char *name, const struct gaih_service *service,
 				      canonbuf = malloc (max_fqdn_len);
 				      if (canonbuf == NULL)
 					{
+					  _res.options
+					    |= old_res_options & RES_USE_INET6;
 					  result = -EAI_MEMORY;
 					  goto free_and_return;
 					}
@@ -2334,14 +2356,17 @@ getaddrinfo (const char *name, const char *service,
   size_t in6ailen = 0;
   bool seen_ipv4 = false;
   bool seen_ipv6 = false;
-  /* We might need information about what interfaces are available.
-     Also determine whether we have IPv4 or IPv6 interfaces or both.  We
-     cannot cache the results since new interfaces could be added at
-     any time.  */
-  __check_pf (&seen_ipv4, &seen_ipv6, &in6ai, &in6ailen);
+  bool check_pf_called = false;
 
   if (hints->ai_flags & AI_ADDRCONFIG)
     {
+      /* We might need information about what interfaces are available.
+	 Also determine whether we have IPv4 or IPv6 interfaces or both.  We
+	 cannot cache the results since new interfaces could be added at
+	 any time.  */
+      __check_pf (&seen_ipv4, &seen_ipv6, &in6ai, &in6ailen);
+      check_pf_called = true;
+
       /* Now make a decision on what we return, if anything.  */
       if (hints->ai_family == PF_UNSPEC && (seen_ipv4 || seen_ipv6))
 	{
@@ -2422,6 +2447,10 @@ getaddrinfo (const char *name, const char *service,
       struct addrinfo *q;
       struct addrinfo *last = NULL;
       char *canonname = NULL;
+
+      /* Now we definitely need the interface information.  */
+      if (! check_pf_called)
+	__check_pf (&seen_ipv4, &seen_ipv6, &in6ai, &in6ailen);
 
       /* If we have information about deprecated and temporary addresses
 	 sort the array now.  */
