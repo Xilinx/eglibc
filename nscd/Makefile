@@ -46,7 +46,7 @@ endif
 ifeq ($(have-thread-library),yes)
 
 others-$(OPTION_EGLIBC_INET) += nscd
-others-pie += nscd
+others-pie-$(OPTION_EGLIBC_INET) += nscd
 install-sbin-$(OPTION_EGLIBC_INET) += nscd
 
 extra-objs-$(OPTION_EGLIBC_INET) += $(nscd-modules:=.o)

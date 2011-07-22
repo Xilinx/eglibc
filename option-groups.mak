@@ -34,6 +34,7 @@ install-bin-y  	    :=
 install-others-y    :=
 install-sbin-y 	    :=
 others-y       	    :=
+others-pie-y   	    :=
 routines-y     	    :=
 test-srcs-y    	    :=   
 tests-y        	    :=

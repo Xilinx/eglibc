@@ -1,3 +1,10 @@
+2011-07-22  Denis Zaitceff  <zaitceff@gmail.com>
+
+	* Makerules (others-pie): Involve this new variable into EGLIBC's
+	build system.
+	* nscd/Makefile: Ditto.
+	* option-groups.mak (others-pie-y): Add the variable.
+
 2011-07-06  Sebastan Andrzej Siewior  <bigeasy@linutronix.de>
 
 	* sysdeps/powerpc/powerpc32/dl-trampoline.S: Put __NO_FPRS__
