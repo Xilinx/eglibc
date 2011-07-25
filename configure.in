@@ -1524,11 +1524,16 @@ EOF
   AC_CACHE_CHECK(whether to use .ctors/.dtors header and trailer,
 		 libc_cv_ctors_header, [dnl
     libc_cv_ctors_header=yes
-    AC_TRY_LINK([], [
+    cat > conftest.c <<EOF
+int _start (void) { return 0; }
+int __start (void) { return 0; }
+int puts (const char *s) { return 0; }
 __attribute__ ((constructor)) void ctor (void) { puts("ctor"); }
 __attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
-],
-		[dnl
+EOF
+    if AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest
+		       conftest.c -static -nostartfiles -nostdlib 1>&AS_MESSAGE_LOG_FD])
+    then
       AS_IF([$READELF -WS conftest$ac_exeext | $AWK '
         { gsub(/\@<:@ */, "@<:@") }
 	$2 == ".ctors" || $2 == ".dtors" {
@@ -1543,10 +1548,10 @@ __attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
 	  exit ((ctors_ok && dtors_ok) ? 0 : 1)
 	}
       '], [libc_cv_ctors_header=no])
-    ], [dnl
+    else
       AC_MSG_ERROR([missing __attribute__ ((constructor)) support??])
-    ])
-  ])
+    fi
+  rm -f conftest*])
   if test $libc_cv_ctors_header = no; then
     AC_DEFINE(NO_CTORS_DTORS_SECTIONS)
   fi

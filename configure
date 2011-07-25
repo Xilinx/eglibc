@@ -6520,46 +6520,22 @@ if test "${libc_cv_ctors_header+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
       libc_cv_ctors_header=yes
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
+    cat > conftest.c <<EOF
+int _start (void) { return 0; }
+int __start (void) { return 0; }
+int puts (const char *s) { return 0; }
 __attribute__ ((constructor)) void ctor (void) { puts("ctor"); }
 __attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
+EOF
+    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest
+		       conftest.c -static -nostartfiles -nostdlib 1>&5'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-        if $READELF -WS conftest$ac_exeext | $AWK '
+  (exit $ac_status); }; }
+    then
+      if $READELF -WS conftest$ac_exeext | $AWK '
         { gsub(/\[ */, "[") }
 	$2 == ".ctors" || $2 == ".dtors" {
 	  size = strtonum("0x" $6)
@@ -6576,21 +6552,12 @@ $as_echo "$ac_try_echo") >&5
   libc_cv_ctors_header=no
 fi
 
-
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	      { { $as_echo "$as_me:$LINENO: error: missing __attribute__ ((constructor)) support??" >&5
+    else
+      { { $as_echo "$as_me:$LINENO: error: missing __attribute__ ((constructor)) support??" >&5
 $as_echo "$as_me: error: missing __attribute__ ((constructor)) support??" >&2;}
    { (exit 1); exit 1; }; }
-
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-
+    fi
+  rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_ctors_header" >&5
 $as_echo "$libc_cv_ctors_header" >&6; }
