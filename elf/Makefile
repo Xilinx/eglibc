@@ -1170,6 +1170,7 @@ $(objpfx)tst-unique3.out: $(objpfx)tst-unique3lib2.so
 $(objpfx)tst-unique4: $(objpfx)tst-unique4lib.so
 
 $(objpfx)tst-initorder.out: $(objpfx)tst-initorder
+	$(cross-test-wrapper) \
 	$(elf-objpfx)${rtld-installed-name} \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@

@@ -1,3 +1,7 @@
+2011-09-06  Dr. David Alan Gilbert  <david.gilbert@linaro.org>
+
+	* elf/Makefile: Push tst-initorder through cross-test-wrapper.
+
 2011-08-11  Khem Raj  <raj.khem@gmail.com>
 
 	* sysdeps/generic/initfini.c: Re-define __i686.
