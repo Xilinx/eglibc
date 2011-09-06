@@ -396,7 +396,7 @@ struct rtld_global
 	uint32_t hashval;
 	const char *name;
 	const ElfW(Sym) *sym;
-	struct link_map *map;
+	const struct link_map *map;
       } *entries;
       size_t size;
       size_t n_elements;
@@ -564,9 +564,10 @@ struct rtld_global_ro
 #define DL_DEBUG_FILES      (1 << 6)
 #define DL_DEBUG_STATISTICS (1 << 7)
 #define DL_DEBUG_UNUSED	    (1 << 8)
+#define DL_DEBUG_SCOPES	    (1 << 9)
 /* These two are used only internally.  */
-#define DL_DEBUG_HELP       (1 << 9)
-#define DL_DEBUG_PRELINK    (1 << 10)
+#define DL_DEBUG_HELP       (1 << 10)
+#define DL_DEBUG_PRELINK    (1 << 11)
 
   /* OS version.  */
   EXTERN unsigned int _dl_osversion;
@@ -1111,6 +1112,9 @@ extern void *_dl_tls_get_addr_soft (struct link_map *l) attribute_hidden;
 
 extern int _dl_addr_inside_object (struct link_map *l, const ElfW(Addr) addr)
      internal_function attribute_hidden;
+
+/* Show show of an object.  */
+extern void _dl_show_scope (struct link_map *new, int from);
 
 __END_DECLS
 

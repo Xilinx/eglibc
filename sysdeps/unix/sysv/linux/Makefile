@@ -23,7 +23,7 @@ sysdep_routines += sysctl clone llseek umount umount2 readahead \
 
 
 CFLAGS-gethostid.c = -fexceptions
-CFLAGS-tst-writev.c += -DARTIFICIAL_LIMIT=0x7ffff000
+CFLAGS-tst-writev.c += "-DARTIFICIAL_LIMIT=0x80000000-__getpagesize()"
 
 sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
 		  sys/klog.h sys/kdaemon.h \

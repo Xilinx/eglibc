@@ -21,8 +21,8 @@
 #include <sysdep.h>
 
 ENTRY (__fabsf)
-	st	%o0, [%sp+64]
-	ld	[%sp+64], %f0
+	st	%o0, [%sp+68]
+	ld	[%sp+68], %f0
 	retl
 	 fabss	%f0, %f0
 END (__fabsf)

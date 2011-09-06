@@ -1,3 +1,529 @@
+2011-09-06  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/gettimeofday.c [!SHARED]: Include
+	<errno.h>.
+
+2011-09-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h: Add entry for getcpu
+	syscall on x86-64.
+	* sysdeps/unix/sysv/linux/x86_64/gettimeofday.c [!SHARED]: Use real
+	syscall.
+	* sysdeps/unix/sysv/linux/x86_64/time.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sched_getcpu.S [!SHARED]: Use real
+	syscall if possible.
+
+2011-09-05  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/pldd.c (get_process_info): Don't read whole ELF header, just
+	e_ident.  Don't pass to find_mapsXX.
+	* elf/pldd-xx.c (find_mapsXX): Remove second parameter.
+
+2011-07-20  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines): Add
+	strchr-sse2-no-bsf strrchr-sse2-no-bsf
+	* sysdeps/x86_64/multiarch/strchr.S: Update.
+	Check bit_slow_BSF bit.
+	* sysdeps/x86_64/multiarch/strrchr.S: Likewise.
+	* sysdeps/x86_64/multiarch/strchr-sse2-no-bsf.S: New file.
+	* sysdeps/x86_64/multiarch/strrchr-sse2-no-bsf.S: New file.
+
+2011-09-05  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13134]
+	* sysdeps/posix/spawni.c (script_execute): Define only for compatibility
+	before glibc 2.15.
+	(tryshell): Define.
+	(__spawni): Change last parameter to be flag.  Test
+	SPAWN_XFLAGS_USE_PATH flag to use path or not.
+	Don't try to use shell unless SPAWN_XFLAGS_TRY_SHELL is set.
+	* sysdeps/mach/hurd/spawni.c: Change last parameter and adjust user.
+	* posix/spawni.c: Likewise.
+	* posix/spawn.c: Add compat version which passed SPAWN_XFLAGS_TRY_SHELL.
+	* posix/spawnp.c: Likewise.  Change normal version to use
+	SPAWN_XFLAGS_USE_PATH.
+	* posix/spawn_int.c: Define SPAWN_XFLAGS_USE_PATH and
+	SPAWN_XFLAGS_TRY_SHELL.
+
+	[BZ #13150]
+	* posix/glob.h: Remove gcc 1.x support.
+
+	[BZ #13068]
+	* elf/dl-misc.c (_dl_sysdep_read_whole_file): Use O_CLOEXEC.
+
+2011-07-20  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Add
+	strchr-sse2 strrchr-sse2 strchr-sse2-bsf
+	strrchr-sse2-bsf
+	* sysdeps/i386/i686/multiarch/strchr.S: New file.
+	* sysdeps/i386/i686/multiarch/strrchr.S: New file.
+	* sysdeps/i386/i686/multiarch/strchr-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/strchr-sse2-bsf.S: New file.
+	* sysdeps/i386/i686/multiarch/strrchr-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/strrchr-sse2-bsf.S: New file.
+
+2011-08-29  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* sysdeps/x86_64/wcscmp.S: New file.
+
+	* sysdeps/i386/i686/multiarch/Makefile: (sysdep_routines): Add
+	wcscmp-c wcscmp-sse2
+	* sysdeps/i386/i686/multiarch/wcscmp-c.c: New file.
+	* sysdeps/i386/i686/multiarch/wcscmp.S: New file.
+	* sysdeps/i386/i686/multiarch/wcscmp-sse2.S: New file.
+	* wcsmbs/wcscmp.c: Allow renaming.
+
+2011-09-05  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/fpu/s_fabsf.S: Use first argument
+	stack slot, rather than the struct return pointer slot.
+	* sysdeps/sparc/sparc32/fpu/s_fabs.c: Delete.
+	* sysdeps/sparc/sparc32/fpu/s_fabs.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_fabs.S: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sparcv9/fpu/Implies: Likewise.
+
+2011-09-05  Ulrich Drepper  <drepper@gmail.com>
+
+	* po/ja.po: Update from translation team.
+
+	[BZ #13144]
+	* sysdeps/unix/sysv/linux/x86_64/bits/sem.h (semdid_ds): Fix to match
+	kernel in 64-bit binaries.
+
+2011-09-01  David S. Miller  <davem@davemloft.net>
+
+	* elf/elf.h (HWCAP_SPARC_*): Move to..
+	* sysdeps/sparc/sysdep.h: this new file and add new values.
+	* sysdeps/unix/sparc/sysdep.h: Include sysdeps/sparc/sysdep.h
+	* sysdeps/sparc/dl-procinfo.h: Include sysdep.h and increase
+	_DL_HWCAP_COUNT to 24.
+	* sysdeps/sparc/dl-procinfo.c (_dl_sparc_cap_flags): Add new
+	entries.
+	* sysdeps/sparc/sparc32/bits/atomic.h: Don't use magic local
+	__ATOMIC_HWCAP_SPARC_V9 define, use sysdep.h one instead.
+	* sysdeps/sparc/sparc32/dl-machine.h: Include sysdep.h
+	* sysdeps/sparc/sparc64/multiarch/memcpy.S: Use HWCAP_SPARC_*
+	instead of magic constants.
+	* sysdeps/sparc/sparc64/multiarch/memset.S: Likewise.
+
+2011-08-31  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sparc/sysdep.h (SETUP_PIC_REG): Define.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sysdep.h (PSEUDO):
+	Reimplement to do errno handling inline.
+	(SYSCALL_ERROR_HANDLER): New macro.
+	(__SYSCALL_STRING): Do not do errno handling in asm.
+	(__CLONE_SYSCALL_STRING): Delete.
+	(__INTERNAL_SYSCALL_STRING): Delete.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sysdep.h: Include
+	sysdeps/unix/sparc/sysdep.h instead of sysdeps/unix/sysdep.h
+	(PSEUDO): Reimplement to do errno handling inline.
+	(ret, ret_NOERRNO, ret_ERRVAL, r0, r1, MOVE): Don't redefine.
+	(SYSCALL_ERROR_HANDLER): New macro.
+	(__SYSCALL_STRING): Do not do errno handling in asm.
+	(__CLONE_SYSCALL_STRING): Delete.
+	(__INTERNAL_SYSCALL_STRING): Delete.
+	* sysdeps/unix/sysv/linux/sparc/sysdep.h (INLINE_SYSCALL):
+	Implement in terms of INTERNAL_SYSCALL and __set_errno, just like
+	i386.
+	(INTERNAL_SYSCALL_DECL): Declare %g1 var for err state.
+	(inline_syscall*): Add 'err' argument.
+	(INTERNAL_SYSCALL, INTERNAL_SYSCALL_NCS,
+	INTERNAL_SYSCALL_ERROR_P): Likewise and pass it down.
+	(INLINE_CLONE_SYSCALL): Reimplement in terms of __SYSCALL_STRING,
+	INTERNAL_SYSCALL_ERRNO, and INTERNAL_SYSCALL_ERROR_P.
+
+	* scripts/data/localplt-sparc-linux-gnu.data: Remove 'ffs'.
+	* scripts/data/localplt-sparc64-linux-gnu.data: Likewise.
+
+2011-08-30  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/rtld.c (dl_main): Relocate objects in dependency order.
+
+2011-08-29  Jiri Olsa <jolsa@redhat.com>
+
+	* sysdeps/i386/dl-trampoline.S (_dl_runtime_profile): Fix cfi
+	directive.
+
+2011-08-24  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/strcmp.S: Rewrite.
+
+2011-08-24  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/Makefile: Add rules to build and run unload8 test.
+	* elf/unload8.c: New file.
+	* elf/unload8mod1.c: New file.
+	* elf/unload8mod1x.c: New file.
+	* elf/unload8mod2.c: New file.
+	* elf/unload8mod3.c: New file.
+
+	* elf/dl-close.c (_dl_close_worker): Reset private search list if
+	it wasn't used.
+
+2011-08-23  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/dl-machine.h (DL_STACK_END): Do not
+	subtract stack bias.
+	* sysdeps/sparc/sparc64/jmpbuf-unwind.h (_JMPBUF_UNWINDS): Use
+	%sp not %fp in calculations.
+	(_JMPBUF_UNWINDS_ADJ): Likewise.
+
+	* sysdeps/pthread/aio_suspend.c (do_aio_misc_wait): New function.
+	(aio_suspend): Call it to force an exception region around the
+	AIO_MISC_WAIT() invocation.
+
+2011-08-23  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/i386/i686/multiarch/strspn.S (ENTRY): Add missing
+	backslash.
+
+2011-07-04  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* sysdeps/powerpc/dl-tls.h: Add _PPC_DL_TLS_H inclusion
+	protection macro.
+	* sysdeps/powerpc/powerpc64/dl-irel.h: Include <ldsodefs.h>
+	and <dl-machine.h>.
+	(Elf64_FuncDesc): Remove.
+
+2011-08-22  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc32/____longjmp_chk.S: Fix
+	sigaltstack check, add missing cfi directives.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/____longjmp_chk.S: Add
+	missing cfi directives, and sigaltstack handling.
+
+2011-08-16  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #11724]
+	* elf/dl-deps.c (_dl_map_object_deps): Only assume cycle when
+	object is seen twice.
+	* elf/dl-fini.c (_dl_sort_fini): Likewise.
+
+	* elf/Makefile (distribute): Add tst-initorder2.c.
+	(tests): Add tst-initorder2.
+	(modules-names): Add tst-initorder2a tst-initorder2b
+	tst-initorder2c tst-initorder2d.  Add rules to build them.
+	($(objpfx)tst-initorder2.out): New rule.
+	* elf/tst-initorder2.c: New file.
+	* elf/tst-initorder2.exp: New file.
+
+2011-08-22  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/scandir64.c: Include <string.h>.
+
+	* elf/dl-deps.c (_dl_map_object_deps): Move check for missing
+	dependencies back to end of function.
+
+	* dlfcn/Makefile (LDLIBS-bug-atexit3-lib.so): Readd
+	$(elfobjdir)/ld.so.
+
+2011-08-21  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/gettimeofday.S: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/time.S: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/gettimeofday.c: New file.
+	* sysdeps/unix/sysv/linux/x86_64/time.c: New file.
+	* sysdeps/unix/sysv/linux/x86_64/bits/libc-vdso.h: Remove declaration
+	of __vdso_gettimeofday.
+	* sysdeps/unix/sysv/linux/x86_64/init-first.c: Remove definition of
+	__vdso_gettimeofday and __vdso_time.  Define __vdso_getcpu with
+	attribute_hidden.
+	(_libc_vdso_platform_setup): Remove initialization of
+	__vdso_gettimeofday and __vdso_time.
+
+2011-08-20  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/nss_files/files-alias.c (get_next_alias): Use feof_unlocked
+	and fgetc_unlocked.
+	* nss/nss_files/files-key.c (search): Use fgets_unlocked and
+	getc_unlocked.
+
+	* elf/dl-open.c (add_to_global): Report additions to the global scope
+	for LD_DEBUG=scopes.
+	(dl_open_worker): Also print scope of newly loaded dependencies.
+	(_dl_show_scope): Indicate if there is no scope.
+
+	[BZ #13114]
+	* stdio-common/Makefile (tests): Add bug24.
+	* stdio-common/bug24.c: New file.
+
+2011-08-19  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #13114]
+	* libio/fileops.c (_IO_new_file_fopen): Fix handling of
+	non-existant file when using close-on-exec mode.
+
+2011-08-20  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_resolve): Fix CFI for
+	the very first instruction.
+
+	* sysdeps/x86_64/dl-trampoline.h: If MORE_CODE is defined, restore
+	the CFI state in the end.
+	* sysdeps/x86_64/dl-trampoline.S: Define MORE_CODE before first
+	inclusion of dl-trampoline.h.
+	Based on a patch by Jiri Olsa <jolsa@redhat.com>.
+
+2011-08-19  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Relax ctan (0.75 + 1.25 i)
+	expectations for long double.
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/scandir64.c: Renamed
+	from sysdeps/unix/sysv/linux/powerpc/scandir64.c.
+
+2011-08-14  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/Makefile (CFLAGS-tst-writev.c): The
+	artificual limit depends upon the system page size.
+
+2011-08-17  Ulrich Drepper  <drepper@gmail.com>
+
+	* Makeconfig (override CFLAGS): Add library-specific CFLAGS.
+	* resolv/Makefile: Define CFLAGS-libresolv.
+
+2011-08-17  Andreas Schwab  <schwab@redhat.com>
+
+	* nss/makedb.c (compute_tables): Make variables used in nested
+	function static.
+
+2011-08-17  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/pldd-xx.c (r_debug): Explicitly add padding when needed.
+	* elf/pldd.c (get_process_info): Use pread to re-read auxiliary vector
+	if buffer was too small.
+
+	* elf/pldd.c (main): Attach to all threads in the process.
+	Rewrite /proc handling to use *at functions.
+
+2011-08-16  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-open.c (_dl_show_scope): Take additional parameter which
+	specifies first scope to show.
+	(dl_open_worker): Update callers.  Move printing scope of new
+	object to before the relocation.
+	* elf/rtld.c (dl_main): Update _dl_show_scope call.
+	* sysdeps/generic/ldsodefs.h: Update declaration.
+
+	* elf/dl-open.c (_dl_show_scope): Use _dl_debug_printf to generate the
+	string for the scope number.
+
+2011-08-14  Ulrich Drepper  <drepper@gmail.com>
+
+	* nscd/servicescache.c (cache_addserv): Make sure written is always
+	initialized.
+
+2011-08-14  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/i386/i486/bits/atomic.h
+	(__arch_compare_and_exchange_val_64_acq): Use RET alone at end of
+	statement expression, so as to suppress "set but not used" warning.
+	(__arch_c_compare_and_exchange_val_64_acq): Likewise.
+
+	* string/strncat.c (STRNCAT): Use prototype definition.
+
+	* locale/Makefile (locale-CPPFLAGS): Renamed CPPFLAGS-locale-programs.
+	(locale-CPPFLAGS): New variable; put LOCALEDIR, LOCALE_ALIAS_PATH and
+	-Iprograms here.
+	(cppflags-iterator.mk sequence): Use locale-programs in place of nonlib.
+	(localedef-modules): Add localedef.
+	(locale-modules): Add locale.
+
+	* sysdeps/generic/ldsodefs.h (struct unique_sym): Add a const.
+	* elf/rtld.c (dl_main): Invert order of assignment in last change,
+	to avoid a warning.
+
+2011-08-14  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/bits/resource.h (RLIM_INFINITY,
+	RLIM64_INFINITY): Fix 64-bit values for 32-bit sparc.
+
+2011-08-13  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-open.c: Rename show_scope to _dl_show_scope and export.
+	(dl_open_worker): Call _dl_show_scope when DL_DEBUG_SCOPES is set.
+	* elf/rtld.c (dl_main): Set l_name of vDSO.
+	Call _dl_show_scope when DL_DEBUG_SCOPES.
+	(process_dl_debug): Recognize scopes flag and also set it for all.
+	* sysdeps/generic/ldsodefs.h: Define DL_DEBUG_SCOPES.
+	Declare _dl_show_scope.
+
+	* elf/dl-libc.c (do_dlopen_args): Add caller_dlopen.
+	(do_dlopen): Pass caller_dlopen to dl_open.
+	(__libc_dlopen_mode): Initialize caller_dlopen.
+
+	* intl/l10nflist.c (_nl_normalize_codeset): Make it compile outside
+	of libc.  Make tolower call locale-independent.  Optimize a bit by
+	using isdigit instead of isalnum.
+	* locale/Makefile (locale-CPPFLAGS): Add -DNOT_IN_libc.
+
+2011-08-12  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-load.c (_dl_map_object): Show in debug output whether a DSO
+	was a dependency or dynamically loaded.
+
+2011-08-11  Ulrich Drepper  <drepper@gmail.com>
+
+	* intl/l10nflist.c: Allow architecture-specific pop function.
+	* sysdeps/x86_64/l10nflist.c: New file.
+
+	* intl/l10nflist.c (_nl_make_l10nflist): Use locale-independent
+	classification.
+
+2011-08-10  Andreas Schwab  <schwab@redhat.com>
+
+	* include/dirent.h: Add libc_hidden_proto for scandirat and
+	scandirat64.  Don't declare __scandirat64.
+	* dirent/scandirat.c: Add libc_hidden_def.
+	* dirent/scandirat64.c (SCANDIRAT): Remove underscores.
+	* sysdeps/unix/sysv/linux/i386/scandir64.c (SCANDIRAT): Likewise.
+
+2011-08-10  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/ia64/sys/ptrace.h: Add missing comma in
+	enum.
+	* sysdeps/unix/sysv/linux/powerpc/sys/ptrace.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/sys/ptrace.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/ptrace.h: Likewise.
+
+2011-08-09  Ulrich Drepper  <drepper@gmail.com>
+
+	* Versions.def [libc]: Add GLIBC_2.15.
+	* dirent/Makefile (routines): Add scandirat and scandirat64.
+	* dirent/Versions [libc]: Export scandirat and scandirat64 for
+	GLIBC_2.15.
+	* dirent/dirent.h: Declare scandirat and scandirat64.
+	* dirent/scandirat.c: New file.
+	* dirent/scandirat64.c: New file.
+	* sysdeps/wordsize-64/scandirat.c: New file.
+	* sysdeps/wordsize-64/scandirat64.c: New file.
+	* dirent/opendir.c: Define opendirat.
+	* dirent/scandir.c: Move code to scandirat.c.  Implement scandir
+	using scandirat.
+	* dirent/scandir64.c: Adjust for scandir.c change.
+	* include/dirent.h: Define scandir_cancel_struct.  Declare __opendirat,
+	__scandirat64, and __scandir_cancel_handler.
+	* sysdeps/unix/opendir.c: Rename __opendir to __opendirat.  Take
+	additional parameter and use openat instead of open (outside of ld.so).
+	Add new __opendir as wrapper around __opendirat.
+	* sysdeps/unix/sysv/linux/i386/scandir64.c: Reimplement __old_scandir64
+	here without requiring old scandirat implementation.
+
+2011-08-08  Ulrich Drepper  <drepper@gmail.com>
+
+	* dirent/scandir.c (cancel_handler): Renamed to
+	__scandir_cancel_handler.  Do not define if SKIP_SCANDIR_CANCEL is
+	defined.  Adjust users.
+	* dirent/scandir64.c: Define SKIP_SCANDIR_CANCEL.
+	* sysdeps/unix/sysv/linux/i386/scandir64.c: Likewise.
+
+2011-08-04  Ulrich Drepper  <drepper@gmail.com>
+
+	* string/test-string.h (IMPL): Use __STRING to expand name and then
+	stringify it.
+
+	* string/test-strcmp.c: Unify most of the WIDE and !WIDE code.  Lots
+	of cleanups.
+
+2011-07-22  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* string/Makefile: Update.
+	(strop-tests): Append strncat.
+	* string/test-wcscmp.c: New file.
+	New comprehensive test for wcscmp.
+	* string/test-strcmp.c: Update.
+	(WIDE): New define.
+
+2011-07-22  Andreas Schwab  <schwab@redhat.com>
+
+	* resolv/res_init.c (__res_vinit): Properly tokenize nameserver
+	line.
+
+2011-07-26  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Don't discard result of
+	encoding to ACE if AI_IDN.
+
+2011-08-01  Jakub Jelinek  <jakub@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/k_rem_pio2.c (__kernel_rem_pio2): Fix up fq
+	to y conversion for prec 3 and __FLT_EVAL_METHOD__ != 0.
+
+2011-07-22  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	* sysdeps/i386/i686/multiarch/strcat-sse2.S: Update.
+	Fix overflow bug in strncat.
+	* sysdeps/i386/i686/multiarch/strcpy-ssse3.S: Likewise.
+
+	* string/test-strncat.c: Update.
+	Add new tests for checking overflow bugs.
+
+2011-07-15  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Add
+	strcat-ssse3 strcat-sse2 strncat-ssse3 strncat-sse2 strncat-c.
+	* sysdeps/i386/i686/multiarch/strcat.S: New file.
+	* sysdeps/i386/i686/multiarch/strcat-c.c: New file.
+	* sysdeps/i386/i686/multiarch/strcat-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/strcat-ssse3.S: New file.
+	* sysdeps/i386/i686/multiarch/strncat.S: New file.
+	* sysdeps/i386/i686/multiarch/strncat-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/strncat-ssse3.S: New file.
+
+	* sysdeps/i386/i686/multiarch/strcpy-ssse3.S
+	(USE_AS_STRCAT): Define.
+	Add strcat and strncat support.
+	* sysdeps/i386/i686/multiarch/strlen-sse2.S: Likewise.
+
+2011-07-25  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/i386/i486/bits/string.h (__strncat_g): Correctly handle
+	__n bigger than INT_MAX+1.
+	(__strncmp_g): Likewise.
+
+2011-07-23  Ulrich Drepper  <drepper@gmail.com>
+
+	* posix/unistd.h: Define SEEK_DATA and SEEK_HOLE.
+	* libio/stido.h: Likewise.
+
+	* sysdeps/unix/sysv/linux/bits/socket.h (PF_NFC): Define.
+	(AF_NFC): Define.
+	* sysdeps/unix/sysv/linux/sparc/bits/socket.h (PF_NFC): Define.
+	(AF_NFC): Define.
+
+	* sysdeps/unix/sysv/linux/sys/ptrace.h: Add new constants.
+	* sysdeps/unix/sysv/linux/sparc/sys/ptrace.h: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/sys/ptrace.h: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/sys/ptrace.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/sys/ptrace.h: Likewise.
+
+	[BZ #13021]
+	* scripts/test-installation.pl: Don't expect libnss_test1 to be
+	installed.
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix one more
+	typo.
+	(_dl_x86_64_save_sse): Likewise.
+
+2011-07-22  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix test for
+	OSXSAVE.
+	(_dl_x86_64_save_sse): Likewise.
+
+	* crypt/crypt_util.c (__init_des_r): Optimize memset calls.
+
+	* crypt/crypt_util.c (__init_des_r): Add read barrier as well.
+
+2011-07-21  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix last
+	change.
+	(_dl_x86_64_save_sse): Use correct AVX check.
+
 2011-07-21  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
 
 	* sysdeps/x86_64/multiarch/strcpy-sse2-unaligned.S: Fix overfow

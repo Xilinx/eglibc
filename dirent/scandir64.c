@@ -1,4 +1,4 @@
-/* Copyright (C) 2000, 2009 Free Software Foundation, Inc.
+/* Copyright (C) 2000, 2009, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,13 +19,7 @@
 #include <dirent.h>
 
 #define SCANDIR scandir64
-#define READDIR __readdir64
+#define SCANDIRAT scandirat64
 #define DIRENT_TYPE struct dirent64
-
-int scandir64 (__const char *__restrict __dir,
-	       struct dirent64 ***__restrict __namelist,
-	       int (*__selector) (__const struct dirent64 *),
-	       int (*__cmp) (__const struct dirent64 **,
-			     __const struct dirent64 **));
 
 #include <dirent/scandir.c>

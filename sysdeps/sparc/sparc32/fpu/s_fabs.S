@@ -1,4 +1,5 @@
-/* Copyright (C) 2002, 2003, 2007 Free Software Foundation, Inc.
+/* Float absolute value, sparc32 version.
+   Copyright (C) 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,33 +18,12 @@
    02111-1307 USA.  */
 
 #include <sysdep.h>
-#define _ERRNO_H	1
-#include <bits/errno.h>
 
-/* For the calculation see asm/vsyscall.h.  */
-#define VSYSCALL_ADDR_vgettimeofday	0xffffffffff600000
-
-
-ENTRY (__gettimeofday)
-	/* Align stack.  */
-	sub	$0x8, %rsp
-	cfi_adjust_cfa_offset(8)
-#ifdef SHARED
-	movq	__vdso_gettimeofday(%rip), %rax
-	PTR_DEMANGLE (%rax)
-#else
-	movq	$VSYSCALL_ADDR_vgettimeofday, %rax
-#endif
-	callq	*%rax
-	/* Check error return.  */
-	cmpl	$-4095, %eax
-	jae	SYSCALL_ERROR_LABEL
-
-L(pseudo_end):
-	add	$0x8, %rsp
-	cfi_adjust_cfa_offset(-8)
-	ret
-PSEUDO_END(__gettimeofday)
-
-strong_alias (__gettimeofday, __gettimeofday_internal)
-weak_alias (__gettimeofday, gettimeofday)
+ENTRY (__fabs)
+	st	%o0, [%sp+72]
+	st	%o1, [%sp+76]
+	ldd	[%sp+72], %f0
+	retl
+	 fabss	%f0, %f0
+END (__fabs)
+weak_alias (__fabs, fabs)

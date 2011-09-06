@@ -50,7 +50,7 @@ routines-$(OPTION_EGLIBC_ENVZ) += envz
 # for -fbounded-pointer compiles.  Glibc uses memchr for explicit checks.
 o-objects.ob	:= memcpy.o memset.o memchr.o
 
-strop-tests	:= memchr memcmp memcpy memmove mempcpy memset memccpy	\
+strop-tests	:=  wcscmp memchr memcmp memcpy memmove mempcpy memset memccpy	\
 		   stpcpy stpncpy strcat strchr strcmp strcpy strcspn	\
 		   strlen strncmp strncpy strpbrk strrchr strspn memmem	\
 		   strstr strcasestr strnlen strcasecmp strncasecmp	\

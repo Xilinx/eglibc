@@ -90,6 +90,7 @@ distribute	:= rtld-Rules \
 		   unload4mod1.c unload4mod2.c unload4mod3.c unload4mod4.c \
 		   unload6mod1.c unload6mod2.c unload6mod3.c \
 		   unload7mod1.c unload7mod2.c \
+		   unload8mod1.c unload8mod1x.c unload8mod2.c unload8mod3.c \
 		   tst-audit1.c tst-audit2.c tst-audit3.c tst-audit4.c \
 		   tst-auditmod1.c tst-auditmod3a.c tst-auditmod3b.c \
 		   tst-auditmod4a.c tst-auditmod4b.c \
@@ -120,9 +121,10 @@ distribute	:= rtld-Rules \
 		   ifuncmain7pie.c ifuncmain7static.c \
 		   tst-unique1.c tst-unique1mod1.c tst-unique1mod2.c \
 		   tst-unique2.c tst-unique2mod1.c tst-unique2mod2.c \
-			 tst-initordera1.c tst-initordera2.c tst-initorderb1.c \
-			 tst-initorderb2.c tst-initordera3.c tst-initordera4.c \
-			 tst-initorder.c
+		   tst-initordera1.c tst-initordera2.c tst-initorderb1.c \
+		   tst-initorderb2.c tst-initordera3.c tst-initordera4.c \
+		   tst-initorder.c \
+		   tst-initorder2.c
 
 CFLAGS-dl-runtime.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-dl-lookup.c = -fexceptions -fasynchronous-unwind-tables
@@ -227,11 +229,11 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 tst-align tst-align2 $(tests-execstack-$(have-z-execstack)) \
 	 tst-dlmodcount tst-dlopenrpath tst-deep1 \
 	 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3 \
-	 unload3 unload4 unload5 unload6 unload7 tst-global1 order2 \
+	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
 	 tst-audit1 tst-audit2 \
 	 tst-stackguard1 tst-addr1 tst-thrlock \
 	 tst-unique1 tst-unique2 tst-unique3 tst-unique4 \
-	 tst-initorder
+	 tst-initorder tst-initorder2
 #	 reldep9
 test-srcs = tst-pathopt
 selinux-enabled := $(shell cat /selinux/enforce 2> /dev/null)
@@ -285,6 +287,7 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		unload4mod1 unload4mod2 unload4mod3 unload4mod4 \
 		unload6mod1 unload6mod2 unload6mod3 \
 		unload7mod1 unload7mod2 \
+		unload8mod1 unload8mod1x unload8mod2 unload8mod3 \
 		order2mod1 order2mod2 order2mod3 order2mod4 \
 		tst-unique1mod1 tst-unique1mod2 \
 		tst-unique2mod1 tst-unique2mod2 \
@@ -292,7 +295,8 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-unique4lib \
 		tst-initordera1 tst-initorderb1 \
 		tst-initordera2 tst-initorderb2 \
-		tst-initordera3 tst-initordera4
+		tst-initordera3 tst-initordera4 \
+		tst-initorder2a tst-initorder2b tst-initorder2c tst-initorder2d
 ifeq (yes,$(have-initfini-array))
 modules-names += tst-array2dep tst-array5dep
 endif
@@ -574,6 +578,9 @@ $(objpfx)unload6mod2.so: $(libdl)
 $(objpfx)unload6mod3.so: $(libdl)
 $(objpfx)unload7mod1.so: $(libdl)
 $(objpfx)unload7mod2.so: $(objpfx)unload7mod1.so
+$(objpfx)unload8mod1.so: $(objpfx)unload8mod2.so
+$(objpfx)unload8mod2.so: $(objpfx)unload8mod3.so
+$(objpfx)unload8mod3.so: $(libdl)
 $(objpfx)tst-initordera2.so: $(objpfx)tst-initordera1.so
 $(objpfx)tst-initorderb2.so: $(objpfx)tst-initorderb1.so $(objpfx)tst-initordera2.so
 $(objpfx)tst-initordera3.so: $(objpfx)tst-initorderb2.so $(objpfx)tst-initorderb1.so
@@ -891,6 +898,9 @@ $(objpfx)unload7: $(libdl)
 $(objpfx)unload7.out: $(objpfx)unload7mod1.so $(objpfx)unload7mod2.so
 unload7-ENV = MALLOC_PERTURB_=85
 
+$(objpfx)unload8: $(libdl)
+$(objpfx)unload8.out: $(objpfx)unload8mod1.so $(objpfx)unload8mod1x.so
+
 ifdef libdl
 $(objpfx)tst-tls9-static: $(common-objpfx)dlfcn/libdl.a
 $(objpfx)tst-tls9-static.out: $(objpfx)tst-tlsmod5.so $(objpfx)tst-tlsmod6.so
@@ -1175,6 +1185,23 @@ $(objpfx)tst-initorder.out: $(objpfx)tst-initorder
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@
 	cmp $@ tst-initorder.exp > /dev/null
+
+$(objpfx)tst-initorder2: $(objpfx)tst-initorder2a.so $(objpfx)tst-initorder2d.so $(objpfx)tst-initorder2c.so
+$(objpfx)tst-initorder2a.so: $(objpfx)tst-initorder2b.so
+$(objpfx)tst-initorder2b.so: $(objpfx)tst-initorder2c.so
+$(objpfx)tst-initorder2c.so: $(objpfx)tst-initorder2d.so
+define o-iterator-doit
+$(objpfx)tst-initorder2$o.os: tst-initorder2.c; \
+$$(compile-command.c) -DNAME=\"$o\"
+endef
+object-suffixes-left := a b c d
+include $(o-iterator)
+
+$(objpfx)tst-initorder2.out: $(objpfx)tst-initorder2
+	$(elf-objpfx)${rtld-installed-name} \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $< > $@
+	cmp $@ tst-initorder2.exp > /dev/null
 
 ifeq (yes,$(config-cflags-avx))
 AVX-CFLAGS=-mavx
