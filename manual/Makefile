@@ -116,9 +116,9 @@ stamp-libm-err: libm-err-tab.pl $(wildcard $(foreach dir,$(sysdirs),\
 # Package version and bug reporting URL.
 pkgvers.texi: stamp-pkgvers
 stamp-pkgvers:
-	echo "@set PKGVERSION $(PKGVERSION)" > pkgvers-tmp
-	echo "@set REPORT_BUGS_TO $(REPORT_BUGS_TO)" \
-	  | sed -e 's/@/@@/g' >> pkgvers-tmp
+	echo "@set PKGVERSION $(subst @,@@,$(PKGVERSION))" > pkgvers-tmp
+	echo "@set REPORT_BUGS_TO $(subst @,@@,$(REPORT_BUGS_TO))" \
+	  >> pkgvers-tmp
 	$(move-if-change) pkgvers-tmp pkgvers.texi
 	touch $@
 

@@ -1,3 +1,8 @@
+2011-10-07  Michael Hope  <michael.hope@linaro.org>
+
+	* manual/Makefile (stamp-pkgvers): Escape PKGVERSION.  Fix the
+	escaping of REPORT_BUGS_TO.
+
 2011-09-06  Dr. David Alan Gilbert  <david.gilbert@linaro.org>
 
 	* elf/Makefile: Push tst-initorder through cross-test-wrapper.
