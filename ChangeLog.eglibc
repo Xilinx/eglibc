@@ -1,3 +1,11 @@
+2011-10-25  Michael Hope  <michael.hope@linaro.org>
+
+	* aclocal.m4 (PKGVERSION_TEXI): Define.
+	* config.make.in (PKGVERSION_TEXI, REPORT_BUGS_TEXI): Define.
+	* manual/Makefile (stamp-pkgvers): Use PKGVERSION_TEXI and
+	REPORT_BUGS_TEXI.
+	* configure: Regenerate.
+
 2011-10-07  Michael Hope  <michael.hope@linaro.org>
 
 	* manual/Makefile (stamp-pkgvers): Escape PKGVERSION.  Fix the

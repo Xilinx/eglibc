@@ -131,7 +131,9 @@ AC_DEFUN([ACX_PKGVERSION],[
      esac],
     PKGVERSION="($1) "
   )
+  PKGVERSION_TEXI=`echo "$PKGVERSION" | sed 's/@/@@/g'`
   AC_SUBST(PKGVERSION)
+  AC_SUBST(PKGVERSION_TEXI)
 ])
 
 dnl Support the --with-bugurl configure option.

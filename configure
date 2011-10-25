@@ -733,6 +733,7 @@ add_ons
 libc_cv_nss_crypt
 REPORT_BUGS_TEXI
 REPORT_BUGS_TO
+PKGVERSION_TEXI
 PKGVERSION
 all_warnings
 force_install
@@ -3790,6 +3791,8 @@ else
   PKGVERSION="(EGLIBC) "
 
 fi
+
+  PKGVERSION_TEXI=`echo "$PKGVERSION" | sed 's/@/@@/g'`
 
 
 
