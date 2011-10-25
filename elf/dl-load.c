@@ -888,6 +888,8 @@ lose (int code, int fd, const char *name, char *realname, struct link_map *l,
   /* The file might already be closed.  */
   if (fd != -1)
     (void) __close (fd);
+  if (l != NULL && l->l_origin != (char *) -1l)
+    free ((char *) l->l_origin);
   free (l);
   free (realname);
 
@@ -1708,7 +1710,7 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 #endif
 
   /* Open the file.  We always open files read-only.  */
-  int fd = __open (name, O_RDONLY);
+  int fd = __open (name, O_RDONLY | O_CLOEXEC);
   if (fd != -1)
     {
       ElfW(Ehdr) *ehdr;

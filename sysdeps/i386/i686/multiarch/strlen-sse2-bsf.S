@@ -1,5 +1,5 @@
 /* strlen with SSE2 and BSF
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010, 2011 Free Software Foundation, Inc.
    Contributed by Intel Corporation.
    This file is part of the GNU C Library.
 
@@ -21,7 +21,6 @@
 #if defined SHARED && !defined NOT_IN_libc
 
 #include <sysdep.h>
-#include "asm-syntax.h"
 
 #define CFI_PUSH(REG)						\
   cfi_adjust_cfa_offset (4);					\

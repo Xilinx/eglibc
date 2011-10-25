@@ -1,5 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  x86-64 version.
-   Copyright (C) 2001-2006, 2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2001-2006, 2008-2010, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>.
 
@@ -195,8 +195,7 @@ _dl_start_user:\n\
    define the value.
    ELF_RTYPE_CLASS_NOCOPY iff TYPE should not be allowed to resolve to one
    of the main executable's symbols, as for a COPY reloc.  */
-#if !defined RTLD_BOOTSTRAP || USE___THREAD
-# define elf_machine_type_class(type)					      \
+#define elf_machine_type_class(type)					      \
   ((((type) == R_X86_64_JUMP_SLOT					      \
      || (type) == R_X86_64_DTPMOD64					      \
      || (type) == R_X86_64_DTPOFF64					      \
@@ -204,14 +203,13 @@ _dl_start_user:\n\
      || (type) == R_X86_64_TLSDESC)					      \
     * ELF_RTYPE_CLASS_PLT)						      \
    | (((type) == R_X86_64_COPY) * ELF_RTYPE_CLASS_COPY))
-#else
-# define elf_machine_type_class(type) \
-  ((((type) == R_X86_64_JUMP_SLOT) * ELF_RTYPE_CLASS_PLT) \
-   | (((type) == R_X86_64_COPY) * ELF_RTYPE_CLASS_COPY))
-#endif
 
 /* A reloc type used for ld.so cmdline arg lookups to reject PLT entries.  */
 #define ELF_MACHINE_JMP_SLOT	R_X86_64_JUMP_SLOT
+
+/* The relative ifunc relocation.  */
+// XXX This is a work-around for a broken linker.  Remove!
+#define ELF_MACHINE_IRELATIVE	R_X86_64_IRELATIVE
 
 /* The x86-64 never uses Elf64_Rel relocations.  */
 #define ELF_MACHINE_NO_REL 1
@@ -261,7 +259,7 @@ auto inline void
 __attribute__ ((always_inline))
 elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 		  const Elf64_Sym *sym, const struct r_found_version *version,
-		  void *const reloc_addr_arg)
+		  void *const reloc_addr_arg, int skip_ifunc)
 {
   Elf64_Addr *const reloc_addr = reloc_addr_arg;
   const unsigned long int r_type = ELF64_R_TYPE (reloc->r_info);
@@ -299,13 +297,10 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
       if (sym != NULL
 	  && __builtin_expect (ELFW(ST_TYPE) (sym->st_info) == STT_GNU_IFUNC,
 			       0)
-	  && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1))
+	  && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1)
+	  && __builtin_expect (!skip_ifunc, 1))
 	value = ((Elf64_Addr (*) (void)) value) ();
 
-# if defined RTLD_BOOTSTRAP && !USE___THREAD
-      assert (r_type == R_X86_64_GLOB_DAT || r_type == R_X86_64_JUMP_SLOT);
-      *reloc_addr = value + reloc->r_addend;
-# else
       switch (r_type)
 	{
 	case R_X86_64_GLOB_DAT:
@@ -453,7 +448,6 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 	  break;
 # endif
 	}
-#endif
     }
 }
 
@@ -470,7 +464,8 @@ elf_machine_rela_relative (Elf64_Addr l_addr, const Elf64_Rela *reloc,
 auto inline void
 __attribute ((always_inline))
 elf_machine_lazy_rel (struct link_map *map,
-		      Elf64_Addr l_addr, const Elf64_Rela *reloc)
+		      Elf64_Addr l_addr, const Elf64_Rela *reloc,
+		      int skip_ifunc)
 {
   Elf64_Addr *const reloc_addr = (void *) (l_addr + reloc->r_offset);
   const unsigned long int r_type = ELF64_R_TYPE (reloc->r_info);
@@ -497,7 +492,8 @@ elf_machine_lazy_rel (struct link_map *map,
   else if (__builtin_expect (r_type == R_X86_64_IRELATIVE, 0))
     {
       Elf64_Addr value = map->l_addr + reloc->r_addend;
-      value = ((Elf64_Addr (*) (void)) value) ();
+      if (__builtin_expect (!skip_ifunc, 1))
+	value = ((Elf64_Addr (*) (void)) value) ();
       *reloc_addr = value;
     }
   else

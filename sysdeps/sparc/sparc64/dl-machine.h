@@ -1,6 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  Sparc64 version.
-   Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-	2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 1997-2006, 2009, 2010, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -77,11 +76,11 @@ elf_machine_load_address (void)
   register Elf64_Addr *got __asm ("%l7");
 
   __asm ("sethi %%hi(_GLOBAL_OFFSET_TABLE_-4), %1\n\t"
-         "call 1f\n\t"
-         " add %1, %%lo(_GLOBAL_OFFSET_TABLE_+4), %1\n\t"
-         "call _DYNAMIC\n\t"
-         "call _GLOBAL_OFFSET_TABLE_\n"
-         "1:\tadd %1, %0, %1\n\t" : "=r" (pc), "=r" (got));
+	 "call 1f\n\t"
+	 " add %1, %%lo(_GLOBAL_OFFSET_TABLE_+4), %1\n\t"
+	 "call _DYNAMIC\n\t"
+	 "call _GLOBAL_OFFSET_TABLE_\n"
+	 "1:\tadd %1, %0, %1\n\t" : "=r" (pc), "=r" (got));
 
   /* got is now l_addr + _GLOBAL_OFFSET_TABLE_
      *got is _DYNAMIC
@@ -115,17 +114,11 @@ elf_machine_plt_value (struct link_map *map, const Elf64_Rela *reloc,
    PLT entries should not be allowed to define the value.
    ELF_RTYPE_CLASS_NOCOPY iff TYPE should not be allowed to resolve to one
    of the main executable's symbols, as for a COPY reloc.  */
-#if !defined RTLD_BOOTSTRAP || USE___THREAD
-# define elf_machine_type_class(type) \
+#define elf_machine_type_class(type) \
   ((((type) == R_SPARC_JMP_SLOT						      \
      || ((type) >= R_SPARC_TLS_GD_HI22 && (type) <= R_SPARC_TLS_TPOFF64))     \
     * ELF_RTYPE_CLASS_PLT)						      \
    | (((type) == R_SPARC_COPY) * ELF_RTYPE_CLASS_COPY))
-#else
-# define elf_machine_type_class(type) \
-  ((((type) == R_SPARC_JMP_SLOT) * ELF_RTYPE_CLASS_PLT)	\
-   | (((type) == R_SPARC_COPY) * ELF_RTYPE_CLASS_COPY))
-#endif
 
 /* A reloc type used for ld.so cmdline arg lookups to reject PLT entries.  */
 #define ELF_MACHINE_JMP_SLOT	R_SPARC_JMP_SLOT
@@ -168,7 +161,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 
       /* PLT0 looks like:
 
-         sethi	%uhi(_dl_runtime_{resolve,profile}_0), %g4
+	 sethi	%uhi(_dl_runtime_{resolve,profile}_0), %g4
 	 sethi	%hi(_dl_runtime_{resolve,profile}_0), %g5
 	 or	%g4, %ulo(_dl_runtime_{resolve,profile}_0), %g4
 	 or	%g5, %lo(_dl_runtime_{resolve,profile}_0), %g5
@@ -189,7 +182,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 
       /* PLT1 looks like:
 
-         sethi	%uhi(_dl_runtime_{resolve,profile}_1), %g4
+	 sethi	%uhi(_dl_runtime_{resolve,profile}_1), %g4
 	 sethi	%hi(_dl_runtime_{resolve,profile}_1), %g5
 	 or	%g4, %ulo(_dl_runtime_{resolve,profile}_1), %g4
 	 or	%g5, %lo(_dl_runtime_{resolve,profile}_1), %g5
@@ -375,7 +368,7 @@ auto inline void
 __attribute__ ((always_inline))
 elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 		  const Elf64_Sym *sym, const struct r_found_version *version,
-		  void *const reloc_addr_arg)
+		  void *const reloc_addr_arg, int skip_ifunc)
 {
   Elf64_Addr *const reloc_addr = reloc_addr_arg;
 #if !defined RTLD_BOOTSTRAP && !defined RESOLVE_CONFLICT_FIND_MAP
@@ -429,7 +422,8 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 
   if (sym != NULL
       && __builtin_expect (ELFW(ST_TYPE) (sym->st_info) == STT_GNU_IFUNC, 0)
-      && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1))
+      && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1)
+      && __builtin_expect (!skip_ifunc, 1))
     value = ((Elf64_Addr (*) (int)) value) (GLRO(dl_hwcap));
 
   switch (r_type)
@@ -479,8 +473,7 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
       sparc64_fixup_plt (map, reloc, reloc_addr, value, reloc->r_addend, 0);
 #endif
       break;
-#if (!defined RTLD_BOOTSTRAP || USE___THREAD) \
-    && !defined RESOLVE_CONFLICT_FIND_MAP
+#ifndef RESOLVE_CONFLICT_FIND_MAP
     case R_SPARC_TLS_DTPMOD64:
       /* Get the information from the link map returned by the
 	 resolv function.  */
@@ -647,7 +640,8 @@ elf_machine_rela_relative (Elf64_Addr l_addr, const Elf64_Rela *reloc,
 auto inline void
 __attribute__ ((always_inline))
 elf_machine_lazy_rel (struct link_map *map,
-		      Elf64_Addr l_addr, const Elf64_Rela *reloc)
+		      Elf64_Addr l_addr, const Elf64_Rela *reloc,
+		      int skip_ifunc)
 {
   Elf64_Addr *const reloc_addr = (void *) (l_addr + reloc->r_offset);
   const unsigned int r_type = ELF64_R_TYPE (reloc->r_info);
@@ -658,7 +652,8 @@ elf_machine_lazy_rel (struct link_map *map,
 	   || r_type == R_SPARC_IRELATIVE)
     {
       Elf64_Addr value = map->l_addr + reloc->r_addend;
-      value = ((Elf64_Addr (*) (int)) value) (GLRO(dl_hwcap));
+      if (__builtin_expect (!skip_ifunc, 1))
+	value = ((Elf64_Addr (*) (int)) value) (GLRO(dl_hwcap));
       if (r_type == R_SPARC_JMP_IREL)
 	{
 	  /* 'high' is always zero, for large PLT entries the linker

@@ -1,5 +1,5 @@
 /* Complex hyperbole tangent for long double.
-   Copyright (C) 1997, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2005, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -21,8 +21,7 @@
 #include <complex.h>
 #include <fenv.h>
 #include <math.h>
-
-#include "math_private.h"
+#include <math_private.h>
 
 
 __complex__ long double
@@ -30,9 +29,9 @@ __ctanhl (__complex__ long double x)
 {
   __complex__ long double res;
 
-  if (!isfinite (__real__ x) || !isfinite (__imag__ x))
+  if (__builtin_expect (!isfinite (__real__ x) || !isfinite (__imag__ x), 0))
     {
-      if (__isinfl (__real__ x))
+      if (__isinf_nsl (__real__ x))
 	{
 	  __real__ res = __copysignl (1.0, __real__ x);
 	  __imag__ res = __copysignl (0.0, __imag__ x);
@@ -46,10 +45,8 @@ __ctanhl (__complex__ long double x)
 	  __real__ res = __nanl ("");
 	  __imag__ res = __nanl ("");
 
-#ifdef FE_INVALID
-	  if (__isinfl (__imag__ x))
+	  if (__isinf_nsl (__imag__ x))
 	    feraiseexcept (FE_INVALID);
-#endif
 	}
     }
   else

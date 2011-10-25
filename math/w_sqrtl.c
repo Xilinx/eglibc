@@ -1,47 +1,33 @@
-/* w_sqrtl.c -- long double version of w_sqrt.c.
- * Conversion to long double by Ulrich Drepper,
- * Cygnus Support, drepper@cygnus.com.
- */
+/* Copyright (C) 2011 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+   Contributed by Ulrich Drepper <drepper@gmail.com>, 2011.
 
-/*
- * ====================================================
- * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
- *
- * Developed at SunPro, a Sun Microsystems, Inc. business.
- * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice
- * is preserved.
- * ====================================================
- */
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: $";
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-/*
- * wrapper sqrtl(x)
- */
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
 
 #include <math.h>
-#include "math_private.h"
+#include <math_private.h>
 
-#ifdef __STDC__
-	long double __sqrtl(long double x)	/* wrapper sqrtl */
-#else
-	long double __sqrtl(x)			/* wrapper sqrtl */
-	long double x;
-#endif
+
+/* wrapper sqrtl */
+long double
+__sqrtl (long double x)
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_sqrtl(x);
-#else
-	long double z;
-	z = __ieee754_sqrtl(x);
-	if(_LIB_VERSION == _IEEE_ || __isnanl(x)) return z;
-	if(x<0.0) {
-	    return __kernel_standard(x,x,226); /* sqrt(negative) */
-	} else
-	    return z;
-#endif
+  if (__builtin_expect (x < 0.0L, 0) && _LIB_VERSION != _IEEE_)
+    return __kernel_standard (x, x, 226); /* sqrt(negative) */
+
+  return __ieee754_sqrtl (x);
 }
 weak_alias (__sqrtl, sqrtl)

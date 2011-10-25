@@ -1,5 +1,5 @@
 /* Return cosine of complex long double value.
-   Copyright (C) 1997 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -21,56 +21,17 @@
 #include <complex.h>
 #include <fenv.h>
 #include <math.h>
+#include <math_private.h>
 
 
 __complex__ long double
 __ccosl (__complex__ long double x)
 {
-  __complex__ long double res;
+  __complex__ long double y;
 
-  if (!isfinite (__real__ x) || __isnanl (__imag__ x))
-    {
-      if (__real__ x == 0.0 || __imag__ x == 0.0)
-	{
-	  __real__ res = __nanl ("");
-	  __imag__ res = 0.0;
+  __real__ y = -__imag__ x;
+  __imag__ y = __real__ x;
 
-#ifdef FE_INVALID
-	  if (__isinfl (__real__ x))
-	    feraiseexcept (FE_INVALID);
-#endif
-	}
-      else if (__isinfl (__imag__ x))
-	{
-	  __real__ res = HUGE_VALL;
-	  __imag__ res = __nanl ("");
-
-#ifdef FE_INVALID
-	  if (__isinfl (__real__ x))
-	    feraiseexcept (FE_INVALID);
-#endif
-	}
-      else
-	{
-	  __real__ res = __nanl ("");
-	  __imag__ res = __nanl ("");
-
-#ifdef FE_INVALID
-	  if (isfinite (__imag__ x))
-	    feraiseexcept (FE_INVALID);
-#endif
-	}
-    }
-  else
-    {
-      __complex__ long double y;
-
-      __real__ y = -__imag__ x;
-      __imag__ y = __real__ x;
-
-      res = __ccoshl (y);
-    }
-
-  return res;
+  return __ccoshl (y);
 }
 weak_alias (__ccosl, ccosl)

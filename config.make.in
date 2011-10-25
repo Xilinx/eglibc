@@ -53,7 +53,6 @@ have-as-needed = @libc_cv_as_needed@
 libgcc_s_suffix = @libc_cv_libgcc_s_suffix@
 need-nopic-initfini = @nopic_initfini@
 with-fp = @with_fp@
-with-cvs = @with_cvs@
 old-glibc-headers = @old_glibc_headers@
 unwind-find-fde = @libc_cv_gcc_unwind_find_fde@
 have-cpp-asm-debuginfo = @libc_cv_cpp_asm_debuginfo@
@@ -76,7 +75,6 @@ static-libgcc = @libc_cv_gcc_static_libgcc@
 
 versioning = @VERSIONING@
 oldest-abi = @oldest_abi@
-no-whole-archive = @no_whole_archive@
 exceptions = @exceptions@
 multi-arch = @multi_arch@
 
@@ -108,6 +106,7 @@ CC = @CC@
 CXX = @CXX@
 BUILD_CC = @BUILD_CC@
 CFLAGS = @CFLAGS@
+CPPFLAGS-config = @CPPFLAGS@
 ASFLAGS-config = @ASFLAGS_config@
 AR = @AR@
 NM = @NM@

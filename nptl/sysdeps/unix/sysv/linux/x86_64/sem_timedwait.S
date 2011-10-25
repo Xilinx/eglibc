@@ -1,4 +1,4 @@
-/* Copyright (C) 2002,2003,2005,2007,2009,2010 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2005,2007,2009,2010,2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -23,10 +23,6 @@
 #include <shlib-compat.h>
 #include <pthread-errnos.h>
 #include <structsem.h>
-
-
-/* For the calculation see asm/vsyscall.h.  */
-#define VSYSCALL_ADDR_vgettimeofday	0xffffffffff600000
 
 	.text
 
@@ -147,39 +143,24 @@ sem_timedwait:
 
 	cfi_adjust_cfa_offset(8)
 3:	negq	%r9
-#if USE___THREAD
 	movq	errno@gottpoff(%rip), %rdx
 	movl	%r9d, %fs:(%rdx)
-#else
-	callq	__errno_location@plt
-	movl	%r9d, (%rax)
-#endif
 
 	orl	$-1, %eax
 	jmp	15b
 
 	cfi_adjust_cfa_offset(-8)
 6:
-#if USE___THREAD
 	movq	errno@gottpoff(%rip), %rdx
 	movl	$EINVAL, %fs:(%rdx)
-#else
-	callq	__errno_location@plt
-	movl	$EINVAL, (%rax)
-#endif
 
 	orl	$-1, %eax
 
 	retq
 
 16:
-#if USE___THREAD
 	movq	errno@gottpoff(%rip), %rdx
 	movl	$ETIMEDOUT, %fs:(%rdx)
-#else
-	callq	__errno_location@plt
-	movl	$ETIMEDOUT, (%rax)
-#endif
 
 	orl	$-1, %eax
 
@@ -212,9 +193,10 @@ sem_timedwait:
 	addq	$1, NWAITERS(%r12)
 
 7:	xorl	%esi, %esi
-	movq	%rsp, %rdi
-	movq	$VSYSCALL_ADDR_vgettimeofday, %rax
-	callq	*%rax
+	movq	%rsp,%rdi
+	/* This call works because we directly jump to a system call entry
+	   which preserves all the registers.  */
+	call	JUMPTARGET(__gettimeofday)
 
 	/* Compute relative timeout.  */
 	movq	8(%rsp), %rax
@@ -306,13 +288,8 @@ sem_timedwait:
 	cfi_rel_offset(%r14, STACKFRAME)
 33:	negq	%r14
 36:
-#if USE___THREAD
 	movq	errno@gottpoff(%rip), %rdx
 	movl	%r14d, %fs:(%rdx)
-#else
-	callq	__errno_location@plt
-	movl	%r14d, (%rax)
-#endif
 
 	orl	$-1, %eax
 	jmp	45b

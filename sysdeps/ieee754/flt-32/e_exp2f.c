@@ -1,5 +1,6 @@
 /* Single-precision floating point 2^x.
-   Copyright (C) 1997,1998,2000,2001,2005,2006 Free Software Foundation, Inc.
+   Copyright (C) 1997,1998,2000,2001,2005,2006,2011
+   Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Geoffrey Keating <geoffk@ozemail.com.au>
 
@@ -56,11 +57,7 @@ __ieee754_exp2f (float x)
       union ieee754_float ex2_u, scale_u;
       fenv_t oldenv;
 
-      feholdexcept (&oldenv);
-#ifdef FE_TONEAREST
-      /* If we don't have this, it's too bad.  */
-      fesetround (FE_TONEAREST);
-#endif
+      libc_feholdexcept_setroundf (&oldenv, FE_TONEAREST);
 
       /* 1. Argument reduction.
 	 Choose integers ex, -128 <= t < 128, and some real
@@ -103,7 +100,7 @@ __ieee754_exp2f (float x)
       x22 = (.24022656679f * x + .69314736128f) * ex2_u.f;
 
       /* 5. Return (2^x2-1) * 2^(t/512+e+ex) + 2^(t/512+e+ex).  */
-      fesetenv (&oldenv);
+      libc_fesetenv (&oldenv);
 
       result = x22 * x + ex2_u.f;
 
@@ -115,7 +112,7 @@ __ieee754_exp2f (float x)
   /* Exceptional cases:  */
   else if (isless (x, himark))
     {
-      if (__isinff (x))
+      if (__isinf_nsf (x))
 	/* e^-inf == 0, with no error.  */
 	return 0;
       else
@@ -126,3 +123,4 @@ __ieee754_exp2f (float x)
     /* Return x, if x is a NaN or Inf; or overflow, otherwise.  */
     return TWO127*x;
 }
+strong_alias (__ieee754_exp2f, __exp2f_finite)

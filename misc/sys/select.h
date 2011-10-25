@@ -1,5 +1,5 @@
 /* `fd_set' type and related macros, and `select'/`pselect' declarations.
-   Copyright (C) 1996-2003, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1996-2003, 2009, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -54,14 +54,12 @@ typedef __suseconds_t suseconds_t;
 /* The fd_set member is required to be an array of longs.  */
 typedef long int __fd_mask;
 
-/* Some versions of <linux/posix_types.h> define these macros.  */
+/* Some versions of <linux/posix_types.h> define this macros.  */
 #undef	__NFDBITS
-#undef	__FDELT
-#undef	__FDMASK
 /* It's easier to assume 8-bit bytes than to get CHAR_BIT.  */
 #define __NFDBITS	(8 * (int) sizeof (__fd_mask))
-#define	__FDELT(d)	((d) / __NFDBITS)
-#define	__FDMASK(d)	((__fd_mask) 1 << ((d) % __NFDBITS))
+#define	__FD_ELT(d)	((d) / __NFDBITS)
+#define	__FD_MASK(d)	((__fd_mask) 1 << ((d) % __NFDBITS))
 
 /* fd_set for select and pselect.  */
 typedef struct
@@ -123,6 +121,12 @@ extern int pselect (int __nfds, fd_set *__restrict __readfds,
 		    fd_set *__restrict __exceptfds,
 		    const struct timespec *__restrict __timeout,
 		    const __sigset_t *__restrict __sigmask);
+#endif
+
+
+/* Define some inlines helping to catch common problems.  */
+#if __USE_FORTIFY_LEVEL > 0 && defined __GNUC__
+# include <bits/select2.h>
 #endif
 
 __END_DECLS

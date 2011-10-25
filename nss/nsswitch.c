@@ -187,7 +187,7 @@ __nss_database_lookup (const char *database, const char *alternate_name,
 
   unlock_nsswitch;
 
-  return 0;
+  return *ni != NULL ? 0 : -1;
 }
 libc_hidden_def (__nss_database_lookup)
 
@@ -216,6 +216,7 @@ __nss_lookup (service_user **ni, const char *fct_name, const char *fct2_name,
 
   return *fctp != NULL ? 0 : (*ni)->next == NULL ? 1 : -1;
 }
+libc_hidden_def (__nss_lookup)
 
 
 /* -1 == not found
@@ -425,7 +426,10 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
      will be passed to `known_compare' (above).  */
 
   found = __tsearch (&fct_name, &ni->known.tree, &known_compare);
-  if (*found != &fct_name)
+  if (found == NULL)
+    /* This means out-of-memory.  */
+    result = NULL;
+  else if (*found != &fct_name)
     {
       /* The search found an existing structure in the tree.  */
       result = ((known_function *) *found)->fct_ptr;
@@ -445,6 +449,7 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 	  /* Oops.  We can't instantiate this node properly.
 	     Remove it from the tree.  */
 	  __tdelete (&fct_name, &ni->known.tree, &known_compare);
+	  free (known);
 	  result = NULL;
 	}
       else
@@ -456,11 +461,8 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 #if !defined DO_STATIC_NSS || defined SHARED
 	  /* Load the appropriate library.  */
 	  if (nss_load_library (ni) != 0)
-	    {
-	      /* This only happens when out of memory.  */
-	      free (known);
-	      goto remove_from_tree;
-	    }
+	    /* This only happens when out of memory.  */
+	    goto remove_from_tree;
 
 	  if (ni->library->lib_handle == (void *) -1l)
 	    /* Library not found => function not found.  */
@@ -887,6 +889,7 @@ __nss_disable_nscd (void (*cb) (size_t, struct traced_file *))
   __nss_not_use_nscd_group = -1;
   __nss_not_use_nscd_hosts = -1;
   __nss_not_use_nscd_services = -1;
+  __nss_not_use_nscd_netgroup = -1;
 }
 #endif /* __OPTION_EGLIBC_INET */
 #endif

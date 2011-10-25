@@ -1,5 +1,5 @@
 /* Word-wrapping and line-truncating streams
-   Copyright (C) 1997-1999,2001,2002,2003,2005 Free Software Foundation, Inc.
+   Copyright (C) 1997-1999,2001-2003,2005,2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
@@ -40,7 +40,7 @@
 #define isblank(ch) ((ch)==' ' || (ch)=='\t')
 #endif
 
-#if defined _LIBC && defined USE_IN_LIBIO
+#ifdef _LIBC
 # include <wchar.h>
 # include <libio/libioP.h>
 # include <gnu/option-groups.h>
@@ -102,11 +102,7 @@ __argp_fmtstream_free (argp_fmtstream_t fs)
   __argp_fmtstream_update (fs);
   if (fs->p > fs->buf)
     {
-#ifdef USE_IN_LIBIO
       __fxprintf (fs->stream, "%.*s", (int) (fs->p - fs->buf), fs->buf);
-#else
-      fwrite_unlocked (fs->buf, 1, fs->p - fs->buf, fs->stream);
-#endif
     }
   free (fs->buf);
   free (fs);
@@ -151,7 +147,6 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 	      size_t i;
 	      for (i = 0; i < pad; i++)
 		{
-#ifdef USE_IN_LIBIO
 		  if (_IO_fwide (fs->stream, 0) > 0)
                     {
 #if ! _LIBC || __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
@@ -161,7 +156,6 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 #endif
                     }
 		  else
-#endif
 		    putc_unlocked (' ', fs->stream);
 		}
 	    }
@@ -322,7 +316,6 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 	      *nl++ = ' ';
 	  else
 	    for (i = 0; i < fs->wmargin; ++i)
-#ifdef USE_IN_LIBIO
 	      if (_IO_fwide (fs->stream, 0) > 0)
                 {
 #ifdef OPTION_POSIX_WIDE_CHAR_DEVICE_IO
@@ -332,7 +325,6 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
 #endif
                 }
 	      else
-#endif
 		putc_unlocked (' ', fs->stream);
 
 	  /* Copy the tail of the original buffer into the current buffer

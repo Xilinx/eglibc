@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * written by International Business Machines Corp.
- * Copyright (C) 2001 Free Software Foundation
+ * Copyright (C) 2001, 2011 Free Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -35,7 +35,7 @@
 
 #include "endian.h"
 #include "mydefs.h"
-#include "dla.h"
+#include <dla.h>
 #include "MathLib.h"
 #include "root.tbl"
 #include "math_private.h"
@@ -86,3 +86,4 @@ double __ieee754_sqrt(double x) {
     return tm256.x*__ieee754_sqrt(x*t512.x);
   }
 }
+strong_alias (__ieee754_sqrt, __sqrt_finite)

@@ -1,5 +1,5 @@
 /* Malloc implementation for multiple threads without lock contention.
-   Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2009,2010
+   Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2009,2010,2011
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Wolfram Gloger <wg@malloc.de>, 2001.
@@ -53,8 +53,7 @@
 
 /* A heap is a single contiguous memory region holding (coalesceable)
    malloc_chunks.  It is allocated with mmap() and always starts at an
-   address aligned to HEAP_MAX_SIZE.  Not used unless compiling with
-   USE_ARENAS. */
+   address aligned to HEAP_MAX_SIZE.  */
 
 typedef struct _heap_info {
   mstate ar_ptr; /* Arena for this heap. */
@@ -77,9 +76,9 @@ extern int sanity_check_heap_info_alignment[(sizeof (heap_info)
 /* Thread specific data */
 
 static tsd_key_t arena_key;
-static mutex_t list_lock;
+static mutex_t list_lock = MUTEX_INITIALIZER;
 #ifdef PER_THREAD
-static size_t narenas;
+static size_t narenas = 1;
 static mstate free_list;
 #endif
 
@@ -98,7 +97,6 @@ int __malloc_initialized = -1;
 
 /**************************************************************************/
 
-#if USE_ARENAS
 
 /* arena_get() acquires an arena and locks the corresponding mutex.
    First, try the one last locked successfully by this thread.  (This
@@ -114,19 +112,19 @@ int __malloc_initialized = -1;
 } while(0)
 
 #define arena_lookup(ptr) do { \
-  Void_t *vptr = NULL; \
+  void *vptr = NULL; \
   ptr = (mstate)tsd_getspecific(arena_key, vptr); \
 } while(0)
 
 #ifdef PER_THREAD
-#define arena_lock(ptr, size) do { \
+# define arena_lock(ptr, size) do { \
   if(ptr) \
     (void)mutex_lock(&ptr->mutex); \
   else \
     ptr = arena_get2(ptr, (size)); \
 } while(0)
 #else
-#define arena_lock(ptr, size) do { \
+# define arena_lock(ptr, size) do { \
   if(ptr && !mutex_trylock(&ptr->mutex)) { \
     THREAD_STAT(++(ptr->stat_lock_direct)); \
   } else \
@@ -141,45 +139,16 @@ int __malloc_initialized = -1;
 #define arena_for_chunk(ptr) \
  (chunk_non_main_arena(ptr) ? heap_for_ptr(ptr)->ar_ptr : &main_arena)
 
-#else /* !USE_ARENAS */
-
-/* There is only one arena, main_arena. */
-
-#if THREAD_STATS
-#define arena_get(ar_ptr, sz) do { \
-  ar_ptr = &main_arena; \
-  if(!mutex_trylock(&ar_ptr->mutex)) \
-    ++(ar_ptr->stat_lock_direct); \
-  else { \
-    (void)mutex_lock(&ar_ptr->mutex); \
-    ++(ar_ptr->stat_lock_wait); \
-  } \
-} while(0)
-#else
-#define arena_get(ar_ptr, sz) do { \
-  ar_ptr = &main_arena; \
-  (void)mutex_lock(&ar_ptr->mutex); \
-} while(0)
-#endif
-#define arena_for_chunk(ptr) (&main_arena)
-
-#endif /* USE_ARENAS */
 
 /**************************************************************************/
-
-#ifndef NO_THREADS
 
 /* atfork support.  */
 
 static __malloc_ptr_t (*save_malloc_hook) (size_t __size,
 					   __const __malloc_ptr_t);
-# if !defined _LIBC || (defined SHARED && !USE___THREAD)
-static __malloc_ptr_t (*save_memalign_hook) (size_t __align, size_t __size,
-					     __const __malloc_ptr_t);
-# endif
 static void           (*save_free_hook) (__malloc_ptr_t __ptr,
 					 __const __malloc_ptr_t);
-static Void_t*        save_arena;
+static void*        save_arena;
 
 #ifdef ATFORK_MEM
 ATFORK_MEM;
@@ -188,16 +157,16 @@ ATFORK_MEM;
 /* Magic value for the thread-specific arena pointer when
    malloc_atfork() is in use.  */
 
-#define ATFORK_ARENA_PTR ((Void_t*)-1)
+#define ATFORK_ARENA_PTR ((void*)-1)
 
 /* The following hooks are used while the `atfork' handling mechanism
    is active. */
 
-static Void_t*
-malloc_atfork(size_t sz, const Void_t *caller)
+static void*
+malloc_atfork(size_t sz, const void *caller)
 {
-  Void_t *vptr = NULL;
-  Void_t *victim;
+  void *vptr = NULL;
+  void *victim;
 
   tsd_getspecific(arena_key, vptr);
   if(vptr == ATFORK_ARENA_PTR) {
@@ -221,9 +190,9 @@ malloc_atfork(size_t sz, const Void_t *caller)
 }
 
 static void
-free_atfork(Void_t* mem, const Void_t *caller)
+free_atfork(void* mem, const void *caller)
 {
-  Void_t *vptr = NULL;
+  void *vptr = NULL;
   mstate ar_ptr;
   mchunkptr p;                          /* chunk corresponding to mem */
 
@@ -232,27 +201,15 @@ free_atfork(Void_t* mem, const Void_t *caller)
 
   p = mem2chunk(mem);         /* do not bother to replicate free_check here */
 
-#if HAVE_MMAP
   if (chunk_is_mmapped(p))                       /* release mmapped memory. */
   {
     munmap_chunk(p);
     return;
   }
-#endif
 
-#ifdef ATOMIC_FASTBINS
   ar_ptr = arena_for_chunk(p);
   tsd_getspecific(arena_key, vptr);
   _int_free(ar_ptr, p, vptr == ATFORK_ARENA_PTR);
-#else
-  ar_ptr = arena_for_chunk(p);
-  tsd_getspecific(arena_key, vptr);
-  if(vptr != ATFORK_ARENA_PTR)
-    (void)mutex_lock(&ar_ptr->mutex);
-  _int_free(ar_ptr, p);
-  if(vptr != ATFORK_ARENA_PTR)
-    (void)mutex_unlock(&ar_ptr->mutex);
-#endif
 }
 
 
@@ -274,7 +231,7 @@ ptmalloc_lock_all (void)
     return;
   if (mutex_trylock(&list_lock))
     {
-      Void_t *my_arena;
+      void *my_arena;
       tsd_getspecific(arena_key, my_arena);
       if (my_arena == ATFORK_ARENA_PTR)
 	/* This is the same thread which already locks the global list.
@@ -334,11 +291,9 @@ ptmalloc_unlock_all2 (void)
 
   if(__malloc_initialized < 1)
     return;
-#if defined _LIBC || defined MALLOC_HOOKS
   tsd_setspecific(arena_key, save_arena);
   __malloc_hook = save_malloc_hook;
   __free_hook = save_free_hook;
-#endif
 #ifdef PER_THREAD
   free_list = NULL;
 #endif
@@ -363,10 +318,7 @@ ptmalloc_unlock_all2 (void)
 
 #endif
 
-#endif /* !defined NO_THREADS */
-
 /* Initialization routine. */
-#ifdef _LIBC
 #include <string.h>
 extern char **_environ;
 
@@ -400,29 +352,9 @@ next_env_entry (char ***position)
 
   return result;
 }
-#endif /* _LIBC */
-
-/* Set up basic state so that _int_malloc et al can work.  */
-static void
-ptmalloc_init_minimal (void)
-{
-#if DEFAULT_TOP_PAD != 0
-  mp_.top_pad        = DEFAULT_TOP_PAD;
-#endif
-  mp_.n_mmaps_max    = DEFAULT_MMAP_MAX;
-  mp_.mmap_threshold = DEFAULT_MMAP_THRESHOLD;
-  mp_.trim_threshold = DEFAULT_TRIM_THRESHOLD;
-  mp_.pagesize       = malloc_getpagesize;
-#ifdef PER_THREAD
-# define NARENAS_FROM_NCORES(n) ((n) * (sizeof(long) == 4 ? 2 : 8))
-  mp_.arena_test     = NARENAS_FROM_NCORES (1);
-  narenas = 1;
-#endif
-}
 
 
-#ifdef _LIBC
-# ifdef SHARED
+#ifdef SHARED
 static void *
 __failing_morecore (ptrdiff_t d)
 {
@@ -431,86 +363,15 @@ __failing_morecore (ptrdiff_t d)
 
 extern struct dl_open_hook *_dl_open_hook;
 libc_hidden_proto (_dl_open_hook);
-# endif
-
-# if defined SHARED && !USE___THREAD
-/* This is called by __pthread_initialize_minimal when it needs to use
-   malloc to set up the TLS state.  We cannot do the full work of
-   ptmalloc_init (below) until __pthread_initialize_minimal has finished,
-   so it has to switch to using the special startup-time hooks while doing
-   those allocations.  */
-void
-__libc_malloc_pthread_startup (bool first_time)
-{
-  if (first_time)
-    {
-      ptmalloc_init_minimal ();
-      save_malloc_hook = __malloc_hook;
-      save_memalign_hook = __memalign_hook;
-      save_free_hook = __free_hook;
-      __malloc_hook = malloc_starter;
-      __memalign_hook = memalign_starter;
-      __free_hook = free_starter;
-    }
-  else
-    {
-      __malloc_hook = save_malloc_hook;
-      __memalign_hook = save_memalign_hook;
-      __free_hook = save_free_hook;
-    }
-}
-# endif
 #endif
 
 static void
 ptmalloc_init (void)
 {
-#if __STD_C
-  const char* s;
-#else
-  char* s;
-#endif
-  int secure = 0;
-
   if(__malloc_initialized >= 0) return;
   __malloc_initialized = 0;
 
-#ifdef _LIBC
-# if defined SHARED && !USE___THREAD
-  /* ptmalloc_init_minimal may already have been called via
-     __libc_malloc_pthread_startup, above.  */
-  if (mp_.pagesize == 0)
-# endif
-#endif
-    ptmalloc_init_minimal();
-
-#ifndef NO_THREADS
-# if defined _LIBC
-  /* We know __pthread_initialize_minimal has already been called,
-     and that is enough.  */
-#   define NO_STARTER
-# endif
-# ifndef NO_STARTER
-  /* With some threads implementations, creating thread-specific data
-     or initializing a mutex may call malloc() itself.  Provide a
-     simple starter version (realloc() won't work). */
-  save_malloc_hook = __malloc_hook;
-  save_memalign_hook = __memalign_hook;
-  save_free_hook = __free_hook;
-  __malloc_hook = malloc_starter;
-  __memalign_hook = memalign_starter;
-  __free_hook = free_starter;
-#  ifdef _LIBC
-  /* Initialize the pthreads interface. */
-  if (__pthread_initialize != NULL)
-    __pthread_initialize();
-#  endif /* !defined _LIBC */
-# endif	/* !defined NO_STARTER */
-#endif /* !defined NO_THREADS */
-  mutex_init(&main_arena.mutex);
-  main_arena.next = &main_arena;
-
-#if defined _LIBC && defined SHARED
+#ifdef SHARED
   /* In case this libc copy is in a non-default namespace, never use brk.
      Likewise if dlopened from statically linked program.  */
   Dl_info di;
@@ -522,22 +383,10 @@ ptmalloc_init (void)
     __morecore = __failing_morecore;
 #endif
 
-  mutex_init(&list_lock);
   tsd_key_create(&arena_key, NULL);
-  tsd_setspecific(arena_key, (Void_t *)&main_arena);
+  tsd_setspecific(arena_key, (void *)&main_arena);
   thread_atfork(ptmalloc_lock_all, ptmalloc_unlock_all, ptmalloc_unlock_all2);
-#ifndef NO_THREADS
-# ifndef NO_STARTER
-  __malloc_hook = save_malloc_hook;
-  __memalign_hook = save_memalign_hook;
-  __free_hook = save_free_hook;
-# else
-#  undef NO_STARTER
-# endif
-#endif
-#ifdef _LIBC
-  secure = __libc_enable_secure;
-  s = NULL;
+  const char *s = NULL;
   if (__builtin_expect (_environ != NULL, 1))
     {
       char **runp = _environ;
@@ -561,7 +410,7 @@ ptmalloc_init (void)
 		s = &envline[7];
 	      break;
 	    case 8:
-	      if (! secure)
+	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "TOP_PAD_", 8) == 0)
 		    mALLOPt(M_TOP_PAD, atoi(&envline[9]));
@@ -570,7 +419,7 @@ ptmalloc_init (void)
 		}
 	      break;
 	    case 9:
-	      if (! secure)
+	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "MMAP_MAX_", 9) == 0)
 		    mALLOPt(M_MMAP_MAX, atoi(&envline[10]));
@@ -582,7 +431,7 @@ ptmalloc_init (void)
 	      break;
 #ifdef PER_THREAD
 	    case 10:
-	      if (! secure)
+	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "ARENA_TEST", 10) == 0)
 		    mALLOPt(M_ARENA_TEST, atoi(&envline[11]));
@@ -590,7 +439,7 @@ ptmalloc_init (void)
 	      break;
 #endif
 	    case 15:
-	      if (! secure)
+	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "TRIM_THRESHOLD_", 15) == 0)
 		    mALLOPt(M_TRIM_THRESHOLD, atoi(&envline[16]));
@@ -603,22 +452,6 @@ ptmalloc_init (void)
 	    }
 	}
     }
-#else
-  if (! secure)
-    {
-      if((s = getenv("MALLOC_TRIM_THRESHOLD_")))
-	mALLOPt(M_TRIM_THRESHOLD, atoi(s));
-      if((s = getenv("MALLOC_TOP_PAD_")))
-	mALLOPt(M_TOP_PAD, atoi(s));
-      if((s = getenv("MALLOC_PERTURB_")))
-	mALLOPt(M_PERTURB, atoi(s));
-      if((s = getenv("MALLOC_MMAP_THRESHOLD_")))
-	mALLOPt(M_MMAP_THRESHOLD, atoi(s));
-      if((s = getenv("MALLOC_MMAP_MAX_")))
-	mALLOPt(M_MMAP_MAX, atoi(s));
-    }
-  s = getenv("MALLOC_CHECK_");
-#endif
   if(s && s[0]) {
     mALLOPt(M_CHECK_ACTION, (int)(s[0] - '0'));
     if (check_action != 0)
@@ -640,18 +473,12 @@ thread_atfork_static(ptmalloc_lock_all, ptmalloc_unlock_all, \
 
 /* Managing heaps and arenas (for concurrent threads) */
 
-#if USE_ARENAS
-
 #if MALLOC_DEBUG > 1
 
 /* Print the complete contents of a single heap to stderr. */
 
 static void
-#if __STD_C
 dump_heap(heap_info *heap)
-#else
-dump_heap(heap) heap_info *heap;
-#endif
 {
   char *ptr;
   mchunkptr p;
@@ -692,13 +519,9 @@ static char *aligned_heap_area;
 
 static heap_info *
 internal_function
-#if __STD_C
 new_heap(size_t size, size_t top_pad)
-#else
-new_heap(size, top_pad) size_t size, top_pad;
-#endif
 {
-  size_t page_mask = malloc_getpagesize - 1;
+  size_t page_mask = GLRO(dl_pagesize) - 1;
   char *p1, *p2;
   unsigned long ul;
   heap_info *h;
@@ -766,13 +589,9 @@ new_heap(size, top_pad) size_t size, top_pad;
    multiple of the page size. */
 
 static int
-#if __STD_C
 grow_heap(heap_info *h, long diff)
-#else
-grow_heap(h, diff) heap_info *h; long diff;
-#endif
 {
-  size_t page_mask = malloc_getpagesize - 1;
+  size_t page_mask = GLRO(dl_pagesize) - 1;
   long new_size;
 
   diff = (diff + page_mask) & ~page_mask;
@@ -794,11 +613,7 @@ grow_heap(h, diff) heap_info *h; long diff;
 /* Shrink a heap.  */
 
 static int
-#if __STD_C
 shrink_heap(heap_info *h, long diff)
-#else
-shrink_heap(h, diff) heap_info *h; long diff;
-#endif
 {
   long new_size;
 
@@ -807,21 +622,15 @@ shrink_heap(h, diff) heap_info *h; long diff;
     return -1;
   /* Try to re-map the extra heap space freshly to save memory, and
      make it inaccessible. */
-#ifdef _LIBC
   if (__builtin_expect (__libc_enable_secure, 0))
-#else
-  if (1)
-#endif
     {
       if((char *)MMAP((char *)h + new_size, diff, PROT_NONE,
 		      MAP_PRIVATE|MAP_FIXED) == (char *) MAP_FAILED)
 	return -2;
       h->mprotect_size = new_size;
     }
-#ifdef _LIBC
   else
     madvise ((char *)h + new_size, diff, MADV_DONTNEED);
-#endif
   /*fprintf(stderr, "shrink %p %08lx\n", h, new_size);*/
 
   h->size = new_size;
@@ -839,14 +648,10 @@ shrink_heap(h, diff) heap_info *h; long diff;
 
 static int
 internal_function
-#if __STD_C
 heap_trim(heap_info *heap, size_t pad)
-#else
-heap_trim(heap, pad) heap_info *heap; size_t pad;
-#endif
 {
   mstate ar_ptr = heap->ar_ptr;
-  unsigned long pagesz = mp_.pagesize;
+  unsigned long pagesz = GLRO(dl_pagesize);
   mchunkptr top_chunk = top(ar_ptr), p, bck, fwd;
   heap_info *prev_heap;
   long new_size, top_size, extra;
@@ -919,11 +724,6 @@ _int_new_arena(size_t size)
   /*a->next = NULL;*/
   a->system_mem = a->max_system_mem = h->size;
   arena_mem += h->size;
-#ifdef NO_THREADS
-  if((unsigned long)(mp_.mmapped_mem + arena_mem + main_arena.system_mem) >
-     mp_.max_total_mem)
-    mp_.max_total_mem = mp_.mmapped_mem + arena_mem + main_arena.system_mem;
-#endif
 
   /* Set up the top chunk, with proper alignment. */
   ptr = (char *)(a + 1);
@@ -933,7 +733,7 @@ _int_new_arena(size_t size)
   top(a) = (mchunkptr)ptr;
   set_head(top(a), (((char*)h + h->size) - ptr) | PREV_INUSE);
 
-  tsd_setspecific(arena_key, (Void_t *)a);
+  tsd_setspecific(arena_key, (void *)a);
   mutex_init(&a->mutex);
   (void)mutex_lock(&a->mutex);
 
@@ -974,7 +774,7 @@ get_free_list (void)
       if (result != NULL)
 	{
 	  (void)mutex_lock(&result->mutex);
-	  tsd_setspecific(arena_key, (Void_t *)result);
+	  tsd_setspecific(arena_key, (void *)result);
 	  THREAD_STAT(++(result->stat_lock_loop));
 	}
     }
@@ -1029,7 +829,7 @@ reused_arena (void)
   (void)mutex_lock(&result->mutex);
 
  out:
-  tsd_setspecific(arena_key, (Void_t *)result);
+  tsd_setspecific(arena_key, (void *)result);
   THREAD_STAT(++(result->stat_lock_loop));
   next_to_use = result->next;
 
@@ -1039,11 +839,7 @@ reused_arena (void)
 
 static mstate
 internal_function
-#if __STD_C
 arena_get2(mstate a_tsd, size_t size)
-#else
-arena_get2(a_tsd, size) mstate a_tsd; size_t size;
-#endif
 {
   mstate a;
 
@@ -1073,7 +869,7 @@ arena_get2(a_tsd, size) mstate a_tsd; size_t size;
       if (retried)
 	(void)mutex_unlock(&list_lock);
       THREAD_STAT(++(a->stat_lock_loop));
-      tsd_setspecific(arena_key, (Void_t *)a);
+      tsd_setspecific(arena_key, (void *)a);
       return a;
     }
     a = a->next;
@@ -1105,7 +901,7 @@ arena_get2(a_tsd, size) mstate a_tsd; size_t size;
 static void __attribute__ ((section ("__libc_thread_freeres_fn")))
 arena_thread_freeres (void)
 {
-  Void_t *vptr = NULL;
+  void *vptr = NULL;
   mstate a = tsd_getspecific(arena_key, vptr);
   tsd_setspecific(arena_key, NULL);
 
@@ -1119,8 +915,6 @@ arena_thread_freeres (void)
 }
 text_set_element (__libc_thread_subfreeres, arena_thread_freeres);
 #endif
-
-#endif /* USE_ARENAS */
 
 /*
  * Local variables:

@@ -1,4 +1,4 @@
-/* Copyright (C) 2001-2005, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2005, 2007, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -124,7 +124,7 @@
   movl %edx, (%rcx);				\
   orq $-1, %rax;				\
   jmp L(pseudo_end);
-# elif USE___THREAD
+# else
 #  ifndef NOT_IN_libc
 #   define SYSCALL_ERROR_ERRNO __libc_errno
 #  else
@@ -136,34 +136,6 @@
   xorl %edx, %edx;				\
   subq %rax, %rdx;				\
   movl %edx, %fs:(%rcx);			\
-  orq $-1, %rax;				\
-  jmp L(pseudo_end);
-# elif defined _LIBC_REENTRANT
-/* Store (- %rax) into errno through the GOT.
-   Note that errno occupies only 4 bytes.  */
-#  define SYSCALL_ERROR_HANDLER			\
-0:						\
-  xorl %edx, %edx;				\
-  subq %rax, %rdx;				\
-  pushq %rdx;					\
-  cfi_adjust_cfa_offset(8);			\
-  PUSH_ERRNO_LOCATION_RETURN;			\
-  call BP_SYM (__errno_location)@PLT;		\
-  POP_ERRNO_LOCATION_RETURN;			\
-  popq %rdx;					\
-  cfi_adjust_cfa_offset(-8);			\
-  movl %edx, (%rax);				\
-  orq $-1, %rax;				\
-  jmp L(pseudo_end);
-
-/* A quick note: it is assumed that the call to `__errno_location' does
-   not modify the stack!  */
-# else /* Not _LIBC_REENTRANT.  */
-#  define SYSCALL_ERROR_HANDLER			\
-0:movq errno@GOTPCREL(%RIP), %rcx;		\
-  xorl %edx, %edx;				\
-  subq %rax, %rdx;				\
-  movl %edx, (%rcx);				\
   orq $-1, %rax;				\
   jmp L(pseudo_end);
 # endif	/* PIC */
@@ -279,8 +251,8 @@
     if (INTERNAL_SYSCALL_ERROR_P (sc_ret, sc_err))			      \
       {									      \
       iserr:								      \
-        __set_errno (INTERNAL_SYSCALL_ERRNO (sc_ret, sc_err));		      \
-        sc_ret = -1L;							      \
+	__set_errno (INTERNAL_SYSCALL_ERRNO (sc_ret, sc_err));		      \
+	sc_ret = -1L;							      \
       }									      \
   out:									      \
     sc_ret;								      \
@@ -303,9 +275,6 @@
   out:									      \
     v_ret;								      \
   })
-
-/* List of system calls which are supported as vsyscalls.  */
-#  define HAVE_CLOCK_GETTIME_VSYSCALL	1
 
 # else
 #  define INLINE_VSYSCALL(name, nr, args...) \

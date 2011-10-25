@@ -1,5 +1,5 @@
 /* This file is part of the GNU C Library.
-   Copyright (C) 2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -31,11 +31,13 @@
 # define bit_SSSE3	(1 << 9)
 # define bit_SSE4_1	(1 << 19)
 # define bit_SSE4_2	(1 << 20)
+# define bit_AVX	(1 << 28)
 
 # define index_SSE2	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_EDX_OFFSET
 # define index_SSSE3	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_ECX_OFFSET
 # define index_SSE4_1	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_ECX_OFFSET
 # define index_SSE4_2	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_ECX_OFFSET
+# define index_AVX	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_ECX_OFFSET
 
 # define index_Fast_Rep_String		FEATURE_INDEX_1*FEATURE_SIZE
 # define index_Fast_Copy_Backward	FEATURE_INDEX_1*FEATURE_SIZE
@@ -51,6 +53,7 @@
 enum
   {
     COMMON_CPUID_INDEX_1 = 0,
+    COMMON_CPUID_INDEX_80000001,	/* for AMD */
     /* Keep the following line at the end.  */
     COMMON_CPUID_INDEX_MAX
   };
@@ -111,6 +114,7 @@ extern const struct cpu_features *__get_cpu_features (void)
 # define HAS_SSE4_1	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, 19)
 # define HAS_SSE4_2	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, 20)
 # define HAS_FMA	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, 12)
+# define HAS_FMA4	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_80000001, ecx, 16)
 
 # define index_Fast_Rep_String		FEATURE_INDEX_1
 # define index_Fast_Copy_Backward	FEATURE_INDEX_1

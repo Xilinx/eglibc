@@ -139,7 +139,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 		 nop
 		.word MAP
 
-         The PC value (pltpc) saved in %g2 by the jmpl points near the
+	 The PC value (pltpc) saved in %g2 by the jmpl points near the
 	 location where we store the link_map pointer for this object.  */
 
       plt[0] = 0x05000000 | ((rfunc >> 10) & 0x003fffff);
@@ -193,17 +193,11 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
    PLT entries should not be allowed to define the value.
    ELF_RTYPE_CLASS_NOCOPY iff TYPE should not be allowed to resolve to one
    of the main executable's symbols, as for a COPY reloc.  */
-#if !defined RTLD_BOOTSTRAP || USE___THREAD
-# define elf_machine_type_class(type) \
+#define elf_machine_type_class(type) \
   ((((type) == R_SPARC_JMP_SLOT						      \
      || ((type) >= R_SPARC_TLS_GD_HI22 && (type) <= R_SPARC_TLS_TPOFF64))     \
     * ELF_RTYPE_CLASS_PLT)						      \
    | (((type) == R_SPARC_COPY) * ELF_RTYPE_CLASS_COPY))
-#else
-# define elf_machine_type_class(type) \
-  ((((type) == R_SPARC_JMP_SLOT) * ELF_RTYPE_CLASS_PLT)			      \
-   | (((type) == R_SPARC_COPY) * ELF_RTYPE_CLASS_COPY))
-#endif
 
 /* A reloc type used for ld.so cmdline arg lookups to reject PLT entries.  */
 #define ELF_MACHINE_JMP_SLOT	R_SPARC_JMP_SLOT
@@ -348,7 +342,7 @@ auto inline void
 __attribute__ ((always_inline))
 elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 		  const Elf32_Sym *sym, const struct r_found_version *version,
-		  void *const reloc_addr_arg)
+		  void *const reloc_addr_arg, int skip_ifunc)
 {
   Elf32_Addr *const reloc_addr = reloc_addr_arg;
   const Elf32_Sym *const refsym = sym;
@@ -398,7 +392,8 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 
   if (sym != NULL
       && __builtin_expect (ELFW(ST_TYPE) (sym->st_info) == STT_GNU_IFUNC, 0)
-      && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1))
+      && __builtin_expect (sym->st_shndx != SHN_UNDEF, 1)
+      && __builtin_expect (!skip_ifunc, 1))
     {
       value = ((Elf32_Addr (*) (int)) value) (GLRO(dl_hwcap));
     }
@@ -454,8 +449,7 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 	sparc_fixup_plt (reloc, reloc_addr, value, 0, do_flush);
       }
       break;
-#if (!defined RTLD_BOOTSTRAP || USE___THREAD) \
-    && !defined RESOLVE_CONFLICT_FIND_MAP
+#ifndef RESOLVE_CONFLICT_FIND_MAP
     case R_SPARC_TLS_DTPMOD32:
       /* Get the information from the link map returned by the
 	 resolv function.  */
@@ -553,7 +547,8 @@ elf_machine_rela_relative (Elf32_Addr l_addr, const Elf32_Rela *reloc,
 auto inline void
 __attribute__ ((always_inline))
 elf_machine_lazy_rel (struct link_map *map,
-		      Elf32_Addr l_addr, const Elf32_Rela *reloc)
+		      Elf32_Addr l_addr, const Elf32_Rela *reloc,
+		      int skip_ifunc)
 {
   Elf32_Addr *const reloc_addr = (void *) (l_addr + reloc->r_offset);
   const unsigned int r_type = ELF32_R_TYPE (reloc->r_info);
@@ -563,7 +558,8 @@ elf_machine_lazy_rel (struct link_map *map,
   else if (r_type == R_SPARC_JMP_IREL)
     {
       Elf32_Addr value = map->l_addr + reloc->r_addend;
-      value = ((Elf32_Addr (*) (int)) value) (GLRO(dl_hwcap));
+      if (__builtin_expect (!skip_ifunc, 1))
+	value = ((Elf32_Addr (*) (int)) value) (GLRO(dl_hwcap));
       sparc_fixup_plt (reloc, reloc_addr, value, 1, 1);
     }
   else if (r_type == R_SPARC_NONE)

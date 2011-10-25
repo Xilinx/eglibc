@@ -1,5 +1,5 @@
 /* Complex tangent function for double.
-   Copyright (C) 1997, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2005, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -22,7 +22,7 @@
 #include <fenv.h>
 #include <math.h>
 
-#include "math_private.h"
+#include <math_private.h>
 
 
 __complex__ double
@@ -30,9 +30,9 @@ __ctan (__complex__ double x)
 {
   __complex__ double res;
 
-  if (!isfinite (__real__ x) || !isfinite (__imag__ x))
+  if (__builtin_expect (!isfinite (__real__ x) || !isfinite (__imag__ x), 0))
     {
-      if (__isinf (__imag__ x))
+      if (__isinf_ns (__imag__ x))
 	{
 	  __real__ res = __copysign (0.0, __real__ x);
 	  __imag__ res = __copysign (1.0, __imag__ x);
@@ -46,10 +46,8 @@ __ctan (__complex__ double x)
 	  __real__ res = __nan ("");
 	  __imag__ res = __nan ("");
 
-#ifdef FE_INVALID
-	  if (__isinf (__real__ x))
+	  if (__isinf_ns (__real__ x))
 	    feraiseexcept (FE_INVALID);
-#endif
 	}
     }
   else

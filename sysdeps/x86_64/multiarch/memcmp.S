@@ -1,5 +1,5 @@
 /* Multiple versions of memcmp
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010, 2011 Free Software Foundation, Inc.
    Contributed by Intel Corporation.
    This file is part of the GNU C Library.
 
@@ -29,11 +29,20 @@ ENTRY(memcmp)
 	cmpl	$0, KIND_OFFSET+__cpu_features(%rip)
 	jne	1f
 	call	__init_cpu_features
-1:	leaq	__memcmp_sse2(%rip), %rax
-	testl	$bit_SSE4_1, __cpu_features+CPUID_OFFSET+index_SSE4_1(%rip)
-	jz	2f
+
+1:	testl	$bit_SSSE3, __cpu_features+CPUID_OFFSET+index_SSSE3(%rip)
+	jnz	2f
+	leaq	__memcmp_sse2(%rip), %rax
+	ret
+
+2:	testl	$bit_SSE4_1, __cpu_features+CPUID_OFFSET+index_SSE4_1(%rip)
+	jz	3f
 	leaq	__memcmp_sse4_1(%rip), %rax
-2:	ret
+	ret
+
+3:	leaq	__memcmp_ssse3(%rip), %rax
+	ret
+
 END(memcmp)
 
 # undef ENTRY

@@ -1,4 +1,4 @@
-/* Copyright (C) 1997-2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+/* Copyright (C) 1997-2006, 2007, 2009, 2010, 2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 1997.
 
@@ -191,7 +191,7 @@ static FLOAT max_error, real_max_error, imag_max_error;
 
 #if __OPTION_EGLIBC_LIBM_BIG
 #define MANT_DIG CHOOSE ((LDBL_MANT_DIG-1), (DBL_MANT_DIG-1), (FLT_MANT_DIG-1),  \
-                         (LDBL_MANT_DIG-1), (DBL_MANT_DIG-1), (FLT_MANT_DIG-1))
+			 (LDBL_MANT_DIG-1), (DBL_MANT_DIG-1), (FLT_MANT_DIG-1))
 #else
 /* Reduce precision to which the results are checked against
    expected values.  */
@@ -3298,6 +3298,16 @@ jn_test (void)
   TEST_ff_f (jn, 10, 2.0, 0.251538628271673670963516093751820639e-6L);
   TEST_ff_f (jn, 10, 10.0, 0.207486106633358857697278723518753428L);
 
+  /* BZ #11589 .*/
+  TEST_ff_f (jn, 2, 2.4048255576957729, 0.43175480701968038399746111312430703L);
+  TEST_ff_f (jn, 3, 2.4048255576957729, 0.19899990535769083404042146764530813L);
+  TEST_ff_f (jn, 4, 2.4048255576957729, 0.647466661641779720084932282551219891E-1L);
+  TEST_ff_f (jn, 5, 2.4048255576957729, 0.163892432048058525099230549946147698E-1L);
+  TEST_ff_f (jn, 6, 2.4048255576957729, 0.34048184720278336646673682895929161E-2L);
+  TEST_ff_f (jn, 7, 2.4048255576957729, 0.60068836573295394221291569249883076E-3L);
+  TEST_ff_f (jn, 8, 2.4048255576957729, 0.92165786705344923232879022467054148E-4L);
+  TEST_ff_f (jn, 9, 2.4048255576957729, 0.12517270977961513005428966643852564E-4L)
+
   END (jn);
 }
 
@@ -4399,6 +4409,7 @@ lround_test (void)
   TEST_f_l (lround, 1073741824.01, 1073741824);
 # if LONG_MAX > 281474976710656
   TEST_f_l (lround, 281474976710656.025, 281474976710656);
+  TEST_f_l (llround, -3.65309740835E17, -365309740835000000);
 # endif
   TEST_f_l (lround, 2097152.5, 2097153);
   TEST_f_l (lround, -2097152.5, -2097153);
@@ -4942,11 +4953,27 @@ remainder_test (void)
 
   START (remainder);
 
+  errno = 0;
   TEST_ff_f (remainder, 1, 0, nan_value, INVALID_EXCEPTION);
+  check_int ("errno for remainder(1, 0) = EDOM ", errno, EDOM, 0, 0, 0);
+  errno = 0;
   TEST_ff_f (remainder, 1, minus_zero, nan_value, INVALID_EXCEPTION);
+  check_int ("errno for remainder(1, -0) = EDOM ", errno, EDOM, 0, 0, 0);
+  errno = 0;
   TEST_ff_f (remainder, plus_infty, 1, nan_value, INVALID_EXCEPTION);
+  check_int ("errno for remainder(INF, 1) = EDOM ", errno, EDOM, 0, 0, 0);
+  errno = 0;
   TEST_ff_f (remainder, minus_infty, 1, nan_value, INVALID_EXCEPTION);
+  check_int ("errno for remainder(-INF, 1) = EDOM ", errno, EDOM, 0, 0, 0);
+  errno = 0;
   TEST_ff_f (remainder, nan_value, nan_value, nan_value);
+  check_int ("errno for remainder(NAN, NAN) unchanged", errno, 0, 0, 0, 0);
+  errno = 0;
+  TEST_ff_f (remainder, 0, nan_value, nan_value);
+  check_int ("errno for remainder(0, NAN) unchanged", errno, 0, 0, 0, 0);
+  errno = 0;
+  TEST_ff_f (remainder, nan_value, 0, nan_value);
+  check_int ("errno for remainder(NaN, 0) unchanged", errno, 0, 0, 0, 0);
 
   TEST_ff_f (remainder, 1.625, 1.0, -0.375);
   TEST_ff_f (remainder, -1.625, 1.0, 0.375);

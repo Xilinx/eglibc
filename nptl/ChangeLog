@@ -1,3 +1,78 @@
+2011-10-23  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/tls.h: Remove #include <list.h>.
+
+2011-10-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* pthread_create.c (start_thread): Call __ctype_init.
+
+2011-09-15  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/pthread/list.h: Define only list_t if __need_list_t is
+	defined.
+	(list_add): Add atomic_write_barrier.
+	* descr.h: Define __need_list_t before including <list.h>.
+	* nptl-init.c: Include <list.h>
+	* allocatestack.c: Likewise.
+
+2011-09-11  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/tls.h: Remove HAVE_TLS_SUPPORT test.
+	* sysdeps/ia64/tls.h: Likewise.
+	* sysdeps/powerpc/tls.h: Likewise.
+	* sysdeps/s390/tls.h: Likewise.
+	* sysdeps/sh/tls.h: Likewise.
+	* sysdeps/sparc/tls.h: Likewise.
+	* sysdeps/x86_64/tls.h: Likewise.
+
+2011-09-10  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/pthread/malloc-machine.h: Define MUTEX_INITIALIZER.
+
+	* sysdeps/unix/sysv/linux/i386/i486/sem_post.S: Don't handle
+	!USE___THREAD.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_trywait.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/sysdep-cancel.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_post.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_trywait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_post.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_trywait.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_wait.S: Likewise.
+
+	* tst-tls1.c: Support for __thread is now mandatory.
+	* tst-tls2.c: Likewise.
+	* tst-tls3.c: Likewise.
+	* tst-tls3mod.c: Likewise.
+	* tst-tls4.c: Likewise.
+	* tst-tls4moda.c: Likewise.
+	* tst-tls4modb.c: Likewise.
+	* tst-tls5.h: Likewise.
+
+2011-09-08  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12403]
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+	(pthread_rwlock_timedwrlock): Use correct macro in test.
+	Patch by H.J. Lu <hongjiu.lu@intel.com>.
+
+2011-09-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S (sem_timedwait): Don't
+	use gettimeofday vsyscall, just call gettimeofday.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S: Likewise.
+	Simplify __vdso_clock_gettime use.
+
 2011-09-05  David S. Miller  <davem@davemloft.net>
 
 	* sysdeps/unix/sysv/linux/sem_timedwait.c (do_futex_timed_wait):

@@ -1,5 +1,4 @@
-# Copyright (C) 1996-2001,2002,2003,2004,2005,2006
-#	Free Software Foundation, Inc.
+# Copyright (C) 1996-2006,2011 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -27,7 +26,8 @@ include ../option-groups.mak
 headers		:= math.h bits/mathcalls.h bits/mathinline.h bits/huge_val.h \
 		   bits/huge_valf.h bits/huge_vall.h bits/inf.h bits/nan.h \
 		   fpu_control.h complex.h bits/cmathcalls.h fenv.h \
-		   bits/fenv.h bits/fenvinline.h bits/mathdef.h tgmath.h
+		   bits/fenv.h bits/fenvinline.h bits/mathdef.h tgmath.h \
+		   bits/math-finite.h
 
 # Internal header files.
 distribute	:= math_ldbl.h math_private.h machine/asm.h
@@ -62,7 +62,7 @@ libm-calls = e_acos e_acosh e_asin e_atan2 e_atanh e_cosh e_exp e_fmod	\
 	     s_catan s_casin s_ccos s_csin s_ctan s_ctanh s_cacos	\
 	     s_casinh s_cacosh s_catanh s_csqrt s_cpow s_cproj s_clog10 \
 	     s_fma s_lrint s_llrint s_lround s_llround e_exp10 w_log2	\
-	     $(calls:s_%=m_%)
+	     s_isinf_ns $(calls:s_%=m_%)
 
 include ../Makeconfig
 
