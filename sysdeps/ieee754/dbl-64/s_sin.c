@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * written by International Business Machines Corp.
- * Copyright (C) 2001, 2009 Free Software Foundation
+ * Copyright (C) 2001, 2009, 2011 Free Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -53,15 +53,24 @@
 #include "mydefs.h"
 #include "usncs.h"
 #include "MathLib.h"
-#include "sincos.tbl"
 #include "math_private.h"
 
+#ifndef SECTION
+# define SECTION
+#endif
+
+extern const union
+{
+  int4 i[880];
+  double x[440];
+} __sincostab attribute_hidden;
+
 static const double
-          sn3 = -1.66666666666664880952546298448555E-01,
-          sn5 =  8.33333214285722277379541354343671E-03,
-          cs2 =  4.99999999999999999999950396842453E-01,
-          cs4 = -4.16666666666664434524222570944589E-02,
-          cs6 =  1.38888874007937613028114285595617E-03;
+	  sn3 = -1.66666666666664880952546298448555E-01,
+	  sn5 =  8.33333214285722277379541354343671E-03,
+	  cs2 =  4.99999999999999999999950396842453E-01,
+	  cs4 = -4.16666666666664434524222570944589E-02,
+	  cs6 =  1.38888874007937613028114285595617E-03;
 
 void __dubsin(double x, double dx, double w[]);
 void __docos(double x, double dx, double w[]);
@@ -87,7 +96,9 @@ static double csloww2(double x, double dx, double orig, int n);
 /* An ultimate sin routine. Given an IEEE double machine number x   */
 /* it computes the correctly rounded (to nearest) value of sin(x)  */
 /*******************************************************************/
-double __sin(double x){
+double
+SECTION
+__sin(double x){
 	double xx,res,t,cor,y,s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
 #if 0
 	double w[2];
@@ -120,10 +131,10 @@ double __sin(double x){
 	  s = y + y*xx*(sn3 +xx*sn5);
 	  c = xx*(cs2 +xx*(cs4 + xx*cs6));
 	  k=u.i[LOW_HALF]<<2;
-	  sn=(m>0)?sincos.x[k]:-sincos.x[k];
-	  ssn=(m>0)?sincos.x[k+1]:-sincos.x[k+1];
-	  cs=sincos.x[k+2];
-	  ccs=sincos.x[k+3];
+	  sn=(m>0)?__sincostab.x[k]:-__sincostab.x[k];
+	  ssn=(m>0)?__sincostab.x[k+1]:-__sincostab.x[k+1];
+	  cs=__sincostab.x[k+2];
+	  ccs=__sincostab.x[k+3];
 	  cor=(ssn+s*ccs-sn*c)+cs*s;
 	  res=sn+cor;
 	  cor=(sn-res)+cor;
@@ -146,10 +157,10 @@ double __sin(double x){
 	  s = y + y*xx*(sn3 +xx*sn5);
 	  c = xx*(cs2 +xx*(cs4 + xx*cs6));
 	  k=u.i[LOW_HALF]<<2;
-	  sn=sincos.x[k];
-	  ssn=sincos.x[k+1];
-	  cs=sincos.x[k+2];
-	  ccs=sincos.x[k+3];
+	  sn=__sincostab.x[k];
+	  ssn=__sincostab.x[k+1];
+	  cs=__sincostab.x[k+2];
+	  ccs=__sincostab.x[k+3];
 	  cor=(ccs-s*ssn-cs*c)-sn*s;
 	  res=cs+cor;
 	  cor=(cs-res)+cor;
@@ -174,7 +185,7 @@ double __sin(double x){
 	    xx = a*a;
 	    if (n) {a=-a;da=-da;}
 	    if (xx < 0.01588) {
-                      /*Taylor series */
+		      /*Taylor series */
 	      t = (((((s5.x*xx + s4.x)*xx + s3.x)*xx + s2.x)*xx + s1.x)*a - 0.5*da)*xx+da;
 	      res = a+t;
 	      cor = (a-res)+t;
@@ -192,10 +203,10 @@ double __sin(double x){
 	      s = y + (db+y*xx*(sn3 +xx*sn5));
 	      c = y*db+xx*(cs2 +xx*(cs4 + xx*cs6));
 	      k=u.i[LOW_HALF]<<2;
-	      sn=sincos.x[k];
-	      ssn=sincos.x[k+1];
-	      cs=sincos.x[k+2];
-	      ccs=sincos.x[k+3];
+	      sn=__sincostab.x[k];
+	      ssn=__sincostab.x[k+1];
+	      cs=__sincostab.x[k+2];
+	      ccs=__sincostab.x[k+3];
 	      cor=(ssn+s*ccs-sn*c)+cs*s;
 	      res=sn+cor;
 	      cor=(sn-res)+cor;
@@ -212,10 +223,10 @@ double __sin(double x){
 	    y=a-(u.x-big.x)+da;
 	    xx=y*y;
 	    k=u.i[LOW_HALF]<<2;
-	    sn=sincos.x[k];
-	    ssn=sincos.x[k+1];
-	    cs=sincos.x[k+2];
-	    ccs=sincos.x[k+3];
+	    sn=__sincostab.x[k];
+	    ssn=__sincostab.x[k+1];
+	    cs=__sincostab.x[k+2];
+	    ccs=__sincostab.x[k+3];
 	    s = y + y*xx*(sn3 +xx*sn5);
 	    c = xx*(cs2 +xx*(cs4 + xx*cs6));
 	    cor=(ccs-s*ssn-cs*c)-sn*s;
@@ -253,7 +264,7 @@ double __sin(double x){
 	    xx = a*a;
 	    if (n) {a=-a;da=-da;}
 	    if (xx < 0.01588) {
-              /* Taylor series */
+	      /* Taylor series */
 	      t = (((((s5.x*xx + s4.x)*xx + s3.x)*xx + s2.x)*xx + s1.x)*a - 0.5*da)*xx+da;
 	      res = a+t;
 	      cor = (a-res)+t;
@@ -269,10 +280,10 @@ double __sin(double x){
 	      s = y + (db+y*xx*(sn3 +xx*sn5));
 	      c = y*db+xx*(cs2 +xx*(cs4 + xx*cs6));
 	      k=u.i[LOW_HALF]<<2;
-	      sn=sincos.x[k];
-	      ssn=sincos.x[k+1];
-	      cs=sincos.x[k+2];
-	      ccs=sincos.x[k+3];
+	      sn=__sincostab.x[k];
+	      ssn=__sincostab.x[k+1];
+	      cs=__sincostab.x[k+2];
+	      ccs=__sincostab.x[k+3];
 	      cor=(ssn+s*ccs-sn*c)+cs*s;
 	      res=sn+cor;
 	      cor=(sn-res)+cor;
@@ -289,10 +300,10 @@ double __sin(double x){
 	    y=a-(u.x-big.x)+da;
 	    xx=y*y;
 	    k=u.i[LOW_HALF]<<2;
-	    sn=sincos.x[k];
-	    ssn=sincos.x[k+1];
-	    cs=sincos.x[k+2];
-	    ccs=sincos.x[k+3];
+	    sn=__sincostab.x[k];
+	    ssn=__sincostab.x[k+1];
+	    cs=__sincostab.x[k+2];
+	    ccs=__sincostab.x[k+3];
 	    s = y + y*xx*(sn3 +xx*sn5);
 	    c = xx*(cs2 +xx*(cs4 + xx*cs6));
 	    cor=(ccs-s*ssn-cs*c)-sn*s;
@@ -344,7 +355,9 @@ double __sin(double x){
 /* it computes the correctly rounded (to nearest) value of cos(x)  */
 /*******************************************************************/
 
-double __cos(double x)
+double
+SECTION
+__cos(double x)
 {
   double y,xx,res,t,cor,s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
   mynumber u,v;
@@ -364,10 +377,10 @@ double __cos(double x)
     s = y + y*xx*(sn3 +xx*sn5);
     c = xx*(cs2 +xx*(cs4 + xx*cs6));
     k=u.i[LOW_HALF]<<2;
-    sn=sincos.x[k];
-    ssn=sincos.x[k+1];
-    cs=sincos.x[k+2];
-    ccs=sincos.x[k+3];
+    sn=__sincostab.x[k];
+    ssn=__sincostab.x[k+1];
+    cs=__sincostab.x[k+2];
+    ccs=__sincostab.x[k+3];
     cor=(ccs-s*ssn-cs*c)-sn*s;
     res=cs+cor;
     cor=(cs-res)+cor;
@@ -396,10 +409,10 @@ double __cos(double x)
       s = y + (db+y*xx*(sn3 +xx*sn5));
       c = y*db+xx*(cs2 +xx*(cs4 + xx*cs6));
       k=u.i[LOW_HALF]<<2;
-      sn=sincos.x[k];
-      ssn=sincos.x[k+1];
-      cs=sincos.x[k+2];
-      ccs=sincos.x[k+3];
+      sn=__sincostab.x[k];
+      ssn=__sincostab.x[k+1];
+      cs=__sincostab.x[k+2];
+      ccs=__sincostab.x[k+3];
       cor=(ssn+s*ccs-sn*c)+cs*s;
       res=sn+cor;
       cor=(sn-res)+cor;
@@ -442,10 +455,10 @@ double __cos(double x)
 	s = y + (db+y*xx*(sn3 +xx*sn5));
 	c = y*db+xx*(cs2 +xx*(cs4 + xx*cs6));
 	k=u.i[LOW_HALF]<<2;
-	sn=sincos.x[k];
-	ssn=sincos.x[k+1];
-	cs=sincos.x[k+2];
-	ccs=sincos.x[k+3];
+	sn=__sincostab.x[k];
+	ssn=__sincostab.x[k+1];
+	cs=__sincostab.x[k+2];
+	ccs=__sincostab.x[k+3];
 	cor=(ssn+s*ccs-sn*c)+cs*s;
 	res=sn+cor;
 	cor=(sn-res)+cor;
@@ -461,10 +474,10 @@ double __cos(double x)
       y=a-(u.x-big.x)+da;
       xx=y*y;
       k=u.i[LOW_HALF]<<2;
-      sn=sincos.x[k];
-      ssn=sincos.x[k+1];
-      cs=sincos.x[k+2];
-      ccs=sincos.x[k+3];
+      sn=__sincostab.x[k];
+      ssn=__sincostab.x[k+1];
+      cs=__sincostab.x[k+2];
+      ccs=__sincostab.x[k+3];
       s = y + y*xx*(sn3 +xx*sn5);
       c = xx*(cs2 +xx*(cs4 + xx*cs6));
       cor=(ccs-s*ssn-cs*c)-sn*s;
@@ -473,7 +486,7 @@ double __cos(double x)
       cor = (cor>0)? 1.025*cor+eps : 1.025*cor-eps;
       return (res==res+cor)? ((n)?-res:res) : csloww2(a,da,x,n);
 
-           break;
+	   break;
 
     }
 
@@ -517,10 +530,10 @@ double __cos(double x)
 	s = y + (db+y*xx*(sn3 +xx*sn5));
 	c = y*db+xx*(cs2 +xx*(cs4 + xx*cs6));
 	k=u.i[LOW_HALF]<<2;
-	sn=sincos.x[k];
-	ssn=sincos.x[k+1];
-	cs=sincos.x[k+2];
-	ccs=sincos.x[k+3];
+	sn=__sincostab.x[k];
+	ssn=__sincostab.x[k+1];
+	cs=__sincostab.x[k+2];
+	ccs=__sincostab.x[k+3];
 	cor=(ssn+s*ccs-sn*c)+cs*s;
 	res=sn+cor;
 	cor=(sn-res)+cor;
@@ -536,10 +549,10 @@ double __cos(double x)
       y=a-(u.x-big.x)+da;
       xx=y*y;
       k=u.i[LOW_HALF]<<2;
-      sn=sincos.x[k];
-      ssn=sincos.x[k+1];
-      cs=sincos.x[k+2];
-      ccs=sincos.x[k+3];
+      sn=__sincostab.x[k];
+      ssn=__sincostab.x[k+1];
+      cs=__sincostab.x[k+2];
+      ccs=__sincostab.x[k+3];
       s = y + y*xx*(sn3 +xx*sn5);
       c = xx*(cs2 +xx*(cs4 + xx*cs6));
       cor=(ccs-s*ssn-cs*c)-sn*s;
@@ -591,7 +604,9 @@ double __cos(double x)
 /* precision  and if still doesn't accurate enough by mpsin   or dubsin */
 /************************************************************************/
 
-static double slow(double x) {
+static double
+SECTION
+slow(double x) {
 static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
  double y,x1,x2,xx,r,t,res,cor,w[2];
  x1=(x+th2_36)-th2_36;
@@ -611,11 +626,13 @@ static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
  }
 }
 /*******************************************************************************/
-/* Routine compute sin(x) for   0.25<|x|< 0.855469 by  sincos.tbl   and Taylor */
+/* Routine compute sin(x) for   0.25<|x|< 0.855469 by  __sincostab.tbl   and Taylor */
 /* and if result still doesn't accurate enough by mpsin   or dubsin            */
 /*******************************************************************************/
 
-static double slow1(double x) {
+static double
+SECTION
+slow1(double x) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,c1,c2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -627,10 +644,10 @@ static double slow1(double x) {
   s = y*xx*(sn3 +xx*sn5);
   c = xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];          /* Data          */
-  ssn=sincos.x[k+1];       /*  from         */
-  cs=sincos.x[k+2];        /*   tables      */
-  ccs=sincos.x[k+3];       /*    sincos.tbl */
+  sn=__sincostab.x[k];          /* Data          */
+  ssn=__sincostab.x[k+1];       /*  from         */
+  cs=__sincostab.x[k+2];        /*   tables      */
+  ccs=__sincostab.x[k+3];       /*    __sincostab.tbl */
   y1 = (y+t22)-t22;
   y2 = y - y1;
   c1 = (cs+t22)-t22;
@@ -648,10 +665,12 @@ static double slow1(double x) {
   }
 }
 /**************************************************************************/
-/*  Routine compute sin(x) for   0.855469  <|x|<2.426265  by  sincos.tbl  */
+/*  Routine compute sin(x) for   0.855469  <|x|<2.426265  by  __sincostab.tbl  */
 /* and if result still doesn't accurate enough by mpsin   or dubsin       */
 /**************************************************************************/
-static double slow2(double x) {
+static double
+SECTION
+slow2(double x) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,e1,e2,xx,cor,res,del;
   static const double t22 = 6291456.0;
@@ -672,10 +691,10 @@ static double slow2(double x) {
   s = y*xx*(sn3 +xx*sn5);
   c = y*del+xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
   y1 = (y+t22)-t22;
   y2 = (y - y1)+del;
   e1 = (sn+t22)-t22;
@@ -703,7 +722,9 @@ static double slow2(double x) {
 /* result.And if result not accurate enough routine calls mpsin1 or dubsin */
 /***************************************************************************/
 
-static double sloww(double x,double dx, double orig) {
+static double
+SECTION
+sloww(double x,double dx, double orig) {
   static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
   double y,x1,x2,xx,r,t,res,cor,w[2],a,da,xn;
   union {int4 i[2]; double x;} v;
@@ -750,7 +771,9 @@ static double sloww(double x,double dx, double orig) {
 /* accurate enough routine calls  mpsin1   or dubsin                       */
 /***************************************************************************/
 
-static double sloww1(double x, double dx, double orig) {
+static double
+SECTION
+sloww1(double x, double dx, double orig) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,c1,c2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -763,10 +786,10 @@ static double sloww1(double x, double dx, double orig) {
   s = y*xx*(sn3 +xx*sn5);
   c = xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
   y1 = (y+t22)-t22;
   y2 = (y - y1)+dx;
   c1 = (cs+t22)-t22;
@@ -792,7 +815,9 @@ static double sloww1(double x, double dx, double orig) {
 /* accurate enough routine calls  mpsin1   or dubsin                       */
 /***************************************************************************/
 
-static double sloww2(double x, double dx, double orig, int n) {
+static double
+SECTION
+sloww2(double x, double dx, double orig, int n) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,e1,e2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -805,10 +830,10 @@ static double sloww2(double x, double dx, double orig, int n) {
   s = y*xx*(sn3 +xx*sn5);
   c = y*dx+xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
 
   y1 = (y+t22)-t22;
   y2 = (y - y1)+dx;
@@ -836,7 +861,9 @@ static double sloww2(double x, double dx, double orig, int n) {
 /* result.And if result not accurate enough routine calls other routines    */
 /***************************************************************************/
 
-static double bsloww(double x,double dx, double orig,int n) {
+static double
+SECTION
+bsloww(double x,double dx, double orig,int n) {
   static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
   double y,x1,x2,xx,r,t,res,cor,w[2];
 #if 0
@@ -869,7 +896,9 @@ static double bsloww(double x,double dx, double orig,int n) {
 /* And if result not  accurate enough routine calls  other routines         */
 /***************************************************************************/
 
-static double bsloww1(double x, double dx, double orig,int n) {
+static double
+SECTION
+bsloww1(double x, double dx, double orig,int n) {
 mynumber u;
  double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,c1,c2,xx,cor,res;
  static const double t22 = 6291456.0;
@@ -882,10 +911,10 @@ mynumber u;
  s = y*xx*(sn3 +xx*sn5);
  c = xx*(cs2 +xx*(cs4 + xx*cs6));
  k=u.i[LOW_HALF]<<2;
- sn=sincos.x[k];
- ssn=sincos.x[k+1];
- cs=sincos.x[k+2];
- ccs=sincos.x[k+3];
+ sn=__sincostab.x[k];
+ ssn=__sincostab.x[k+1];
+ cs=__sincostab.x[k+2];
+ ccs=__sincostab.x[k+3];
  y1 = (y+t22)-t22;
  y2 = (y - y1)+dx;
  c1 = (cs+t22)-t22;
@@ -912,7 +941,9 @@ mynumber u;
 /* And if result not accurate enough routine calls  other routines          */
 /***************************************************************************/
 
-static double bsloww2(double x, double dx, double orig, int n) {
+static double
+SECTION
+bsloww2(double x, double dx, double orig, int n) {
 mynumber u;
  double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,e1,e2,xx,cor,res;
  static const double t22 = 6291456.0;
@@ -925,10 +956,10 @@ mynumber u;
  s = y*xx*(sn3 +xx*sn5);
  c = y*dx+xx*(cs2 +xx*(cs4 + xx*cs6));
  k=u.i[LOW_HALF]<<2;
- sn=sincos.x[k];
- ssn=sincos.x[k+1];
- cs=sincos.x[k+2];
- ccs=sincos.x[k+3];
+ sn=__sincostab.x[k];
+ ssn=__sincostab.x[k+1];
+ cs=__sincostab.x[k+2];
+ ccs=__sincostab.x[k+3];
 
  y1 = (y+t22)-t22;
  y2 = (y - y1)+dx;
@@ -954,7 +985,9 @@ mynumber u;
 /* precision  and if still doesn't accurate enough by mpcos   or docos  */
 /************************************************************************/
 
-static double cslow2(double x) {
+static double
+SECTION
+cslow2(double x) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,e1,e2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -966,10 +999,10 @@ static double cslow2(double x) {
   s = y*xx*(sn3 +xx*sn5);
   c = xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
   y1 = (y+t22)-t22;
   y2 = y - y1;
   e1 = (sn+t22)-t22;
@@ -997,7 +1030,9 @@ static double cslow2(double x) {
 /***************************************************************************/
 
 
-static double csloww(double x,double dx, double orig) {
+static double
+SECTION
+csloww(double x,double dx, double orig) {
   static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
   double y,x1,x2,xx,r,t,res,cor,w[2],a,da,xn;
   union {int4 i[2]; double x;} v;
@@ -1046,7 +1081,9 @@ static double csloww(double x,double dx, double orig) {
 /* accurate enough routine calls  other routines                            */
 /***************************************************************************/
 
-static double csloww1(double x, double dx, double orig) {
+static double
+SECTION
+csloww1(double x, double dx, double orig) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,c1,c2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -1059,10 +1096,10 @@ static double csloww1(double x, double dx, double orig) {
   s = y*xx*(sn3 +xx*sn5);
   c = xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
   y1 = (y+t22)-t22;
   y2 = (y - y1)+dx;
   c1 = (cs+t22)-t22;
@@ -1090,7 +1127,9 @@ static double csloww1(double x, double dx, double orig) {
 /* accurate enough routine calls  other routines                            */
 /***************************************************************************/
 
-static double csloww2(double x, double dx, double orig, int n) {
+static double
+SECTION
+csloww2(double x, double dx, double orig, int n) {
   mynumber u;
   double sn,ssn,cs,ccs,s,c,w[2],y,y1,y2,e1,e2,xx,cor,res;
   static const double t22 = 6291456.0;
@@ -1103,10 +1142,10 @@ static double csloww2(double x, double dx, double orig, int n) {
   s = y*xx*(sn3 +xx*sn5);
   c = y*dx+xx*(cs2 +xx*(cs4 + xx*cs6));
   k=u.i[LOW_HALF]<<2;
-  sn=sincos.x[k];
-  ssn=sincos.x[k+1];
-  cs=sincos.x[k+2];
-  ccs=sincos.x[k+3];
+  sn=__sincostab.x[k];
+  ssn=__sincostab.x[k+1];
+  cs=__sincostab.x[k+2];
+  ccs=__sincostab.x[k+3];
 
   y1 = (y+t22)-t22;
   y2 = (y - y1)+dx;
@@ -1127,12 +1166,17 @@ static double csloww2(double x, double dx, double orig, int n) {
   }
 }
 
+#ifndef __cos
 weak_alias (__cos, cos)
-weak_alias (__sin, sin)
-
-#ifdef NO_LONG_DOUBLE
-strong_alias (__sin, __sinl)
-weak_alias (__sin, sinl)
+# ifdef NO_LONG_DOUBLE
 strong_alias (__cos, __cosl)
 weak_alias (__cos, cosl)
+# endif
+#endif
+#ifndef __sin
+weak_alias (__sin, sin)
+# ifdef NO_LONG_DOUBLE
+strong_alias (__sin, __sinl)
+weak_alias (__sin, sinl)
+# endif
 #endif

@@ -43,6 +43,10 @@
 #include "upow.tbl"
 #include "math_private.h"
 
+#ifndef SECTION
+# define SECTION
+#endif
+
 
 double __exp1(double x, double xx, double error);
 static double log1(double x, double *delta, double *error);
@@ -55,7 +59,9 @@ static int checkint(double x);
 /* An ultimate power routine. Given two IEEE double machine numbers y,x    */
 /* it computes the correctly rounded (to nearest) value of X^y.            */
 /***************************************************************************/
-double __ieee754_pow(double x, double y) {
+double
+SECTION
+__ieee754_pow(double x, double y) {
   double z,a,aa,error, t,a1,a2,y1,y2;
 #if 0
   double gor=1.0;
@@ -153,12 +159,16 @@ double __ieee754_pow(double x, double y) {
   if (y<0) return (x<1.0)?INF.x:0;
   return 0;     /* unreachable, to make the compiler happy */
 }
+#ifndef __ieee754_pow
 strong_alias (__ieee754_pow, __pow_finite)
+#endif
 
 /**************************************************************************/
 /* Computing x^y using more accurate but more slow log routine            */
 /**************************************************************************/
-static double power1(double x, double y) {
+static double
+SECTION
+power1(double x, double y) {
   double z,a,aa,error, t,a1,a2,y1,y2;
   z = my_log2(x,&aa,&error);
   t = y*134217729.0;
@@ -181,7 +191,9 @@ static double power1(double x, double y) {
 /* + the parameter delta.                                                   */
 /* The result is bounded by error (rightmost argument)                      */
 /****************************************************************************/
-static double log1(double x, double *delta, double *error) {
+static double
+SECTION
+log1(double x, double *delta, double *error) {
   int i,j,m;
 #if 0
   int n;
@@ -273,7 +285,9 @@ static double log1(double x, double *delta, double *error) {
 /* Computing log(x)(x is left argument).The result is return double + delta.*/
 /* The result is bounded by error (right argument)                           */
 /****************************************************************************/
-static double my_log2(double x, double *delta, double *error) {
+static double
+SECTION
+my_log2(double x, double *delta, double *error) {
   int i,j,m;
 #if 0
   int n;
@@ -284,7 +298,7 @@ static double my_log2(double x, double *delta, double *error) {
 #endif
   double ou1,ou2,lu1,lu2,ov,lv1,lv2,a,a1,a2;
   double y,yy,z,zz,j1,j2,j7,j8;
-#ifndef DLA_FMA
+#ifndef DLA_FMS
   double j3,j4,j5,j6;
 #endif
   mynumber u,v;
@@ -367,7 +381,9 @@ static double my_log2(double x, double *delta, double *error) {
 /* Routine receives a double x and checks if it is an integer. If not */
 /* it returns 0, else it returns 1 if even or -1 if odd.              */
 /**********************************************************************/
-static int checkint(double x) {
+static int
+SECTION
+checkint(double x) {
   union {int4 i[2]; double x;} u;
   int k,m,n;
 #if 0

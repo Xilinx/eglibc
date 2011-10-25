@@ -41,13 +41,19 @@
 #include "MathLib.h"
 #include "math_private.h"
 
+#ifndef SECTION
+# define SECTION
+#endif
+
 void __mplog(mp_no *, mp_no *, int);
 
 /*********************************************************************/
 /* An ultimate log routine. Given an IEEE double machine number x     */
 /* it computes the correctly rounded (to nearest) value of log(x).   */
 /*********************************************************************/
-double __ieee754_log(double x) {
+double
+SECTION
+__ieee754_log(double x) {
 #define M 4
   static const int pr[M]={8,10,18,32};
   int i,j,n,ux,dx,p;
@@ -58,7 +64,7 @@ double __ieee754_log(double x) {
 	 sij,ssij,ttij,A,B,B0,y,y1,y2,polI,polII,sa,sb,
 	 t1,t2,t7,t8,t,ra,rb,ww,
 	 a0,aa0,s1,s2,ss2,s3,ss3,a1,aa1,a,aa,b,bb,c;
-#ifndef DLA_FMA
+#ifndef DLA_FMS
   double t3,t4,t5,t6;
 #endif
   number num;
@@ -207,4 +213,6 @@ double __ieee754_log(double x) {
   }
   return y1;
 }
+#ifndef __ieee754_log
 strong_alias (__ieee754_log, __log_finite)
+#endif
