@@ -1,3 +1,8 @@
+2011-10-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* argp/argp-fmtstream.c, argp/argp-help.c: Condition uses of
+	libc-internal interfaces on _LIBC.
+
 2011-10-25  Michael Hope  <michael.hope@linaro.org>
 
 	* aclocal.m4 (PKGVERSION_TEXI): Define.

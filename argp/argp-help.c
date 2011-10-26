@@ -1874,6 +1874,7 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 #endif
 	    }
 
+#ifdef _LIBC
 	  if (_IO_fwide (stream, 0) > 0)
             {
 #if ! _LIBC || __OPTION_POSIX_WIDE_CHAR_DEVICE_IO
@@ -1883,6 +1884,7 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 #endif
             }
 	  else
+#endif
 	    putc_unlocked ('\n', stream);
 
 #if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
