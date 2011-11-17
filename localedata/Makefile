@@ -25,13 +25,9 @@ all: # Make this the default target; it will be defined in Rules.
 include ../option-groups.mak
 
 # List with all available character set descriptions.
-all-charmaps := $(filter-out $(addprefix charmaps/, CVS RCS SCCS %~), \
-					 $(wildcard charmaps/[A-I]*) \
-					 $(wildcard charmaps/[J-Z]*))
+all-charmaps := $(wildcard charmaps/[A-I]*) $(wildcard charmaps/[J-Z]*)
 
-# List with all available character set descriptions.
-all-locales := $(filter-out $(addprefix locales/, CVS RCS SCCS %~), \
-			    $(wildcard locales/*))
+all-locales := $(wildcard locales/*)
 
 # If the EGLIBC_LOCALES option group is not enabled, trim the
 # list of charmap and locale source files.

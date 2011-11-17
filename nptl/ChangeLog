@@ -1,3 +1,23 @@
+2011-11-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* pthread_getattr_np.c (pthread_getattr_np): Set FD_CLOEXEC for
+	/proc/self/maps.
+
+2011-10-29  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13358]
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Initialize %r15 correctly also for code
+	path for kernels with FUTEX_CLOCK_REALTIME.
+	Debugged by H.J. Lu <hjl.tools@gmail.com>.
+
+2011-10-27  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #13344]
+	* sysdeps/pthread/pthread.h: Use __THREADNL instead of __THREAD
+	for memory synchronization functions.
+	* semaphore.h: Likewise.
+
 2011-10-24  Ulrich Drepper  <drepper@gmail.com>
 
 	* tst-cancel7.c: Avoid warning.

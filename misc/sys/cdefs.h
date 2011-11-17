@@ -38,7 +38,8 @@
 
 #ifdef __GNUC__
 
-/* All functions, except those with callbacks, are leaf functions.  */
+/* All functions, except those with callbacks or those that
+   synchronize memory, are leaf functions.  */
 # if __GNUC_PREREQ (4, 6) && !defined _LIBC
 #  define __LEAF , __leaf__
 #  define __LEAF_ATTR __attribute__ ((__leaf__))
@@ -54,13 +55,16 @@
    the -fexceptions options for C code as well.  */
 # if !defined __cplusplus && __GNUC_PREREQ (3, 3)
 #  define __THROW	__attribute__ ((__nothrow__ __LEAF))
+#  define __THROWNL	__attribute__ ((__nothrow__))
 #  define __NTH(fct)	__attribute__ ((__nothrow__ __LEAF)) fct
 # else
 #  if defined __cplusplus && __GNUC_PREREQ (2,8)
 #   define __THROW	throw ()
+#   define __THROWNL	throw ()
 #   define __NTH(fct)	__LEAF_ATTR fct throw ()
 #  else
 #   define __THROW
+#   define __THROWNL
 #   define __NTH(fct)	fct
 #  endif
 # endif
@@ -70,6 +74,7 @@
 # define __inline		/* No inline functions.  */
 
 # define __THROW
+# define __THROWNL
 # define __NTH(fct)	fct
 
 # define __const	const
@@ -187,9 +192,13 @@
 # ifdef __cplusplus
 #  define __REDIRECT_NTH(name, proto, alias) \
      name proto __THROW __asm__ (__ASMNAME (#alias))
+#  define __REDIRECT_NTHNL(name, proto, alias) \
+     name proto __THROWNL __asm__ (__ASMNAME (#alias))
 # else
 #  define __REDIRECT_NTH(name, proto, alias) \
      name proto __asm__ (__ASMNAME (#alias)) __THROW
+#  define __REDIRECT_NTHNL(name, proto, alias) \
+     name proto __asm__ (__ASMNAME (#alias)) __THROWNL
 # endif
 # define __ASMNAME(cname)  __ASMNAME2 (__USER_LABEL_PREFIX__, cname)
 # define __ASMNAME2(prefix, cname) __STRING (prefix) cname

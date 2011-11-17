@@ -98,9 +98,8 @@ __BEGIN_DECLS
 # undef	__MATH_PRECNAME
 
 # if (__STDC__ - 0 || __GNUC__ - 0) \
-     && (!defined __NO_LONG_DOUBLE_MATH \
-	 || defined __LDBL_COMPAT \
-	 || !defined _LIBC)
+     && (!(defined __NO_LONG_DOUBLE_MATH && defined _LIBC) \
+	 || defined __LDBL_COMPAT)
 #  ifdef __LDBL_COMPAT
 
 #   ifdef __USE_ISOC99
@@ -131,6 +130,7 @@ extern long double __REDIRECT_NTH (nexttowardl,
 
 /* Include the file of declarations again, this time using `long double'
    instead of `double' and appending l to each function name.  */
+
 #  ifndef _Mlong_double_
 #   define _Mlong_double_	long double
 #  endif

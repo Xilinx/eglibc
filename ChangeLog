@@ -1,3 +1,431 @@
+2011-11-17  Ulrich Drepper  <drepper@gmail.com>
+
+	* Makefile.in: Remove CVSOPT handling.
+	* configure.in: Remove use of AC_REVISION.
+	* iconvdata/Makefile (distribute): No need to filter out CVS.
+	* scripts/list-sources.sh: Remove CVS, subversion and monotone
+	handling.
+
+2011-11-16  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/i386/i686/multiarch/strcmp-ssse3.S
+	[USE_AS_STRCASECMP_L]: Fix argument offsets for non-PIC.
+	[USE_AS_STRNCASECMP_L]: Likewise.
+	(__strcasecmp_ssse3, __strncasecmp_ssse3): Handle
+	NO_TLS_DIRECT_SEG_REFS.
+	* sysdeps/i386/i686/multiarch/strcmp-sse4.S [USE_AS_STRCASECMP_L]:
+	Fix argument offsets for non-PIC.
+	[USE_AS_STRNCASECMP_L]: Likewise.
+	(__strcasecmp_sse4_2, __strncasecmp_sse4_2): Handle
+	NO_TLS_DIRECT_SEG_REFS.
+
+2011-11-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* locale/loadarchive.c (_nl_load_locale_from_archive): Open files with
+	O_CLOEXEC.
+	* locale/loadlocale.c (_nl_load_locale): Likewise.
+
+2011-11-15  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/clock_gettime.c (SYSDEP_GETTIME_CPU)
+	[__ASSUME_POSIX_CPU_TIMERS > 0]: Assign to retval and break.
+	* sysdeps/unix/sysv/linux/x86_64/clock_gettime.c
+	(SYSCALL_GETTIME): Set errno on error.
+
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request): Properly
+	count references to noai6ai_cached.
+
+2011-11-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* time/getdate.c (__getdate_r): Set FD_CLOEXEC for given file.
+
+	* sysdeps/unix/sysv/linux/readonly-area.c (__readonly_area): Set
+	FD_CLOEXEC for /proc/self/maps.
+
+	* sysdeps/unix/sysv/linux/getsysstats.c (phys_pages_info): Set
+	FD_CLOEXEC for /proc/meminfo.
+
+	* sysdeps/posix/getaddrinfo.c (gaiconf_init): Set FD_CLOEXEC for
+	gai.conf.
+
+	* resolv/res_query.c (res_hostalias):  Don't allow cancellation and set
+	FD_CLOEXEC for given file.
+
+	* resolv/res_hconf.c (do_init): Set FD_CLOEXEC for host.conf.
+
+	* resolv/gethnamaddr.c (_sethtent): Don't allow cancellation and set
+	FD_CLOEXEC for /etc/hosts.
+	(_gethtent): Likewise.
+
+	* nss/nsswitch.c (nss_parse_file): Set FD_CLOEXEC.
+
+	* nss/nss_files/files-netgrp.c (_nss_files_setnetgrent): Don't allow
+	cancellation and set FD_CLOEXEC for /etc/netgroup.
+
+	* nss/nss_files/files-key.c (search): Don't allow cancellation when
+	reading /etc/publickey.
+
+	* nss/nss_files/files-initgroups.c (_nss_files_initgroups_dyn): Don't
+	allow cancellation when reading /etc/group.
+
+	* nss/nss_files/files-alias.c (internal_setent): Don't allow
+	cancellation.
+	(get_next_alias): Likewise for included file.  Also set FD_CLOEXEC.
+
+	* nss/nss_files/files-XXX.c (internal_setent): Don't allow cancellation
+	when using data file.
+
+	* nis/nss-default.c (init): Set FD_CLOEXEC for /etc/default/nss.
+
+	* nis/nis_file.c (read_nis_obj): Set FD_CLOEXEC.
+	(write_nis_obj): Use "c" and "e" in fopen.
+
+	* misc/mntent_r.c (__setmntent): Also append e to fopen format.
+
+	* misc/getusershell.c (initshells): Set FD_CLOEXEC for /etc/shells.
+
+	* misc/getttyent.c (setttyent): Set FD_CLOEXEC.
+
+	* misc/getpass.c (getpass): Set FD_CLOEXEC for /dev/tty.
+
+	* intl/localealias.c (read_alias_file): Set FD_CLOEXEC for
+	locale.alias.
+
+	* inet/ruserpass.c (ruserpass): Set FD_CLOEXEC for .netrc.
+
+	* inet/rcmd.c (iruserfopen): Set FD_CLOEXEC for hosts.equiv.
+
+	* iconv/gconv_conf.c (read_conf_file): Set FD_CLOEXEC for config file.
+
+	* hesiod/hesiod.c (parse_config_file): Prevent cancellation in config
+	file parsing and set FD_CLOEXEC.
+
+2011-11-14  Ulrich Drepper  <drepper@gmail.com>
+
+	* time/tzfile.c (__tzfile_read): Use "e" in fopen call.
+
+2011-11-14  Andreas Schwab  <schwab@redhat.com>
+
+	* malloc/arena.c (arena_get2): Don't call reused_arena when
+	_int_new_arena failed.
+
+2011-11-14  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile [subdir=string]
+	(sysdep_routines): Add strcasecmp_l-sse4 and strncase_l-sse4.
+	* sysdeps/i386/i686/multiarch/strcasecmp.S: Re-enable SSE4.2 code.
+	* sysdeps/i386/i686/multiarch/strcmp.S: Likewise.
+	* sysdeps/i386/i686/multiarch/strncase.S: Likewise.
+	* sysdeps/i386/i686/multiarch/strcmp-sse4.S: Change to allow reuse
+	to compile strcasecmp and strncasecmp.
+	* sysdeps/i386/i686/multiarch/strcasecmp_l-sse4.S: New file.
+	* sysdeps/i386/i686/multiarch/strncase_l-sse4.S: New file.
+
+	* sysdeps/i386/i686/multiarch/strcmp-ssse3.S: Use L macro consistently.
+
+2011-11-13  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile [subdir=string]: Add
+	locale-defines.sym to gen-as-const-headers.
+	(sysdep_routines): Add strcasecmp_l-c, strcasecmp-c,
+	strcasecmp_l-ssse3, strncase_l-c, strncase-c, and strncase_l-ssse3.
+	* sysdeps/i386/i686/multiarch/strcmp-ssse3.S: Change to allow reuse
+	to compile strcasecmp and strncasecmp.
+	* sysdeps/i386/i686/multiarch/strcmp.S: Allow to use for
+	strcasecmp_l and strncasecmp_l.
+	* sysdeps/i386/i686/multiarch/locale-defines.sym: New file.
+	* sysdeps/i386/i686/multiarch/strcasecmp-c.c: New file.
+	* sysdeps/i386/i686/multiarch/strcasecmp.S: New file.
+	* sysdeps/i386/i686/multiarch/strcasecmp_l-c.c: New file.
+	* sysdeps/i386/i686/multiarch/strcasecmp_l-ssse3.S: New file.
+	* sysdeps/i386/i686/multiarch/strcasecmp_l.S: New file.
+	* sysdeps/i386/i686/multiarch/strncase-c.c: New file.
+	* sysdeps/i386/i686/multiarch/strncase.S: New file.
+	* sysdeps/i386/i686/multiarch/strncase_l-c.c: New file.
+	* sysdeps/i386/i686/multiarch/strncase_l-ssse3.S: New file.
+	* sysdeps/i386/i686/multiarch/strncase_l.S: New file.
+
+2011-11-12  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/clock_gettime.c (clock_gettime): No need to assign
+	result of SYSDEP_GETTIME_CPU to retval.
+	* sysdeps/unix/sysv/linux/clock_gettime.c (SYSDEP_GETTIME_CPU): Add
+	parameter list to macro.  Remove trailing semicolon.  Adjust users.
+
+	* resolv/getaddrinfo_a.c (getaddrinfo_a): Avoid warning about unused
+	variable.
+
+	* sysdeps/ieee754/ldbl-96/e_j0l.c (__ieee754_j0l): Avoid storing
+	mantissa words.
+	* sysdeps/ieee754/ldbl-96/e_j1l.c (__ieee754_j1l): Likewise.
+
+	* sysdeps/ieee754/ldbl-96/e_hypotl.c (__ieee754_hypotl): Avoid warning
+	from unused variable.
+
+	* sysdeps/generic/sysdep.h: Clean up, pretty print, use dwarf2.h for
+	DWARF definitions.
+	* sysdeps/generic/dwarf2.h: Don't define enums when using the file
+	for assembling.
+
+	* elf/dl-iteratephdr.c [!SHARED] (__dl_iterate_phdr): Don't iterate
+	over namespaces.
+
+	* sunrpc/rpc_prot.c (rejected): Fix case value.
+
+	* sysdeps/unix/sysv/linux/internal_statvfs.c (INTERNAL_STATVFS): Use
+	unsigned long long int to avoid warnings in shift.
+
+	* posix/regex_internal.c (re_string_reconstruct): Actually use result
+	of use of trans.
+	* posix/regex_internal.h (re_string_wchar_at): Remove temporary
+	variable tmp.
+
+	* sysdeps/i386/i686/multiarch/wcscmp-c.c: Avoid warning.
+	* sysdeps/i386/i686/multiarch/wcslen-c.c: Likewise.
+	* sysdeps/i386/i686/multiarch/wmemcmp-c.c: Likewise.
+
+	* nis/nis_table.c (nis_list): Use variable of correct type for
+	result of __follow_path call.
+
+2011-11-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/math_private.h: Using inline assembly version
+	of math functions ceil, trunc, floor, round, and sqrt, when
+	avaliable on the platform.
+	* sysdeps/powerpc/fpu/e_sqrt.c: Undefine __ieee754_sqrt to avoid
+	name clash.
+	* sysdeps/powerpc/fpu/e_sqrtf.c: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/e_sqrt.c: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/e_sqrtf.c: Likewise.
+
+2011-10-30  Marek Polacek  <mpolacek@redhat.com>
+
+	* libio/wfileops.c (_IO_wfile_underflow_mmap): Remove unused variable.
+	* sysdeps/ieee754/dbl-64/mpsqrt.c (__mpsqrt): Likewise.
+
+2011-11-11  Roland McGrath  <roland@hack.frob.com>
+
+	* include/unistd.h: Fix __readlink return type.
+	Reported by Chris Metcalf <cmetcalf@tilera.com>.
+
+2011-11-11  Ulrich Drepper  <drepper@gmail.com>
+
+	* stdlib/ucontext.h: Undo last change for makecontext.
+
+2011-11-11  Andreas Schwab  <schwab@redhat.com>
+
+	* nss/db-Makefile ($(VAR_DB)/group.db): Fix typo in awk script.
+
+	* misc/sys/cdefs.h (__REDIRECT_NTHNL): Define.
+	* setjmp/setjmp.h: Mark functions as non-leaf.
+	* setjmp/bits/setjmp2.h: Likewise.
+	* stdlib/ucontext.h: Likewise.
+
+2011-11-10  Andreas Schwab  <schwab@redhat.com>
+
+	* malloc/arena.c (_int_new_arena): Don't increment narenas.
+	(reused_arena): Don't check arena limit.
+	(arena_get2): Atomically check arena limit.
+
+2011-11-08  Ulrich Drepper  <drepper@gmail.com>
+
+	* locale/findlocale.c (_nl_find_locale): Use __strcasecmp_l.
+	* intl/localealias.c (strcasecmp): Define using __strcasecmp_l.
+
+	* sysdeps/i386/i686/multiarch/strcmp-ssse3.S: Remove unnecessary
+	instructions.
+
+2011-11-07  Andreas Schwab  <schwab@redhat.com>
+
+	* libio/genops.c (_IO_flush_all_lockp): Only register cleanup
+	handler when locking.
+
+	* nss/nss_files/files-initgroups.c (_nss_files_initgroups_dyn):
+	Fix size of allocated buffer.
+
+2011-11-04  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #10103]
+	* math/math.h [__NO_LONG_DOUBLE_MATH && !_LIBC]: Provide
+	declarations for long double functions.
+	* math/complex.h [__NO_LONG_DOUBLE_MATH && !_LIBC]: Likewise.
+
+	* elf/sprof.c (load_shobj): Fix off-by-one when reading link name.
+
+2011-11-03  Andreas Schwab  <schwab@redhat.com>
+
+	* nscd/nscd.c (main): Don't start AVC thread until credentials are
+	installed.
+
+	* nss/makedb.c (set_file_creation_context): Do nothing if SELinux
+	is disabled.
+
+2011-11-02  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* bits/ioctl-types.h (_IOT_sgttyb): Set number of chars to 4.
+
+2011-11-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* include/alloca.h (stackinfo_alloca_round): Define.
+	(extend_alloca): Use it.
+	[_STACK_GROWS_UP]: Correct check for adjacent allocation.
+	* elf/dl-deps.c (_dl_map_object_deps): Don't round alloca size
+	here.
+
+	* scripts/check-local-headers.sh: Ignore libaudit.h.
+
+	* nscd/Makefile (extra-objs): Make recursively expanded.
+
+2011-11-01  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/strcmp.S: Fix test for non-ASCII locales.
+	* sysdeps/x86_64/multiarch/strcmp-sse42.S: Likewise.
+
+	* posix/tst-rfc3484.c: Add missing __free_in6ai dummy function.
+	* posix/tst-rfc3484-2.c: Likewise.
+	* posix/tst-rfc3484-3.c: Likewise.
+
+	* sysdeps/unix/sysv/linux/bits/uio.h: Declare process_vm_readv and
+	process_vm_writev.
+	* sysdeps/unix/sysv/linux/syscalls.list: Add process_vm_readv and
+	process_vm_writev.
+	* sysdeps/unix/sysv/linux/Versions: Export process_vm_readv and
+	process_vm_writev from libc using GLIBC_2.15 version.
+
+	* nscd/connections.c: Use kernel headers instead of <netlink/netlink.h>.
+
+2011-10-31  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/dl-deps.c (_dl_map_object_deps): Reuse alloca space to reduce
+	stack usage.
+
+2011-10-31  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13367]
+	* nss/getent.c (initgroups_keys): Show error message in case no group
+	names are given.
+
+	* include/ifaddrs.h: Declare __free_in6ai and __bump_nl_timestamp.
+	* inet/check_pf.c: Provide dummy versions of __free_in6ai and
+	__bump_nl_timestamp.
+	* nscd/connections (nscd_init): When host database is served open
+	netlink socket and request notification about configuration changes.
+	(main_loop_poll): Track netlink file descriptor and bump timestamp
+	in case data becomes available.
+	(main_loop_epoll): Likewise.
+	* nscd/nscd-client.h (DB_VERSION): Bump to 2.
+	(database_pers_head): Add extra_data fileds.
+	Declare __nscd_get_mapping and __nscd_get_nl_timestamp.
+	* nscd/nscd_gethst_r.c (__nscd_get_nl_timestamp): New function.
+	* nscd/nscd_helper.c (__nscd_get_mapping): Renamed from get_mapping.
+	Adjust caller.
+	* sysdeps/posix/getaddrinfo.c (getaddrinfo): Don't call free on
+	in6ai data, call __free_in6ai.
+	* sysdeps/unix/sysv/linux/Makefile [subdir=nscd] (sysdep-CFLAGS):
+	Add -DHAVE_NETLINK.
+	* sysdeps/unix/sysv/linux/check_pf.c: Major rewrite.  Cache the
+	interface information.  Reuse previous data if netlink timestamp
+	is not changed.
+	(__bump_nl_timestamp): New function.
+	(__free_in6ai): New function.
+
+2011-10-30  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request): Don't call
+	close_not_cancel_no_status here.
+	(__check_pf): Reorganize code a bit to not call close twice if OOM.
+
+2011-10-29  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13276]
+	* malloc/malloc.c (munmap_chunk): Don't use assertion to check munmap
+	return value.
+
+	* posix/sys/wait.h: Mark wait3 and wait4 with __THROWNL.
+	* libio/stdio.h: Mark sprintf, vsprintf snprintf, vsnprintf, vasprintf,
+	asprintf, __asprintf, obstack_printf, obstack_vprintf with __THROWNL.
+
+2011-07-03  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #10709]
+	* sysdeps/ieee754/dbl-64/s_sin.c (__sin): Fix incorrect rounding
+	of sin. Patch suggested by Paul Zimmermann <zimmerma+gcc@loria.fr>.
+	* math/libm-test.inc (sin_test): Add test case.
+
+2011-10-29  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13337]
+	* elf/sprof.c (load_shobj): Correctly NUL-terminate link name.
+	Patch by Thomas Jarosch <thomas.jarosch@intra2net.com>.
+
+	* elf/chroot_canon.c (chroot_canon): Cleanups.
+
+	* elf/dl-lookup.c (_dl_setup_hash): Avoid warning.
+
+	[BZ #13335]
+	* elf/chroot_canon.c (chroot_canon): Fix readlink call.
+	Patch by Thomas Jarosch <thomas.jarosch@intra2net.com>.
+
+	* string/test-strchr.c: Make usable for strchrnul testing.
+	* string/test-strchrnul.c: New file.
+	* string/Makefile (strop-tests): Add strchrnul.
+
+	* po/it.po: Update from translation team.
+	* po/es.po: Likewise.
+
+2011-10-28  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/multiarch/strstr.c (__m128i_strloadu_tolower): Take
+	the three constants needed as parameters.  Drop the others.
+	(strcasestr_sse42): Load uclow, uchigh, and lcqword and pass to
+	__m128i_strloadu_tolower.
+	Create and initialize variable zero and use it in all the places
+	where _mm_setzero_si128 was used.
+
+	* sysdeps/x86_64/fpu/multiarch/Makefile: Don't build brandred-avx.c,
+	doasin-avx.c, dosincos-avx.c, e_asin-avx.c, mpatan-avx.c,
+	mpatan2-avx.c, mpsqrt-avx.c, mptan-avx.c, sincos32-avx.c.
+	* sysdeps/x86_64/fpu/multiarch/e_asin.c: There are no _avx variants
+	anymore.
+	* sysdeps/x86_64/fpu/multiarch/e_atan2-avx.c: Don't redirect __mpatan2.
+	* sysdeps/x86_64/fpu/multiarch/s_atan-avx.c: Don't redirect __mpatan.
+	* sysdeps/x86_64/fpu/multiarch/s_sin-avx.c: Don't redirect __branred,
+	__docos, __dubsin, __mpcos, __mpcos1, __mpsin, __mpsin1.
+	* sysdeps/x86_64/fpu/multiarch/s_tan-avx.c: Don't redirect __branred,
+	__mpranred, __mptan.
+	* sysdeps/x86_64/fpu/multiarch/brandred-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/doasin-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/dosincos-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/e_asin-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/mpatan-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/mpatan2-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/mpsqrt-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/mptan-avx.c: Removed.
+	* sysdeps/x86_64/fpu/multiarch/sincos32-avx.c: Removed.
+
+2011-10-28  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/i386/i686/multiarch/strnlen-c.c (libc_hidden_def): Only
+	redefine if SHARED.
+	* sysdeps/i386/i686/multiarch/wcscmp-c.c (libc_hidden_def): Likewise.
+
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Move
+	wide char related routines to wcsmbs subdir.
+
+2011-10-27  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #13344]
+	* misc/sys/cdefs.h (__THROWNL): Define.
+	* posix/unistd.h: Use __THREADNL instead of __THREAD
+	for memory synchronization functions.
+
+2011-10-26  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #13349]
+	* libio/Versions (GLIBC_2.0): Remove open_obstack_stream, which
+	doesn't exist.
+	* manual/stdio.texi (Obstack Streams): Node removed.
+
 2011-10-26  Andreas Schwab  <schwab@redhat.com>
 
 	* sysdeps/ieee754/flt-32/e_j0f.c: Fix use of math_force_eval.
