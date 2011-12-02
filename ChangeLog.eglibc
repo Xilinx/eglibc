@@ -1,3 +1,11 @@
+2011-12-01  Joseph Myers  <joseph@codesourcery.com>
+	    Tom de Vries  <tom@codesourcery.com>
+
+	* debug/tst-backtrace3.c, debug/tst-backtrace4.c,
+	debug/tst-backtrace5.c: New tests.
+	* debug/Makefile (LDFLAGS-tst-backtrace3, LDFLAGS-tst-backtrace4)
+	(LDFLAGS-tst-backtrace5): Define.
+
 2011-10-26  Joseph Myers  <joseph@codesourcery.com>
 
 	* argp/argp-fmtstream.c, argp/argp-help.c: Condition uses of
