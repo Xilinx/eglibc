@@ -1,3 +1,9 @@
+2011-12-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/sh/Makefile (CFLAGS-backtrace.c)
+	(CFLAGS-tst-backtrace2.c, CFLAGS-tst-backtrace3.c)
+	(CFLAGS-tst-backtrace4.c, CFLAGS-tst-backtrace5.c): Define.
+
 2011-12-01  Joseph Myers  <joseph@codesourcery.com>
 	    Tom de Vries  <tom@codesourcery.com>
 
