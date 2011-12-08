@@ -1,3 +1,10 @@
+2011-12-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* debug/tst-backtrace6.c: New test.
+	* debug/Makefile (LDFLAGS-tst-backtrace6): Define.
+	(tests-$(OPTION_EGLIBC_BACKTRACE)): Add new tst-backtrace6.
+	* sysdeps/sh/Makefile (CFLAGS-tst-backtrace6.c): Define.
+
 2011-12-02  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/sh/Makefile (CFLAGS-backtrace.c)
