@@ -49,7 +49,7 @@ routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				\
 	 += isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf
 
-strop-tests :=  wcscmp wmemcmp wcslen wcschr
+strop-tests :=  wcscmp wmemcmp wcslen wcschr wcsrchr wcscpy
 tests := tst-wchar-h 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb

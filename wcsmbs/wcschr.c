@@ -18,8 +18,11 @@
 
 #include <wchar.h>
 
-
 /* Find the first occurrence of WC in WCS.  */
+#ifdef WCSCHR
+# define wcschr WCSCHR
+#endif
+
 wchar_t *
 wcschr (wcs, wc)
      register const wchar_t *wcs;

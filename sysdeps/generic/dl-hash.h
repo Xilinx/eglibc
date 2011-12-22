@@ -1,5 +1,5 @@
 /* Compute hash value for given string according to ELF standard.
-   Copyright (C) 1995,1996,1997,1998,2003,2005 Free Software Foundation, Inc.
+   Copyright (C) 1995-1998,2003,2005,2011 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -25,46 +25,47 @@
    first five operations no overflow is possible so we optimized it a
    bit.  */
 static unsigned int
+__attribute__ ((unused))
 _dl_elf_hash (const char *name_arg)
 {
   const unsigned char *name = (const unsigned char *) name_arg;
-  unsigned long int hash = 0;
-  if (*name != '\0')
+  unsigned long int hash = *name;
+  if (hash != 0 && name[1] != '\0')
     {
-      hash = *name++;
-      if (*name != '\0')
+      hash = (hash << 4) + name[1];
+      if (name[2] != '\0')
 	{
-	  hash = (hash << 4) + *name++;
-	  if (*name != '\0')
+	  hash = (hash << 4) + name[2];
+	  if (name[3] != '\0')
 	    {
-	      hash = (hash << 4) + *name++;
-	      if (*name != '\0')
+	      hash = (hash << 4) + name[3];
+	      if (name[4] != '\0')
 		{
-		  hash = (hash << 4) + *name++;
-		  if (*name != '\0')
+		  hash = (hash << 4) + name[4];
+		  name += 5;
+		  while (*name != '\0')
 		    {
+		      unsigned long int hi;
 		      hash = (hash << 4) + *name++;
-		      while (*name != '\0')
-			{
-			  unsigned long int hi;
-			  hash = (hash << 4) + *name++;
-			  hi = hash & 0xf0000000;
+		      hi = hash & 0xf0000000;
 
-			  /* The algorithm specified in the ELF ABI is as
-			     follows:
+		      /* The algorithm specified in the ELF ABI is as
+			 follows:
 
-			     if (hi != 0)
-			       hash ^= hi >> 24;
+			 if (hi != 0)
+			   hash ^= hi >> 24;
 
-			     hash &= ~hi;
+			 hash &= ~hi;
 
-			     But the following is equivalent and a lot
-			     faster, especially on modern processors.  */
+			 But the following is equivalent and a lot
+			 faster, especially on modern processors.  */
 
-			  hash ^= hi;
-			  hash ^= hi >> 24;
-			}
+		      hash ^= hi >> 24;
 		    }
+
+		  /* Second part of the modified formula.  This
+		     operation can be lifted outside the loop.  */
+		  hash &= 0x0fffffff;
 		}
 	    }
 	}

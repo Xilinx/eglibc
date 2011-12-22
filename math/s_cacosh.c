@@ -65,6 +65,11 @@ __cacosh (__complex__ double x)
       __real__ res = 0.0;
       __imag__ res = __copysign (M_PI_2, __imag__ x);
     }
+  /* The factor 16 is just a guess.  */
+  else if (16.0 * fabs (__imag__ x) < fabs (__real__ x))
+    /* Kahan's formula which avoid cancellation through subtraction in
+       some cases.  */
+    res = 2.0 * __clog (__csqrt ((x + 1.0) / 2.0) + __csqrt ((x - 1.0) / 2.0));
   else
     {
       __complex__ double y;
@@ -74,17 +79,13 @@ __cacosh (__complex__ double x)
 
       y = __csqrt (y);
 
-      if (__real__ x < 0.0)
+      if (signbit (__real__ x))
 	y = -y;
 
       __real__ y += __real__ x;
       __imag__ y += __imag__ x;
 
       res = __clog (y);
-
-      /* We have to use the positive branch.  */
-      if (__real__ res < 0.0)
-	res = -res;
     }
 
   return res;

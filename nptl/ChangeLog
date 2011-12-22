@@ -1,3 +1,18 @@
+2011-12-21  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13515]
+	* sysdeps/unix/sysv/linux/pthread_getname.c (pthread_getname_np):
+	Correct reading name from file.
+
+2011-12-14  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* allocatestack.c (allocate_stack): Return errno on failure.
+
+2011-12-14  Jeff Law  <law@redhat.com>
+
+	[BZ #5245]
+	* pthread_create.c (__pthread_create_2_1): Translate ENOMEM to EAGAIN.
+
 2011-11-28  Andreas Schwab  <schwab@redhat.com>
 
 	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S: Handle

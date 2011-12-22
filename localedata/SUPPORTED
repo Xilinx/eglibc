@@ -58,6 +58,7 @@ ber_DZ/UTF-8 \
 ber_MA/UTF-8 \
 bg_BG.UTF-8/UTF-8 \
 bg_BG/CP1251 \
+bho_IN/UTF-8 \
 bn_BD/UTF-8 \
 bn_IN/UTF-8 \
 bo_CN/UTF-8 \
@@ -65,6 +66,7 @@ bo_IN/UTF-8 \
 br_FR.UTF-8/UTF-8 \
 br_FR/ISO-8859-1 \
 br_FR@euro/ISO-8859-15 \
+brx_IN/UTF-8 \
 bs_BA.UTF-8/UTF-8 \
 bs_BA/ISO-8859-2 \
 byn_ER/UTF-8 \
@@ -147,6 +149,7 @@ es_CO.UTF-8/UTF-8 \
 es_CO/ISO-8859-1 \
 es_CR.UTF-8/UTF-8 \
 es_CR/ISO-8859-1 \
+es_CU/UTF-8 \
 es_DO.UTF-8/UTF-8 \
 es_DO/ISO-8859-1 \
 es_EC.UTF-8/UTF-8 \
@@ -399,6 +402,7 @@ tt_RU@iqtelif/UTF-8 \
 ug_CN/UTF-8 \
 uk_UA.UTF-8/UTF-8 \
 uk_UA/KOI8-U \
+unm_US/UTF-8 \
 ur_PK/UTF-8 \
 uz_UZ/ISO-8859-1 \
 uz_UZ@cyrillic/UTF-8 \

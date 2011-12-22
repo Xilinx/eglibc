@@ -1,3 +1,238 @@
+2011-12-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/Makefile (syscall-list-variants)
+	(syscall-list-default-options, syscall-list-default-condition)
+	(syscall-list-includes): Define.
+	($(objpfx)syscall-%.h $(objpfx)syscall-%.d): Support arbitrary
+	list of ABIs and options and #if conditions for each ABI.  Do not
+	handle common syscalls between ABIs specially.
+	* sysdeps/unix/sysv/linux/powerpc/Makefile (64bit-predefine):
+	Remove.
+	(syscall-list-variants, syscall-list-32bit-options)
+	(syscall-list-32bit-condition, syscall-list-64bit-options)
+	(syscall-list-64bit-condition): Define.
+	* sysdeps/unix/sysv/linux/s390/Makefile (64bit-predefine): Remove.
+	(syscall-list-variants, syscall-list-32bit-options)
+	(syscall-list-32bit-condition, syscall-list-64bit-options)
+	(syscall-list-64bit-condition): Define.
+	* sysdeps/unix/sysv/linux/sparc/Makefile (64bit-predefine):
+	Remove.
+	(syscall-list-variants, syscall-list-32bit-options)
+	(syscall-list-32bit-condition, syscall-list-64bit-options)
+	(syscall-list-64bit-condition): Define.
+	* sysdeps/unix/sysv/linux/x86_64/Makefile (64bit-predefine):
+	Remove.
+	(syscall-list-variants, syscall-list-32bit-options)
+	(syscall-list-32bit-condition, syscall-list-64bit-options)
+	(syscall-list-64bit-condition): Define.
+
+2011-12-22  Ulrich Drepper  <drepper@gmail.com>
+
+	* locale/iso-639.def: Add brx entry.
+
+	[BZ #13328]
+	* malloc/mtrace.c (tr_freehook): Avoid unnecessary unlock/lock.
+	Proposed by Mariusz_Cukr <marcukr@op.pl>.
+
+	* sysdeps/x86_64/fpu/bits/fenv.h: Use __REDIRECT_NTH for
+	__feraiseexcept_renamed.
+
+2011-12-21  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13538]
+	* sysdeps/unix/sysv/linux/sys/epoll.h: Initialize EPOLLONESHOT and
+	EPOLLET with unsigned values.
+	* sysdeps/unix/sysv/linux/x86_64/sys/epoll.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/epoll.h: Likewise.
+
+	* math/s_cacosh.c: Use Kahan's formula if the subtraction could lead
+	to large cancellation.
+	* math/s_cacoshf.c: Likewise.
+	* math/s_cacoshl.c: Likewise.
+
+2011-11-18  Richard B. Kreckel  <kreckel@ginac.de>
+
+	[BZ #13305]
+	* math/s_cacosh.c: Fix rare miscomputation in cacosh().
+	* math/s_cacoshf.c: Likewise.
+	* math/s_cacoshl.c: Likewise.
+
+2011-12-21  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13439]
+	* iconv/gconv.h: Define __GCONV_SWAP.
+	* iconvdata/unicode.c: The swap bit must be stored in __flags.
+	* iconvdata/utf-16.c: Likewise.
+	* iconvdata/utf-32.c: Likewise.
+
+2011-12-21  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #13524]
+	* stdlib/strtod_l.c (____STRTOF_INTERNAL): Clear lowest limb of
+	numerator after shifting it by one limb.
+
+2011-12-19  Rafael Ávila de Espíndola  <rafael.espindola@gmail.com>
+
+	* sysdeps/x86_64/fpu/bits/fenv.h (feraiseexcept): Define it only
+	under [__USE_EXTERN_INLINES].
+
+2011-12-17  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13446]
+	* stdio-common/vfprintf.c (vfprintf): Fix extension of specs array.
+
+2011-11-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/Makefile: Added locale-defines.sym generation.
+	* sysdeps/powerpc/locale-defines.sym: Locale definitions for strcasecmp
+	optimized code.
+	* sysdeps/powerpc/powerpc32/power7/Makefile: New file.
+	* sysdeps/powerpc/powerpc32/power7/strcasecmp.S: New file.
+	* sysdeps/powerpc/powerpc32/power7/strcasecmp_l.S: New file.
+	* sysdeps/powerpc/powerpc64/power7/Makefile: Added unroll-loop option
+	for strncasecmp/strncasecmp_l compilation.
+	* sysdeps/powerpc/powerpc64/power7/strcasecmp.S: New file.
+	* sysdeps/powerpc/powerpc64/power7/strcasecmp_l.S: New file.
+
+2011-12-08  Marek Polacek  <mpolacek@redhat.com>
+
+	[BZ #13484]
+	* math/bits/math-finite.h: Use __REDIRECT_NTH and __NTH instead
+	of __asm__.
+
+2011-12-17  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13506]
+	* time/tzfile.c (__tzfile_read): Check values from file header.
+
+2011-11-21  Will Schmidt  <will_schmidt@vnet.ibm.com>
+
+	* powerpc/powerpc32/sysdep.h: Define SETUP_GOT_ACCESS() macro.
+	* powerpc/powerpc32/a2/memcpy.S: Use SETUP_GOT_ACCESS() macro.
+	* powerpc/powerpc32/dl-start.S: Likewise.
+	* powerpc/powerpc32/elf/start.S: Likewise.
+	* powerpc/powerpc32/fpu/__longjmp-common.S: Likewise.
+	* powerpc/powerpc32/fpu/s_ceil.S: Likewise.
+	* powerpc/powerpc32/fpu/s_ceilf.S: Likewise.
+	* powerpc/powerpc32/fpu/s_floor.S: Likewise.
+	* powerpc/powerpc32/fpu/s_floorf.S: Likewise.
+	* powerpc/powerpc32/fpu/s_lround.S: Likewise.
+	* powerpc/powerpc32/fpu/s_rint.S: Likewise.
+	* powerpc/powerpc32/fpu/s_rintf.S: Likewise.
+	* powerpc/powerpc32/fpu/s_round.S: Likewise.
+	* powerpc/powerpc32/fpu/s_roundf.S: Likewise.
+	* powerpc/powerpc32/fpu/s_trunc.S: Likewise.
+	* powerpc/powerpc32/fpu/s_truncf.S: Likewise.
+	* powerpc/powerpc32/fpu/setjmp-common.S: Likewise.
+	* powerpc/powerpc32/memset.S: Likewise.
+	* powerpc/powerpc32/power4/fpu/s_llround.S: Likewise.
+	* powerpc/powerpc32/power4/fpu/w_sqrt.S: Likewise.
+	* powerpc/powerpc32/power4/fpu/w_sqrtf.S: Likewise.
+	* powerpc/powerpc32/power5/fpu/w_sqrt.S: Likewise.
+	* powerpc/powerpc32/power5/fpu/w_sqrtf.S: Likewise.
+	* powerpc/powerpc32/power7/fpu/s_finite.S: Likewise.
+	* powerpc/powerpc32/power7/fpu/s_isinf.S: Likewise.
+	* powerpc/powerpc32/power7/fpu/s_isnan.S: Likewise.
+	* unix/sysv/linux/powerpc/powerpc32/____longjmp_chk.S: Likewise.
+	* unix/sysv/linux/powerpc/powerpc32/brk.S: Likewise.
+	* unix/sysv/linux/powerpc/powerpc32/getcontext-common.S: Likewise.
+	* unix/sysv/linux/powerpc/powerpc32/setcontext-common.S: Likewise.
+	* unix/sysv/linux/powerpc/powerpc32/swapcontext-common.S: Likewise.
+
+2011-11-18  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* math/libm-test.inc: Added more nearbyint tests.
+	* sysdeps/powerpc/powerpc32/fpu/s_nearbyint.S: New file.
+	* sysdeps/powerpc/powerpc32/fpu/s_nearbyintf.S: New file.
+	* sysdeps/powerpc/powerpc64/fpu/s_nearbyint.S: New file.
+	* sysdeps/powerpc/powerpc64/fpu/s_nearbyintf.S: New file.
+
+2011-11-21  Ross Lagerwall  <rosslagerwall@gmail.com>
+
+	* resolv/res_init.c (__res_vinit): Open /etc/resolv.conf with
+	FD_CLOEXEC.
+
+2011-11-14  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* sysdeps/x86_64/multiarch/Makefile [subdir=wcsmbs] (sysdep_routines):
+	Add wcscpy-ssse3 wcscpy-c.
+	* sysdeps/x86_64/multiarch/wcscpy-ssse3.S: New file.
+	* sysdeps/x86_64/multiarch/wcscpy-c.c: New file.
+	* sysdeps/x86_64/multiarch/wcscpy.S: New file.
+	* sysdeps/x86_64/wcschr.S: New file.
+	* sysdeps/x86_64/wcsrchr.S: New file.
+	* string/test-strcmp.c: Remove checking of wcscmp function for
+	wrong alignments.
+	* sysdeps/i386/i686/multiarch/Makefile [subdir=wcsmbs]
+	(sysdep_routines): Add wcscpy-ssse3 wcscpy-c wcschr-sse2 wcschr-c
+	wcsrchr-sse2 wcsrchr-c.
+	* sysdeps/i386/i686/multiarch/wcschr.S: New file.
+	* sysdeps/i386/i686/multiarch/wcschr-c.c: New file.
+	* sysdeps/i386/i686/multiarch/wcschr-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/wcsrchr.S: New file.
+	* sysdeps/i386/i686/multiarch/wcsrchr-c.c: New file.
+	* sysdeps/i386/i686/multiarch/wcsrchr-sse2.S: New file.
+	* sysdeps/i386/i686/multiarch/wcscpy.S: New file.
+	* sysdeps/i386/i686/multiarch/wcscpy-c.c: New file.
+	* sysdeps/i386/i686/multiarch/wcscpy-ssse3.S: New file.
+	* wcsmbc/wcschr.c (WCSCHR): New macro.
+
+2011-11-17  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* wcsmbs/Makefile (strop-tests): Add wcsrchr wcscpy.
+	* wcsmbs/test-wcsrchr.c: New file.
+	* string/test-strrchr.c: Add wcsrchr support.
+	(WIDE): New macro.
+	* wcsmbs/test-wcscpy.c: New file.
+	* string/test-strcpy.c: Add wcscpy support.
+	(WIDE): New macro.
+
+2011-12-10  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/generic/dl-hash.h (_dl_elf_hash): Lift one operation out of
+	the inner loop.
+
+2011-12-06  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #13472]
+	* sysdeps/powerpc/fpu/e_hypot.c (twoM600): Correct value.
+
+2011-12-04  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/generic/dl-hash.h (_dl_elf_hash): Fix attribute.
+	Minor optimizations.
+
+	* sunrpc/clnt_unix.c (clntunix_control): Fix aliasing issues.
+	* sunrpc/clnt_tcp.c (clnttcp_control): Likewise.
+	* sunrpc/clnt_udp.c (clntudp_call): Likewise.
+
+2011-12-03  Ulrich Drepper  <drepper@gmail.com>
+
+	* inet/netinet/in.h: Provide versions of IN6_IS_ADDR_UNSPECIFIED,
+	IN6_IS_ADDR_LOOPBACK, IN6_IS_ADDR_LINKLOCAL, IN6_IS_ADDR_SITELOCAL,
+	IN6_IS_ADDR_V4MAPPED, IN6_IS_ADDR_V4COMPAT, and IN6_ARE_ADDR_EQUAL
+	for gcc to avoid warnings.
+	* inet/Makefile (tests): Add tst-checks.
+	* inet/tst-checks.c: New file.
+
+	* sysdeps/generic/dl-hash.h (_dl_elf_hash): Add attribute to avoid
+	warning.
+
+	* sysdeps/x86_64/multiarch/wmemcmp-c.c: Provide prototype for
+	__wmemcmp_sse2.
+
+	* sysdeps/x86_64/fpu/s_scalbln.c: Removed.
+	* sysdeps/x86_64/fpu/s_scalbn.c: Removed.
+
+	* malloc/mcheck.h: Fix use of incorrect encoding in comment.
+
+2011-12-02  Ulrich Drepper  <drepper@gmail.com>
+
+	* nis/nis_findserv.c (__nis_findfastest_with_timeout): Avoid aliasing
+	problem.
+
+	* nscd/aicache.c (addhstaiX): Avoid unused variable warning.
+
 2011-11-29  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/sh/bits/atomic.h (rNOSP): Define

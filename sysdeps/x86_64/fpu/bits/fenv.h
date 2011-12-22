@@ -97,11 +97,11 @@ fenv_t;
 #endif
 
 
-#ifdef __OPTIMIZE__
+#ifdef __USE_EXTERN_INLINES
 __BEGIN_DECLS
 
 /* Optimized versions.  */
-extern int __NTH (__feraiseexcept_renamed (int)) __asm__ ("feraiseexcept");
+extern int __REDIRECT_NTH (__feraiseexcept_renamed, (int), feraiseexcept);
 __extern_inline int
 __NTH (feraiseexcept (int __excepts))
 {
