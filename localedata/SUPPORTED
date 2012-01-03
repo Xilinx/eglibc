@@ -380,6 +380,7 @@ sv_SE/ISO-8859-1 \
 sw_KE/UTF-8 \
 sw_TZ/UTF-8 \
 ta_IN/UTF-8 \
+ta_LK/UTF-8 \
 te_IN/UTF-8 \
 tg_TJ.UTF-8/UTF-8 \
 tg_TJ/KOI8-T \
@@ -403,6 +404,7 @@ ug_CN/UTF-8 \
 uk_UA.UTF-8/UTF-8 \
 uk_UA/KOI8-U \
 unm_US/UTF-8 \
+ur_IN/UTF-8 \
 ur_PK/UTF-8 \
 uz_UZ/ISO-8859-1 \
 uz_UZ@cyrillic/UTF-8 \
@@ -413,6 +415,7 @@ wa_BE/ISO-8859-1 \
 wa_BE@euro/ISO-8859-15 \
 wa_BE.UTF-8/UTF-8 \
 wae_CH/UTF-8 \
+wal_ET/UTF-8 \
 wo_SN/UTF-8 \
 xh_ZA.UTF-8/UTF-8 \
 xh_ZA/ISO-8859-1 \

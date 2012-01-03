@@ -1,3 +1,72 @@
+2011-12-23  Ulrich Drepper  <drepper@gmail.com>
+
+	* version.h (RELEASE): Bump for 2.15 release.
+	* include/features.h (__GLIBC_MINOR__): Bump to 15.
+
+	* sysdeps/x86_64/dl-machine.h: Fix typos in comments.
+	Patch by Marek Polacek <mpolacek@redhat.com>.
+
+	* bits/byteswap.h: Protect long long constants with __extension__.
+	* sysdeps/i386/bits/byteswap.h: Likewise.
+	* sysdeps/ia64/bits/byteswap.h: Likewise.
+	* sysdeps/s390/bits/byteswap.h: Likewise.
+	* sysdeps/x86_64/bits/byteswap.h: Likewise.
+
+2011-12-23  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	[BZ #13540]
+	* sysdeps/x86_64/multiarch/strcpy-ssse3.S: Fix overrun in
+	destination buffer.
+	* sysdeps/x86_64/multiarch/wcscpy-ssse3.S: Likewise.
+
+2011-12-23  Marek Polacek  <polacek@redhat.com>
+
+	* elf/dl-addr.c (determine_info): Add inline keyword.
+	* elf/tst-auditmod4b.c (check_avx): Likewise.
+	* elf/tst-auditmod6b.c (check_avx): Likewise.
+	* elf/tst-auditmod6c.c (check_avx): Likewise.
+	* elf/tst-auditmod7b.c (check_avx): Likewise.
+
+2011-12-23  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/i386/fpu/bits/fenv.h (feraiseexcept): Also enable for
+	!__SSE_MATH__.
+
+2011-12-23  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	[BZ #13540]
+	* sysdeps/i386/i686/multiarch/wcscpy-ssse3.S: Fix wrong copying
+	processing for last bytes.
+
+2011-08-06  Bruno Haible  <bruno@clisp.org>
+
+	[BZ #13061]
+	* iconvdata/cp1258.c (comp_table_data): Combine U+00A8 U+0301 to
+	U+0385, not to U+1FEE.
+
+	[BZ #13062]
+	* iconvdata/tcvn5712-1.c (comp_table_data): Remove useless and wrong
+	entry for U+00A5 U+0301.
+
+2011-12-22  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13166]
+	* inet/getnameinfo.c (getnameinfo): Return EAI_OVERFLOW if the
+	buffer for the output is too small.
+
+	* sysdeps/i386/fpu/bits/fenv.h [__SSE_MATH__]: Add feraiseexcept
+	optimization.
+
+	[BZ #13185]
+	* sysdeps/i386/fpu/fgetexcptflg.c (__fegetexceptflag): Also return
+	SSE flags if possible.
+
+2011-12-22  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	[BZ #13540]
+	* sysdeps/i386/i686/multiarch/strcpy-ssse3.S: Fix wrong copying
+	processing for last bytes.
+
 2011-12-22  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/Makefile (syscall-list-variants)
@@ -53,6 +122,7 @@
 2011-11-18  Richard B. Kreckel  <kreckel@ginac.de>
 
 	[BZ #13305]
+	[BZ #12786]
 	* math/s_cacosh.c: Fix rare miscomputation in cacosh().
 	* math/s_cacoshf.c: Likewise.
 	* math/s_cacoshl.c: Likewise.

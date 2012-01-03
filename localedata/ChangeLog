@@ -1,4 +1,30 @@
+2011-12-23  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12840]
+	* locales/sv_SE: Modernize date format.
+
+	[BZ #12906]
+	* SUPPORTED (SUPPORTED-LOCALES): Add wal_ET entry.
+
+	* locales/wal_ET: Remove lang_ab entry.
+
+	[BZ #12962]
+	* locales/fi_FI: Various fixups.
+	Patch by Marko Myllynen <myllynen@redhat.com>.
+
+	[BZ #13085]
+	* locales/ta_LK: New file.
+	* SUPPORTED (SUPPORTED-LOCALES): Add appropriate entry
+
+	* locales/si_LK: Add country_ab2, country_ab3, country_num.
+
 2011-12-22  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13096]
+	* locales/fi_FI: Fix collation reordering rules.
+
+	[BZ #13189]
+	* SUPPORTED (SUPPORTED-LOCALES): Add ur_IN entry.
 
 	[BZ #13282]
 	* locales/brx_IN: New file.
