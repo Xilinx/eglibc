@@ -24,7 +24,7 @@ include ../option-groups.mak
 
 subdir	:= wcsmbs
 
-headers	:= wchar.h bits/wchar.h bits/wchar2.h bits/wchar-ldbl.h
+headers	:= wchar.h bits/wchar.h bits/wchar2.h bits/wchar-ldbl.h uchar.h
 distribute := wcwidth.h wcsmbsload.h
 
 # These functions are used by printf_fp.c, even in the plain case; see
@@ -45,7 +45,8 @@ routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
 	    wcscoll_l wcsxfrm_l \
 	    wcscasecmp wcsncase wcscasecmp_l wcsncase_l \
 	    wcsmbsload mbsrtowcs_l \
-	    isoc99_swscanf isoc99_vswscanf
+	    isoc99_swscanf isoc99_vswscanf \
+	    mbrtoc16 c16rtomb
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				\
 	 += isoc99_wscanf isoc99_vwscanf isoc99_fwscanf isoc99_vfwscanf
 

@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+# Copyright (C) 1991-2003, 2004, 2005, 2007, 2011 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -31,7 +31,8 @@ routines := offtime asctime clock ctime ctime_r difftime \
 	    tzfile getitimer setitimer			 \
 	    stime dysize timegm ftime			 \
 	    getdate strptime strptime_l			 \
-	    strftime strftime_l
+	    strftime strftime_l				 \
+	    timespec_get
 routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR)		 \
 	 := wcsftime wcsftime_l
 aux-$(OPTION_EGLIBC_LOCALE_CODE) += alt_digit era lc-time-cleanup
