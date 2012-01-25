@@ -1,4 +1,4 @@
-/* Thread-local storage handling in the ELF dynamic linker.  ARM version.
+/* Thread-local storage handling in the ELF dynamic linker.  Microblaze version.
    Copyright (C) 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -17,7 +17,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-
 /* Type used for the representation of TLS information in the GOT.  */
 typedef struct
 {
@@ -25,5 +24,7 @@ typedef struct
   unsigned long int ti_offset;
 } tls_index;
 
-
 extern void *__tls_get_addr (tls_index *ti);
+
+/* Value used for dtv entries for which the allocation is delayed.  */
+#define TLS_DTV_UNALLOCATED	((void *) -1l)
