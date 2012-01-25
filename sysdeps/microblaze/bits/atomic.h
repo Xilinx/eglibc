@@ -35,13 +35,13 @@ typedef uintptr_t uatomicptr_t;
 typedef intmax_t atomic_max_t;
 typedef uintmax_t uatomic_max_t;
 
-void __microblaze_link_error (void);
+//void __microblaze_link_error (void);
 
 /* REVISIT: This is not atomic, we need to use a swap instruction */
-#define atomic_exchange_acq(mem, newvalue)				\
-   ({ __typeof (*mem) result;						\	
-      result = *mem;            					\
-      *mem = newvalue;            					\
+#define atomic_exchange_acq(mem, newvalue)          \
+   ({ __typeof (*mem) result;                       \
+      result = *mem;                                \
+      *mem = newvalue;                              \
       result; })
 
 /* Atomic compare and exchange.  These sequences are not actually atomic;
@@ -49,20 +49,20 @@ void __microblaze_link_error (void);
    swaps.  */
 
 #define __arch_compare_and_exchange_val_8_acq(mem, newval, oldval) 	\
-   ({ __typeof (*mem) result;						\	
-      result = *mem;            					\
-      if (result == oldval) *mem = newval;            		\
-      result; })
+   ({ __typeof (*mem) archmem = (*mem);           \
+      __typeof (oldval) archold = (oldval);       \
+      if (archmem == oldval) *mem = newval;       \
+      archold; })
 
 #define __arch_compare_and_exchange_val_16_acq(mem, newval, oldval)     \
-  ({ __microblaze_link_error (); oldval; })
+  (abort (), (__typeof (*mem)) 0)
 
 /* REVISIT : This is not atomic */
 #define __arch_compare_and_exchange_val_32_acq(mem, newval, oldval)	\
-   ({ __typeof (*mem) result;						\	
-      result = *mem;            					\
-      if (result == oldval) *mem = newval;            		\
-      result; })
+   ({ __typeof (*mem) archmem = (*mem);           \
+      __typeof (oldval) archold = (oldval);       \
+      if (archmem == oldval) *mem = newval;       \
+      archold; })
 
 #define __arch_compare_and_exchange_val_64_acq(mem, newval, oldval) \
-  ({ __microblaze_link_error (); oldval; })
+  (abort (), (__typeof (*mem)) 0)
