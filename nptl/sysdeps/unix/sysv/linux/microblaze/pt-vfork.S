@@ -18,4 +18,4 @@
 
 #include <tcb-offsets.h>
 
-#include "../vfork.S"
+#include "vfork.S"
