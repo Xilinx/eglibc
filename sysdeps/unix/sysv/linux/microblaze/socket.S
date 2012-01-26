@@ -57,10 +57,8 @@
 
 	.text
 ENTRY(__socket)
-	cfi_startproc
 	addik r1,r1,-stackadjust
 	swi r15,r1,0
-	cfi_adjust_cfa_offset(stackadjust)
 #if NARGS >= 1
 	swi  r5,r1,stackadjust+4
 #endif
@@ -120,7 +118,6 @@ L(socket_cancel):
 	rtsd	r15,8
 	addk	r0,r0,r0
 #endif
-	cfi_endproc
 
 PSEUDO_END (__socket)
 
