@@ -163,6 +163,8 @@ asm (TRAMPOLINE_TEMPLATE (_dl_runtime_resolve, fixup) \
      ".set _dl_runtime_profile, _dl_runtime_resolve");
 #endif
 
+/* The PLT uses Elf32_Rela relocs.  */
+#define elf_machine_relplt elf_machine_rela
 
 /* Mask identifying addresses reserved for the user program,
    where the dynamic linker should not map anything.  */
@@ -291,10 +293,10 @@ elf_machine_plt_value (struct link_map *map, const Elf32_Rela *reloc,
 auto inline void __attribute__ ((always_inline))
 elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 		  const Elf32_Sym *sym, const struct r_found_version *version,
-		  void *const reloc_addr_arg)
+		  void *const reloc_addr_arg, int skip_ifunc)
 {
   Elf32_Addr *const reloc_addr = reloc_addr_arg;
-  const unsigned int r_type = ELF32_R_TYPE (reloc->r_info);
+  const int r_type = ELF32_R_TYPE (reloc->r_info);
 
   if (__builtin_expect (r_type == R_MICROBLAZE_64_PCREL, 0))
     PUT_REL_64(reloc_addr, map->l_addr + reloc->r_addend);
@@ -369,7 +371,8 @@ elf_machine_rela_relative (Elf32_Addr l_addr, const Elf32_Rela *reloc,
 
 auto inline void
 elf_machine_lazy_rel (struct link_map *map,
-		      Elf32_Addr l_addr, const Elf32_Rela *reloc)
+		      Elf32_Addr l_addr, const Elf32_Rela *reloc,
+		      int skip_ifunc)
 {
   Elf32_Addr *const reloc_addr = (void *) (l_addr + reloc->r_offset);
   if (ELF32_R_TYPE (reloc->r_info) == R_MICROBLAZE_JUMP_SLOT)
