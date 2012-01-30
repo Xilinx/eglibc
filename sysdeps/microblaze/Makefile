@@ -25,3 +25,22 @@ CFLAGS-setjmp.c := -fno-omit-frame-pointer
 ifeq ($(subdir),elf)
 CFLAGS-rtld.c += -Wno-uninitialized -Wno-unused
 endif
+
+# Without the following we get undefined references from these
+# various libs to __tls_get_addr. Not sure why only microblaze
+# needs this?
+$(objpfx)libm.so: $(elfobjdir)/ld.so
+$(objpfx)libcrypt.so: $(elfobjdir)/ld.so
+$(objpfx)libresolv.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_dns.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_files.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_db.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_nis.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_nisplus.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_hesiod.so: $(elfobjdir)/ld.so
+$(objpfx)libnss_compat.so: $(elfobjdir)/ld.so
+$(objpfx)libanl.so: $(elfobjdir)/ld.so
+$(objpfx)libnsl.so: $(elfobjdir)/ld.so
+$(objpfx)libcidn.so: $(elfobjdir)/ld.so
+$(objpfx)libutil.so: $(elfobjdir)/ld.so
+
