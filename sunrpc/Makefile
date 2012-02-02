@@ -55,7 +55,7 @@ headers-in-tirpc = $(addprefix rpc/,auth.h auth_unix.h clnt.h pmap_clnt.h \
 				    des_crypt.h)
 headers-not-in-tirpc = $(addprefix rpc/,key_prot.h rpc_des.h) \
 		       $(rpcsvc:%=rpcsvc/%) rpcsvc/bootparam.h
-headers = rpc/netdb.h
+headers = rpc/netdb.h $(headers-in-tirpc) $(headers-not-in-tirpc)
 generated = $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
 	    $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen
 generated-dirs := rpcsvc
