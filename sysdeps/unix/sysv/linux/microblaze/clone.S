@@ -31,7 +31,7 @@
    OUTGOING:
 
    linux: arch/microblaze/entry.S: sys_clone expects 
-	r5 (flags)  r6(child stack) r7(stack_size) r8(ptid) r9(ctid)
+	r5 (flags)  r6(child stack) r7(stack_size) r8(ptid) r9(ctid) r10(tls)
 */
 
         .text
