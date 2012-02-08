@@ -1,3 +1,8 @@
+2012-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* locale/localeinfo.h: Condition <tls.h> include and
+	NL_CURRENT_INDIRECT define on !defined IN_GLIBC_LOCALEDEF.
+
 2012-01-03  Tom de Vries  <tom@codesourcery.com>
 
 	* elf/Makefile ($(objpfx)tst-initorder2.out): Add
