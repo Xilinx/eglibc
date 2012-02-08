@@ -1,5 +1,5 @@
 /* Malloc implementation for multiple threads without lock contention.
-   Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2009,2010,2011
+   Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2009,2010,2011,2012
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Wolfram Gloger <wg@malloc.de>, 2001.
@@ -145,9 +145,9 @@ int __malloc_initialized = -1;
 /* atfork support.  */
 
 static __malloc_ptr_t (*save_malloc_hook) (size_t __size,
-					   __const __malloc_ptr_t);
+					   const __malloc_ptr_t);
 static void           (*save_free_hook) (__malloc_ptr_t __ptr,
-					 __const __malloc_ptr_t);
+					 const __malloc_ptr_t);
 static void*        save_arena;
 
 #ifdef ATFORK_MEM
@@ -185,7 +185,7 @@ malloc_atfork(size_t sz, const void *caller)
        mALLOc() can be used again. */
     (void)mutex_lock(&list_lock);
     (void)mutex_unlock(&list_lock);
-    return public_mALLOc(sz);
+    return __libc_malloc(sz);
   }
 }
 
@@ -413,19 +413,19 @@ ptmalloc_init (void)
 	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "TOP_PAD_", 8) == 0)
-		    mALLOPt(M_TOP_PAD, atoi(&envline[9]));
+		    __libc_mallopt(M_TOP_PAD, atoi(&envline[9]));
 		  else if (memcmp (envline, "PERTURB_", 8) == 0)
-		    mALLOPt(M_PERTURB, atoi(&envline[9]));
+		    __libc_mallopt(M_PERTURB, atoi(&envline[9]));
 		}
 	      break;
 	    case 9:
 	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "MMAP_MAX_", 9) == 0)
-		    mALLOPt(M_MMAP_MAX, atoi(&envline[10]));
+		    __libc_mallopt(M_MMAP_MAX, atoi(&envline[10]));
 #ifdef PER_THREAD
 		  else if (memcmp (envline, "ARENA_MAX", 9) == 0)
-		    mALLOPt(M_ARENA_MAX, atoi(&envline[10]));
+		    __libc_mallopt(M_ARENA_MAX, atoi(&envline[10]));
 #endif
 		}
 	      break;
@@ -434,7 +434,7 @@ ptmalloc_init (void)
 	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "ARENA_TEST", 10) == 0)
-		    mALLOPt(M_ARENA_TEST, atoi(&envline[11]));
+		    __libc_mallopt(M_ARENA_TEST, atoi(&envline[11]));
 		}
 	      break;
 #endif
@@ -442,9 +442,9 @@ ptmalloc_init (void)
 	      if (! __builtin_expect (__libc_enable_secure, 0))
 		{
 		  if (memcmp (envline, "TRIM_THRESHOLD_", 15) == 0)
-		    mALLOPt(M_TRIM_THRESHOLD, atoi(&envline[16]));
+		    __libc_mallopt(M_TRIM_THRESHOLD, atoi(&envline[16]));
 		  else if (memcmp (envline, "MMAP_THRESHOLD_", 15) == 0)
-		    mALLOPt(M_MMAP_THRESHOLD, atoi(&envline[16]));
+		    __libc_mallopt(M_MMAP_THRESHOLD, atoi(&envline[16]));
 		}
 	      break;
 	    default:
@@ -453,7 +453,7 @@ ptmalloc_init (void)
 	}
     }
   if(s && s[0]) {
-    mALLOPt(M_CHECK_ACTION, (int)(s[0] - '0'));
+    __libc_mallopt(M_CHECK_ACTION, (int)(s[0] - '0'));
     if (check_action != 0)
       __malloc_check_init();
   }
@@ -543,39 +543,38 @@ new_heap(size_t size, size_t top_pad)
   p2 = MAP_FAILED;
   if(aligned_heap_area) {
     p2 = (char *)MMAP(aligned_heap_area, HEAP_MAX_SIZE, PROT_NONE,
-		      MAP_PRIVATE|MAP_NORESERVE);
+		      MAP_NORESERVE);
     aligned_heap_area = NULL;
     if (p2 != MAP_FAILED && ((unsigned long)p2 & (HEAP_MAX_SIZE-1))) {
-      munmap(p2, HEAP_MAX_SIZE);
+      __munmap(p2, HEAP_MAX_SIZE);
       p2 = MAP_FAILED;
     }
   }
   if(p2 == MAP_FAILED) {
-    p1 = (char *)MMAP(0, HEAP_MAX_SIZE<<1, PROT_NONE,
-		      MAP_PRIVATE|MAP_NORESERVE);
+    p1 = (char *)MMAP(0, HEAP_MAX_SIZE<<1, PROT_NONE, MAP_NORESERVE);
     if(p1 != MAP_FAILED) {
       p2 = (char *)(((unsigned long)p1 + (HEAP_MAX_SIZE-1))
 		    & ~(HEAP_MAX_SIZE-1));
       ul = p2 - p1;
       if (ul)
-	munmap(p1, ul);
+	__munmap(p1, ul);
       else
 	aligned_heap_area = p2 + HEAP_MAX_SIZE;
-      munmap(p2 + HEAP_MAX_SIZE, HEAP_MAX_SIZE - ul);
+      __munmap(p2 + HEAP_MAX_SIZE, HEAP_MAX_SIZE - ul);
     } else {
       /* Try to take the chance that an allocation of only HEAP_MAX_SIZE
 	 is already aligned. */
-      p2 = (char *)MMAP(0, HEAP_MAX_SIZE, PROT_NONE, MAP_PRIVATE|MAP_NORESERVE);
+      p2 = (char *)MMAP(0, HEAP_MAX_SIZE, PROT_NONE, MAP_NORESERVE);
       if(p2 == MAP_FAILED)
 	return 0;
       if((unsigned long)p2 & (HEAP_MAX_SIZE-1)) {
-	munmap(p2, HEAP_MAX_SIZE);
+	__munmap(p2, HEAP_MAX_SIZE);
 	return 0;
       }
     }
   }
-  if(mprotect(p2, size, PROT_READ|PROT_WRITE) != 0) {
-    munmap(p2, HEAP_MAX_SIZE);
+  if(__mprotect(p2, size, PROT_READ|PROT_WRITE) != 0) {
+    __munmap(p2, HEAP_MAX_SIZE);
     return 0;
   }
   h = (heap_info *)p2;
@@ -599,9 +598,9 @@ grow_heap(heap_info *h, long diff)
   if((unsigned long) new_size > (unsigned long) HEAP_MAX_SIZE)
     return -1;
   if((unsigned long) new_size > h->mprotect_size) {
-    if (mprotect((char *)h + h->mprotect_size,
-		 (unsigned long) new_size - h->mprotect_size,
-		 PROT_READ|PROT_WRITE) != 0)
+    if (__mprotect((char *)h + h->mprotect_size,
+		   (unsigned long) new_size - h->mprotect_size,
+		   PROT_READ|PROT_WRITE) != 0)
       return -2;
     h->mprotect_size = new_size;
   }
@@ -625,7 +624,7 @@ shrink_heap(heap_info *h, long diff)
   if (__builtin_expect (__libc_enable_secure, 0))
     {
       if((char *)MMAP((char *)h + new_size, diff, PROT_NONE,
-		      MAP_PRIVATE|MAP_FIXED) == (char *) MAP_FAILED)
+		      MAP_FIXED) == (char *) MAP_FAILED)
 	return -2;
       h->mprotect_size = new_size;
     }
@@ -643,7 +642,7 @@ shrink_heap(heap_info *h, long diff)
   do {								\
     if ((char *)(heap) + HEAP_MAX_SIZE == aligned_heap_area)	\
       aligned_heap_area = NULL;					\
-    munmap((char*)(heap), HEAP_MAX_SIZE);			\
+    __munmap((char*)(heap), HEAP_MAX_SIZE);			\
   } while (0)
 
 static int
@@ -828,7 +827,7 @@ arena_get2(mstate a_tsd, size_t size)
 	{
 	  if (mp_.arena_max != 0)
 	    narenas_limit = mp_.arena_max;
-	  else
+	  else if (narenas > mp_.arena_test)
 	    {
 	      int n  = __get_nprocs ();
 
@@ -842,7 +841,14 @@ arena_get2(mstate a_tsd, size_t size)
 	}
     repeat:;
       size_t n = narenas;
-      if (__builtin_expect (n <= mp_.arena_test || n < narenas_limit, 0))
+      /* NB: the following depends on the fact that (size_t)0 - 1 is a
+	 very large number and that the underflow is OK.  If arena_max
+	 is set the value of arena_test is irrelevant.  If arena_test
+	 is set but narenas is not yet larger or equal to arena_test
+	 narenas_limit is 0.  There is no possibility for narenas to
+	 be too big for the test to always fail since there is not
+	 enough address space to create that many arenas.  */
+      if (__builtin_expect (n <= narenas_limit - 1, 0))
 	{
 	  if (catomic_compare_and_exchange_bool_acq (&narenas, n + 1, n))
 	    goto repeat;

@@ -1,5 +1,5 @@
 /* This file is part of the GNU C Library.
-   Copyright (C) 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2008, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,13 @@
 #define bit_Prefer_SSE_for_memop	(1 << 3)
 #define bit_Fast_Unaligned_Load		(1 << 4)
 #define bit_Prefer_PMINUB_for_stringop	(1 << 5)
+#define bit_YMM_Usable			(1 << 6)
 
 #define bit_SSE2	(1 << 26)
 #define bit_SSSE3	(1 << 9)
 #define bit_SSE4_1	(1 << 19)
 #define bit_SSE4_2	(1 << 20)
+#define bit_OSXSAVE	(1 << 27)
 #define bit_AVX		(1 << 28)
 #define bit_POPCOUNT	(1 << 23)
 #define bit_FMA		(1 << 12)
@@ -48,6 +50,7 @@
 # define index_Prefer_SSE_for_memop	FEATURE_INDEX_1*FEATURE_SIZE
 # define index_Fast_Unaligned_Load	FEATURE_INDEX_1*FEATURE_SIZE
 # define index_Prefer_PMINUB_for_stringop FEATURE_INDEX_1*FEATURE_SIZE
+# define index_YMM_Usable		FEATURE_INDEX_1*FEATURE_SIZE
 
 #else	/* __ASSEMBLER__ */
 
@@ -92,7 +95,7 @@ extern struct cpu_features
 
 
 extern void __init_cpu_features (void) attribute_hidden;
-#define INIT_ARCH()\
+# define INIT_ARCH() \
   do							\
     if (__cpu_features.kind == arch_kind_unknown)	\
       __init_cpu_features ();				\
@@ -125,23 +128,21 @@ extern const struct cpu_features *__get_cpu_features (void)
 # define index_Slow_BSF			FEATURE_INDEX_1
 # define index_Prefer_SSE_for_memop	FEATURE_INDEX_1
 # define index_Fast_Unaligned_Load	FEATURE_INDEX_1
+# define index_YMM_Usable		FEATURE_INDEX_1
 
-#define HAS_ARCH_FEATURE(idx, bit) \
-  ((__get_cpu_features ()->feature[idx] & (bit)) != 0)
+# define HAS_ARCH_FEATURE(name) \
+  ((__get_cpu_features ()->feature[index_##name] & (bit_##name)) != 0)
 
-#define HAS_FAST_REP_STRING \
-  HAS_ARCH_FEATURE (index_Fast_Rep_String, bit_Fast_Rep_String)
+# define HAS_FAST_REP_STRING	HAS_ARCH_FEATURE (Fast_Rep_String)
 
-#define HAS_FAST_COPY_BACKWARD \
-  HAS_ARCH_FEATURE (index_Fast_Copy_Backward, bit_Fast_Copy_Backward)
+# define HAS_FAST_COPY_BACKWARD	HAS_ARCH_FEATURE (Fast_Copy_Backward)
 
-#define HAS_SLOW_BSF \
-  HAS_ARCH_FEATURE (index_Slow_BSF, bit_Slow_BSF)
+# define HAS_SLOW_BSF		HAS_ARCH_FEATURE (Slow_BSF)
 
-#define HAS_PREFER_SSE_FOR_MEMOP \
-  HAS_ARCH_FEATURE (index_Prefer_SSE_for_memop, bit_Prefer_SSE_for_memop)
+# define HAS_PREFER_SSE_FOR_MEMOP HAS_ARCH_FEATURE (Prefer_SSE_for_memop)
 
-#define HAS_FAST_UNALIGNED_LOAD \
-  HAS_ARCH_FEATURE (index_Fast_Unaligned_Load, bit_Fast_Unaligned_Load)
+# define HAS_FAST_UNALIGNED_LOAD HAS_ARCH_FEATURE (Fast_Unaligned_Load)
+
+# define HAS_YMM_USABLE		HAS_ARCH_FEATURE (YMM_Usable)
 
 #endif	/* __ASSEMBLER__ */

@@ -5,25 +5,27 @@
 #  include <libio/stdio.h>
 
 /* Now define the internal interfaces.  */
+__BEGIN_DECLS
+
 extern int __fcloseall (void);
 extern int __snprintf (char *__restrict __s, size_t __maxlen,
-		       __const char *__restrict __format, ...)
+		       const char *__restrict __format, ...)
      __attribute__ ((__format__ (__printf__, 3, 4)));
 extern int __vsnprintf (char *__restrict __s, size_t __maxlen,
-			__const char *__restrict __format, _G_va_list __arg)
+			const char *__restrict __format, _G_va_list __arg)
      __attribute__ ((__format__ (__printf__, 3, 0)));
 extern int __vfscanf (FILE *__restrict __s,
-		      __const char *__restrict __format,
+		      const char *__restrict __format,
 		      _G_va_list __arg)
      __attribute__ ((__format__ (__scanf__, 2, 0)));
 libc_hidden_proto (__vfscanf)
-extern int __vscanf (__const char *__restrict __format,
+extern int __vscanf (const char *__restrict __format,
 		     _G_va_list __arg)
      __attribute__ ((__format__ (__scanf__, 1, 0)));
 extern _IO_ssize_t __getline (char **__lineptr, size_t *__n,
 			      FILE *__stream);
-extern int __vsscanf (__const char *__restrict __s,
-		      __const char *__restrict __format,
+extern int __vsscanf (const char *__restrict __s,
+		      const char *__restrict __format,
 		      _G_va_list __arg)
      __attribute__ ((__format__ (__scanf__, 2, 0)));
 
@@ -52,17 +54,17 @@ extern int __obstack_vprintf_chk (struct obstack *, int, const char *,
 #endif
 
 extern int __isoc99_fscanf (FILE *__restrict __stream,
-			    __const char *__restrict __format, ...) __wur;
-extern int __isoc99_scanf (__const char *__restrict __format, ...) __wur;
-extern int __isoc99_sscanf (__const char *__restrict __s,
-			    __const char *__restrict __format, ...) __THROW;
+			    const char *__restrict __format, ...) __wur;
+extern int __isoc99_scanf (const char *__restrict __format, ...) __wur;
+extern int __isoc99_sscanf (const char *__restrict __s,
+			    const char *__restrict __format, ...) __THROW;
 extern int __isoc99_vfscanf (FILE *__restrict __s,
-			     __const char *__restrict __format,
+			     const char *__restrict __format,
 			     _G_va_list __arg) __wur;
-extern int __isoc99_vscanf (__const char *__restrict __format,
+extern int __isoc99_vscanf (const char *__restrict __format,
 			    _G_va_list __arg) __wur;
-extern int __isoc99_vsscanf (__const char *__restrict __s,
-			     __const char *__restrict __format,
+extern int __isoc99_vsscanf (const char *__restrict __s,
+			     const char *__restrict __format,
 			     _G_va_list __arg) __THROW;
 libc_hidden_proto (__isoc99_vsscanf)
 libc_hidden_proto (__isoc99_vfscanf)
@@ -77,7 +79,7 @@ extern FILE *__old_tmpfile (void);
 #  include <stddef.h>
 /* Generate a unique file name (and possibly open it).  */
 extern int __path_search (char *__tmpl, size_t __tmpl_len,
-			  __const char *__dir, __const char *__pfx,
+			  const char *__dir, const char *__pfx,
 			  int __try_tempdir);
 
 extern int __gen_tempname (char *__tmpl, int __suffixlen, int __flags,
@@ -88,9 +90,9 @@ extern int __gen_tempname (char *__tmpl, int __suffixlen, int __flags,
 #  define __GT_NOCREATE	2	/* just find a name not currently in use */
 
 /* Print out MESSAGE on the error output and abort.  */
-extern void __libc_fatal (__const char *__message)
+extern void __libc_fatal (const char *__message)
      __attribute__ ((__noreturn__));
-extern void __libc_message (int do_abort, __const char *__fnt, ...);
+extern void __libc_message (int do_abort, const char *__fnt, ...);
 extern void __fortify_fail (const char *msg)
      __attribute__ ((__noreturn__)) internal_function;
 libc_hidden_proto (__fortify_fail)
@@ -111,11 +113,11 @@ extern wint_t __getwc_unlocked (FILE *__fp);
 extern int __fxprintf (FILE *__fp, const char *__fmt, ...)
      __attribute__ ((__format__ (__printf__, 2, 3)));
 
-extern __const char *__const _sys_errlist_internal[] attribute_hidden;
+extern const char *const _sys_errlist_internal[] attribute_hidden;
 extern int _sys_nerr_internal attribute_hidden;
 
 extern int __asprintf_internal (char **__restrict __ptr,
-				__const char *__restrict __fmt, ...)
+				const char *__restrict __fmt, ...)
      attribute_hidden __attribute__ ((__format__ (__printf__, 2, 3)));
 #  if !defined NOT_IN_libc && !defined _ISOMAC
 #    define __asprintf(ptr, fmt, args...) \
@@ -164,6 +166,26 @@ libc_hidden_proto (__vfprintf_chk)
 libc_hidden_proto (__vasprintf_chk)
 libc_hidden_proto (__vdprintf_chk)
 libc_hidden_proto (__obstack_vprintf_chk)
+
+/* The <stdio.h> header does not include the declaration for gets
+   anymore when compiling with _GNU_SOURCE.  Provide a copy here.  */
+extern char *gets (char *__s);
+#  if __USE_FORTIFY_LEVEL > 0
+extern char *__gets_chk (char *__str, size_t) __wur;
+extern char *__REDIRECT (__gets_warn, (char *__str), gets)
+     __wur __warnattr ("please use fgets or getline instead, gets can't "
+		       "specify buffer size");
+
+__extern_always_inline __wur char *
+gets (char *__str)
+{
+  if (__bos (__str) != (size_t) -1)
+    return __gets_chk (__str, __bos (__str));
+  return __gets_warn (__str);
+}
+#  endif
+
+__END_DECLS
 # endif
 
 #endif

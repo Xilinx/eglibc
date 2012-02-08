@@ -1,5 +1,5 @@
-/* Copyright (C) 1993, 1994, 1995, 1997, 2003, 2011
-        Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995, 1997, 2003, 2011, 2012
+	Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,12 +22,10 @@
 
 #ifdef	__ASSEMBLER__
 
-#ifdef	NO_UNDERSCORES
 /* Since C identifiers are not normally prefixed with an underscore
    on this system, the asm identifier `syscall_error' intrudes on the
    C name space.  Make sure we use an innocuous name.  */
 #define	syscall_error	C_SYMBOL_NAME(__syscall_error)
-#endif
 
 #ifdef PIC
 #define SETUP_PIC_REG(reg, tmp)						\
@@ -49,20 +47,12 @@ __sparc_get_pc_thunk.reg:		   				\
 	mov	%##tmp, %o7;
 #endif
 
-#ifdef HAVE_ELF
 #define	ENTRY(name)		\
   .global C_SYMBOL_NAME(name);	\
   .type name,@function;		\
   .align 4;			\
   C_LABEL(name)
 
-#else
-#define	ENTRY(name)		\
-  .global C_SYMBOL_NAME(name);	\
-  .align 4;			\
-  C_LABEL(name)
-
-#endif /* HAVE_ELF */
 
 #define	PSEUDO(name, syscall_name, args)	\
   .global syscall_error;			\

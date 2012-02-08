@@ -1,4 +1,4 @@
-# Copyright (C) 1996-2006,2011 Free Software Foundation, Inc.
+# Copyright (C) 1996-2006,2011,2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -93,7 +93,7 @@ distribute += $(filter-out $(generated),$(long-m-yes:=.c) $(long-c-yes:=.c))
 tests = test-matherr test-fenv basic-test \
 	test-misc test-fpucw tst-definitions test-tgmath test-tgmath-ret \
 	bug-nextafter bug-nexttoward bug-tgmath1 test-tgmath-int test-tgmath2 \
-	test-dbl-wrap test-powl
+	test-dbl-wrap test-powl tst-CMPLX tst-CMPLX2
 tests-$(OPTION_EGLIBC_LIBM_BIG) += atest-exp atest-sincos atest-exp2
 # We do the `long double' tests only if this data type is available and
 # distinct from `double'.
@@ -205,12 +205,7 @@ ifeq ($(build-bounded),yes)
 $(tests:%=$(objpfx)%-bp): $(objpfx)libm_b.a
 endif
 
-ifeq ($(build-static),yes)
-o = .o
-else
-o = .os
-endif
-gmp-objs = $(patsubst %,$(common-objpfx)stdlib/%$o,\
+gmp-objs = $(patsubst %,$(common-objpfx)stdlib/%.o,\
 		      add_n sub_n cmp addmul_1 mul_1 mul_n divmod_1 \
 		      lshift rshift mp_clz_tab udiv_qrnnd inlines)
 $(objpfx)atest-exp: $(gmp-objs)

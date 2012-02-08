@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2000,2002,2003,2004,2005,2006,2007,2011
+# Copyright (C) 1995-2000,2002,2003,2004,2005,2006,2007,2011,2012
 #	Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
@@ -53,7 +53,7 @@ routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)				\
 strop-tests :=  wcscmp wmemcmp wcslen wcschr wcsrchr wcscpy
 tests := tst-wchar-h 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-      += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb
+      += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb tst-c16c32-1
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
       += tst-wcstof wcsmbs-tst1 tst-wcsnlen \
 	 tst-wcpncpy tst-mbsrtowcs wcsatcliff $(addprefix test-,$(strop-tests))
@@ -95,3 +95,4 @@ tst-btowc-ENV = LOCPATH=$(common-objpfx)localedata
 tst-mbrtowc-ENV = LOCPATH=$(common-objpfx)localedata
 tst-wcrtomb-ENV = LOCPATH=$(common-objpfx)localedata
 tst-mbrtowc2-ENV = LOCPATH=$(common-objpfx)localedata
+tst-c16c32-1-ENV = LOCPATH=$(common-objpfx)localedata

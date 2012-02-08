@@ -1,7 +1,7 @@
 /*
  * UFC-crypt: ultra fast crypt(3) implementation
  *
- * Copyright (C) 1991-1993,1996-1998,2000,2010,2011
+ * Copyright (C) 1991-1993,1996-1998,2000,2010,2011,2012
  * Free Software Foundation, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,6 @@
 #include "crypt-private.h"
 
 /* Prototypes for local functions.  */
-#if __STDC__ - 0
 #ifndef __GNU_LIBRARY__
 void _ufc_clearmem (char *start, int cnt);
 void _ufc_copymem (char *from, char *to, int cnt);
@@ -58,7 +57,6 @@ void _ufc_copymem (char *from, char *to, int cnt);
 STATIC void shuffle_sb (long32 *k, ufc_long saltbits);
 #else
 STATIC void shuffle_sb (long64 *k, ufc_long saltbits);
-#endif
 #endif
 
 
@@ -605,7 +603,7 @@ shuffle_sb(k, saltbits)
 
 void
 _ufc_setup_salt_r(s, __data)
-     __const char *s;
+     const char *s;
      struct crypt_data * __restrict __data;
 {
   ufc_long i, j, saltbits;
@@ -758,7 +756,7 @@ _ufc_dofinalperm_r(res, __data)
 void
 _ufc_output_conversion_r(v1, v2, salt, __data)
      ufc_long v1, v2;
-     __const char *salt;
+     const char *salt;
      struct crypt_data * __restrict __data;
 {
   int i, s, shf;
@@ -902,7 +900,7 @@ encrypt(__block, __edflag)
 
 void
 __setkey_r(__key, __data)
-     __const char *__key;
+     const char *__key;
      struct crypt_data * __restrict __data;
 {
   int i,j;
@@ -922,7 +920,7 @@ weak_alias (__setkey_r, setkey_r)
 
 void
 setkey(__key)
-     __const char *__key;
+     const char *__key;
 {
   __setkey_r(__key, &_ufc_foobar);
 }

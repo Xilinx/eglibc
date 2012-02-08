@@ -353,10 +353,10 @@ extern double __slowpow (double __x, double __y, double __z);
 extern void __docos (double __x, double __dx, double __v[]);
 
 #ifndef math_opt_barrier
-#define math_opt_barrier(x) \
+# define math_opt_barrier(x) \
 ({ __typeof (x) __x = (x); __asm ("" : "+m" (__x)); __x; })
-#define math_force_eval(x) \
-({ __typeof (x) __x = (x); __asm __volatile ("" : : "m" (__x)); })
+# define math_force_eval(x) \
+({ __typeof (x) __x = (x); __asm __volatile__ ("" : : "m" (__x)); })
 #endif
 
 
@@ -365,14 +365,6 @@ extern void __docos (double __x, double __dx, double __v[]);
    know what operations are going to be performed.  Therefore we
    define additional interfaces.  By default they refer to the normal
    interfaces.  */
-#define libc_fegetround() fegetround ()
-#define libc_fegetroundf() fegetround ()
-#define libc_fegetroundl() fegetround ()
-
-#define libc_fesetround(r) (void) fesetround (r)
-#define libc_fesetroundf(r) (void) fesetround (r)
-#define libc_fesetroundl(r) (void) fesetround (r)
-
 #define libc_feholdexcept(e) (void) feholdexcept (e)
 #define libc_feholdexceptf(e) (void) feholdexcept (e)
 #define libc_feholdexceptl(e) (void) feholdexcept (e)

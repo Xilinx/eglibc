@@ -91,11 +91,4 @@ typedef unsigned int _G_uint32_t __attribute__ ((__mode__ (__SI__)));
 #define _G_VTABLE_LABEL_PREFIX "__vt_"
 #define _G_VTABLE_LABEL_PREFIX_ID __vt_
 
-
-#if defined __cplusplus || defined __STDC__
-# define _G_ARGS(ARGLIST) ARGLIST
-#else
-# define _G_ARGS(ARGLIST) ()
-#endif
-
 #endif	/* _G_config.h */

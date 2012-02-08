@@ -1,5 +1,5 @@
 /* Simple transformations functions.
-   Copyright (C) 1997-2005, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 1997-2005, 2007, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -34,7 +34,7 @@
 #define BUILTIN_TRANSFORMATION(From, To, Cost, Name, Fct, BtowcFct, \
 			       MinF, MaxF, MinT, MaxT) \
   extern int Fct (struct __gconv_step *, struct __gconv_step_data *,	      \
-		  __const unsigned char **, __const unsigned char *,	      \
+		  const unsigned char **, const unsigned char *,	      \
 		  unsigned char **, size_t *, int, int);
 #include "gconv_builtin.h"
 
@@ -1065,6 +1065,7 @@ ucs4le_internal_loop_single (struct __gconv_step *step,
 									      \
     state->__count = inend - *inptrp;					      \
 									      \
+    assert (ch != 0xc0 && ch != 0xc1);					      \
     if (ch >= 0xc2 && ch < 0xe0)					      \
       {									      \
 	/* We expect two bytes.  The first byte cannot be 0xc0 or	      \
@@ -1315,75 +1316,6 @@ ucs4le_internal_loop_single (struct __gconv_step *step,
 	put16 (outptr, bswap_16 (val));					      \
 	outptr += sizeof (uint16_t);					      \
 	inptr += 4;							      \
-      }									      \
-  }
-#define LOOP_NEED_FLAGS
-#include <iconv/loop.c>
-#include <iconv/skeleton.c>
-
-
-/* Convert from ISO 646-IRV to UTF-16.  */
-#define DEFINE_INIT		0
-#define DEFINE_FINI		0
-#define MIN_NEEDED_FROM		1
-#define MIN_NEEDED_TO		2
-#define FROM_DIRECTION		1
-#define FROM_LOOP		ascii_utf16_loop
-#define TO_LOOP			ascii_utf16_loop /* This is not used.  */
-#define FUNCTION_NAME		__gconv_transform_ascii_utf16
-#define ONE_DIRECTION		1
-
-#define MIN_NEEDED_INPUT	MIN_NEEDED_FROM
-#define MIN_NEEDED_OUTPUT	MIN_NEEDED_TO
-#define LOOPFCT			FROM_LOOP
-#define BODY \
-  {									      \
-    if (__builtin_expect (*inptr > '\x7f', 0))				      \
-      {									      \
-	/* The value is too large.  We don't try transliteration here since   \
-	   this is not an error because of the lack of possibilities to	      \
-	   represent the result.  This is a genuine bug in the input since    \
-	   ASCII does not allow such values.  */			      \
-	STANDARD_FROM_LOOP_ERR_HANDLER (1);				      \
-      }									      \
-    else								      \
-      {									      \
-	/* It's an one byte sequence.  */				      \
-	*((uint16_t *) outptr) = *inptr++;				      \
-	outptr += sizeof (uint16_t);					      \
-      }									      \
-  }
-#define LOOP_NEED_FLAGS
-#include <iconv/loop.c>
-#include <iconv/skeleton.c>
-
-
-/* Convert from UTF-16 to ISO 646-IRV.  */
-#define DEFINE_INIT		0
-#define DEFINE_FINI		0
-#define MIN_NEEDED_FROM		2
-#define MIN_NEEDED_TO		1
-#define FROM_DIRECTION		1
-#define FROM_LOOP		utf16_ascii_loop
-#define TO_LOOP			utf16_ascii_loop /* This is not used.  */
-#define FUNCTION_NAME		__gconv_transform_utf16_ascii
-#define ONE_DIRECTION		1
-
-#define MIN_NEEDED_INPUT	MIN_NEEDED_FROM
-#define MIN_NEEDED_OUTPUT	MIN_NEEDED_TO
-#define LOOPFCT			FROM_LOOP
-#define BODY \
-  {									      \
-    if (__builtin_expect (*((const uint16_t *) inptr) > 0x7f, 0))	      \
-      {									      \
-	UNICODE_TAG_HANDLER (*((const uint16_t *) inptr), 2);		      \
-	STANDARD_TO_LOOP_ERR_HANDLER (2);				      \
-      }									      \
-    else								      \
-      {									      \
-	/* It's an one byte sequence.  */				      \
-	*outptr++ = *((const uint16_t *) inptr);			      \
-	inptr += sizeof (uint16_t);					      \
       }									      \
   }
 #define LOOP_NEED_FLAGS

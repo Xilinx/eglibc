@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2007,2008,2009,2010,2011 Free Software Foundation, Inc.
+# Copyright (C) 1995-2011, 2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -124,7 +124,8 @@ distribute	:= rtld-Rules \
 		   tst-initordera1.c tst-initordera2.c tst-initorderb1.c \
 		   tst-initorderb2.c tst-initordera3.c tst-initordera4.c \
 		   tst-initorder.c \
-		   tst-initorder2.c
+		   tst-initorder2.c \
+		   tst-relsort1.c tst-relsort1mod1.c tst-relsort1mod2.c
 
 CFLAGS-dl-runtime.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-dl-lookup.c = -fexceptions -fasynchronous-unwind-tables
@@ -203,9 +204,8 @@ tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1
 ifeq (yes,$(have-initfini-array))
 tests += tst-array1 tst-array2 tst-array3 tst-array4 tst-array5
 endif
-ifeq (yes,$(build-static))
 tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static
-ifeq (yesyesyes,$(build-static)$(build-shared)$(elf))
+ifeq (yes,$(build-shared))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
   EGLIBC_TEST_LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
@@ -215,7 +215,6 @@ ifeq (yes,$(have-initfini-array))
 tests-static += tst-array1-static tst-array5-static
 endif
 tests += $(tests-static)
-endif
 ifeq (yes,$(build-shared))
 tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 constload1 order vismain noload filter unload \
@@ -233,7 +232,7 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 tst-audit1 tst-audit2 \
 	 tst-stackguard1 tst-addr1 tst-thrlock \
 	 tst-unique1 tst-unique2 tst-unique3 tst-unique4 \
-	 tst-initorder tst-initorder2
+	 tst-initorder tst-initorder2 tst-relsort1
 #	 reldep9
 test-srcs = tst-pathopt
 selinux-enabled := $(shell cat /selinux/enforce 2> /dev/null)
@@ -296,7 +295,9 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-initordera1 tst-initorderb1 \
 		tst-initordera2 tst-initorderb2 \
 		tst-initordera3 tst-initordera4 \
-		tst-initorder2a tst-initorder2b tst-initorder2c tst-initorder2d
+		tst-initorder2a tst-initorder2b tst-initorder2c \
+		tst-initorder2d \
+		tst-relsort1mod1 tst-relsort1mod2
 ifeq (yes,$(have-initfini-array))
 modules-names += tst-array2dep tst-array5dep
 endif
@@ -1217,3 +1218,9 @@ CFLAGS-tst-auditmod6b.c += $(AVX-CFLAGS)
 CFLAGS-tst-auditmod6c.c += $(AVX-CFLAGS)
 CFLAGS-tst-auditmod7b.c += $(AVX-CFLAGS)
 endif
+
+$(objpfx)tst-relsort1: $(libdl)
+$(objpfx)tst-relsort1mod1.so: $(libm) $(objpfx)tst-relsort1mod2.so
+$(objpfx)tst-relsort1mod2.so: $(libm)
+$(objpfx)tst-relsort1.out: $(objpfx)tst-relsort1mod1.so \
+			   $(objpfx)tst-relsort1mod2.so

@@ -1,5 +1,5 @@
 /* poll file descriptors.  Hurd version.
-   Copyright (C) 2006 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -28,3 +28,4 @@ ppoll (struct pollfd *fds, nfds_t nfds,
 {
   return _hurd_select (nfds, fds, NULL, NULL, NULL, timeout, sigmask);
 }
+libc_hidden_def (ppoll)

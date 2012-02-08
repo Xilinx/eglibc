@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2008,2009,2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008,2009,2010,2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -354,14 +354,22 @@ ifneq (,$(patsubst .,,$(multidir)))
 generated-dirs := $(firstword $(subst /, , $(multidir)))
 crti-objs += $(multidir)/crti.o
 crtn-objs += $(multidir)/crtn.o
+# Conditionals on the existence of a sysdeps version of crti.S are
+# temporary until all targets either have such a file or have been
+# removed, after which the old approach of postprocessing compiler
+# output will be removed.
+ifeq (,$(wildcard $(sysdirs:%=%/crti.S)))
 omit-deps += $(multidir)/crti $(multidir)/crtn
+endif
 $(objpfx)$(multidir):
 	mkdir -p $@
 endif
 extra-objs += $(crti-objs) $(crtn-objs)
+ifeq (,$(wildcard $(sysdirs:%=%/crti.S)))
 omit-deps += crti crtn
 
 CFLAGS-pt-initfini.s = -g0 -fPIC -fno-inline-functions $(fno-unit-at-a-time)
+endif
 endif
 
 CFLAGS-flockfile.c = -D_IO_MTSAFE_IO
@@ -371,11 +379,10 @@ CFLAGS-funlockfile.c = -D_IO_MTSAFE_IO
 link-libc-static := $(common-objpfx)libc.a $(static-gnulib) \
 		    $(common-objpfx)libc.a
 
-ifeq ($(build-static),yes)
 tests-static += tst-locale1 tst-locale2 tst-stackguard1-static
 tests += tst-stackguard1-static
 xtests-static += tst-setuid1-static
-endif
+
 # These tests are linked with libc before libpthread
 tests-reverse += tst-cancel5 tst-cancel23 tst-vfork1x tst-vfork2x
 
@@ -539,7 +546,7 @@ $(objpfx)libpthread.so: +postinit += $(addprefix $(objpfx),$(crtn-objs))
 # Depend on ld.so too to get proper versions of ld.so symbols.
 $(objpfx)libpthread.so: $(common-objpfx)libc.so \
 			$(common-objpfx)libc_nonshared.a \
-			$(if $(filter yes,$(elf)), $(elfobjdir)/ld.so)
+			$(elfobjdir)/ld.so
 
 # Make sure we link with the thread library.
 ifeq ($(build-shared),yes)
@@ -563,14 +570,23 @@ $(addprefix $(objpfx),$(tests) $(test-srcs)): $(objpfx)libpthread.a
 endif
 
 ifeq ($(build-shared),yes)
+ifeq (,$(wildcard $(sysdirs:%=%/crti.S)))
 vpath pt-initfini.c $(sysdirs)
 
 $(objpfx)pt-initfini.s: pt-initfini.c
 	$(compile.c) -S $(CFLAGS-pt-initfini.s) -finhibit-size-directive \
 		$(patsubst -f%,-fno-%,$(exceptions)) -o $@
+endif
 
 $(objpfx)tst-cleanup0.out: /dev/null $(objpfx)tst-cleanup0
 	$(make-test-out) 2>&1 | cmp - tst-cleanup0.expect > $@
+
+ifneq (,$(wildcard $(sysdirs:%=%/crti.S)))
+
+$(objpfx)crti.o: $(objpfx)pt-crti.o
+	ln -f $< $@
+
+else
 
 # We only have one kind of startup code files.  Static binaries and
 # shared libraries are build using the PIC version.
@@ -592,6 +608,8 @@ $(objpfx)crti.o: $(objpfx)crti.S $(objpfx)defs.h
 
 $(objpfx)crtn.o: $(objpfx)crtn.S $(objpfx)defs.h
 	$(compile.S) -g0 $(ASFLAGS-.os) -o $@
+
+endif
 
 ifneq ($(multidir),.)
 $(objpfx)$(multidir)/crti.o: $(objpfx)crti.o $(objpfx)$(multidir)/

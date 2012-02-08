@@ -646,19 +646,16 @@ mach_interface_list
 DEFINES
 nopic_initfini
 static_nss
-bounded
-omitfp
 profile
 libc_cv_pic_default
 shared
 static
-xcoff
-elf
 ldd_rewrite_script
 use_ldconfig
 libc_cv_as_i686
 libc_cv_cc_fma4
 libc_cv_cc_novzeroupper
+libc_cv_cc_sse2avx
 libc_cv_cc_avx
 libc_cv_cc_sse4
 libc_cv_cpp_asm_debuginfo
@@ -678,7 +675,6 @@ have_libaudit
 LIBGD
 libc_cv_cc_submachine
 exceptions
-libc_cv_have_initfini
 gnu89_inline
 libc_cv_ssp
 fno_unit_at_a_time
@@ -710,7 +706,6 @@ SED
 MAKEINFO
 MSGFMT
 MAKE
-PWD_P
 LD
 AS
 MIG
@@ -807,17 +802,13 @@ with_gd_include
 with_gd_lib
 with_fp
 with_binutils
-with_elf
 with_selinux
-with_xcoff
 with_headers
 with_default_link
 enable_sanity_checks
 enable_check_abi
 enable_shared
 enable_profile
-enable_omitfp
-enable_bounded
 enable_versioning
 enable_oldest_abi
 enable_stackguard_randomization
@@ -1476,10 +1467,8 @@ Optional Features:
                           in special situations) [default=yes]
   --enable-check-abi      do "make check-abi" in "make check" (no/warn/yes)
                           [default=no]
-  --enable-shared         build shared library [default=yes if GNU ld & ELF]
+  --enable-shared         build shared library [default=yes if GNU ld]
   --enable-profile        build profiled library [default=no]
-  --enable-omitfp         build undebuggable optimized library [default=no]
-  --enable-bounded        build with runtime bounds checking [default=no]
   --disable-versioning    do not include versioning information in the library
                           objects [default=yes if supported]
   --enable-oldest-abi=ABI configure the oldest ABI supported [e.g. 2.2]
@@ -1510,9 +1499,7 @@ Optional Packages:
   --with-gd-lib=DIR       find libgd library files in DIR
   --with-fp               if using floating-point hardware [default=yes]
   --with-binutils=PATH    specify location of binutils (as and ld)
-  --with-elf              if using the ELF object format
   --with-selinux          if building with SELinux support
-  --with-xcoff            if using the XCOFF object format
   --with-headers=PATH     location of system headers to use (for example
                           /usr/src/linux/include) [default=compiler default]
   --with-default-link     do not use explicit linker scripts
@@ -3571,27 +3558,11 @@ else
 fi
 
 
-# Check whether --with-elf was given.
-if test "${with_elf+set}" = set; then
-  withval=$with_elf; elf=$withval
-else
-  elf=no
-fi
-
-
 # Check whether --with-selinux was given.
 if test "${with_selinux+set}" = set; then
   withval=$with_selinux; with_selinux=$withval
 else
   with_selinux=auto
-fi
-
-
-# Check whether --with-xcoff was given.
-if test "${with_xcoff+set}" = set; then
-  withval=$with_xcoff; xcoff=$withval
-else
-  xcoff=no
 fi
 
 
@@ -3631,12 +3602,11 @@ else
 fi
 
 
-static=yes
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then
   enableval=$enable_shared; shared=$enableval
 else
-  shared=default
+  shared=yes
 fi
 
 # Check whether --enable-profile was given.
@@ -3644,20 +3614,6 @@ if test "${enable_profile+set}" = set; then
   enableval=$enable_profile; profile=$enableval
 else
   profile=no
-fi
-
-# Check whether --enable-omitfp was given.
-if test "${enable_omitfp+set}" = set; then
-  enableval=$enable_omitfp; omitfp=$enableval
-else
-  omitfp=no
-fi
-
-# Check whether --enable-bounded was given.
-if test "${enable_bounded+set}" = set; then
-  enableval=$enable_bounded; bounded=$enableval
-else
-  bounded=no
 fi
 
 # Check whether --enable-versioning was given.
@@ -3996,20 +3952,7 @@ test "$config_vendor" = unknown && config_vendor=
 config_os="`echo $config_os | sed 's/^unknown-//'`"
 
 # Some configurations imply other options.
-case "$host_os" in
-# i586-linuxaout is mangled into i586-pc-linux-gnuaout
-linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
-  ;;
-gnu* | linux* | freebsd* | netbsd* | sysv4* | solaris2* | irix6*)
-  # These systems (almost) always use the ELF format.
-  elf=yes
-  ;;
-aix*)
-  # These systems are always xcoff
-  xcoff=yes
-  elf=no
-  ;;
-esac
+elf=yes
 
 # The configure fragment of an add-on port can modify these to supplement
 # or override the table in the case statement below.  No fragment should
@@ -4220,7 +4163,7 @@ fi
 ###
 if test -z "$enable_hacker_mode" && test x"$libc_config_ok" != xyes; then
   case "$machine-$host_os" in
-  *-linux* | *-gnu* | arm*-none* | powerpc-aix4.3.*)
+  *-linux* | *-gnu* | arm*-none*)
     ;;
   *)
     echo "*** The GNU C library is currently not available for this platform."
@@ -4238,13 +4181,7 @@ fi
 # type and particular chip.  If an add-on configure fragment already set
 # base_machine, we don't change it.
 test -n "$base_machine" || case "$machine" in
-a29k | am29000)	base_machine=a29k machine=a29k ;;
-c3[012])	base_machine=cx0 machine=cx0/c30 ;;
-c4[04])		base_machine=cx0 machine=cx0/c40 ;;
 i[34567]86)	base_machine=i386 machine=i386/$machine ;;
-ia64)		base_machine=ia64 machine=ia64 ;;
-m88???)		base_machine=m88k machine=m88k/$machine ;;
-m88k)		base_machine=m88k machine=m88k/m88100 ;;
 powerpc)	base_machine=powerpc machine=powerpc/powerpc32 ;;
 powerpc64)	base_machine=powerpc machine=powerpc/powerpc64 ;;
 s390)           base_machine=s390 machine=s390/s390-32 ;;
@@ -4437,10 +4374,6 @@ irix6*)
   base_os=unix/sysv/irix6/$os ;;
 solaris[2-9]*)
   base_os=unix/sysv/sysv4 ;;
-hpux*)
-  base_os=unix/sysv/hpux/$os ;;
-aix4.3*)
-  base_os=unix/sysv/aix/aix4.3 ;;
 none)
   base_os=standalone ;;
 esac
@@ -4567,27 +4500,25 @@ fi
 # We have now validated the configuration.
 
 
-# If using ELF, look for an `elf' subdirectory of each machine directory.
+# Look for an `elf' subdirectory of each machine directory.
 # We prepend these rather than inserting them whereever the machine appears
 # because things specified by the machine's ELF ABI should override
 # OS-specific things, and should always be the same for any OS on the
 # machine (otherwise what's the point of an ABI?).
-if test "$elf" = yes; then
-  elf_dirs=
-  for d in $add_ons_pfx ''; do
-    for m in $mach; do
-      try="${d}sysdeps$m/elf"
-      case $d in
-	/*) try_srcdir= ;;
-	*) try_srcdir=$srcdir/ ;;
-      esac
-      if test -d $try_srcdir$try; then
-	elf_dirs="$elf_dirs $try"
-      fi
-    done
+elf_dirs=
+for d in $add_ons_pfx ''; do
+  for m in $mach; do
+    try="${d}sysdeps$m/elf"
+    case $d in
+      /*) try_srcdir= ;;
+      *) try_srcdir=$srcdir/ ;;
+    esac
+    if test -d $try_srcdir$try; then
+      elf_dirs="$elf_dirs $try"
+    fi
   done
-  sysnames="`echo $elf_dirs | sed -e 's,//,/,g'` $sysnames"
-fi
+done
+sysnames="`echo $elf_dirs | sed -e 's,//,/,g'` $sysnames"
 
 # Peek into option-groups.config to check if sysdeps/ieee754/[l]dbl-wrap needs
 # to be included into $sysnames.
@@ -4692,10 +4623,7 @@ $as_echo "$as_me: WARNING: $name/Implies specifies nonexistent $x" >&2;}
 done
 
 # Add the default directories.
-default_sysnames=sysdeps/generic
-if test "$elf" = yes; then
-  default_sysnames="sysdeps/generic/elf $default_sysnames"
-fi
+default_sysnames="sysdeps/generic/elf sysdeps/generic"
 sysnames="$names $default_sysnames"
 
 # The other names were emitted during the scan.
@@ -5056,58 +4984,6 @@ if test $ac_verc_fail = yes; then
   LD=: critic_missing="$critic_missing ld"
 fi
 
-
-# We need the physical current working directory.  We cannot use the
-# "pwd -P" shell builtin since that's not portable.  Instead we try to
-# find a pwd binary.  Note that assigning to the PWD environment
-# variable might have some interesting side effects, so we don't do
-# that.
-# Extract the first word of "pwd", so it can be a program name with args.
-set dummy pwd; ac_word=$2
-{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_path_PWD_P+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  case $PWD_P in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_PWD_P="$PWD_P" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_PWD_P="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_PWD_P" && ac_cv_path_PWD_P="no"
-  ;;
-esac
-fi
-PWD_P=$ac_cv_path_PWD_P
-if test -n "$PWD_P"; then
-  { $as_echo "$as_me:$LINENO: result: $PWD_P" >&5
-$as_echo "$PWD_P" >&6; }
-else
-  { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test "$PWD_P" = no; then
-  { { $as_echo "$as_me:$LINENO: error: *** A pwd binary could not be found." >&5
-$as_echo "$as_me: error: *** A pwd binary could not be found." >&2;}
-   { (exit 1); exit 1; }; }
-fi
 
 # These programs are version sensitive.
 
@@ -5632,9 +5508,6 @@ fi
 
 
 
-# ranlib is never necessary on Linux and Hurd systems
-RANLIB=:
-
 # Test if LD_LIBRARY_PATH contains the notation for the current directory
 # since this would lead to problems installing/building glibc.
 # LD_LIBRARY_PATH contains the current directory if one of the following
@@ -5963,30 +5836,6 @@ fi
 
 
 
-{ $as_echo "$as_me:$LINENO: checking for signed size_t type" >&5
-$as_echo_n "checking for signed size_t type... " >&6; }
-if test "${libc_cv_signed_size_t+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  echo '#include <stddef.h>
-FOOBAR __SIZE_TYPE__ FOOBAR' > conftest.c
-if eval "$ac_cpp conftest.c 2>/dev/null" \
-| grep '^FOOBAR.*unsigned.*FOOBAR$' >/dev/null; then
-  libc_cv_signed_size_t=no
-else
-  libc_cv_signed_size_t=yes
-fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_signed_size_t" >&5
-$as_echo "$libc_cv_signed_size_t" >&6; }
-if test $libc_cv_signed_size_t = yes; then
-    cat >> confdefs.h <<\EOF
-#undef __SIZE_TYPE__
-#define __SIZE_TYPE__ unsigned
-EOF
-fi
-
 { $as_echo "$as_me:$LINENO: checking for libc-friendly stddef.h" >&5
 $as_echo_n "checking for libc-friendly stddef.h... " >&6; }
 if test "${libc_cv_friendly_stddef+set}" = set; then
@@ -6218,22 +6067,50 @@ else
 fi
 
 
-if test $elf = yes && test $shared != no && test $VERSIONING = no; then
+if test $shared != no && test $VERSIONING = no; then
   echo "\
 *** WARNING: You should not compile GNU libc without versioning. Not using
 *** versioning will introduce incompatibilities so that old binaries
 *** will not run anymore.
 *** For versioning you need recent binutils (binutils-2.8.1.0.23 or newer)."
 fi
-if test $elf = yes; then
-  { $as_echo "$as_me:$LINENO: checking for .previous assembler directive" >&5
+{ $as_echo "$as_me:$LINENO: checking for .previous assembler directive" >&5
 $as_echo_n "checking for .previous assembler directive... " >&6; }
 if test "${libc_cv_asm_previous_directive+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.s <<EOF
+  cat > conftest.s <<EOF
 .section foo_section
 .previous
+EOF
+if { ac_try='${CC-cc} -c $ASFLAGS conftest.s 1>&5'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  libc_cv_asm_previous_directive=yes
+else
+  libc_cv_asm_previous_directive=no
+fi
+rm -f conftest*
+fi
+{ $as_echo "$as_me:$LINENO: result: $libc_cv_asm_previous_directive" >&5
+$as_echo "$libc_cv_asm_previous_directive" >&6; }
+if test $libc_cv_asm_previous_directive = yes; then
+  cat >>confdefs.h <<\_ACEOF
+#define HAVE_ASM_PREVIOUS_DIRECTIVE 1
+_ACEOF
+
+else
+  { $as_echo "$as_me:$LINENO: checking for .popsection assembler directive" >&5
+$as_echo_n "checking for .popsection assembler directive... " >&6; }
+if test "${libc_cv_asm_popsection_directive+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+    cat > conftest.s <<EOF
+.pushsection foo_section
+.popsection
 EOF
   if { ac_try='${CC-cc} -c $ASFLAGS conftest.s 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
@@ -6241,80 +6118,51 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-    libc_cv_asm_previous_directive=yes
+    libc_cv_asm_popsection_directive=yes
   else
-    libc_cv_asm_previous_directive=no
+    libc_cv_asm_popsection_directive=no
   fi
   rm -f conftest*
 fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_asm_previous_directive" >&5
-$as_echo "$libc_cv_asm_previous_directive" >&6; }
-  if test $libc_cv_asm_previous_directive = yes; then
-    cat >>confdefs.h <<\_ACEOF
-#define HAVE_ASM_PREVIOUS_DIRECTIVE 1
-_ACEOF
-
-  else
-    { $as_echo "$as_me:$LINENO: checking for .popsection assembler directive" >&5
-$as_echo_n "checking for .popsection assembler directive... " >&6; }
-if test "${libc_cv_asm_popsection_directive+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-      cat > conftest.s <<EOF
-.pushsection foo_section
-.popsection
-EOF
-    if { ac_try='${CC-cc} -c $ASFLAGS conftest.s 1>&5'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-      libc_cv_asm_popsection_directive=yes
-    else
-      libc_cv_asm_popsection_directive=no
-    fi
-    rm -f conftest*
-fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_asm_popsection_directive" >&5
 $as_echo "$libc_cv_asm_popsection_directive" >&6; }
-    if test $libc_cv_asm_popsection_directive = yes; then
-      cat >>confdefs.h <<\_ACEOF
+  if test $libc_cv_asm_popsection_directive = yes; then
+    cat >>confdefs.h <<\_ACEOF
 #define HAVE_ASM_POPSECTION_DIRECTIVE 1
 _ACEOF
 
-    fi
   fi
-  { $as_echo "$as_me:$LINENO: checking for .protected and .hidden assembler directive" >&5
+fi
+{ $as_echo "$as_me:$LINENO: checking for .protected and .hidden assembler directive" >&5
 $as_echo_n "checking for .protected and .hidden assembler directive... " >&6; }
 if test "${libc_cv_asm_protected_directive+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.s <<EOF
+  cat > conftest.s <<EOF
 .protected foo
 foo:
 .hidden bar
 bar:
 EOF
-  if { ac_try='${CC-cc} -c $ASFLAGS conftest.s 1>&5'
+if { ac_try='${CC-cc} -c $ASFLAGS conftest.s 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-    libc_cv_asm_protected_directive=yes
-  else
-    { { $as_echo "$as_me:$LINENO: error: assembler support for symbol visibility is required" >&5
+  libc_cv_asm_protected_directive=yes
+else
+  { { $as_echo "$as_me:$LINENO: error: assembler support for symbol visibility is required" >&5
 $as_echo "$as_me: error: assembler support for symbol visibility is required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
-  rm -f conftest*
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_asm_protected_directive" >&5
 $as_echo "$libc_cv_asm_protected_directive" >&6; }
 
-  if test $libc_cv_asm_protected_directive = yes; then
-    { $as_echo "$as_me:$LINENO: checking whether __attribute__((visibility())) is supported" >&5
+if test $libc_cv_asm_protected_directive = yes; then
+  { $as_echo "$as_me:$LINENO: checking whether __attribute__((visibility())) is supported" >&5
 $as_echo_n "checking whether __attribute__((visibility())) is supported... " >&6; }
 if test "${libc_cv_visibility_attribute+set}" = set; then
   $as_echo_n "(cached) " >&6
@@ -6341,15 +6189,15 @@ EOF
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_visibility_attribute" >&5
 $as_echo "$libc_cv_visibility_attribute" >&6; }
-    if test $libc_cv_visibility_attribute != yes; then
-      { { $as_echo "$as_me:$LINENO: error: compiler support for visibility attribute is required" >&5
+  if test $libc_cv_visibility_attribute != yes; then
+    { { $as_echo "$as_me:$LINENO: error: compiler support for visibility attribute is required" >&5
 $as_echo "$as_me: error: compiler support for visibility attribute is required" >&2;}
    { (exit 1); exit 1; }; }
-    fi
   fi
+fi
 
-  if test $libc_cv_visibility_attribute = yes; then
-    { $as_echo "$as_me:$LINENO: checking for broken __attribute__((visibility()))" >&5
+if test $libc_cv_visibility_attribute = yes; then
+  { $as_echo "$as_me:$LINENO: checking for broken __attribute__((visibility()))" >&5
 $as_echo_n "checking for broken __attribute__((visibility()))... " >&6; }
 if test "${libc_cv_broken_visibility_attribute+set}" = set; then
   $as_echo_n "(cached) " >&6
@@ -6375,51 +6223,51 @@ EOF
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_broken_visibility_attribute" >&5
 $as_echo "$libc_cv_broken_visibility_attribute" >&6; }
-    if test $libc_cv_broken_visibility_attribute = yes; then
-      { { $as_echo "$as_me:$LINENO: error: working compiler support for visibility attribute is required" >&5
+  if test $libc_cv_broken_visibility_attribute = yes; then
+    { { $as_echo "$as_me:$LINENO: error: working compiler support for visibility attribute is required" >&5
 $as_echo "$as_me: error: working compiler support for visibility attribute is required" >&2;}
    { (exit 1); exit 1; }; }
-    fi
   fi
+fi
 
-  { $as_echo "$as_me:$LINENO: checking for broken __attribute__((alias()))" >&5
+{ $as_echo "$as_me:$LINENO: checking for broken __attribute__((alias()))" >&5
 $as_echo_n "checking for broken __attribute__((alias()))... " >&6; }
 if test "${libc_cv_broken_alias_attribute+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.c <<EOF
-		  extern int foo (int x) __asm ("xyzzy");
-		  int bar (int x) { return x; }
-		  extern __typeof (bar) foo __attribute ((weak, alias ("bar")));
-		  extern int dfoo;
-		  extern __typeof (dfoo) dfoo __asm ("abccb");
-		  int dfoo = 1;
+	       extern int foo (int x) __asm ("xyzzy");
+	       int bar (int x) { return x; }
+	       extern __typeof (bar) foo __attribute ((weak, alias ("bar")));
+	       extern int dfoo;
+	       extern __typeof (dfoo) dfoo __asm ("abccb");
+	       int dfoo = 1;
 EOF
-		  libc_cv_broken_alias_attribute=yes
-		  if { ac_try='${CC-cc} -Werror -S conftest.c -o conftest.s 1>&5'
+	       libc_cv_broken_alias_attribute=yes
+	       if { ac_try='${CC-cc} -Werror -S conftest.c -o conftest.s 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-		    if grep 'xyzzy' conftest.s >/dev/null &&
-		       grep 'abccb' conftest.s >/dev/null; then
-		      libc_cv_broken_alias_attribute=no
-		    fi
-		  fi
-		  rm -f conftest.c conftest.s
+		 if grep 'xyzzy' conftest.s >/dev/null &&
+		    grep 'abccb' conftest.s >/dev/null; then
+		   libc_cv_broken_alias_attribute=no
+		 fi
+	       fi
+	       rm -f conftest.c conftest.s
 
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_broken_alias_attribute" >&5
 $as_echo "$libc_cv_broken_alias_attribute" >&6; }
-  if test $libc_cv_broken_alias_attribute = yes; then
-    { { $as_echo "$as_me:$LINENO: error: working alias attribute support required" >&5
+if test $libc_cv_broken_alias_attribute = yes; then
+  { { $as_echo "$as_me:$LINENO: error: working alias attribute support required" >&5
 $as_echo "$as_me: error: working alias attribute support required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
+fi
 
-  if test $libc_cv_visibility_attribute = yes; then
-    { $as_echo "$as_me:$LINENO: checking whether to put _rtld_local into .sdata section" >&5
+if test $libc_cv_visibility_attribute = yes; then
+  { $as_echo "$as_me:$LINENO: checking whether to put _rtld_local into .sdata section" >&5
 $as_echo_n "checking whether to put _rtld_local into .sdata section... " >&6; }
 if test "${libc_cv_have_sdata_section+set}" = set; then
   $as_echo_n "(cached) " >&6
@@ -6435,72 +6283,72 @@ else
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_have_sdata_section" >&5
 $as_echo "$libc_cv_have_sdata_section" >&6; }
-    if test $libc_cv_have_sdata_section = yes; then
-      cat >>confdefs.h <<\_ACEOF
+  if test $libc_cv_have_sdata_section = yes; then
+    cat >>confdefs.h <<\_ACEOF
 #define HAVE_SDATA_SECTION 1
 _ACEOF
 
-    fi
   fi
+fi
 
-  { $as_echo "$as_me:$LINENO: checking for .preinit_array/.init_array/.fini_array support" >&5
+{ $as_echo "$as_me:$LINENO: checking for .preinit_array/.init_array/.fini_array support" >&5
 $as_echo_n "checking for .preinit_array/.init_array/.fini_array support... " >&6; }
 if test "${libc_cv_initfini_array+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 0; }
 int __start (void) { return 0; }
 int foo (void) { return 1; }
 int (*fp) (void) __attribute__ ((section (".init_array"))) = foo;
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest conftest.c
-		     -static -nostartfiles -nostdlib 1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest conftest.c
+		   -static -nostartfiles -nostdlib 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    if $READELF -S conftest | fgrep INIT_ARRAY > /dev/null; then
-      libc_cv_initfini_array=yes
-    else
-      libc_cv_initfini_array=no
-    fi
+then
+  if $READELF -S conftest | fgrep INIT_ARRAY > /dev/null; then
+    libc_cv_initfini_array=yes
   else
     libc_cv_initfini_array=no
   fi
-  rm -f conftest*
+else
+  libc_cv_initfini_array=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_initfini_array" >&5
 $as_echo "$libc_cv_initfini_array" >&6; }
-  if test $libc_cv_initfini_array != yes; then
-    { { $as_echo "$as_me:$LINENO: error: Need linker with .init_array/.fini_array support." >&5
+if test $libc_cv_initfini_array != yes; then
+  { { $as_echo "$as_me:$LINENO: error: Need linker with .init_array/.fini_array support." >&5
 $as_echo "$as_me: error: Need linker with .init_array/.fini_array support." >&2;}
    { (exit 1); exit 1; }; }
-  fi
+fi
 
-  { $as_echo "$as_me:$LINENO: checking whether to use .ctors/.dtors header and trailer" >&5
+{ $as_echo "$as_me:$LINENO: checking whether to use .ctors/.dtors header and trailer" >&5
 $as_echo_n "checking whether to use .ctors/.dtors header and trailer... " >&6; }
 if test "${libc_cv_ctors_header+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-      libc_cv_ctors_header=yes
-    cat > conftest.c <<EOF
+    libc_cv_ctors_header=yes
+  cat > conftest.c <<EOF
 int _start (void) { return 0; }
 int __start (void) { return 0; }
 int puts (const char *s) { return 0; }
 __attribute__ ((constructor)) void ctor (void) { puts("ctor"); }
 __attribute__ ((destructor))  void dtor (void) { puts("dtor"); }
 EOF
-    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest
-		       conftest.c -static -nostartfiles -nostdlib 1>&5'
+  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest
+		     conftest.c -static -nostartfiles -nostdlib 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-    then
+  then
       if $READELF -WS conftest$ac_exeext | $AWK '
 	{ gsub(/\[ */, "[") }
 	$2 == ".ctors" || $2 == ".dtors" {
@@ -6518,87 +6366,87 @@ EOF
   libc_cv_ctors_header=no
 fi
 
-    else
-      { { $as_echo "$as_me:$LINENO: error: missing __attribute__ ((constructor)) support??" >&5
+  else
+    { { $as_echo "$as_me:$LINENO: error: missing __attribute__ ((constructor)) support??" >&5
 $as_echo "$as_me: error: missing __attribute__ ((constructor)) support??" >&2;}
    { (exit 1); exit 1; }; }
-    fi
+  fi
   rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_ctors_header" >&5
 $as_echo "$libc_cv_ctors_header" >&6; }
-  if test $libc_cv_ctors_header = no; then
-    cat >>confdefs.h <<\_ACEOF
+if test $libc_cv_ctors_header = no; then
+  cat >>confdefs.h <<\_ACEOF
 #define NO_CTORS_DTORS_SECTIONS 1
 _ACEOF
 
-  fi
+fi
 
-  { $as_echo "$as_me:$LINENO: checking for libunwind-support in compiler" >&5
+{ $as_echo "$as_me:$LINENO: checking for libunwind-support in compiler" >&5
 $as_echo_n "checking for libunwind-support in compiler... " >&6; }
 if test "${libc_cv_cc_with_libunwind+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
 
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int main (void) { return 0; }
 EOF
-    if ${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -static -o conftest \
-       conftest.c -v 2>&1 >/dev/null | grep -q " -lunwind "; then
-      libc_cv_cc_with_libunwind=yes
-    else
-      libc_cv_cc_with_libunwind=no
-    fi
-    rm -f conftest*
+  if ${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -static -o conftest \
+     conftest.c -v 2>&1 >/dev/null | grep -q " -lunwind "; then
+    libc_cv_cc_with_libunwind=yes
+  else
+    libc_cv_cc_with_libunwind=no
+  fi
+  rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_cc_with_libunwind" >&5
 $as_echo "$libc_cv_cc_with_libunwind" >&6; }
 
-  if test $libc_cv_cc_with_libunwind = yes; then
-    cat >>confdefs.h <<\_ACEOF
+if test $libc_cv_cc_with_libunwind = yes; then
+  cat >>confdefs.h <<\_ACEOF
 #define HAVE_CC_WITH_LIBUNWIND 1
 _ACEOF
 
-  fi
+fi
 
-  { $as_echo "$as_me:$LINENO: checking for -z nodelete option" >&5
+{ $as_echo "$as_me:$LINENO: checking for -z nodelete option" >&5
 $as_echo_n "checking for -z nodelete option... " >&6; }
 if test "${libc_cv_z_nodelete+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-		     -fPIC -shared -o conftest.so conftest.c
-		     -nostartfiles -nostdlib
-		     -Wl,--enable-new-dtags,-z,nodelete 1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+		   -fPIC -shared -o conftest.so conftest.c
+		   -nostartfiles -nostdlib
+		   -Wl,--enable-new-dtags,-z,nodelete 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_z_nodelete=yes
-  else
-    { { $as_echo "$as_me:$LINENO: error: linker with -z nodelete support required" >&5
+then
+  libc_cv_z_nodelete=yes
+else
+  { { $as_echo "$as_me:$LINENO: error: linker with -z nodelete support required" >&5
 $as_echo "$as_me: error: linker with -z nodelete support required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
-  rm -f conftest*
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_nodelete" >&5
 $as_echo "$libc_cv_z_nodelete" >&6; }
 
-  { $as_echo "$as_me:$LINENO: checking for -z nodlopen option" >&5
+{ $as_echo "$as_me:$LINENO: checking for -z nodlopen option" >&5
 $as_echo_n "checking for -z nodlopen option... " >&6; }
 if test "${libc_cv_z_nodlopen+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
 			-fPIC -shared -o conftest.so conftest.c
 			-nostartfiles -nostdlib
 			-Wl,--enable-new-dtags,-z,nodlopen 1>&5'
@@ -6607,27 +6455,27 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_z_nodlopen=yes
-  else
-    { { $as_echo "$as_me:$LINENO: error: linker with -z nodlopen support required" >&5
+then
+  libc_cv_z_nodlopen=yes
+else
+  { { $as_echo "$as_me:$LINENO: error: linker with -z nodlopen support required" >&5
 $as_echo "$as_me: error: linker with -z nodlopen support required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
-  rm -f conftest*
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_nodlopen" >&5
 $as_echo "$libc_cv_z_nodlopen" >&6; }
 
-  { $as_echo "$as_me:$LINENO: checking for -z initfirst option" >&5
+{ $as_echo "$as_me:$LINENO: checking for -z initfirst option" >&5
 $as_echo_n "checking for -z initfirst option... " >&6; }
 if test "${libc_cv_z_initfirst+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
 			-fPIC -shared -o conftest.so conftest.c
 			-nostartfiles -nostdlib
 			-Wl,--enable-new-dtags,-z,initfirst 1>&5'
@@ -6636,47 +6484,40 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_z_initfirst=yes
-  else
-    { { $as_echo "$as_me:$LINENO: error: linker with -z initfirst support required" >&5
+then
+  libc_cv_z_initfirst=yes
+else
+  { { $as_echo "$as_me:$LINENO: error: linker with -z initfirst support required" >&5
 $as_echo "$as_me: error: linker with -z initfirst support required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
-  rm -f conftest*
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_initfirst" >&5
 $as_echo "$libc_cv_z_initfirst" >&6; }
 
-  # Add-on fragments can set these for other machines.
-  libc_commonpagesize=${libc_commonpagesize:-no}
-  libc_relro_required=${libc_relro_required:-no}
-  case "$base_machine" in
-    i[34567]86 | x86_64 | powerpc* | s390*)
-      libc_commonpagesize=0x1000
-      libc_relro_required=yes
-      ;;
-    sparc*)
-      libc_commonpagesize=0x2000
-      libc_relro_required=yes
-      ;;
-    ia64*)
-      libc_commonpagesize=0x4000
-      ;;
-    alpha*)
-      libc_commonpagesize=0x10000
-      libc_relro_required=yes
-      ;;
-  esac
+# Add-on fragments can set these for other machines.
+libc_commonpagesize=${libc_commonpagesize:-no}
+libc_relro_required=${libc_relro_required:-no}
+case "$base_machine" in
+  i[34567]86 | x86_64 | powerpc* | s390*)
+    libc_commonpagesize=0x1000
+    libc_relro_required=yes
+    ;;
+  sparc*)
+    libc_commonpagesize=0x2000
+    libc_relro_required=yes
+    ;;
+esac
 
-  if test $libc_commonpagesize != no; then
-    { $as_echo "$as_me:$LINENO: checking for -z relro option" >&5
+if test $libc_commonpagesize != no; then
+  { $as_echo "$as_me:$LINENO: checking for -z relro option" >&5
 $as_echo_n "checking for -z relro option... " >&6; }
 if test "${libc_cv_z_relro+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-      libc_cv_z_relro=no
-    cat >conftest.$ac_ext <<_ACEOF
+    libc_cv_z_relro=no
+  cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -6695,7 +6536,7 @@ const void *const relro[] = { &_start, &_exit, 0 };
 int data[0x10000] = { 1, };
 
 _ACEOF
-    cat > conftest.awk <<\EOF
+  cat > conftest.awk <<\EOF
 BEGIN {
   result = "no"
   commonpagesize = strtonum(commonpagesize)
@@ -6711,7 +6552,7 @@ $1 == "GNU_RELRO" {
 }
 END { print result }
 EOF
-    { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+  { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
 		    -fPIC -shared -o conftest.so conftest.c
 		    -nostartfiles -nostdlib
 		    -Wl,-z,relro 1>&5'
@@ -6720,13 +6561,13 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; } &&
-    { ac_try='$READELF -Wl conftest.so > conftest.ph'
+  { ac_try='$READELF -Wl conftest.so > conftest.ph'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; } &&
-    { ac_try='
+  { ac_try='
       $AWK -v commonpagesize=$libc_commonpagesize -f conftest.awk
 	   conftest.ph > conftest.cps
     '
@@ -6735,78 +6576,78 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; } &&
-    libc_cv_z_relro=`cat conftest.cps 2>&5`
-    rm -f conftest*
+  libc_cv_z_relro=`cat conftest.cps 2>&5`
+  rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_relro" >&5
 $as_echo "$libc_cv_z_relro" >&6; }
-    if { test "x$libc_relro_required" = xyes &&
-	 test "x$libc_cv_z_relro" != xyes
-       }
-    then
-      { { $as_echo "$as_me:$LINENO: error: linker with -z relro support required" >&5
+  if { test "x$libc_relro_required" = xyes &&
+       test "x$libc_cv_z_relro" != xyes
+     }
+  then
+    { { $as_echo "$as_me:$LINENO: error: linker with -z relro support required" >&5
 $as_echo "$as_me: error: linker with -z relro support required" >&2;}
    { (exit 1); exit 1; }; }
-    fi
-  else
-    { $as_echo "$as_me:$LINENO: WARNING: missing architecture parameter to check for working -z relro" >&5
-$as_echo "$as_me: WARNING: missing architecture parameter to check for working -z relro" >&2;}
   fi
+else
+  { $as_echo "$as_me:$LINENO: WARNING: missing architecture parameter to check for working -z relro" >&5
+$as_echo "$as_me: WARNING: missing architecture parameter to check for working -z relro" >&2;}
+fi
 
-  { $as_echo "$as_me:$LINENO: checking for -Bgroup option" >&5
+{ $as_echo "$as_me:$LINENO: checking for -Bgroup option" >&5
 $as_echo_n "checking for -Bgroup option... " >&6; }
 if test "${libc_cv_Bgroup+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			      -fPIC -shared -o conftest.so conftest.c
-			      -Wl,-Bgroup -nostdlib 1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+			    -fPIC -shared -o conftest.so conftest.c
+			    -Wl,-Bgroup -nostdlib 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_Bgroup=yes
-  else
-    libc_cv_Bgroup=no
-  fi
-  rm -f conftest*
+then
+  libc_cv_Bgroup=yes
+else
+  libc_cv_Bgroup=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_Bgroup" >&5
 $as_echo "$libc_cv_Bgroup" >&6; }
 
 
-  { $as_echo "$as_me:$LINENO: checking for libgcc_s suffix" >&5
+{ $as_echo "$as_me:$LINENO: checking for libgcc_s suffix" >&5
 $as_echo_n "checking for libgcc_s suffix... " >&6; }
 if test "${libc_cv_libgcc_s_suffix+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int main (void) { return 0; }
 EOF
-  libc_cv_libgcc_s_suffix=`${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS \
+libc_cv_libgcc_s_suffix=`${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS \
 			   -fPIC -shared -shared-libgcc -o conftest.so \
 			   conftest.c -v 2>&1 >/dev/null \
 			   | sed -n 's/^.* -lgcc_s\([^ ]*\) .*$/\1/p'`
-  rm -f conftest*
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_libgcc_s_suffix" >&5
 $as_echo "$libc_cv_libgcc_s_suffix" >&6; }
 
 
-  { $as_echo "$as_me:$LINENO: checking for --as-needed option" >&5
+{ $as_echo "$as_me:$LINENO: checking for --as-needed option" >&5
 $as_echo_n "checking for --as-needed option... " >&6; }
 if test "${libc_cv_as_needed+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int main (void) { return 0; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
 			      -fPIC -shared -o conftest.so conftest.c
 			      -lgcc_s$libc_cv_libgcc_s_suffix -Wl,--as-needed
 			      -nostdlib 1>&5'
@@ -6815,66 +6656,66 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_as_needed=yes
-  else
-    libc_cv_as_needed=no
-  fi
-  rm -f conftest*
+then
+  libc_cv_as_needed=yes
+else
+  libc_cv_as_needed=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_as_needed" >&5
 $as_echo "$libc_cv_as_needed" >&6; }
 
 
-  ASFLAGS_config=
-  { $as_echo "$as_me:$LINENO: checking whether --noexecstack is desirable for .S files" >&5
+ASFLAGS_config=
+{ $as_echo "$as_me:$LINENO: checking whether --noexecstack is desirable for .S files" >&5
 $as_echo_n "checking whether --noexecstack is desirable for .S files... " >&6; }
 if test "${libc_cv_as_noexecstack+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 void foo (void) { }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS
-		     -S -o conftest.s conftest.c 1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS
+		   -S -o conftest.s conftest.c 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; } \
-     && grep -q .note.GNU-stack conftest.s \
-     && { ac_try='${CC-cc} $ASFLAGS -Wa,--noexecstack
-		       -c -o conftest.o conftest.s 1>&5'
+   && grep -q .note.GNU-stack conftest.s \
+   && { ac_try='${CC-cc} $ASFLAGS -Wa,--noexecstack
+		      -c -o conftest.o conftest.s 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_as_noexecstack=yes
-  else
-    libc_cv_as_noexecstack=no
-  fi
-  rm -f conftest*
+then
+  libc_cv_as_noexecstack=yes
+else
+  libc_cv_as_noexecstack=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_as_noexecstack" >&5
 $as_echo "$libc_cv_as_noexecstack" >&6; }
-  if test $libc_cv_as_noexecstack = yes; then
-    ASFLAGS_config="$ASFLAGS_config -Wa,--noexecstack"
-  fi
+if test $libc_cv_as_noexecstack = yes; then
+  ASFLAGS_config="$ASFLAGS_config -Wa,--noexecstack"
+fi
 
 
-  { $as_echo "$as_me:$LINENO: checking for -z combreloc" >&5
+{ $as_echo "$as_me:$LINENO: checking for -z combreloc" >&5
 $as_echo_n "checking for -z combreloc... " >&6; }
 if test "${libc_cv_z_combreloc+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 extern int bar (int);
 extern int mumble;
 int foo (void) { return bar (mumble); }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
 			-fPIC -shared -o conftest.so conftest.c
 			-nostdlib -nostartfiles
 			-Wl,-z,combreloc 1>&5'
@@ -6883,96 +6724,96 @@ EOF
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    if $READELF -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
-      libc_cv_z_combreloc=yes
-    else
-      libc_cv_z_combreloc=no
-    fi
+then
+  if $READELF -S conftest.so | grep '\.rel\(a\|\)\.dyn' > /dev/null; then
+    libc_cv_z_combreloc=yes
   else
     libc_cv_z_combreloc=no
   fi
-  rm -f conftest*
+else
+  libc_cv_z_combreloc=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_combreloc" >&5
 $as_echo "$libc_cv_z_combreloc" >&6; }
-  if test "$libc_cv_z_combreloc" = yes; then
-    cat >>confdefs.h <<\_ACEOF
+if test "$libc_cv_z_combreloc" = yes; then
+  cat >>confdefs.h <<\_ACEOF
 #define HAVE_Z_COMBRELOC 1
 _ACEOF
 
-  fi
+fi
 
 
-  { $as_echo "$as_me:$LINENO: checking for -z execstack" >&5
+{ $as_echo "$as_me:$LINENO: checking for -z execstack" >&5
 $as_echo_n "checking for -z execstack... " >&6; }
 if test "${libc_cv_z_execstack+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			      -fPIC -shared -o conftest.so conftest.c
-			      -Wl,-z,execstack -nostdlib
-			      1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+			    -fPIC -shared -o conftest.so conftest.c
+			    -Wl,-z,execstack -nostdlib
+			    1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_z_execstack=yes
-  else
-    libc_cv_z_execstack=no
-  fi
-  rm -f conftest*
+then
+  libc_cv_z_execstack=yes
+else
+  libc_cv_z_execstack=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_z_execstack" >&5
 $as_echo "$libc_cv_z_execstack" >&6; }
 
 
-          libc_cv_fpie=yes
+libc_cv_fpie=yes
 
 
-  { $as_echo "$as_me:$LINENO: checking for --hash-style option" >&5
+{ $as_echo "$as_me:$LINENO: checking for --hash-style option" >&5
 $as_echo_n "checking for --hash-style option... " >&6; }
 if test "${libc_cv_hashstyle+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-    cat > conftest.c <<EOF
+  cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-  if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			      -fPIC -shared -o conftest.so conftest.c
-			      -Wl,--hash-style=both -nostdlib 1>&5'
+if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+			    -fPIC -shared -o conftest.so conftest.c
+			    -Wl,--hash-style=both -nostdlib 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }
-  then
-    libc_cv_hashstyle=yes
-  else
-    libc_cv_hashstyle=no
-  fi
-  rm -f conftest*
+then
+  libc_cv_hashstyle=yes
+else
+  libc_cv_hashstyle=no
+fi
+rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_hashstyle" >&5
 $as_echo "$libc_cv_hashstyle" >&6; }
 
 
-  # The linker's default -shared behavior is good enough if it
-  # does these things that our custom linker scripts ensure that
-  # all allocated NOTE sections come first.
-  if test "$use_default_link" = default; then
-    { $as_echo "$as_me:$LINENO: checking for sufficient default -shared layout" >&5
+# The linker's default -shared behavior is good enough if it
+# does these things that our custom linker scripts ensure that
+# all allocated NOTE sections come first.
+if test "$use_default_link" = default; then
+  { $as_echo "$as_me:$LINENO: checking for sufficient default -shared layout" >&5
 $as_echo_n "checking for sufficient default -shared layout... " >&6; }
 if test "${libc_cv_use_default_link+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-      libc_cv_use_default_link=no
-    cat > conftest.s <<\EOF
+    libc_cv_use_default_link=no
+  cat > conftest.s <<\EOF
 	  .section .note.a,"a",%note
 	  .balign 4
 	  .long 4,4,9
@@ -6984,7 +6825,7 @@ else
 	  .string "GNU"
 	  .string "bar"
 EOF
-    if { ac_try='  ${CC-cc} $ASFLAGS -shared -o conftest.so conftest.s 1>&5'
+  if { ac_try='  ${CC-cc} $ASFLAGS -shared -o conftest.so conftest.s 1>&5'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
@@ -6997,33 +6838,32 @@ EOF
 	  b
 	  : a
 	  H'`
-    then
-      libc_seen_a=no libc_seen_b=no
-      set -- $ac_try
-      while test $# -ge 2 -a "$1" = NOTE; do
-	case "$2" in
-	.note.a) libc_seen_a=yes ;;
-	.note.b) libc_seen_b=yes ;;
-	esac
-	shift 2
-      done
-      case "$libc_seen_a$libc_seen_b" in
-      yesyes)
-	libc_cv_use_default_link=yes
-	;;
-      *)
-	echo >&5 "\
+  then
+    libc_seen_a=no libc_seen_b=no
+    set -- $ac_try
+    while test $# -ge 2 -a "$1" = NOTE; do
+      case "$2" in
+      .note.a) libc_seen_a=yes ;;
+      .note.b) libc_seen_b=yes ;;
+      esac
+      shift 2
+    done
+    case "$libc_seen_a$libc_seen_b" in
+    yesyes)
+      libc_cv_use_default_link=yes
+      ;;
+    *)
+      echo >&5 "\
 $libc_seen_a$libc_seen_b from:
 $ac_try"
-	;;
-      esac
-    fi
-    rm -f conftest*
+      ;;
+    esac
+  fi
+  rm -f conftest*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_use_default_link" >&5
 $as_echo "$libc_cv_use_default_link" >&6; }
-    use_default_link=$libc_cv_use_default_link
-  fi
+  use_default_link=$libc_cv_use_default_link
 fi
 
 { $as_echo "$as_me:$LINENO: checking linker output format" >&5
@@ -7133,205 +6973,34 @@ else
 fi
 
 
-if test $elf != yes; then
-  { $as_echo "$as_me:$LINENO: checking for .init and .fini sections" >&5
-$as_echo_n "checking for .init and .fini sections... " >&6; }
-if test "${libc_cv_have_initfini+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-asm (".section .init");
-				    asm (".section .fini");
-				    asm ("${libc_cv_dot_text}");
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  libc_cv_have_initfini=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	libc_cv_have_initfini=no
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_have_initfini" >&5
-$as_echo "$libc_cv_have_initfini" >&6; }
-    if test $libc_cv_have_initfini = yes; then
-    cat >>confdefs.h <<\_ACEOF
-#define HAVE_INITFINI 1
-_ACEOF
-
-  fi
-fi
-
-if test $elf = yes; then
-  { $as_echo "$as_me:$LINENO: checking whether cc puts quotes around section names" >&5
+{ $as_echo "$as_me:$LINENO: checking whether cc puts quotes around section names" >&5
 $as_echo_n "checking whether cc puts quotes around section names... " >&6; }
 if test "${libc_cv_have_section_quotes+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.c <<EOF
-		  static const int foo
-		  __attribute__ ((section ("bar"))) = 1;
+		static const int foo
+		__attribute__ ((section ("bar"))) = 1;
 EOF
-		  if ${CC-cc} -S conftest.c -o conftest.s; then
-		    if grep '\.section.*"bar"' conftest.s >/dev/null; then
-		      libc_cv_have_section_quotes=yes
-		    else
-		      libc_cv_have_section_quotes=no
-		    fi
+		if ${CC-cc} -S conftest.c -o conftest.s; then
+		  if grep '\.section.*"bar"' conftest.s >/dev/null; then
+		    libc_cv_have_section_quotes=yes
 		  else
-		    libc_cv_have_section_quotes=unknown
+		    libc_cv_have_section_quotes=no
 		  fi
-		  rm -f conftest.{c,s}
+		else
+		  libc_cv_have_section_quotes=unknown
+		fi
+		rm -f conftest.{c,s}
 
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_have_section_quotes" >&5
 $as_echo "$libc_cv_have_section_quotes" >&6; }
-  if test $libc_cv_have_section_quotes = yes; then
-    cat >>confdefs.h <<\_ACEOF
+if test $libc_cv_have_section_quotes = yes; then
+  cat >>confdefs.h <<\_ACEOF
 #define HAVE_SECTION_QUOTES 1
 _ACEOF
 
-  fi
-fi
-
-
-
-if test $elf = yes; then
-  libc_cv_asm_underscores=no
-else
-  if test $ac_cv_prog_cc_works = yes; then
-    { $as_echo "$as_me:$LINENO: checking for _ prefix on C symbol names" >&5
-$as_echo_n "checking for _ prefix on C symbol names... " >&6; }
-if test "${libc_cv_asm_underscores+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-asm ("_glibc_foobar:");
-int
-main ()
-{
-glibc_foobar ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  libc_cv_asm_underscores=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	libc_cv_asm_underscores=no
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_asm_underscores" >&5
-$as_echo "$libc_cv_asm_underscores" >&6; }
-  else
-    { $as_echo "$as_me:$LINENO: checking for _ prefix on C symbol names" >&5
-$as_echo_n "checking for _ prefix on C symbol names... " >&6; }
-if test "${libc_cv_asm_underscores+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.$ac_ext <<EOF
-#line $LINENO "configure"
-#include "confdefs.h"
-void underscore_test(void) {
-return; }
-EOF
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
-  if grep _underscore_test conftest* >/dev/null; then
-    rm -f conftest*
-    libc_cv_asm_underscores=yes
-  else
-    rm -f conftest*
-    libc_cv_asm_underscores=no
-  fi
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  rm -f conftest*
-  libc_cv_asm_underscores=no
-fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_asm_underscores" >&5
-$as_echo "$libc_cv_asm_underscores" >&6; }
-  fi
-fi
-if test $libc_cv_asm_underscores = no; then
-  cat >>confdefs.h <<\_ACEOF
-#define NO_UNDERSCORES 1
-_ACEOF
-
-fi
-
-if test $elf = yes; then
-  libc_cv_weak_symbols=yes
 fi
 
 { $as_echo "$as_me:$LINENO: checking for assembler .weak directive" >&5
@@ -7565,40 +7234,6 @@ if test "$libc_cv_c_asmcr0_bug" != 'no'; then
 _ACEOF
 
 fi
-fi
-
-{ $as_echo "$as_me:$LINENO: checking for __builtin_expect" >&5
-$as_echo_n "checking for __builtin_expect... " >&6; }
-if test "${libc_cv_gcc_builtin_expect+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
-#line $LINENO "configure"
-int foo (int a)
-{
-  a = __builtin_expect (a, 10);
-  return a == 10 ? 0 : 1;
-}
-EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -nostdlib -nostartfiles
-			    -o conftest conftest.c -lgcc >&5'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  libc_cv_gcc_builtin_expect=yes
-else
-  libc_cv_gcc_builtin_expect=no
-fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:$LINENO: result: $libc_cv_gcc_builtin_expect" >&5
-$as_echo "$libc_cv_gcc_builtin_expect" >&6; }
-if test "$libc_cv_gcc_builtin_expect" = no; then
-  { { $as_echo "$as_me:$LINENO: error: support for __builtin_expect needed" >&5
-$as_echo "$as_me: error: support for __builtin_expect needed" >&2;}
-   { (exit 1); exit 1; }; }
 fi
 
 { $as_echo "$as_me:$LINENO: checking for __builtin_memset" >&5
@@ -8945,24 +8580,8 @@ fi
 
 
 
-if test $elf = yes; then
-  cat >>confdefs.h <<\_ACEOF
-#define HAVE_ELF 1
-_ACEOF
-
-fi
-if test $xcoff = yes; then
-  cat >>confdefs.h <<\_ACEOF
-#define HAVE_XCOFF 1
-_ACEOF
-
-fi
 
 
-
-if test $shared = default; then
-  shared=$elf
-fi
 
 { $as_echo "$as_me:$LINENO: checking whether -fPIC is default" >&5
 $as_echo_n "checking whether -fPIC is default... " >&6; }
@@ -8982,8 +8601,6 @@ rm -f conftest.*
 fi
 { $as_echo "$as_me:$LINENO: result: $libc_cv_pic_default" >&5
 $as_echo "$libc_cv_pic_default" >&6; }
-
-
 
 
 

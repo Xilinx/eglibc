@@ -1,3 +1,69 @@
+2012-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	Support crti.S and crtn.S provided directly by architectures.
+	* Makefile [crti.S in sysdirs] (omit-deps): Do not append.
+	[crti.S in sysdirs] (CFLAGS-pt-initfini.s): Do not define variable.
+	[crti.S in sysdirs] ($(objpfx)pt-initfini.s): Disable rule.
+	[crti.S in sysdirs] ($(objpfx)crti.S): Likewise.
+	[crti.S in sysdirs] ($(objpfx)crtn.S): Likewise.
+	[crti.S in sysdirs] ($(objpfx)defs.h): Likewise.
+	[crti.S in sysdirs] ($(objpfx)crti.o): Likewise.
+	[crti.S in sysdirs] ($(objpfx)crtn.o): Likewise.
+	[crti.S in sysdirs] (pt-initfini.c): Remove vpath directive.
+	[crti.S in sysdirs] ($(objpfx)crti.o): New rule.
+	* pt-crti.S: New file.
+	* sysdeps/unix/sysv/linux/i386/Makefile: Remove file.
+
+2012-02-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S: Use
+	macros for PIC register setup.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_post.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_trywait.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/i386/pthread_once.S: Likewise.
+
+2012-01-11  Marek Polacek  <polacek@redhat.com>
+
+	* forward.c (FORWARD_NORETURN): Define macro.
+	(__pthread_unwind): Use FORWARD_NORETURN macro to avoid warning.
+	(__pthread_exit): Likewise.
+
+2012-01-10  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/pthread/pthread.h: Add const attribute to pthread_equal.
+
+	* pthreadP.h: Add noreturn to __pthread_exit.
+	* sysdeps/pthread/pthread-functions.h: Likewise for ptr___pthread_exit.
+
+2011-12-30  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/aio_misc.h (__aio_create_helper_thread):
+	Call pthread_attr_setstacksize() with result of
+	__pthread_get_minstack() to account for application TLS usage.
+
+2012-01-08  Marek Polacek  <polacek@redhat.com>
+
+	* sysdeps/unix/sysv/linux/mq_notify.c: Include <nptl/pthreadP.h>.
+
+2012-01-07  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13553]
+	* pthreadP.h: Use const instead of __const.
+	* semaphore.h: Likewise.
+	* sysdeps/pthread/bits/libc-lock.h: Likewise.
+	* sysdeps/pthread/bits/sigthread.h: Likewise.
+	* sysdeps/pthread/pthread.h: Likewise.
+
+	* Makefile: Remove elf=yes test, only ELF is supported.
+
+	* shlib-versions: Remove entries for ports architectures.
+
+	In case anyone cares, the IA-64 architecture could move to ports.
+	* sysdeps/ia64/*: Removed.
+	* sysdeps/unix/sysv/linux/ia64/*: Removed.
+
 2011-12-22  Ulrich Drepper  <drepper@gmail.com>
 
 	* sysdeps/pthread/gai_misc.h (__gai_create_helper_thread): Use

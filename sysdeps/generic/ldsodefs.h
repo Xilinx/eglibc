@@ -1,5 +1,5 @@
 /* Run-time dynamic linker data structures for loaded ELF shared objects.
-   Copyright (C) 1995-2009, 2010, 2011 Free Software Foundation, Inc.
+   Copyright (C) 1995-2009, 2010, 2011, 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -194,14 +194,10 @@ struct La_ppc64_regs;
 struct La_ppc64_retval;
 struct La_sh_regs;
 struct La_sh_retval;
-struct La_alpha_regs;
-struct La_alpha_retval;
 struct La_s390_32_regs;
 struct La_s390_32_retval;
 struct La_s390_64_regs;
 struct La_s390_64_retval;
-struct La_ia64_regs;
-struct La_ia64_retval;
 struct La_sparc32_regs;
 struct La_sparc32_retval;
 struct La_sparc64_regs;
@@ -242,10 +238,6 @@ struct audit_ifaces
 				  uintptr_t *, const struct La_sh_regs *,
 				  unsigned int *, const char *name,
 				  long int *framesizep);
-    Elf64_Addr (*alpha_gnu_pltenter) (Elf64_Sym *, unsigned int, uintptr_t *,
-				      uintptr_t *, struct La_alpha_regs *,
-				      unsigned int *, const char *name,
-				      long int *framesizep);
     Elf32_Addr (*s390_32_gnu_pltenter) (Elf32_Sym *, unsigned int, uintptr_t *,
 					uintptr_t *, struct La_s390_32_regs *,
 					unsigned int *, const char *name,
@@ -254,10 +246,6 @@ struct audit_ifaces
 					uintptr_t *, struct La_s390_64_regs *,
 					unsigned int *, const char *name,
 					long int *framesizep);
-    Elf64_Addr (*ia64_gnu_pltenter) (Elf64_Sym *, unsigned int, uintptr_t *,
-				     uintptr_t *, struct La_ia64_regs *,
-				     unsigned int *, const char *name,
-				     long int *framesizep);
     Elf32_Addr (*sparc32_gnu_pltenter) (Elf32_Sym *, unsigned int,
 					uintptr_t *, uintptr_t *,
 					const struct La_sparc32_regs *,
@@ -293,10 +281,6 @@ struct audit_ifaces
     unsigned int (*sh_gnu_pltexit) (Elf32_Sym *, unsigned int, uintptr_t *,
 				    uintptr_t *, const struct La_sh_regs *,
 				    struct La_sh_retval *, const char *);
-    unsigned int (*alpha_gnu_pltexit) (Elf64_Sym *, unsigned int, uintptr_t *,
-				       uintptr_t *,
-				       const struct La_alpha_regs *,
-				       struct La_alpha_retval *, const char *);
     unsigned int (*s390_32_gnu_pltexit) (Elf32_Sym *, unsigned int,
 					 uintptr_t *, uintptr_t *,
 					 const struct La_s390_32_regs *,
@@ -307,10 +291,6 @@ struct audit_ifaces
 					 const struct La_s390_64_regs *,
 					 struct La_s390_64_retval *,
 					 const char *);
-    unsigned int (*ia64_gnu_pltexit) (Elf64_Sym *, unsigned int, uintptr_t *,
-				      uintptr_t *,
-				      const struct La_ia64_regs *,
-				      struct La_ia64_retval *, const char *);
     unsigned int (*sparc32_gnu_pltexit) (Elf32_Sym *, unsigned int,
 					 uintptr_t *, uintptr_t *,
 					 const struct La_sparc32_regs *,

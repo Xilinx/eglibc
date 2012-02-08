@@ -1,5 +1,6 @@
 // BZ 12511
 #include "tst-unique4.h"
+
 #include <cstdio>
 
 static int a[24] =

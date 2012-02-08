@@ -1,5 +1,5 @@
 /* Assembly macros for 32-bit PowerPC.
-   Copyright (C) 1999, 2001, 2002, 2003, 2006, 2011
+   Copyright (C) 1999, 2001-2003, 2006, 2011-2012
 	Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -21,8 +21,6 @@
 #include <sysdeps/powerpc/sysdep.h>
 
 #ifdef __ASSEMBLER__
-
-#ifdef __ELF__
 
 /* If compiled for profiling, call `_mcount' at the start of each
    function.  */
@@ -93,7 +91,7 @@ GOT_LABEL:			;					      \
   ASM_SIZE_DIRECTIVE(name)
 
 #define DO_CALL(syscall)				      		      \
-    li 0,syscall;						              \
+    li 0,syscall;							      \
     sc
 
 #undef JUMPTARGET
@@ -153,9 +151,11 @@ GOT_LABEL:			;					      \
 #undef L
 #define L(x) .L##x
 
+#define XGLUE(a,b) a##b
+#define GLUE(a,b) XGLUE (a,b)
+#define GENERATE_GOT_LABEL(name) GLUE (.got_label, name)
+
 /* Label in text section.  */
 #define C_TEXT(name) name
-
-#endif /* __ELF__ */
 
 #endif	/* __ASSEMBLER__ */
