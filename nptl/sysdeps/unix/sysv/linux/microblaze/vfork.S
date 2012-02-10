@@ -17,6 +17,7 @@
 #define _ERRNO_H	1
 #include <bits/errno.h>
 #include <kernel-features.h>
+#include <tcb-offsets.h>
 
 /* Clone the calling process, but without copying the whole address space.
    The calling process is suspended until the new process exits or is
@@ -26,18 +27,15 @@
 ENTRY (__vfork)
 
 #ifdef __NR_vfork
-
 	DO_CALL (vfork, 0)
-#if 0
-	/* REVISIT */
-	PSEUDO_RET
-#endif
 #else
 	DO_CALL (fork, 0)
-#if 0
-	PSEUDO_RET
 #endif
-#endif
+	addik	r12,r0,-4095
+	cmpu	r12,r12,r3
+	bgei	r12,SYSCALL_ERROR_LABEL
+	rtsd	r15,8
+	nop
 
 PSEUDO_END (__vfork)
 libc_hidden_def (__vfork)
