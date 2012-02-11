@@ -175,11 +175,11 @@ $(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs)) \
 	$(+link)
 
 $(addprefix $(objpfx)cross-,$(rpcgen-objs)): $(objpfx)cross-%.o: %.c
-	gcc $< -c -D_RPC_THREAD_SAFE_ -D_CROSS_RPCGEN_ \
+	$(BUILD_CC) $< -c -D_RPC_THREAD_SAFE_ -D_CROSS_RPCGEN_ \
 		$(OUTPUT_OPTION) $(compile-mkdep-flags)
 
 $(objpfx)cross-rpcgen: $(addprefix $(objpfx)cross-,$(rpcgen-objs))
-	gcc $^ -o $@
+	$(BUILD_CC) $^ -o $@
 
 # This makes sure -DNOT_IN_libc is passed for all these modules.
 cpp-srcs-left := $(rpcgen-objs:.o=.c)

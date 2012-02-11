@@ -181,11 +181,11 @@ zic-objs = zic.o ialloc.o scheck.o
 $(objpfx)zic: $(addprefix $(objpfx), $(zic-objs))
 
 $(addprefix $(objpfx)cross-,$(zic-objs)): $(objpfx)cross-%.o: %.c
-	gcc $< -c $(OUTPUT_OPTION) $(CFLAGS-$*.c) $(CPPFLAGS-$*) \
+	$(BUILD_CC) $< -c $(OUTPUT_OPTION) $(CFLAGS-$*.c) $(CPPFLAGS-$*) \
 		-DCROSS_ZIC $(compile-mkdep-flags)
 
 $(objpfx)cross-zic: $(addprefix $(objpfx)cross-,$(zic-objs))
-	gcc $(addprefix $(objpfx)cross-,$(zic-objs)) -o $@
+	$(BUILD_CC) $(addprefix $(objpfx)cross-,$(zic-objs)) -o $@
 
 tz-cflags = -DTZDIR='"$(zonedir)"' \
 	    -DTZDEFAULT='"$(localtime-file)"' \
