@@ -1,5 +1,5 @@
-/* Special .init and .fini section support for x86-64.
-   Copyright (C) 2001, 2002 Free Software Foundation, Inc.
+/* Special .init and .fini section support for SH.
+   Copyright (C) 2000-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -34,75 +34,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-/* This file is compiled into assembly code which is then munged by a sed
-   script into two files: crti.s and crtn.s.
+/* crtn.S puts function epilogues in the .init and .fini sections
+   corresponding to the prologues in crti.S. */
 
-   * crti.s puts a function prologue at the beginning of the
-   .init and .fini sections and defines global symbols for
-   those addresses, so they can be called as functions.
+	.section .init,"ax",@progbits
+	mov	r14,r15
+	lds.l	@r15+,pr
+	mov.l	@r15+,r14
+	mov.l	@r15+,r12
+	rts
+	nop
 
-   * crtn.s puts the corresponding function epilogues
-   in the .init and .fini sections. */
-
-__asm__ ("\n\
-#include \"defs.h\"\n\
-\n\
-/*@HEADER_ENDS*/\n\
-\n\
-/*@_init_PROLOG_BEGINS*/\n\
-	.align 4\n\
-	.type	call_gmon_start,@function\n\
-call_gmon_start:\n\
-	subq	$8, %rsp\n\
-	movq	__gmon_start__@GOTPCREL(%rip), %rax\n\
-	testq	%rax, %rax\n\
-	je	.L22\n\
-	call	*%rax\n\
-.L22:\n\
-	addq	$8, %rsp\n\
-	ret\n\
-\n\
-	.section .init\n\
-	.align 4\n\
-.globl _init\n\
-	.type	_init,@function\n\
-_init:\n\
-	subq	$8, %rsp\n\
-	call	call_gmon_start\n\
-	ALIGN\n\
-	END_INIT\n\
-\n\
-/*@_init_PROLOG_ENDS*/\n\
-\n\
-/*@_init_EPILOG_BEGINS*/\n\
-	.section .init\n\
-	addq	$8, %rsp\n\
-	ret\n\
-	END_INIT\n\
-\n\
-/*@_init_EPILOG_ENDS*/\n\
-\n\
-/*@_fini_PROLOG_BEGINS*/\n\
-	.section .fini\n\
-	.align 4\n\
-.globl _fini\n\
-	.type	_fini,@function\n\
-_fini:\n\
-	subq	$8, %rsp\n\
-	ALIGN\n\
-	END_FINI\n\
-\n\
-/*@_fini_PROLOG_ENDS*/\n\
-	call	i_am_not_a_leaf@PLT\n\
-\n\
-/*@_fini_EPILOG_BEGINS*/\n\
-	.section .fini\n\
-	addq	$8, %rsp\n\
-	ret\n\
-	END_FINI\n\
-\n\
-/*@_fini_EPILOG_ENDS*/\n\
-\n\
-/*@TRAILER_BEGINS*/\n\
-	.weak	__gmon_start__\n\
-");
+	.section .fini,"ax",@progbits
+	mov	r14,r15
+	lds.l	@r15+,pr
+	mov.l	@r15+,r14
+	mov.l	@r15+,r12
+	rts
+	nop

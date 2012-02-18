@@ -13,9 +13,8 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
 
 #include <assert.h>
 #include <errno.h>
@@ -756,7 +755,7 @@ update_get_addr (GET_ADDR_ARGS)
   if (__builtin_expect (p == TLS_DTV_UNALLOCATED, 0))
     return tls_get_addr_tail (GET_ADDR_PARAM, dtv, the_map);
 
-  return (char *) p + GET_ADDR_OFFSET;
+  return (void *) p + GET_ADDR_OFFSET;
 }
 
 

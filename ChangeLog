@@ -1,3 +1,235 @@
+2012-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #5077]
+	* manual/lang.texi (FLT_EPSILON): Avoid description depending on
+	rounding modes.
+
+2012-02-17  Fabrice Bauzac  <fabrice.bauzac@wanadoo.fr>
+
+	[BZ #6907]
+	* manual/string.texi (strchr): Change when strchrnul is
+	recommended.
+
+2012-02-17  Dwayne Grant McConnell  <decimal@us.ibm.com>
+
+	[BZ #174]
+	* manual/locale.texi (setlocale): Document LOCPATH.
+
+2012-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10210]
+	* manual/process.texi (execle): Move @dots{} before last argument.
+
+2012-02-17  Paul Bolle  <pebolle@tiscali.nl>
+
+	[BZ #12047]
+	* manual/charset.texi (Generic Charset Conversion): Fix typo
+	(LC_TYPE -> LC_CTYPE).
+
+2012-02-17  Nicolas Boulenguez  <nicolas.boulenguez@free.fr>
+
+	[BZ #5805]
+	* manual/arith.texi (scalbn): Use @var{} on parameter names.
+	(scalbnf): Likewise.
+	(scalbnl): Likewise.
+	(scalbln): Likewise.
+	(scalblnf): Likewise.
+	(scalblnl): Likewise.
+	* manual/errno.texi (vwarn): Name last parameter as @var{ap}.
+	(vwarnx): Likewise.
+	(verr): Likewise.
+	(verrx): Likewise.
+	* manual/filesys.texi (telldir): Use braces around return type.
+	* manual/llio.texi (mmap): Add space after comma.
+	(mmap64): Likewise.
+	* manual/math.texi (jn): Use @var{} on parameter names.
+	(jnf): Likewise.
+	(jnl): Likewise.
+	(yn): Likewise.
+	(ynf): Likewise.
+	(ynl): Likewise.
+	* manual/memory.texi (alloca): Remove semicolon on @deftypefun
+	line.
+	* manual/resource.texi (ulimit): Use @dots{} instead of literal
+	"...".
+	(sched_get_priority_min): Remove semicolon on @deftypefun line.
+	(sched_get_priority_max): Likewise.
+	* manual/signal.texi (sigvec): Add space after comma.
+	* manual/socket.texi (if_nametoindex): Use @var{} on parameter
+	names.
+	(if_indextoname): Likewise.
+	(if_freenameindex): Likewise.
+	(sendto): Use ',' instead of '.' in prototype.
+	* manual/startup.texi (syscall): Use @dots{} instead of literal
+	"...".
+	* manual/stdio.texi (__fpending): Separate initial words of
+	paragraph from @deftypefun line.
+	* manual/syslog.texi (syslog): Use @dots{} instead of literal
+	"...".
+	(vsyslog): Use @var{} on parameter names.
+	* manual/terminal.texi (stty): Use @var{} on parameter names.
+	* manual/users.texi (getutmp): Use @var{} on parameter names.
+	(getutmpx): Likewise.
+
+2012-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #6884]
+	* manual/stdio.texi (fopen): Fix typos in description of
+	",ccs=STRING".
+
+2012-02-17  Aurelien Jarno  <aurelien@aurel32.net>
+
+	[BZ #4026]
+	* sysdeps/unix/sysv/linux/clock_settime.c: include <time.h> to
+	get clock_id definition.
+
+2012-02-17  Thomas Schwinge  <thomas@schwinge.name>
+
+	[BZ #4822]
+	* sysdeps/mach/hurd/malloc-machine.h: #include <sys/mman.h>.
+	(madvise): Cast every argument to void on its own.
+
+2012-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #9902]
+	* manual/startup.texi (Exit Status): Fix typo.
+
+2012-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10140]
+	* manual/examples/argp-ex1.c: Include <stdlib.h>.
+	* manual/examples/argp-ex2.c: Likewise.
+	* manual/examples/argp-ex3.c: Likewise.
+
+2012-02-16  Richard Henderson  <rth@redhat.com>
+
+	* sysdeps/s390/s390-32/crti.S, sysdeps/s390/s390-32/crtn.S: New files.
+	* sysdeps/s390/s390-32/initfini.c: Remove.
+	* sysdeps/s390/s390-64/crti.S, sysdeps/s390/s390-64/crtn.S:
+	* sysdeps/s390/s390-64/initfini.c: Remove.
+
+2012-02-15  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/sh/crti.S, sysdeps/sh/crtn.S: New files, based on
+	compiler output for sysdeps/generic/initfini.c.
+	* sysdeps/sh/elf/initfini.c: Remove file.
+
+2012-02-16  David S. Miller  <davem@davemloft.net>
+
+	[BZ #11494]
+	* sysdeps/unix/sysv/linux/sparc/bits/fcntl.h (O_FSYNC): Define.
+
+	* sysdeps/sparc/Makefile: Add -fPIC when building crt{i,n}.S
+	* sysdeps/sparc/crti.S: New file.
+	* sysdeps/sparc/crtn.S: New file.
+	* sysdeps/sparc/sparc32/Makefile: Remove initfini handling.
+	* sysdeps/sparc/sparc64/Makefile: Likewise.
+
+2012-02-15  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #3335]
+	* sysdeps/unix/sysv/linux/getcwd.c: Include sys/param.h.
+
+2012-02-15  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #4822]
+	* sysdeps/mach/hurd/malloc-machine.h (madvise): New macro.
+
+	* mach/devstream.c (cookie_io_functions_t): Macro removed.
+	(write, read, close): Likewise.
+	Patch by Aurelien Jarno <aurelien@aurel32.net>.
+
+2012-02-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/bits/signalfd.h: New file.
+	* sysdeps/unix/sysv/linux/sparc/bits/signalfd.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/signalfd.h: Remove.
+	* sysdeps/unix/sysv/linux/sys/signalfd.h: Get flags from
+	<bits/signalfd.h>.
+	(SFD_CLOEXEC, SFD_NONBLOCK): Don't define here.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/signalfd.h.
+
+2012-02-14  Marek Polacek  <polacek@redhat.com>
+
+	* sysdeps/x86_64/crti.S: New file.
+	* sysdeps/x86_64/crtn.S: New file.
+	* sysdeps/x86_64/elf/initfini.c: Remove file.
+
+2012-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/bits/inotify.h: New file.
+	* sysdeps/unix/sysv/linux/sparc/bits/inotify.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/inotify.h: Remove.
+	* sysdeps/unix/sysv/linux/sys/inotify.h: Get flags from
+	<bits/inotify.h>.
+	(IN_CLOEXEC, IN_NONBLOCK): Don't define here.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/inotify.h.
+
+2012-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/bits/eventfd.h: New file.
+	* sysdeps/unix/sysv/linux/sparc/bits/eventfd.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sys/eventfd.h: Remove.
+	* sysdeps/unix/sysv/linux/sys/eventfd.h: Get flags from
+	<bits/eventfd.h>.
+	(EFD_SEMAPHORE, EFD_CLOEXEC, EFD_NONBLOCK): Don't define here.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/eventfd.h.
+
+2012-02-10  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/i386/fpu/feupdateenv.c (__feupdateenv): Invoke
+	__feraiseexcept instead of feraiseexcept.
+
+	* rt/tst-cpuclock1.c: Add a few comments, and error checking for
+	nanosleep invocations.
+	* rt/tst-cpuclock2.c: Print some values as intended, fix explanatory
+	strings, and add error checking for a nanosleep invocations.
+
+2012-02-09  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Replace FSF snail mail address with URLs, as per GNU coding standards.
+	Most of the snail mail addresses were wrong anyway, and omitting
+	them makes the source code easier to maintain.  Almost all of the
+	changes are to license notices and to locale LC_IDENTIFICATION
+	addresses, except for this one:
+	* manual/libc.texinfo: In "Published by", give the FSF's URL,
+	not its snail mail address.
+
+2012-02-09  Richard Henderson  <rth@twiddle.net>
+
+	* sysdeps/unix/sysv/linux/internal_statvfs.c: Use <> for include
+	of kernel-features.h.
+
+	* elf/dl-tls.c (update_get_addr): Avoid pointer type mismatch warning.
+
+2012-02-08  Marek Polacek  <polacek@redhat.com>
+
+	* libio/libio.h: Remove _G_HAVE_SYS_CDEFS conditional.
+	* sysdeps/mach/hurd/_G_config.h: Remove _G_HAVE_SYS_CDEFS macro.
+	* sysdeps/gnu/_G_config.h: Likewise.
+	* sysdeps/generic/_G_config.h: Likewise.
+
+2012-02-08  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Reduce ldouble ULPs for jn
+	tests.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	* sysdeps/powerpc/powerpc32/crti.S: New file.
+	* sysdeps/powerpc/powerpc32/crtn.S: New file.
+	* sysdeps/powerpc/powerpc64/crti.S: New file.
+	* sysdeps/powerpc/powerpc64/crtn.S: New file.
+
+	* Makeconfig (have-initfini): Don't set.
+	* config.make.in (have-initfini, need-nopic-initfini): Don't set.
+	* configure.in (nopic_initfini): Don't substitute.
+	* config.h.in (HAVE_INITFINI): Don't #undef.
+	* csu/Makefile (CPPFLAGS): Don't add -DHAVE_INITFINI.
+	* csu/gmon-start.c: Assume HAVE_INITFINI is defined.
+
 2012-02-08  Joseph Myers  <joseph@codesourcery.com>
 
 	Support crti.S and crtn.S provided directly by architectures.
