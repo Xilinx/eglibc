@@ -49,6 +49,8 @@
 #define LLL_PRIVATE	0
 #define LLL_SHARED	FUTEX_PRIVATE_FLAG
 
+/* Initialize locks to zero.  */
+#define LLL_MUTEX_LOCK_INITIALIZER (0)
 
 #if !defined NOT_IN_libc || defined IS_IN_rtld
 /* In libc.so or ld.so all futexes are private.  */
@@ -74,7 +76,6 @@
 # endif	      
 #endif
 
-
 #define lll_futex_wait(futexp, val, private) \
   lll_futex_timed_wait(futexp, val, NULL, private)
 
@@ -82,28 +83,33 @@
   ({									      \
     INTERNAL_SYSCALL_DECL (__err);					      \
     long int __ret;							      \
+									      \
     __ret = INTERNAL_SYSCALL (futex, __err, 4, (futexp),		      \
 			      __lll_private_flag (FUTEX_WAIT, private),	      \
 			      (val), (timespec));			      \
-    __ret;								      \
+    INTERNAL_SYSCALL_ERROR_P (__ret, __err) ? -__ret : __ret;		      \
   })
 
 #define lll_futex_wake(futexp, nr, private) \
   ({									      \
     INTERNAL_SYSCALL_DECL (__err);					      \
     long int __ret;							      \
+									      \
     __ret = INTERNAL_SYSCALL (futex, __err, 4, (futexp),		      \
 			      __lll_private_flag (FUTEX_WAKE, private),	      \
 			      (nr), 0);					      \
-    __ret;								      \
+    INTERNAL_SYSCALL_ERROR_P (__ret, __err) ? -__ret : __ret;		      \
   })
 
 #define lll_robust_dead(futexv, private) \
   do									      \
     {									      \
+      INTERNAL_SYSCALL_DECL (__err);					      \
       int *__futexp = &(futexv);					      \
+									      \
       atomic_or (__futexp, FUTEX_OWNER_DIED);				      \
-      lll_futex_wake (__futexp, 1, private);				      \
+      INTERNAL_SYSCALL (futex, __err, 4, __futexp,			      \
+			__lll_private_flag (FUTEX_WAKE, private), 1, 0);      \
     }									      \
   while (0)
 
@@ -112,18 +118,19 @@
   ({									      \
     INTERNAL_SYSCALL_DECL (__err);					      \
     long int __ret;							      \
+									      \
     __ret = INTERNAL_SYSCALL (futex, __err, 6, (futexp),		      \
 			      __lll_private_flag (FUTEX_CMP_REQUEUE, private),\
 			      (nr_wake), (nr_move), (mutex), (val));	      \
     INTERNAL_SYSCALL_ERROR_P (__ret, __err);				      \
   })
 
-
 /* Returns non-zero if error happened, zero if success.  */
 #define lll_futex_wake_unlock(futexp, nr_wake, nr_wake2, futexp2, private) \
   ({									      \
     INTERNAL_SYSCALL_DECL (__err);					      \
     long int __ret;							      \
+									      \
     __ret = INTERNAL_SYSCALL (futex, __err, 6, (futexp),		      \
 			      __lll_private_flag (FUTEX_WAKE_OP, private),    \
 			      (nr_wake), (nr_wake2), (futexp2),		      \
@@ -131,15 +138,28 @@
     INTERNAL_SYSCALL_ERROR_P (__ret, __err);				      \
   })
 
+/* Set *futex to 1 if it is 0, atomically.  Returns the old value */
+static inline int __attribute__((always_inline))
+__lll_trylock(int *futex)
+{
+  return atomic_compare_and_exchange_val_acq (futex, 1, 0) != 0;
+}
+#define lll_trylock(lock)       __lll_trylock (&(lock))
 
-#define lll_trylock(lock)	\
-  atomic_compare_and_exchange_val_acq(&(lock), 1, 0)
+/* Set *futex to 2 if it is 0, atomically.  Returns the old value */
+static inline int __attribute__((always_inline))
+__lll_cond_trylock(int *futex)
+{
+  return atomic_compare_and_exchange_val_acq (futex, 2, 0) != 0;
+}
+#define lll_cond_trylock(lock)  __lll_cond_trylock (&(lock))
 
-#define lll_cond_trylock(lock)	\
-  atomic_compare_and_exchange_val_acq(&(lock), 2, 0)
-
-#define __lll_robust_trylock(futex, id) \
-  (atomic_compare_and_exchange_val_acq (futex, id, 0) != 0)
+/* Set *futex to ID if it is 0, atomically.  Returns the old value */
+static inline int __attribute__((always_inline))
+__lll_robust_trylock(int *futex, int id)
+{
+  return atomic_compare_and_exchange_val_acq (futex, id, 0) != 0;
+}
 #define lll_robust_trylock(lock, id) \
   __lll_robust_trylock (&(lock), id)
 
@@ -147,100 +167,89 @@ extern void __lll_lock_wait_private (int *futex) attribute_hidden;
 extern void __lll_lock_wait (int *futex, int private) attribute_hidden;
 extern int __lll_robust_lock_wait (int *futex, int private) attribute_hidden;
 
-#define __lll_lock(futex, private)					      \
-  ((void) ({								      \
-    int *__futex = (futex);						      \
-    if (__builtin_expect (atomic_compare_and_exchange_val_acq (__futex,       \
-								1, 0), 0))    \
+#define lll_lock(lock, private) \
+  (void) ({								      \
+    int *__futex = &(lock);						      \
+    if (__builtin_expect (atomic_compare_and_exchange_val_acq (__futex, 1, 0),\
+			  0) != 0)					      \
       {									      \
 	if (__builtin_constant_p (private) && (private) == LLL_PRIVATE)	      \
 	  __lll_lock_wait_private (__futex);				      \
 	else								      \
 	  __lll_lock_wait (__futex, private);				      \
       }									      \
-  }))
-#define lll_lock(futex, private) __lll_lock (&(futex), private)
+  })
 
-
-#define __lll_robust_lock(futex, id, private)				      \
+#define lll_robust_lock(lock, id, private) \
   ({									      \
-    int *__futex = (futex);						      \
+    int *__futex = &(lock);						      \
     int __val = 0;							      \
-									      \
     if (__builtin_expect (atomic_compare_and_exchange_bool_acq (__futex, id,  \
 								0), 0))	      \
       __val = __lll_robust_lock_wait (__futex, private);		      \
     __val;								      \
   })
-#define lll_robust_lock(futex, id, private) \
-  __lll_robust_lock (&(futex), id, private)
 
-
-#define __lll_cond_lock(futex, private)					      \
-  ((void) ({								      \
-    int *__futex = (futex);						      \
-    if (__builtin_expect (atomic_exchange_acq (__futex, 2), 0))		      \
+#define lll_cond_lock(lock, private) \
+  (void) ({								      \
+    int *__futex = &(lock);						      \
+    if (__builtin_expect (atomic_compare_and_exchange_val_acq (__futex, 2, 0),\
+			  0) != 0)					      \
       __lll_lock_wait (__futex, private);				      \
-  }))
-#define lll_cond_lock(futex, private) __lll_cond_lock (&(futex), private)
+  })
 
-
-#define lll_robust_cond_lock(futex, id, private) \
-  __lll_robust_lock (&(futex), (id) | FUTEX_WAITERS, private)
-
-
-extern int __lll_timedlock_wait (int *futex, const struct timespec *,
-				 int private) attribute_hidden;
-extern int __lll_robust_timedlock_wait (int *futex, const struct timespec *,
-					int private) attribute_hidden;
-
-#define __lll_timedlock(futex, abstime, private)			      \
+#define lll_robust_cond_lock(lock, id, private) \
   ({									      \
-     int *__futex = (futex);						      \
-     int __val = 0;							      \
-									      \
-     if (__builtin_expect (atomic_exchange_acq (__futex, 1), 0))	      \
+    int *__futex = &(lock);						      \
+    int __val = 0;							      \
+    int __id = id | FUTEX_WAITERS;					      \
+    if (__builtin_expect (atomic_compare_and_exchange_bool_acq (__futex, __id,\
+								0), 0))	      \
+      __val = __lll_robust_lock_wait (__futex, private);		      \
+    __val;								      \
+  })
+
+
+extern int __lll_timedlock_wait
+  (int *futex, const struct timespec *, int private) attribute_hidden;
+extern int __lll_robust_timedlock_wait
+  (int *futex, const struct timespec *, int private) attribute_hidden;
+
+#define lll_timedlock(lock, abstime, private) \
+  ({									      \
+    int *__futex = &(lock);						      \
+    int __val = 0;							      \
+    if (__builtin_expect (atomic_compare_and_exchange_val_acq (__futex, 1, 0),\
+			  0) != 0)					      \
        __val = __lll_timedlock_wait (__futex, abstime, private);	      \
      __val;								      \
   })
-#define lll_timedlock(futex, abstime, private) \
-  __lll_timedlock (&(futex), abstime, private)
 
-
-#define __lll_robust_timedlock(futex, abstime, id, private)		      \
+#define lll_robust_timedlock(lock, abstime, id, private) \
   ({									      \
-    int *__futex = (futex);						      \
+    int *__futex = &(lock);						      \
     int __val = 0;							      \
-									      \
     if (__builtin_expect (atomic_compare_and_exchange_bool_acq (__futex, id,  \
 								0), 0))	      \
       __val = __lll_robust_timedlock_wait (__futex, abstime, private);	      \
     __val;								      \
   })
-#define lll_robust_timedlock(futex, abstime, id, private) \
-  __lll_robust_timedlock (&(futex), abstime, id, private)
 
-
-#define __lll_unlock(futex, private) \
-  (void)							\
-    ({ int *__futex = (futex);					\
-       int __oldval = atomic_exchange_rel (__futex, 0);		\
-       if (__builtin_expect (__oldval > 1, 0))			\
+#define lll_unlock(lock, private) \
+  ((void) ({								      \
+    int *__futex = &(lock);						      \
+    int __val = atomic_exchange_rel (__futex, 0);			      \
+    if (__builtin_expect (__val > 1, 0))				      \
 	 lll_futex_wake (__futex, 1, private);			\
-    })
-#define lll_unlock(futex, private) __lll_unlock(&(futex), private)
+  }))
 
-
-#define __lll_robust_unlock(futex, private) \
-  (void)							\
-    ({ int *__futex = (futex);					\
-       int __oldval = atomic_exchange_rel (__futex, 0);		\
-       if (__builtin_expect (__oldval & FUTEX_WAITERS, 0))	\
+#define lll_robust_unlock(lock, private) \
+  ((void) ({								      \
+    int *__futex = &(lock);						      \
+    int __val = atomic_exchange_rel (__futex, 0);			      \
+    if (__builtin_expect (__val & FUTEX_WAITERS, 0))			      \
 	 lll_futex_wake (__futex, 1, private);			\
-    })
-#define lll_robust_unlock(futex, private) \
-  __lll_robust_unlock(&(futex), private)
-
+  }))
 
 #define lll_islocked(futex) \
   (futex != 0)
