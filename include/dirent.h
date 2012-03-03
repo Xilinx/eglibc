@@ -1,6 +1,9 @@
 #ifndef _DIRENT_H
-# include <dirstream.h>
+# ifndef _ISOMAC
+#  include <dirstream.h>
+# endif
 # include <dirent/dirent.h>
+# ifndef _ISOMAC
 # include <sys/stat.h>
 # include <stdbool.h>
 
@@ -44,5 +47,6 @@ extern void __scandir_cancel_handler (void *arg);
 libc_hidden_proto (rewinddir)
 libc_hidden_proto (scandirat)
 libc_hidden_proto (scandirat64)
+# endif
 
 #endif

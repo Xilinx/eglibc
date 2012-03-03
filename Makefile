@@ -60,7 +60,7 @@ endif # $(AUTOCONF) = no
 		   $(addprefix install-, no-libc.a bin lib data headers others)
 
 headers := limits.h values.h features.h gnu-versions.h bits/libc-lock.h \
-	   bits/xopen_lim.h gnu/libc-version.h bits/predefs.h
+	   bits/xopen_lim.h gnu/libc-version.h stdc-predef.h bits/predefs.h
 
 echo-headers: subdir_echo-headers
 
@@ -418,8 +418,8 @@ define format-me
 makeinfo --no-validate --plaintext --no-number-sections $< -o $@
 -chmod a-w $@
 endef
-INSTALL: manual/install.texi; $(format-me)
-NOTES: manual/creature.texi; $(format-me)
+INSTALL: manual/install.texi manual/macros.texi; $(format-me)
+NOTES: manual/creature.texi manual/macros.texi; $(format-me)
 manual/dir-add.texi manual/dir-add.info: FORCE
 	$(MAKE) $(PARALLELMFLAGS) -C $(@D) $(@F)
 FAQ: scripts/gen-FAQ.pl FAQ.in

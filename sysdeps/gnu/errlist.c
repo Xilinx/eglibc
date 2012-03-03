@@ -386,7 +386,7 @@ TRANS not representable because of overflow or underflow. */
 /*
 TRANS Resource temporarily unavailable; the call might work if you try again
 TRANS later.  The macro @code{EWOULDBLOCK} is another name for @code{EAGAIN};
-TRANS they are always the same in the GNU C library.
+TRANS they are always the same in @theglibc{}.
 TRANS 
 TRANS This error can happen in a few different situations:
 TRANS 
@@ -421,7 +421,7 @@ TRANS @end itemize */
 #endif
 #if defined (EWOULDBLOCK) && EWOULDBLOCK != EAGAIN
 /*
-TRANS In the GNU C library, this is another name for @code{EAGAIN} (above).
+TRANS In @theglibc{}, this is another name for @code{EAGAIN} (above).
 TRANS The values are always the same, on every operating system.
 TRANS 
 TRANS C libraries in many older Unix systems have @code{EWOULDBLOCK} as a
@@ -1462,6 +1462,14 @@ TRANS error; @pxref{Cancel AIO Operations}. */
 # if ERFKILL > ERR_MAX
 # undef ERR_MAX
 # define ERR_MAX ERFKILL
+# endif
+#endif
+#ifdef EHWPOISON
+/* */
+    [ERR_REMAP (EHWPOISON)] = N_("Memory page has hardware error"),
+# if EHWPOISON > ERR_MAX
+# undef ERR_MAX
+# define ERR_MAX EHWPOISON
 # endif
 #endif
   };

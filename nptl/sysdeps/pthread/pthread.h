@@ -21,6 +21,10 @@
 #include <features.h>
 #include <endian.h>
 #include <sched.h>
+#ifdef __USE_XOPEN2K
+# define __need_clockid_t
+#endif
+#define __need_timespec
 #include <time.h>
 
 #include <bits/pthreadtypes.h>
@@ -71,7 +75,7 @@ enum
 #endif
 
 
-#ifdef __USE_UNIX98
+#if defined __USE_POSIX199506 || defined __USE_UNIX98
 /* Mutex protocols.  */
 enum
 {

@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 2000, 2002, 2003, 2004, 2006, 2008, 2011
+/* Copyright (C) 1997, 2000, 2002, 2003, 2004, 2006, 2008, 2011, 2012
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson <richard@gnu.ai.mit.edu>, 1997.
@@ -96,10 +96,10 @@ ENTRY(name);					\
 #else
 # if RTLD_PRIVATE_ERRNO
 #  define SYSCALL_ERROR_HANDLER			\
-0:	SETUP_PIC_REG(o2,g1)			\
-	sethi	%hi(rtld_errno), %g1;		\
-	or	%g1, %lo(rtld_errno), %g1;	\
-	ldx	[%o2 + %g1], %g1;		\
+0:	SETUP_PIC_REG_LEAF(o2,g1)		\
+	sethi	%gdop_hix22(rtld_errno), %g1;	\
+	xor	%g1, %gdop_lox10(rtld_errno), %g1;\
+	ldx	[%o2 + %g1], %g1, %gdop(rtld_errno); \
 	st	%o0, [%g1];			\
 	jmp	%o7 + 8;			\
 	 mov	-1, %o0;
@@ -110,8 +110,8 @@ ENTRY(name);					\
 #  else
 #   define SYSCALL_ERROR_ERRNO errno
 #  endif
-#  define SYSCALL_ERROR_HANDLER				\
-0:	SETUP_PIC_REG(o2,g1)					\
+#  define SYSCALL_ERROR_HANDLER					\
+0:	SETUP_PIC_REG_LEAF(o2,g1)				\
 	sethi	%tie_hi22(SYSCALL_ERROR_ERRNO), %g1;		\
 	add	%g1, %tie_lo10(SYSCALL_ERROR_ERRNO), %g1;	\
 	ldx	[%o2 + %g1], %g1, %tie_ldx(SYSCALL_ERROR_ERRNO);\
@@ -120,10 +120,10 @@ ENTRY(name);					\
 	 mov	-1, %o0;
 # else
 #  define SYSCALL_ERROR_HANDLER		\
-0:	SETUP_PIC_REG(o2,g1)		\
-	sethi	%hi(errno), %g1;	\
-	or	%g1, %lo(errno), %g1;	\
-	ldx	[%o2 + %g1], %g1;	\
+0:	SETUP_PIC_REG_LEAF(o2,g1)	\
+	sethi	%gdop_hix22(errno), %g1;\
+	xor	%g1, %gdop_lox10(errno), %g1;\
+	ldx	[%o2 + %g1], %g1, %gdop(errno);\
 	st	%o0, [%g1];		\
 	jmp	%o7 + 8;		\
 	 mov	-1, %o0;

@@ -107,7 +107,7 @@ tests		:= tstgetopt testfnm runtests \
 		   bug-getopt5 tst-getopt_long1
 tests-$(OPTION_EGLIBC_LOCALE_CODE)					    \
 		+= tst-fnmatch tst-regexloc bug-regex1 bug-regex5 \
-		   bug-regex23 bug-regex25 bug-regex32
+		   bug-regex23 bug-regex25 bug-regex32 bug-regex33
 tests-$(OPTION_EGLIBC_INET) \
 	        += tst-getaddrinfo bug-ga1 tst-getaddrinfo2 \
 		   tst-rfc3484 tst-rfc3484-2 tst-rfc3484-3 tst-getaddrinfo3
@@ -240,6 +240,7 @@ bug-regex25-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex26-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex30-ENV = LOCPATH=$(common-objpfx)localedata
 bug-regex32-ENV = LOCPATH=$(common-objpfx)localedata
+bug-regex33-ENV = LOCPATH=$(common-objpfx)localedata
 tst-rxspencer-ARGS = rxspencer/tests
 ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
 tst-rxspencer-ARGS += --utf8 

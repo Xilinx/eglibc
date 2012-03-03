@@ -1,3 +1,45 @@
+2012-02-27  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h: Don't refer to non-existing
+	__pthread_attr.
+	* sysdeps/unix/sysv/linux/powerpc/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/pthreadtypes.h: Likewise.
+
+2012-02-26  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/pthread/pthread.h: Define __need_clockid_t for __USE_XOPEN2K.
+
+	* sysdeps/pthread/pthread.h: Define __need_timespec before including
+	<time.h>.
+	* sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h: Name pthread_attr_t
+	union.
+	* sysdeps/unix/sysv/linux/powerpc/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/bits/pthreadtypes.h: Likewise.
+
+2012-02-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13695]
+	* Makefile (generated): Remove crti.S, crtn.S, defs.h and
+	pt-initfini.s.
+	[crti.S not in sysdirs] (omit-deps): Do not append.
+	[crti.S not in sysdirs] (CFLAGS-pt-initfini.s): Remove variable.
+	[crti.S not in sysdirs] (pt-initfini.c): Remove vpath directive.
+	[crti.S not in sysdirs] ($(objpfx)crti.S): Remove rule.
+	[crti.S not in sysdirs] ($(objpfx)crtn.S): Likewise.
+	[crti.S not in sysdirs] ($(objpfx)defs.h): Likewise.
+	[crti.S not in sysdirs] ($(objpfx)crti.o): Likewise.
+	[crti.S not in sysdirs] ($(objpfx)crtn.o): Likewise.
+	[crti.S in sysdirs] (extra-objs): Append unconditionally.
+	[crti.S in sysdirs] ($(objpfx)crti.o): Define rule
+	unconditionally.
+	* sysdeps/pthread/pt-initfini.c: Remove file.
+
 2012-02-16  Richard Henderson  <rth@twiddle.net>
 
 	* nptl/sysdeps/unix/sysv/linux/s390/s390-32/pt-initfini.c: Remove file.

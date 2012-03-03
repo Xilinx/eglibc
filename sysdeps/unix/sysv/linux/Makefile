@@ -34,7 +34,7 @@ sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
 		  sys/ultrasound.h sys/raw.h sys/personality.h sys/epoll.h \
 		  bits/a.out.h sys/inotify.h sys/signalfd.h sys/eventfd.h \
 		  sys/timerfd.h sys/fanotify.h bits/eventfd.h bits/inotify.h \
-		  bits/signalfd.h
+		  bits/signalfd.h bits/timerfd.h bits/epoll.h
 
 install-headers-nosubdir: $(inst_includedir)/bits/syscall.h
 

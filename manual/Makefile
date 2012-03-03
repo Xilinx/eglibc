@@ -1,4 +1,4 @@
-# Copyright (C) 1992-1999,2000,2001,2002,2003,2004,2006,2011
+# Copyright (C) 1992-2012
 #	Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
@@ -59,7 +59,7 @@ chapters = $(addsuffix .texi, \
 		       users sysinfo conf crypt debug)
 add-chapters = $(wildcard $(foreach d, $(add-ons), ../$d/$d.texi))
 appendices = lang.texi header.texi install.texi maint.texi contrib.texi
-licenses = freemanuals.texi lgpl-2.1.texi fdl-1.1.texi
+licenses = freemanuals.texi lgpl-2.1.texi fdl-1.3.texi
 
 -include $(objpfx)texis
 $(objpfx)texis: texis.awk $(chapters) $(add-chapters) $(appendices) $(licenses)
@@ -77,13 +77,15 @@ chapters.% top-menu.%: libc-texinfo.sh $(texis) Makefile
 			       '$(add-chapters)' \
 			       '$(appendices) $(licenses)'
 
-libc.dvi libc.pdf libc.info: chapters.texi top-menu.texi dir-add.texi \
-			     libm-err.texi pkgvers.texi
+# Generated files directly included from libc.texinfo.
+libc-texi-generated = chapters.texi top-menu.texi dir-add.texi \
+		      libm-err.texi version.texi pkgvers.texi
+
+libc.dvi libc.pdf libc.info: $(libc-texi-generated)
 libc.dvi libc.pdf: texinfo.tex
 
 html: libc/index.html
-libc/index.html: chapters.texi top-menu.texi dir-add.texi libm-err.texi \
-		 pkgvers.texi
+libc/index.html: $(libc-texi-generated)
 	$(MAKEINFO) --html libc.texinfo
 
 # Generate the summary from the Texinfo source files for each chapter.
@@ -118,6 +120,13 @@ stamp-pkgvers:
 	echo "@set PKGVERSION $(PKGVERSION_TEXI)" > pkgvers-tmp
 	echo "@set REPORT_BUGS_TO $(REPORT_BUGS_TEXI)" >> pkgvers-tmp
 	$(move-if-change) pkgvers-tmp pkgvers.texi
+	touch $@
+
+# Generate a file with the version number.
+version.texi: stamp-version ;
+stamp-version: $(common-objpfx)config.make
+	echo "@set VERSION $(version)" > version-tmp
+	$(move-if-change) version-tmp version.texi
 	touch $@
 
 # Generate Texinfo files from the C source for the example programs.
@@ -183,10 +192,10 @@ clean: mostlyclean
 distclean: clean
 indices = cp fn pg tp vr ky
 realclean: distclean
-	-rm -f texis summary.texi stamp-summary *.c.texi dir-add.texi
+	-rm -f texis summary.texi stamp-summary *.c.texi
 	-rm -f $(foreach index,$(indices),libc.$(index) libc.$(index)s)
-	-rm -f libc.log libc.aux libc.toc dir-add.texinfo
-	-rm -f top-menu.texi chapters.texi
+	-rm -f libc.log libc.aux libc.toc
+	-rm -f $(libc-texi-generated)
 
 .PHONY: install subdir_install installdirs install-data
 install-data subdir_install: install
