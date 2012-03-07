@@ -73,8 +73,6 @@ routines-$(OPTION_EGLIBC_FSTAB) += fstab
 routines-$(OPTION_EGLIBC_BSD) += chflags fchflags revoke 
 routines-$(OPTION_EGLIBC_FCVT) += efgcvt efgcvt_r qefgcvt qefgcvt_r
 
-distribute := device-nrs.h
-
 generated := tst-error1.mtrace tst-error1-mem
 
 include ../Makeconfig

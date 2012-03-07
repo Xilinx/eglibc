@@ -77,8 +77,6 @@ tests		:= test-utime test-stat test-stat2 test-lfs tst-getcwd \
 tests-$(OPTION_EGLIBC_FTRAVERSE) += bug-ftw1 bug-ftw2 bug-ftw3 bug-ftw4 \
 				    bug-ftw5
 
-distribute	:= ftwtest-sh
-
 include ../Rules
 
 CFLAGS-fcntl.c = -fexceptions -fasynchronous-unwind-tables

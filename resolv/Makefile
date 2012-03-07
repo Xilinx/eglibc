@@ -27,8 +27,6 @@ headers	:= resolv.h \
 	   netdb.h bits/netdb.h \
 	   arpa/nameser.h arpa/nameser_compat.h \
 	   sys/bitypes.h
-distribute := ../conf/portability.h mapv4v6addr.h mapv4v6hostent.h \
-	      Banner res_hconf.h res_debug.h README gai_misc.h ga_test.c
 
 routines-$(OPTION_EGLIBC_INET) \
 	 += herror inet_addr inet_ntop inet_pton nsap_addr res_init \

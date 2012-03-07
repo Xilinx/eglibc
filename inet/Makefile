@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2006, 2007, 2009, 2011 Free Software Foundation, Inc.
+# Copyright (C) 1991-2007, 2009, 2011, 2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -26,8 +26,6 @@ headers	:= netinet/ether.h netinet/in.h netinet/in_systm.h \
 	   netinet/if_ether.h netinet/igmp.h \
 	   netinet/tcp.h netinet/ip.h $(wildcard arpa/*.h protocols/*.h) \
 	   aliases.h ifaddrs.h netinet/ip6.h netinet/icmp6.h bits/in.h
-
-distribute := netgroup.h
 
 routines-$(OPTION_EGLIBC_INET) \
 	 += htonl htons \

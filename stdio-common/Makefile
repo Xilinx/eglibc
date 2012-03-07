@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2009, 2011 Free Software Foundation, Inc.
+# Copyright (C) 1991-2009, 2011, 2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -52,8 +52,6 @@ install-headers-nosubdir: $(inst_includedir)/bits/stdio_lim.h
 
 aux	:= errlist siglist printf-parsemb fxprintf
 aux-$(OPTION_POSIX_C_LANG_WIDE_CHAR) += printf-parsewc
-distribute := _itoa.h _itowa.h _i18n_number.h \
-	      printf-parse.h stdio_lim.h.in tst-unbputc.sh tst-printf.sh
 
 tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 temptest tst-fileno test-fwrite tst-ungetc tst-ferror \
@@ -67,11 +65,11 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-sprintf2 bug18 \
 	 bug19 tst-popen2 scanf14 scanf15 bug21 bug22 scanf16 scanf17 \
-	 tst-setvbuf1 bug23 bug24
+	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf bug14 scanf13 tst-grouping
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
-      += tst-perror bug19a bug20
+      += tst-perror bug19a bug20 tst-long-dbl-fphex
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
       += bug18a tst-swscanf tst-wc-printf
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2008, 2009, 2010, 2011   Free Software Foundation, Inc.
+/* Copyright (C) 1991-2011, 2012   Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -247,6 +247,9 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
   /* 1 if format is in read-only memory, -1 if it is in writable memory,
      0 if unknown.  */
   int readonly_format = 0;
+
+  /* For the argument descriptions, which may be allocated on the heap.  */
+  void *args_malloced = NULL;
 
   /* This table maps a character into a number representing a
      class.  In each step there is a destination label for each
@@ -832,7 +835,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 									      \
 	if (function_done < 0)						      \
 	  {								      \
-	    /* Error in print handler.  */				      \
+	    /* Error in print handler; up to handler to set errno.  */	      \
 	    done = -1;							      \
 	    goto all_done;						      \
 	  }								      \
@@ -886,7 +889,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 									      \
 	if (function_done < 0)						      \
 	  {								      \
-	    /* Error in print handler.  */				      \
+	    /* Error in print handler; up to handler to set errno.  */	      \
 	    done = -1;							      \
 	    goto all_done;						      \
 	  }								      \
@@ -1131,7 +1134,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 			 &mbstate);					      \
 	if (len == (size_t) -1)						      \
 	  {								      \
-	    /* Something went wron gduring the conversion.  Bail out.  */     \
+	    /* Something went wrong during the conversion.  Bail out.  */     \
 	    done = -1;							      \
 	    goto all_done;						      \
 	  }								      \
@@ -1203,6 +1206,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 		      if (__mbsnrtowcs (ignore, &str2, strend - str2,	      \
 					ignore_size, &ps) == (size_t) -1)     \
 			{						      \
+			  /* Conversion function has set errno.  */	      \
 			  done = -1;					      \
 			  goto all_done;				      \
 			}						      \
@@ -1623,6 +1627,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	  if (spec == L_('\0'))
 	    {
 	      /* The format string ended before the specifier is complete.  */
+	      __set_errno (EINVAL);
 	      done = -1;
 	      goto all_done;
 	    }
@@ -1668,9 +1673,10 @@ do_positional:
        determine the size of the array needed to store the argument
        attributes.  */
     size_t nargs = 0;
-    int *args_type;
-    union printf_arg *args_value = NULL;
+    size_t bytes_per_arg;
+    union printf_arg *args_value;
     int *args_size;
+    int *args_type;
 
     /* Positional parameters refer to arguments directly.  This could
        also determine the maximum number of arguments.  Track the
@@ -1721,13 +1727,38 @@ do_positional:
 
     /* Determine the number of arguments the format string consumes.  */
     nargs = MAX (nargs, max_ref_arg);
+    /* Calculate total size needed to represent a single argument across
+       all three argument-related arrays.  */
+    bytes_per_arg = (sizeof (*args_value) + sizeof (*args_size)
+		     + sizeof (*args_type));
 
-    /* Allocate memory for the argument descriptions.  */
-    args_type = alloca (nargs * sizeof (int));
+    /* Check for potential integer overflow.  */
+    if (__builtin_expect (nargs > SIZE_MAX / bytes_per_arg, 0))
+      {
+	 __set_errno (ERANGE);
+	 done = -1;
+	 goto all_done;
+      }
+
+    /* Allocate memory for all three argument arrays.  */
+    if (__libc_use_alloca (nargs * bytes_per_arg))
+	args_value = alloca (nargs * bytes_per_arg);
+    else
+      {
+	args_value = args_malloced = malloc (nargs * bytes_per_arg);
+	if (args_value == NULL)
+	  {
+	    done = -1;
+	    goto all_done;
+	  }
+      }
+
+    /* Set up the remaining two arrays to each point past the end of the
+       prior array, since space for all three has been allocated now.  */
+    args_size = &args_value[nargs].pa_int;
+    args_type = &args_size[nargs];
     memset (args_type, s->_flags2 & _IO_FLAGS2_FORTIFY ? '\xff' : '\0',
-	    nargs * sizeof (int));
-    args_value = alloca (nargs * sizeof (union printf_arg));
-    args_size = alloca (nargs * sizeof (int));
+	    nargs * sizeof (*args_type));
 
     /* XXX Could do sanity check here: If any element in ARGS_TYPE is
        still zero after this loop, format is invalid.  For now we
@@ -1942,6 +1973,7 @@ do_positional:
 		       about # of chars.  */
 		    if (function_done < 0)
 		      {
+			/* Function has set errno.  */
 			done = -1;
 			goto all_done;
 		      }
@@ -1976,6 +2008,7 @@ do_positional:
 		 of chars.  */
 	      if (function_done < 0)
 		{
+		  /* Function has set errno.  */
 		  done = -1;
 		  goto all_done;
 		}
@@ -1996,8 +2029,8 @@ do_positional:
   }
 
 all_done:
-  if (__builtin_expect (workstart != NULL, 0))
-    free (workstart);
+  free (args_malloced);
+  free (workstart);
   /* Unlock the stream.  */
   _IO_funlockfile (s);
   _IO_cleanup_region_end (0);

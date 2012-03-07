@@ -1,4 +1,241 @@
+2012-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10716]
+	* math/s_cacosh.c (__cacosh): Convert negative log results to 0.
+	* math/s_cacoshf.c (__cacoshf): Likewise.
+	* math/s_cacoshl.c (__cacoshl): Likewise.
+	* math/s_casinh.c (__casinh): Set signs of result from argument.
+	* math/s_casinhf.c (__casinhf): Likewise.
+	* math/s_casinhl.c (__casinhl): Likewise.
+	* math/libm-test.inc (cacos_test, cacosh_test, casin_test)
+	(casinh_test): Add more tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2012-03-07  Ulrich Drepper  <drepper@gmail.com>
+
+	* login/Makefile (distribute): Remove variable.
+	* catgets/Makefile: Likewise.
+	* mach/Makefile: Likewise.
+	* malloc/Makefile: Likewise.
+	* misc/Makefile: Likewise.
+	* iconv/Makefile: Likewise.
+	* nscd/Makefile: Likewise.
+	* hurd/Makefile: Likewise.
+	* manual/Makefile: Likewise.
+	* locale/Makefile: Likewise.
+	* intl/Makefile: Likewise.
+	* conform/Makefile: Likewise.
+	* nss/Makefile: Likewise.
+	* time/Makefile: Likewise.
+	* soft-fp/Makefile: Likewise.
+	* dirent/Makefile: Likewise.
+	* gmon/Makefile: Likewise.
+	* po/Makefile: Likewise.
+	* rt/Makefile: Likewise.
+	* socket/Makefile: Likewise.
+	* math/Makefile: Likewise.
+	* signal/Makefile: Likewise.
+	* debug/Makefile: Likewise.
+	* elf/Makefile: Likewise.
+	* timezone/Makefile: Likewise.
+	* stdlib/Makefile: Likewise.
+	* iconvdata/Makefile: Likewise.
+	* sunrpc/Makefile: Likewise.
+	* io/Makefile: Likewise.
+	* argp/Makefile: Likewise.
+	* inet/Makefile: Likewise.
+	* hesiod/Makefile: Likewise.
+	* grp/Makefile: Likewise.
+	* csu/Makefile: Likewise.
+	* wctype/Makefile: Likewise.
+	* crypt/Makefile: Likewise.
+	* libio/Makefile: Likewise.
+	* string/Makefile: Likewise.
+	* nis/Makefile: Likewise.
+	* resolv/Makefile: Likewise.
+	* stdio-common/Makefile: Likewise.
+	* wcsmbs/Makefile: Likewise.
+	* dlfcn/Makefile: Likewise.
+	* posix/Makefile: Likewise.
+
+	* timezone/Makefile: Don't install timezone files, just the programs
+	and scripts.
+
+2012-03-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/databases.def: Add missing gshadow entry.
+
+	* stdio-common/vfprintf.c: Fix formatting.  Missing copyright update.
+
+2012-03-06  Marek Polacek  <polacek@redhat.com>
+
+	[BZ #13726]
+	* sysdeps/ieee754/ldbl-96/printf_fphex.c: Adjust position of wnumstr.
+	* sysdeps/x86_64/fpu/printf_fphex.c: Likewise.
+	* stdio-common/Makefile (tests): Add tst-long-dbl-fphex.
+	* stdio-common/tst-long-dbl-fphex.c: New file.
+
+2012-03-06  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/get_clockfreq.c
+	(set_obp_int): New function.
+	(get_obp_int): New function.
+	(__get_clockfreq_via_dev_openprom): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sysdep.h (INTERNAL_SYSCALL_ERROR_P):
+	Avoid unused variable warnings on 'val' and use builtin_expect.
+	(INLINE_SYSCALL): Don't wrap INTERNAL_SYSCALL_ERROR_P with
+	__builtin_expect.
+	(INLINE_CLONE_SYSCALL): Likewise.
+
+2012-03-05  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-03-05  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+	* sysdeps/ieee754/ldbl-128ibm/e_coshl.c: Drop exp(-x) term
+	only for |x| >= 40.
+	* sysdeps/ieee754/ldbl-128ibm/e_sinhl.c: Likewise.
+
+2012-03-05  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/gettimeofday.c (gettimeofday_ifunc):
+	Replace gettimeofday with __vdso_gettimeofday.
+
+	* sysdeps/unix/sysv/linux/x86_64/init-first.c
+	(_libc_vdso_platform_setup): Replace clock_gettime and getcpu with
+	__vdso_clock_gettime and __vdso_getcpu.
+
+	* sysdeps/unix/sysv/linux/x86_64/time.c (time_ifunc): Replace
+	time with __vdso_time.
+
+2012-03-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* manual/lang.texi (size_t): Note types to which size_t may be
+	equivalent with the GNU C Library, but do not describe when
+	differences between them are significant.
+
+2012-03-05  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+2012-03-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #3976]
+	* sysdeps/ieee754/dbl-64/e_pow.c: Include <fenv.h>.
+	(__ieee754_pow): Save and restore rounding mode and use
+	round-to-nearest for main computations.
+	* math/libm-test.inc (pow_test_tonearest): New function.
+	(pow_test_towardzero): Likewise.
+	(pow_test_downward): Likewise.
+	(pow_test_upward): Likewise.
+	(main): Call the new functions.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	[BZ #3976]
+	* math/libm-test.inc (cosh_test_tonearest): New function.
+	(cosh_test_towardzero): Likewise.
+	(cosh_test_downward): Likewise.
+	(cosh_test_upward): Likewise.
+	(sinh_test_tonearest): Likewise.
+	(sinh_test_towardzero): Likewise.
+	(sinh_test_downward): Likewise.
+	(sinh_test_upward): Likewise.
+	(main): Call the new functions.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2012-03-05  Tom de Vries  <tom@codesourcery.com>
+
+	* sysdeps/generic/dl-osinfo.h (_dl_setup_stack_chk_guard): Ensure
+	default stack guard is set in last bytes.
+	* sysdeps/unix/sysv/linux/dl-osinfo.h (_dl_setup_stack_chk_guard): Same.
+
+2012-03-05  Kees Cook  <keescook@chromium.org>
+
+	* stdio-common/vfprintf.c (vfprintf): add missing errno settings.
+
+	[BZ #13656]
+	* stdio-common/vfprintf.c (vfprintf): Check for nargs overflow and
+	possibly allocate from heap instead of stack.
+	* stdio-common/bug-vfprintf-nargs.c: New file.
+	* stdio-common/Makefile (tests): Add nargs overflow test.
+
+2012-03-03  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2012-03-03  Marek Polacek  <polacek@redhat.com>
+
+	* include/sys/cdefs.h: Remove __GNUC_PREREQ macro.
+	* math/math_private.h: Likewise.
+	* stdlib/tst-strtod.c: Likewise.
+	* sysdeps/i386/i486/bits/atomic.h: Likewise.
+	* sysdeps/x86_64/bits/atomic.h: Likewise.
+
+2012-03-02  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_llrint.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_llrintf.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_lrint.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_lrintf.S: New file.
+	* sysdeps/sparc/sparc64/fpu/s_llrint.S: New file.
+	* sysdeps/sparc/sparc64/fpu/s_llrintf.S: New file.
+	* sysdeps/sparc/sparc64/fpu/s_lrint.S: New file.
+	* sysdeps/sparc/sparc64/fpu/s_lrintf.S: New file.
+
 2012-03-02  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #13792]
+	* manual/examples/README: New file, says the example source files
+	can be used under GPL>=2.
+	* manual/Makefile (%.c.texi): Eat the leading part of the file until a
+	line containing just "*/".
+	* manual/examples/add.c: Add copyright header (GPL>=2).
+	* manual/examples/argp-ex1.c: Likewise.
+	* manual/examples/argp-ex2.c: Likewise.
+	* manual/examples/argp-ex3.c: Likewise.
+	* manual/examples/argp-ex4.c: Likewise.
+	* manual/examples/atexit.c: Likewise.
+	* manual/examples/db.c: Likewise.
+	* manual/examples/dir.c: Likewise.
+	* manual/examples/dir2.c: Likewise.
+	* manual/examples/execinfo.c: Likewise.
+	* manual/examples/filecli.c: Likewise.
+	* manual/examples/filesrv.c: Likewise.
+	* manual/examples/fmtmsgexpl.c: Likewise.
+	* manual/examples/genpass.c: Likewise.
+	* manual/examples/inetcli.c: Likewise.
+	* manual/examples/inetsrv.c: Likewise.
+	* manual/examples/isockad.c: Likewise.
+	* manual/examples/longopt.c: Likewise.
+	* manual/examples/memopen.c: Likewise.
+	* manual/examples/memstrm.c: Likewise.
+	* manual/examples/mkfsock.c: Likewise.
+	* manual/examples/mkisock.c: Likewise.
+	* manual/examples/mygetpass.c: Likewise.
+	* manual/examples/pipe.c: Likewise.
+	* manual/examples/popen.c: Likewise.
+	* manual/examples/rprintf.c: Likewise.
+	* manual/examples/search.c: Likewise.
+	* manual/examples/select.c: Likewise.
+	* manual/examples/setjmp.c: Likewise.
+	* manual/examples/sigh1.c: Likewise.
+	* manual/examples/sigusr.c: Likewise.
+	* manual/examples/stpcpy.c: Likewise.
+	* manual/examples/strdupa.c: Likewise.
+	* manual/examples/strftim.c: Likewise.
+	* manual/examples/strncat.c: Likewise.
+	* manual/examples/subopt.c: Likewise.
+	* manual/examples/swapcontext.c: Likewise.
+	* manual/examples/termios.c: Likewise.
+	* manual/examples/testopt.c: Likewise.
+	* manual/examples/testpass.c: Likewise.
+	* manual/examples/timeval_subtract.c: Likewise.
 
 	[BZ #13792]
 	* manual/time.texi (Elapsed Time): Move timeval_subtract example

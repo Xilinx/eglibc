@@ -1,4 +1,4 @@
-# Copyright (C) 1996, 2000, 2001, 2007, 2009 Free Software Foundation, Inc.
+# Copyright (C) 1996,2000,2001,2007,2009,2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -33,9 +33,6 @@ libcrypt-routines += $(libcrypt-routines-y)
 
 tests-$(OPTION_EGLIBC_CRYPT) := md5c-test sha256c-test sha512c-test
 tests-$(OPTION_EGLIBC_CRYPT_UFC) += cert
-
-distribute := ufc-crypt.h crypt-private.h ufc.c speeds.c README.ufc-crypt \
-	      Banner md5.h sha256.h sha512.h
 
 include ../Makeconfig
 

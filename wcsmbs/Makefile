@@ -24,7 +24,6 @@ include ../option-groups.mak
 subdir	:= wcsmbs
 
 headers	:= wchar.h bits/wchar.h bits/wchar2.h bits/wchar-ldbl.h uchar.h
-distribute := wcwidth.h wcsmbsload.h
 
 # These functions are used by printf_fp.c, even in the plain case; see
 # comments there for OPTION_EGLIBC_LOCALE_CODE.

@@ -1,4 +1,4 @@
-# Copyright (C) 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2004, 2005, 2006, 2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -19,8 +19,6 @@
 include ../option-groups.mak
 
 subdir	:= libidn
-
-distribute := punycode.h stringprep.h idna.h iconvme.h
 
 routines = idn-stub
 

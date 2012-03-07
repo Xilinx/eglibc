@@ -69,8 +69,6 @@ aux =	grouping groupingwc tens_in_limb
 # linked against when the shared library will be used.
 static-only-routines = atexit at_quick_exit
 
-distribute	:= exit.h grouping.h abort-instr.h isomac.c tst-fmtmsg.sh   \
-		   allocalim.h
 test-srcs-$(OPTION_EGLIBC_FMTMSG) := tst-fmtmsg
 tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   test-canon test-canon2 tst-strtoll tst-environ	    \
@@ -99,7 +97,6 @@ routines := $(strip $(routines) $(mpn-routines))	\
 	    dbl2mpn ldbl2mpn				\
 	    mpn2flt mpn2dbl mpn2ldbl
 aux += fpioconst mp_clz_tab
-distribute := $(distribute) $(mpn-headers) fpioconst.h tst-putenvmod.c
 
 tests-extras += tst-putenvmod
 extra-test-objs += tst-putenvmod.os
