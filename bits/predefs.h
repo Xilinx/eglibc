@@ -16,8 +16,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _FEATURES_H
-# error "Never use <bits/predefs.h> directly; include <features.h> instead."
+#ifndef _STDC_PREDEF_H
+# error "Never use <bits/predefs.h> directly; include <stdc-predef.h> instead."
 #endif
 
 #ifndef _PREDEFS_H

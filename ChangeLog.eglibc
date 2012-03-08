@@ -1,3 +1,7 @@
+2012-03-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* bits/predefs.h: Test _STDC_PREDEF_H, not _FEATURES_H.
+
 2012-02-10  Paul Pluzhnikov  <ppluzhnikov@google.com>
 
 	* timezone/Makefile: Use BUILD_CC instead of 'gcc'.
