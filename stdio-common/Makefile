@@ -22,7 +22,7 @@ include ../option-groups.mak
 
 subdir	:= stdio-common
 
-headers	:= stdio_ext.h printf.h bits/printf-ldbl.h
+headers	:= stdio_ext.h printf.h bits/printf-ldbl.h bits/stdio_lim.h
 
 routines	:=							      \
 	ctermid cuserid							      \
@@ -48,8 +48,6 @@ routines-$(OPTION_POSIX_C_LANG_WIDE_CHAR) +=				      \
 
 include ../Makeconfig
 
-install-headers-nosubdir: $(inst_includedir)/bits/stdio_lim.h
-
 aux	:= errlist siglist printf-parsemb fxprintf
 aux-$(OPTION_POSIX_C_LANG_WIDE_CHAR) += printf-parsewc
 
@@ -69,16 +67,13 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf bug15 test-vfprintf bug14 scanf13 tst-grouping
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
-      += tst-perror bug19a bug20 tst-long-dbl-fphex
+      += tst-perror bug19a bug20 tst-long-dbl-fphex tst-fphex-wide
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
       += bug18a tst-swscanf tst-wc-printf
 
 test-srcs = tst-unbputc tst-printf
 
 include ../Rules
-
-$(inst_includedir)/bits/stdio_lim.h: $(common-objpfx)bits/stdio_lim.h $(+force)
-	$(do-install)
 
 # eglibc: ifeq ($(cross-compiling),no)
 .PHONY: do-tst-unbputc do-tst-printf

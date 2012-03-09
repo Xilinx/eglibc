@@ -1,4 +1,141 @@
+2012-03-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* sunrpc/rpc_cout.c: Remove __GNU_LIBRARY__ conditionals.
+	* sunrpc/rpc_main.c: Likewise.
+	* sunrpc/rpc_svcout.c: Likewise.
+
+2012-03-09  David S. Miller  <davem@davemloft.net>
+
+	* include/math_private.h: New file.
+
+2012-03-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/bits/socket_type.h: New file.
+	* sysdeps/unix/sysv/linux/sparc/bits/socket_type.h: Likewise.
+	* sysdeps/unix/sysv/linux/bits/socket.h: Get enum __socket_type
+	from <bits/socket_type.h>.
+	(enum __socket_type): Don't define here.
+	* sysdeps/unix/sysv/linux/sparc/bits/socket.h: Remove.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/socket_type.h.
+
+	[BZ #13566]
+	* libio/stdio.h (gets): Always declare for C++ up to C++11 without
+	checking __USE_GNU.
+
+	* Makerules ($(inst_includedir)/%.h): New rule.
+	* stdio-common/Makefile (headers): Add bits/stdio_lim.h.
+	(install-others): Remove variable setting.
+	($(inst_includedir)/bits/stdio_lim.h): Remove rule.
+
+2012-03-08  Richard Henderson  <rth@twiddle.net>
+
+	* sysdeps/powerpc/fpu/math_private.h (__ieee754_sqrt): Convert
+	from macro to inline function; merge with the
+	!__LIBC_INTERNAL_MATH_INLINES version.
+	(__ieee754_sqrtf): Likewise.
+
+	* sysdeps/x86_64/fpu/math_private.h (__rint): Convert from macro
+	to inline function.
+	(__rintf, __floor, __floorf): Likewise.
+
+	* sysdeps/x86_64/fpu/math_private.h (__ieee754_sqrt): Convert from
+	macro to inline function.
+	(__ieee754_sqrtf, __ieee754_sqrtl): Likewise.
+
+	* sysdeps/ieee754/ldbl-opt/math_ldbl_opt.h: Include <math_private.h>,
+	not <math/math_private.h>.
+
+2012-03-08  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/get_clockfreq.c: Update
+	copyright year.
+	* sysdeps/unix/sysv/linux/sparc/sysdep.h: Likewise.
+
+2012-03-08  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* resolv/gai_misc.c (handle_requests): Fix struct timespec
+	normalization.
+	* rt/tst-cpuclock2.c (test_nanosleep): Likewise.
+	* sysdeps/pthread/aio_misc.c (handle_fildes_io): Likewise.
+
+2012-03-08  Ulrich Drepper  <drepper@gmail.com>
+
+	* stdio-common/tst-fphex.c: Various cleanups.  The macros cannot
+	be defined individually, they must be defined as a block.  Define
+	S for printing a string instead of hidint the different by using a
+	macro for adding the 'l'.
+	* stdio-common/tst-fphex-wide.c: Adjust.
+
+2012-03-07  Marek Polacek  <polacek@redhat.com>
+
+	* stdio-common/tst-long-dbl-fphex.c: Fix test for non ldbl-96 targets.
+
+2012-03-08  Marek Polacek  <polacek@redhat.com>
+
+	[BZ #13806]
+	* stdio-common/Makefile (tests): Add tst-fphex-wide.
+	* stdio-common/tst-fphex.c: Define a few macros to make the
+	test reusable.  Use them.
+	* stdio-common/tst-fphex-wide.c: New file.
+
+2012-03-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #6911]
+	* manual/macros.texi (gnusystems): New macro.
+	(nongnusystems): Likewise.
+	(gnulinuxhurdsystems): Likewise.
+	(gnuhurdsystems): Likewise..
+	(gnulinuxsystems): Likewise.
+	* manual/charset.texi: Use new macros or @theglibc{} to refer to
+	variants of the GNU system, not "GNU system".
+	* manual/conf.texi: Likewise.
+	* manual/errno.texi: Likewise.  Update example of errno macro
+	expansion.
+	* manual/filesys.texi: Likewise.
+	(getumask): Document as specific to GNU/Hurd.
+	* manual/install.texi: Likewise.  Reword some references to
+	GNU/Linux.
+	* manual/intro.texi: Likewise.
+	* manual/io.texi: Likewise.
+	(File Name Portability): Detail which constraints are inapplicable
+	to all GNU systems and which are only inapplicable to GNU/Hurd.
+	* manual/job.texi: Likewise.
+	* manual/llio.texi: Likewise.
+	(O_NOCTTY): Document as present on GNU/Linux.
+	* manual/maint.texi: Likewise.
+	* manual/memory.texi: Likewise.
+	* manual/pattern.texi: Likewise.
+	* manual/pipe.texi: Likewise.
+	* manual/process.texi: Likewise.
+	* manual/resource.texi: Likewise.
+	(RUSAGE_CHILDREN): Remove statement about specifying a particular
+	child on GNU/Hurd.
+	* manual/setjmp.texi: Likewise.
+	* manual/signal.texi: Likewise.
+	* manual/startup.texi: Likewise.
+	* manual/stdio.texi: Likewise.
+	* manual/terminal.texi: Likewise.
+	(ONLCR): Document as POSIX.
+	(OXTABS): Document availability on GNU/Linux as XTABS.
+	(ONOEOT): Document availability separately from other bits.
+	(VLNEXT, VDISCARD, VSTATUS): Document availability individually.
+	* manual/time.texi: Likewise.
+	* manual/users.texi: Likewise.
+	* INSTALL: Regenerated.
+	* sysdeps/gnu/errlist.c: Regenerated.
+
+	* aclocal.m4 (LIBC_TRY_LINK_STATIC): New macro.
+	* configure.in (libc_cv_preinit_array): Use LIBC_TRY_LINK_STATIC.
+	(libc_cv_ctors_header): Likewise.  Use asm ("") instead of calling
+	puts.
+	* configure: Regenerated.
+
 2012-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/i386/configure.in (cpuid.h): Use AC_CHECK_HEADER with no
+	default includes instead of AC_HEADER_CHECK.
+	* sysdeps/i386/configure: Regenerated.
 
 	[BZ #10716]
 	* math/s_cacosh.c (__cacosh): Convert negative log results to 0.
@@ -13,6 +150,8 @@
 	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
 
 2012-03-07  Ulrich Drepper  <drepper@gmail.com>
+
+	* po/zh_TW.po: Update from translation team.
 
 	* login/Makefile (distribute): Remove variable.
 	* catgets/Makefile: Likewise.

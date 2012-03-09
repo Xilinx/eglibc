@@ -1,3 +1,33 @@
+2012-03-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/pthread/pthread.h (__need_clockid_t, __need_timespec):
+	Do not define before including <time.h>.
+
+2012-03-08  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sem_post.c: Update copyright year.
+
+2012-03-08  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.S (__lll_timedlock_wait):
+	Check for timestamp before the Epoch.
+
+	* sysdeps/unix/sysv/linux/sh/sem_timedwait.S (sem_timedwait): Fix
+	updating nwaiters.
+
+	* tst-sem13.c (do_test): Add another test case.
+	* sysdeps/unix/sysv/linux/i386/i486/sem_timedwait.S (sem_timedwait):
+	Fix updating nwaiters.
+
+2012-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10545]
+	* sysdeps/pthread/configure.in (libc_cv_forced_unwind): Change
+	link test to a compile test.
+	(libc_cv_c_cleanup): Likewise.  Declare puts rather than including
+	<stdio.h>.
+	* sysdeps/pthread/configure: Regenerated.
+
 2012-03-07  Ulrich Drepper  <drepper@gmail.com>
 
 	* Makefile (distribute): Remove variable.
