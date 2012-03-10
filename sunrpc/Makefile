@@ -97,6 +97,7 @@ rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 	      rpc_scan.o rpc_util.o rpc_svcout.o rpc_clntout.o \
 	      rpc_tblout.o rpc_sample.o
 extra-objs-$(OPTION_EGLIBC_SUNRPC) += $(rpcgen-objs)
+others-$(OPTION_EGLIBC_SUNRPC) += rpcgen
 
 all: # Make this the default target; it will be defined in Rules.
 
@@ -162,10 +163,7 @@ $(objpfx)tst-getmyaddr: $(common-objpfx)linkobj/libc.so
 $(objpfx)tst-xdrmem: $(common-objpfx)linkobj/libc.so
 $(objpfx)tst-xdrmem2: $(common-objpfx)linkobj/libc.so
 
-$(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs)) \
-  $(sort $(filter $(common-objpfx)libc%,$(link-libc))) \
-  $(addprefix $(csu-objpfx),start.o) $(+preinit) $(+postinit)
-	$(+link)
+$(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs))
 
 $(addprefix $(objpfx)cross-,$(rpcgen-objs)): $(objpfx)cross-%.o: %.c
 	$(BUILD_CC) $< -c -D_RPC_THREAD_SAFE_ -D_CROSS_RPCGEN_ \

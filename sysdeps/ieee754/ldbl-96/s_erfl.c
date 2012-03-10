@@ -104,8 +104,8 @@
  */
 
 
-#include "math.h"
-#include "math_private.h"
+#include <math.h>
+#include <math_private.h>
 #include <gnu/option-groups.h>
 
 #if __OPTION_EGLIBC_LIBM_BIG
