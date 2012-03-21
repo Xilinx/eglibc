@@ -21,4 +21,12 @@ if [ "${EGLIBC_TEST_LD_LIBRARY_PATH+set}" ]; then
     export LD_LIBRARY_PATH="${EGLIBC_TEST_LD_LIBRARY_PATH}"
 fi
 
+if [ "${EGLIBC_TEST_LD_TRACE_LOADED_OBJECTS+set}" ]; then
+    export LD_TRACE_LOADED_OBJECTS="${EGLIBC_TEST_LD_TRACE_LOADED_OBJECTS}"
+fi
+
+if [ "${EGLIBC_TEST_LD_DEBUG+set}" ]; then
+    export LD_DEBUG="${EGLIBC_TEST_LD_DEBUG}"
+fi
+
 exec "$@"

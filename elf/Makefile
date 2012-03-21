@@ -1142,9 +1142,11 @@ $(objpfx)tst-relsort1.out: $(objpfx)tst-relsort1mod1.so \
 tests: $(objpfx)tst-unused-dep.out
 
 $(objpfx)tst-unused-dep.out: $(objpfx)testobj1.so
-	LD_TRACE_LOADED_OBJECTS=1 \
-	LD_DEBUG=unused \
-	LD_PRELOAD= \
+	EGLIBC_TEST_LD_TRACE_LOADED_OBJECTS=1 \
+	EGLIBC_TEST_LD_DEBUG=unused \
+	EGLIBC_TEST_LD_PRELOAD= \
+	$(cross-test-wrapper) \
+	$(..)scripts/run-with-env.sh \
 	$(elf-objpfx)${rtld-installed-name} \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@
