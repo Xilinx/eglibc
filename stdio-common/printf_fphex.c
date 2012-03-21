@@ -25,8 +25,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
-#include "_itoa.h"
-#include "_itowa.h"
+#include <_itoa.h>
+#include <_itowa.h>
 #include <locale/localeinfo.h>
 #include <gnu/option-groups.h>
 

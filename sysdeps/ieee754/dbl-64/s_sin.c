@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * written by International Business Machines Corp.
- * Copyright (C) 2001, 2009, 2011 Free Software Foundation
+ * Copyright (C) 2001-2012 Free Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -108,10 +108,9 @@ __sin(double x){
 #if 0
 	int4 nn;
 #endif
-	fenv_t env;
 	double retval = 0;
 
-	libc_feholdexcept_setround (&env, FE_TONEAREST);
+	SET_RESTORE_ROUND_53BIT (FE_TONEAREST);
 
 	u.x = x;
 	m = u.i[HIGH_HALF];
@@ -365,7 +364,6 @@ __sin(double x){
 	}
 
  ret:
-	libc_feupdateenv (&env);
 	return retval;
 }
 
@@ -383,10 +381,9 @@ __cos(double x)
   mynumber u,v;
   int4 k,m,n;
 
-  fenv_t env;
   double retval = 0;
 
-  libc_feholdexcept_setround (&env, FE_TONEAREST);
+  SET_RESTORE_ROUND_53BIT (FE_TONEAREST);
 
   u.x = x;
   m = u.i[HIGH_HALF];
@@ -635,7 +632,6 @@ __cos(double x)
   }
 
  ret:
-  libc_feupdateenv (&env);
   return retval;
 }
 

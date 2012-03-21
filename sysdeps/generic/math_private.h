@@ -19,6 +19,7 @@
 #include <endian.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include <fenv.h>
 
 /* The original fdlibm code used statements like:
 	n0 = ((*(int*)&one)>>29)^1;		* index of high word *
@@ -76,50 +77,59 @@ do {								\
 
 /* Get the more significant 32 bit int from a double.  */
 
-#define GET_HIGH_WORD(i,d)					\
+#ifndef GET_HIGH_WORD
+# define GET_HIGH_WORD(i,d)					\
 do {								\
   ieee_double_shape_type gh_u;					\
   gh_u.value = (d);						\
   (i) = gh_u.parts.msw;						\
 } while (0)
+#endif
 
 /* Get the less significant 32 bit int from a double.  */
 
-#define GET_LOW_WORD(i,d)					\
+#ifndef GET_LOW_WORD
+# define GET_LOW_WORD(i,d)					\
 do {								\
   ieee_double_shape_type gl_u;					\
   gl_u.value = (d);						\
   (i) = gl_u.parts.lsw;						\
 } while (0)
+#endif
 
 /* Get all in one, efficient on 64-bit machines.  */
-#define EXTRACT_WORDS64(i,d)					\
+#ifndef EXTRACT_WORDS64
+# define EXTRACT_WORDS64(i,d)					\
 do {								\
   ieee_double_shape_type gh_u;					\
   gh_u.value = (d);						\
   (i) = gh_u.word;						\
 } while (0)
+#endif
 
 /* Set a double from two 32 bit ints.  */
-
-#define INSERT_WORDS(d,ix0,ix1)					\
+#ifndef INSERT_WORDS
+# define INSERT_WORDS(d,ix0,ix1)				\
 do {								\
   ieee_double_shape_type iw_u;					\
   iw_u.parts.msw = (ix0);					\
   iw_u.parts.lsw = (ix1);					\
   (d) = iw_u.value;						\
 } while (0)
+#endif
 
 /* Get all in one, efficient on 64-bit machines.  */
-#define INSERT_WORDS64(d,i)					\
+#ifndef INSERT_WORDS64
+# define INSERT_WORDS64(d,i)					\
 do {								\
   ieee_double_shape_type iw_u;					\
   iw_u.word = (i);						\
   (d) = iw_u.value;						\
 } while (0)
+#endif
 
 /* Set the more significant 32 bits of a double from an int.  */
-
+#ifndef SET_HIGH_WORD
 #define SET_HIGH_WORD(d,v)					\
 do {								\
   ieee_double_shape_type sh_u;					\
@@ -127,16 +137,18 @@ do {								\
   sh_u.parts.msw = (v);						\
   (d) = sh_u.value;						\
 } while (0)
+#endif
 
 /* Set the less significant 32 bits of a double from an int.  */
-
-#define SET_LOW_WORD(d,v)					\
+#ifndef SET_LOW_WORD
+# define SET_LOW_WORD(d,v)					\
 do {								\
   ieee_double_shape_type sl_u;					\
   sl_u.value = (d);						\
   sl_u.parts.lsw = (v);						\
   (d) = sl_u.value;						\
 } while (0)
+#endif
 
 /* A union which permits us to convert between a float and a 32 bit
    int.  */
@@ -148,22 +160,24 @@ typedef union
 } ieee_float_shape_type;
 
 /* Get a 32 bit int from a float.  */
-
-#define GET_FLOAT_WORD(i,d)					\
+#ifndef GET_FLOAT_WORD
+# define GET_FLOAT_WORD(i,d)					\
 do {								\
   ieee_float_shape_type gf_u;					\
   gf_u.value = (d);						\
   (i) = gf_u.word;						\
 } while (0)
+#endif
 
 /* Set a float from a 32 bit int.  */
-
-#define SET_FLOAT_WORD(d,i)					\
+#ifndef SET_FLOAT_WORD
+# define SET_FLOAT_WORD(d,i)					\
 do {								\
   ieee_float_shape_type sf_u;					\
   sf_u.word = (i);						\
   (d) = sf_u.value;						\
 } while (0)
+#endif
 
 /* Get long double macros from a separate header.  */
 #include <math_ldbl.h>
@@ -359,28 +373,176 @@ extern void __docos (double __x, double __dx, double __v[]);
    know what operations are going to be performed.  Therefore we
    define additional interfaces.  By default they refer to the normal
    interfaces.  */
-#define libc_feholdexcept(e) (void) feholdexcept (e)
-#define libc_feholdexceptf(e) (void) feholdexcept (e)
-#define libc_feholdexceptl(e) (void) feholdexcept (e)
 
-#define libc_feholdexcept_setround(e, r) \
-  do { feholdexcept (e); fesetround (r); } while (0)
-#define libc_feholdexcept_setroundf(e, r) \
-  do { feholdexcept (e); fesetround (r); } while (0)
-#define libc_feholdexcept_setroundl(e, r) \
-  do { feholdexcept (e); fesetround (r); } while (0)
+static __always_inline void
+default_libc_feholdexcept (fenv_t *e)
+{
+  (void) feholdexcept (e);
+}
 
-#define libc_fetestexcept(e) fetestexcept (e)
-#define libc_fetestexceptf(e) fetestexcept (e)
-#define libc_fetestexceptl(e) fetestexcept (e)
+#ifndef libc_feholdexcept
+# define libc_feholdexcept  default_libc_feholdexcept
+#endif
+#ifndef libc_feholdexceptf
+# define libc_feholdexceptf default_libc_feholdexcept
+#endif
+#ifndef libc_feholdexceptl
+# define libc_feholdexceptl default_libc_feholdexcept
+#endif
 
-#define libc_fesetenv(e) (void) fesetenv (e)
-#define libc_fesetenvf(e) (void) fesetenv (e)
-#define libc_fesetenvl(e) (void) fesetenv (e)
+static __always_inline void
+default_libc_feholdexcept_setround (fenv_t *e, int r)
+{
+  feholdexcept (e);
+  fesetround (r);
+}
 
-#define libc_feupdateenv(e) (void) feupdateenv (e)
-#define libc_feupdateenvf(e) (void) feupdateenv (e)
-#define libc_feupdateenvl(e) (void) feupdateenv (e)
+#ifndef libc_feholdexcept_setround
+# define libc_feholdexcept_setround  default_libc_feholdexcept_setround
+#endif
+#ifndef libc_feholdexcept_setroundf
+# define libc_feholdexcept_setroundf default_libc_feholdexcept_setround
+#endif
+#ifndef libc_feholdexcept_setroundl
+# define libc_feholdexcept_setroundl default_libc_feholdexcept_setround
+#endif
+
+#ifndef libc_feholdexcept_setround_53bit
+# define libc_feholdexcept_setround_53bit libc_feholdexcept_setround
+#endif
+
+#ifndef libc_fetestexcept
+# define libc_fetestexcept  fetestexcept
+#endif
+#ifndef libc_fetestexceptf
+# define libc_fetestexceptf fetestexcept
+#endif
+#ifndef libc_fetestexceptl
+# define libc_fetestexceptl fetestexcept
+#endif
+
+static __always_inline void
+default_libc_fesetenv (fenv_t *e)
+{
+  (void) fesetenv (e);
+}
+
+#ifndef libc_fesetenv
+# define libc_fesetenv  default_libc_fesetenv
+#endif
+#ifndef libc_fesetenvf
+# define libc_fesetenvf default_libc_fesetenv
+#endif
+#ifndef libc_fesetenvl
+# define libc_fesetenvl default_libc_fesetenv
+#endif
+
+static __always_inline void
+default_libc_feupdateenv (fenv_t *e)
+{
+  (void) feupdateenv (e);
+}
+
+#ifndef libc_feupdateenv
+# define libc_feupdateenv  default_libc_feupdateenv
+#endif
+#ifndef libc_feupdateenvf
+# define libc_feupdateenvf default_libc_feupdateenv
+#endif
+#ifndef libc_feupdateenvl
+# define libc_feupdateenvl default_libc_feupdateenv
+#endif
+
+#ifndef libc_feupdateenv_53bit
+# define libc_feupdateenv_53bit libc_feupdateenv
+#endif
+
+static __always_inline int
+default_libc_feupdateenv_test (fenv_t *e, int ex)
+{
+  int ret = fetestexcept (ex);
+  feupdateenv (e);
+  return ret;
+}
+
+#ifndef libc_feupdateenv_test
+# define libc_feupdateenv_test  default_libc_feupdateenv_test
+#endif
+#ifndef libc_feupdateenv_testf
+# define libc_feupdateenv_testf default_libc_feupdateenv_test
+#endif
+#ifndef libc_feupdateenv_testl
+# define libc_feupdateenv_testl default_libc_feupdateenv_test
+#endif
+
+/* Save and set the rounding mode.  The use of fenv_t to store the old mode
+   allows a target-specific version of this function to avoid converting the
+   rounding mode from the fpu format.  By default we have no choice but to
+   manipulate the entire env.  */
+
+#ifndef libc_feholdsetround
+# define libc_feholdsetround  libc_feholdexcept_setround
+#endif
+#ifndef libc_feholdsetroundf
+# define libc_feholdsetroundf libc_feholdexcept_setroundf
+#endif
+#ifndef libc_feholdsetroundl
+# define libc_feholdsetroundl libc_feholdexcept_setroundl
+#endif
+
+/* ... and the reverse.  */
+
+#ifndef libc_feresetround
+# define libc_feresetround  libc_feupdateenv
+#endif
+#ifndef libc_feresetroundf
+# define libc_feresetroundf libc_feupdateenvf
+#endif
+#ifndef libc_feresetroundl
+# define libc_feresetroundl libc_feupdateenvl
+#endif
+
+/* ... and a version that may also discard exceptions.  */
+
+#ifndef libc_feresetround_noex
+# define libc_feresetround_noex  libc_fesetenv
+#endif
+#ifndef libc_feresetround_noexf
+# define libc_feresetround_noexf libc_fesetenvf
+#endif
+#ifndef libc_feresetround_noexl
+# define libc_feresetround_noexl libc_fesetenvl
+#endif
+
+/* Save and restore the rounding mode within a lexical block.  */
+
+#define SET_RESTORE_ROUND(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetround)));	\
+  libc_feholdsetround (&__libc_save_rm, (RM))
+#define SET_RESTORE_ROUNDF(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetroundf)));	\
+  libc_feholdsetroundf (&__libc_save_rm, (RM))
+#define SET_RESTORE_ROUNDL(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetroundl)));	\
+  libc_feholdsetroundl (&__libc_save_rm, (RM))
+
+/* Save and restore the rounding mode within a lexical block, and also
+   the set of exceptions raised within the block may be discarded.  */
+
+#define SET_RESTORE_ROUND_NOEX(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetround_noex))); \
+  libc_feholdsetround (&__libc_save_rm, (RM))
+#define SET_RESTORE_ROUND_NOEXF(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetround_noexf))); \
+  libc_feholdsetroundf (&__libc_save_rm, (RM))
+#define SET_RESTORE_ROUND_NOEXL(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feresetround_noexl))); \
+  libc_feholdsetroundl (&__libc_save_rm, (RM))
+
+/* Like SET_RESTORE_ROUND, but also set rounding precision to 53 bits.  */
+#define SET_RESTORE_ROUND_53BIT(RM) \
+  fenv_t __libc_save_rm __attribute__((cleanup(libc_feupdateenv_53bit))); \
+  libc_feholdexcept_setround_53bit (&__libc_save_rm, (RM))
 
 #define __nan(str) \
   (__builtin_constant_p (str) && str[0] == '\0' ? NAN : __nan (str))

@@ -130,6 +130,26 @@ AS_IF([AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -o conftest
       [$2], [$3])
 rm -f conftest*])
 
+dnl Test a compiler option or options with an empty input file.
+dnl LIBC_TRY_CC_OPTION([options], [action-if-true], [action-if-false])
+AC_DEFUN([LIBC_TRY_CC_OPTION],
+[AS_IF([AC_TRY_COMMAND([${CC-cc} $1 -xc /dev/null -S -o /dev/null])],
+	[$2], [$3])])
+
+dnl Find and source sysdeps/*/preconfigure.
+dnl LIBC_PRECONFIGURE([$srcdir], [for])
+AC_DEFUN([LIBC_PRECONFIGURE], [dnl
+if frags=`ls -d $1/sysdeps/*/preconfigure 2> /dev/null`
+then
+  AC_MSG_CHECKING($2 preconfigure fragments)
+  for frag in $frags; do
+    name=`echo "$frag" | sed 's@/[[^/]]*[$]@@;s@^.*/@@'`
+    echo $ECHO_N "$name $ECHO_C" >&AS_MESSAGE_FD
+    . "$frag"
+  done
+  AC_MSG_RESULT()
+fi])
+
 # These two macros are taken from GCC's config/acx.m4.
 dnl Support the --with-pkgversion configure option.
 dnl ACX_PKGVERSION(default-pkgversion)
