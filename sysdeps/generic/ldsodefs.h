@@ -187,6 +187,8 @@ struct La_i86_regs;
 struct La_i86_retval;
 struct La_x86_64_regs;
 struct La_x86_64_retval;
+struct La_x32_regs;
+struct La_x32_retval;
 struct La_ppc32_regs;
 struct La_ppc32_retval;
 struct La_ppc64_regs;
@@ -225,6 +227,10 @@ struct audit_ifaces
 				       uintptr_t *, struct La_x86_64_regs *,
 				       unsigned int *, const char *name,
 				       long int *framesizep);
+    Elf32_Addr (*x32_gnu_pltenter) (Elf32_Sym *, unsigned int, uintptr_t *,
+				    uintptr_t *, struct La_x32_regs *,
+				    unsigned int *, const char *name,
+				    long int *framesizep);
     Elf32_Addr (*ppc32_gnu_pltenter) (Elf32_Sym *, unsigned int, uintptr_t *,
 				      uintptr_t *, struct La_ppc32_regs *,
 				      unsigned int *, const char *name,
@@ -269,6 +275,11 @@ struct audit_ifaces
 					const struct La_x86_64_regs *,
 					struct La_x86_64_retval *,
 					const char *);
+    unsigned int (*x32_gnu_pltexit) (Elf32_Sym *, unsigned int, uintptr_t *,
+				     uintptr_t *,
+				     const struct La_x32_regs *,
+				     struct La_x86_64_retval *,
+				     const char *);
     unsigned int (*ppc32_gnu_pltexit) (Elf32_Sym *, unsigned int, uintptr_t *,
 				       uintptr_t *,
 				       const struct La_ppc32_regs *,

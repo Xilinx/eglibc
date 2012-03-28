@@ -28,59 +28,55 @@
 	 wint_t types are no greater than the width of type long.
 
 	 Currently this means all environment which the system allows.  */
-      {
-	char restenvs[4 * sizeof "POSIX_V7_LPBIG_OFFBIG"];
-
-	string_len = 0;
+      string_len = 0;
 #ifndef _POSIX_V7_ILP32_OFF32
-	if (__sysconf (_SC_V7_ILP32_OFF32) > 0)
+      if (__sysconf (_SC_V7_ILP32_OFF32) > 0)
 #endif
 #if !defined _POSIX_V7_ILP32_OFF32 || _POSIX_V7_ILP32_OFF32 > 0
-	  {
-	    memcpy (restenvs + string_len, "POSIX_V7_ILP32_OFF32",
-		    sizeof "POSIX_V7_ILP32_OFF32" - 1);
-	    string_len += sizeof "POSIX_V7_ILP32_OFF32" - 1;
-	  }
+	{
+	  memcpy (restenvs + string_len, "POSIX_V7_ILP32_OFF32",
+		  sizeof "POSIX_V7_ILP32_OFF32" - 1);
+	  string_len += sizeof "POSIX_V7_ILP32_OFF32" - 1;
+	}
 #endif
 #ifndef _POSIX_V7_ILP32_OFFBIG
-	if (__sysconf (_SC_V7_ILP32_OFFBIG) > 0)
+      if (__sysconf (_SC_V7_ILP32_OFFBIG) > 0)
 #endif
 #if !defined _POSIX_V7_ILP32_OFFBIG || _POSIX_V7_ILP32_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V7_ILP32_OFFBIG",
-		    sizeof "POSIX_V7_ILP32_OFFBIG" - 1);
-	    string_len += sizeof "POSIX_V7_ILP32_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V7_ILP32_OFFBIG",
+		  sizeof "POSIX_V7_ILP32_OFFBIG" - 1);
+	  string_len += sizeof "POSIX_V7_ILP32_OFFBIG" - 1;
+	}
 #endif
 #ifndef _POSIX_V7_LP64_OFF64
-	if (__sysconf (_SC_V7_LP64_OFF64) > 0)
+      if (__sysconf (_SC_V7_LP64_OFF64) > 0)
 #endif
 #if !defined _POSIX_V7_LP64_OFF64 || _POSIX_V7_LP64_OFF64 > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V7_LP64_OFF64",
-		    sizeof "POSIX_V7_LP64_OFF64" - 1);
-	    string_len += sizeof "POSIX_V7_LP64_OFF64" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V7_LP64_OFF64",
+		  sizeof "POSIX_V7_LP64_OFF64" - 1);
+	  string_len += sizeof "POSIX_V7_LP64_OFF64" - 1;
+	}
 #endif
 #ifndef _POSIX_V7_LPBIG_OFFBIG
-	if (__sysconf (_SC_V7_LPBIG_OFFBIG) > 0)
+      if (__sysconf (_SC_V7_LPBIG_OFFBIG) > 0)
 #endif
 #if !defined _POSIX_V7_LPBIG_OFFBIG || _POSIX_V7_LPBIG_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V7_LPBIG_OFFBIG",
-		    sizeof "POSIX_V7_LPBIG_OFFBIG" - 1);
-	    string_len += sizeof "POSIX_V7_LPBIG_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V7_LPBIG_OFFBIG",
+		  sizeof "POSIX_V7_LPBIG_OFFBIG" - 1);
+	  string_len += sizeof "POSIX_V7_LPBIG_OFFBIG" - 1;
+	}
 #endif
-	restenvs[string_len++] = '\0';
-	string = restenvs;
-      }
+      restenvs[string_len++] = '\0';
+      string = restenvs;
       break;
 
     case _CS_V6_WIDTH_RESTRICTED_ENVS:
@@ -91,59 +87,55 @@
 	 wint_t types are no greater than the width of type long.
 
 	 Currently this means all environment which the system allows.  */
-      {
-	char restenvs[4 * sizeof "POSIX_V6_LPBIG_OFFBIG"];
-
-	string_len = 0;
+      string_len = 0;
 #ifndef _POSIX_V6_ILP32_OFF32
-	if (__sysconf (_SC_V6_ILP32_OFF32) > 0)
+      if (__sysconf (_SC_V6_ILP32_OFF32) > 0)
 #endif
 #if !defined _POSIX_V6_ILP32_OFF32 || _POSIX_V6_ILP32_OFF32 > 0
-	  {
-	    memcpy (restenvs + string_len, "POSIX_V6_ILP32_OFF32",
-		    sizeof "POSIX_V6_ILP32_OFF32" - 1);
-	    string_len += sizeof "POSIX_V6_ILP32_OFF32" - 1;
-	  }
+	{
+	  memcpy (restenvs + string_len, "POSIX_V6_ILP32_OFF32",
+		  sizeof "POSIX_V6_ILP32_OFF32" - 1);
+	  string_len += sizeof "POSIX_V6_ILP32_OFF32" - 1;
+	}
 #endif
 #ifndef _POSIX_V6_ILP32_OFFBIG
-	if (__sysconf (_SC_V6_ILP32_OFFBIG) > 0)
+      if (__sysconf (_SC_V6_ILP32_OFFBIG) > 0)
 #endif
 #if !defined _POSIX_V6_ILP32_OFFBIG || _POSIX_V6_ILP32_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V6_ILP32_OFFBIG",
-		    sizeof "POSIX_V6_ILP32_OFFBIG" - 1);
-	    string_len += sizeof "POSIX_V6_ILP32_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V6_ILP32_OFFBIG",
+		  sizeof "POSIX_V6_ILP32_OFFBIG" - 1);
+	  string_len += sizeof "POSIX_V6_ILP32_OFFBIG" - 1;
+	}
 #endif
 #ifndef _POSIX_V6_LP64_OFF64
-	if (__sysconf (_SC_V6_LP64_OFF64) > 0)
+      if (__sysconf (_SC_V6_LP64_OFF64) > 0)
 #endif
 #if !defined _POSIX_V6_LP64_OFF64 || _POSIX_V6_LP64_OFF64 > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V6_LP64_OFF64",
-		    sizeof "POSIX_V6_LP64_OFF64" - 1);
-	    string_len += sizeof "POSIX_V6_LP64_OFF64" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V6_LP64_OFF64",
+		  sizeof "POSIX_V6_LP64_OFF64" - 1);
+	  string_len += sizeof "POSIX_V6_LP64_OFF64" - 1;
+	}
 #endif
 #ifndef _POSIX_V6_LPBIG_OFFBIG
-	if (__sysconf (_SC_V6_LPBIG_OFFBIG) > 0)
+      if (__sysconf (_SC_V6_LPBIG_OFFBIG) > 0)
 #endif
 #if !defined _POSIX_V6_LPBIG_OFFBIG || _POSIX_V6_LPBIG_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "POSIX_V6_LPBIG_OFFBIG",
-		    sizeof "POSIX_V6_LPBIG_OFFBIG" - 1);
-	    string_len += sizeof "POSIX_V6_LPBIG_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "POSIX_V6_LPBIG_OFFBIG",
+		  sizeof "POSIX_V6_LPBIG_OFFBIG" - 1);
+	  string_len += sizeof "POSIX_V6_LPBIG_OFFBIG" - 1;
+	}
 #endif
-	restenvs[string_len++] = '\0';
-	string = restenvs;
-      }
+      restenvs[string_len++] = '\0';
+      string = restenvs;
       break;
 
     case _CS_V5_WIDTH_RESTRICTED_ENVS:
@@ -154,57 +146,53 @@
 	 wint_t types are no greater than the width of type long.
 
 	 Currently this means all environment which the system allows.  */
-      {
-	char restenvs[4 * sizeof "XBS5_LPBIG_OFFBIG"];
-
-	string_len = 0;
+      string_len = 0;
 #ifndef _XBS5_ILP32_OFF32
-	if (__sysconf (_SC_XBS5_ILP32_OFF32) > 0)
+      if (__sysconf (_SC_XBS5_ILP32_OFF32) > 0)
 #endif
 #if !defined _XBS5_ILP32_OFF32 || _XBS5_ILP32_OFF32 > 0
-	  {
-	    memcpy (restenvs + string_len, "XBS5_ILP32_OFF32",
-		    sizeof "XBS5_ILP32_OFF32" - 1);
-	    string_len += sizeof "XBS5_ILP32_OFF32" - 1;
-	  }
+	{
+	  memcpy (restenvs + string_len, "XBS5_ILP32_OFF32",
+		  sizeof "XBS5_ILP32_OFF32" - 1);
+	  string_len += sizeof "XBS5_ILP32_OFF32" - 1;
+	}
 #endif
 #ifndef _XBS5_ILP32_OFFBIG
-	if (__sysconf (_SC_XBS5_ILP32_OFFBIG) > 0)
+      if (__sysconf (_SC_XBS5_ILP32_OFFBIG) > 0)
 #endif
 #if !defined _XBS5_ILP32_OFFBIG || _XBS5_ILP32_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "XBS5_ILP32_OFFBIG",
-		    sizeof "XBS5_ILP32_OFFBIG" - 1);
-	    string_len += sizeof "XBS5_ILP32_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "XBS5_ILP32_OFFBIG",
+		  sizeof "XBS5_ILP32_OFFBIG" - 1);
+	  string_len += sizeof "XBS5_ILP32_OFFBIG" - 1;
+	}
 #endif
 #ifndef _XBS5_LP64_OFF64
-	if (__sysconf (_SC_XBS5_LP64_OFF64) > 0)
+      if (__sysconf (_SC_XBS5_LP64_OFF64) > 0)
 #endif
 #if !defined _XBS5_LP64_OFF64 || _XBS5_LP64_OFF64 > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "XBS5_LP64_OFF64",
-		    sizeof "XBS5_LP64_OFF64" - 1);
-	    string_len += sizeof "XBS5_LP64_OFF64" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "XBS5_LP64_OFF64",
+		  sizeof "XBS5_LP64_OFF64" - 1);
+	  string_len += sizeof "XBS5_LP64_OFF64" - 1;
+	}
 #endif
 #ifndef _XBS5_LPBIG_OFFBIG
-	if (__sysconf (_SC_XBS5_LPBIG_OFFBIG) > 0)
+      if (__sysconf (_SC_XBS5_LPBIG_OFFBIG) > 0)
 #endif
 #if !defined _XBS5_LPBIG_OFFBIG || _XBS5_LPBIG_OFFBIG > 0
-	  {
-	    if (string_len)
-	      restenvs[string_len++] = '\n';
-	    memcpy (restenvs + string_len, "XBS5_LPBIG_OFFBIG",
-		    sizeof "XBS5_LPBIG_OFFBIG" - 1);
-	    string_len += sizeof "XBS5_LPBIG_OFFBIG" - 1;
-	  }
+	{
+	  if (string_len)
+	    restenvs[string_len++] = '\n';
+	  memcpy (restenvs + string_len, "XBS5_LPBIG_OFFBIG",
+		  sizeof "XBS5_LPBIG_OFFBIG" - 1);
+	  string_len += sizeof "XBS5_LPBIG_OFFBIG" - 1;
+	}
 #endif
-	restenvs[string_len++] = '\0';
-	string = restenvs;
-      }
+      restenvs[string_len++] = '\0';
+      string = restenvs;
       break;

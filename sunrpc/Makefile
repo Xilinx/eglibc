@@ -110,11 +110,6 @@ ifeq ($(have-thread-library),yes)
 xtests-$(OPTION_EGLIBC_SUNRPC) += thrsvc
 endif
 
-ifeq (yes,$(build-static-nss))
-otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \
-	     $(resolvobjdir)/libresolv.a
-endif
-
 ifneq (yes,$(install-bootstrap-headers))
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
 extra-libs-$(OPTION_EGLIBC_SUNRPC) += librpcsvc

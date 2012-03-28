@@ -748,27 +748,6 @@ AC_SUBST(submachine)
 
 # We have now validated the configuration.
 
-
-# Look for an `elf' subdirectory of each machine directory.
-# We prepend these rather than inserting them whereever the machine appears
-# because things specified by the machine's ELF ABI should override
-# OS-specific things, and should always be the same for any OS on the
-# machine (otherwise what's the point of an ABI?).
-elf_dirs=
-for d in $add_ons_pfx ''; do
-  for m in $mach; do
-    try="${d}sysdeps$m/elf"
-    case $d in
-      /*) try_srcdir= ;;
-      *) try_srcdir=$srcdir/ ;;
-    esac
-    if test -d $try_srcdir$try; then
-      elf_dirs="$elf_dirs $try"
-    fi
-  done
-done
-sysnames="`echo $elf_dirs | sed -e 's,//,/,g'` $sysnames"
-
 # Peek into option-groups.config to check if sysdeps/ieee754/[l]dbl-wrap needs
 # to be included into $sysnames.
 grep "OPTION_EGLIBC_LIBM_BIG = n" option-groups.config > /dev/null 2>&1
@@ -873,7 +852,7 @@ changequote([,])dnl
 done
 
 # Add the default directories.
-default_sysnames="sysdeps/generic/elf sysdeps/generic"
+default_sysnames="sysdeps/generic"
 sysnames="$names $default_sysnames"
 AC_SUBST(sysnames)
 # The other names were emitted during the scan.
@@ -2020,6 +1999,14 @@ if test "$libc_cv_gcc_tls_model_attr" = no; then
   AC_MSG_ERROR([support for the tls_model attribute is required])
 fi
 
+dnl Determine how to disable generation of FMA instructions.
+AC_CACHE_CHECK([for compiler option to disable generation of FMA instructions],
+	       libc_cv_cc_nofma, [dnl
+libc_cv_cc_nofma=
+for opt in -ffp-contract=off -mno-fused-madd; do
+  LIBC_TRY_CC_OPTION([$opt], [libc_cv_cc_nofma=$opt; break])
+done])
+
 if test -n "$submachine"; then
   AC_CACHE_CHECK([for compiler option for CPU variant],
 		 libc_cv_cc_submachine, [dnl
@@ -2163,6 +2150,7 @@ AC_SUBST(libc_cv_cc_avx)
 AC_SUBST(libc_cv_cc_sse2avx)
 AC_SUBST(libc_cv_cc_novzeroupper)
 AC_SUBST(libc_cv_cc_fma4)
+AC_SUBST(libc_cv_cc_nofma)
 AC_SUBST(libc_cv_as_i686)
 AC_SUBST(libc_cv_sparc_as_vis3)
 

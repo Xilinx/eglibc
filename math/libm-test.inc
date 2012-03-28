@@ -754,6 +754,8 @@ acos_test (void)
   /* |x| > 1: */
   TEST_f_f (acos, 1.125L, nan_value, INVALID_EXCEPTION);
   TEST_f_f (acos, -1.125L, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (acos, max_value, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (acos, -max_value, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (acos, 0, M_PI_2l);
   TEST_f_f (acos, minus_zero, M_PI_2l);
@@ -783,6 +785,7 @@ acosh_test (void)
 
   /* x < 1:  */
   TEST_f_f (acosh, -1.125L, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (acosh, -max_value, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (acosh, 1, 0);
   TEST_f_f (acosh, 7, 2.63391579384963341725009269461593689L);
@@ -808,6 +811,8 @@ asin_test (void)
   /* asin x == NaN plus invalid exception for |x| > 1.  */
   TEST_f_f (asin, 1.125L, nan_value, INVALID_EXCEPTION);
   TEST_f_f (asin, -1.125L, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (asin, max_value, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (asin, -max_value, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (asin, 0, 0);
   TEST_f_f (asin, minus_zero, minus_zero);
@@ -893,6 +898,8 @@ atanh_test (void)
   /* atanh (x) == NaN plus invalid exception if |x| > 1.  */
   TEST_f_f (atanh, 1.125L, nan_value, INVALID_EXCEPTION);
   TEST_f_f (atanh, -1.125L, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (atanh, max_value, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (atanh, -max_value, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (atanh, 0.75L, 0.972955074527656652552676371721589865L);
 
@@ -1916,6 +1923,35 @@ cexp_test (void)
   TEST_c_c (cexp, 0, 0x1p16383L, 0.9210843909921906206874509522505756251609L, 0.3893629985894208126948115852610595405563L);
   TEST_c_c (cexp, -10000, 0x1p16383L, 1.045876464564882298442774542991176546722e-4343L, 4.421154026488516836023811173959413420548e-4344L);
 #endif
+
+  TEST_c_c (cexp, 88.75, 0.75, 2.558360358486542817001900410314204322891e38L, 2.383359453227311447654736314679677655100e38L);
+  TEST_c_c (cexp, -95, 0.75, 4.039714446238306526889476684000081624047e-42L, 3.763383677300535390271646960780570275931e-42L);
+
+#ifndef TEST_FLOAT
+  TEST_c_c (cexp, 709.8125, 0.75, 1.355121963080879535248452862759108365762e308L, 1.262426823598609432507811340856186873507e308L);
+  TEST_c_c (cexp, -720, 0.75, 1.486960657116368433685753325516638551722e-313L, 1.385247284245720590980701226843815229385e-313L);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
+  TEST_c_c (cexp, 11356.5625, 0.75, 9.052188470850960144814815984311663764287e4931L, 8.432986734191301036267148978260970230200e4931L);
+  TEST_c_c (cexp, -11370, 0.75, 8.631121063182211587489310508568170739592e-4939L, 8.040721827809267291427062346918413482824e-4939L);
+#endif
+
+#ifdef TEST_FLOAT
+  TEST_c_c (cexp, 180, 0x1p-149, plus_infty, 2.087071793345235105931967606907855310664e33L, OVERFLOW_EXCEPTION);
+#endif
+
+#if defined TEST_DOUBLE || (defined TEST_LDOUBLE && LDBL_MAX_EXP == 1024)
+  TEST_c_c (cexp, 1440, 0x1p-1074, plus_infty, 1.196295853897226111293303155636183216483e302L, OVERFLOW_EXCEPTION);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
+  TEST_c_c (cexp, 22730, 0x1p-16434L, plus_infty, 2.435706297811211974162115164702304105374e4924L, OVERFLOW_EXCEPTION);
+#endif
+
+  TEST_c_c (cexp, 1e6, 0, plus_infty, 0, OVERFLOW_EXCEPTION);
+  TEST_c_c (cexp, 1e6, min_value, plus_infty, plus_infty, OVERFLOW_EXCEPTION);
+  TEST_c_c (cexp, 1e6, -min_value, plus_infty, minus_infty, OVERFLOW_EXCEPTION);
 
   END (cexp, complex);
 }
@@ -2978,6 +3014,11 @@ exp_test (void)
   TEST_f_f (exp, 1000.0L, 0.197007111401704699388887935224332313e435L);
 #endif
 
+  /* Bug 13922: OVERFLOW exception may be missing.  */
+  TEST_f_f (exp, max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+  /* Bug 13705: spurious OVERFLOW exception may be present.  */
+  TEST_f_f (exp, -max_value, 0, OVERFLOW_EXCEPTION_OK);
+
   END (exp);
 }
 
@@ -3111,6 +3152,11 @@ exp10_test (void)
   TEST_f_f (exp10, -1, 0.1L);
   TEST_f_f (exp10, 1e6, plus_infty, OVERFLOW_EXCEPTION);
   TEST_f_f (exp10, -1e6, 0);
+#ifndef TEST_LDOUBLE /* Bug 13914: spurious exceptions.  */
+  TEST_f_f (exp10, max_value, plus_infty, OVERFLOW_EXCEPTION);
+  /* Bug 13924: spurious OVERFLOW exception may be present.  */
+  TEST_f_f (exp10, -max_value, 0, OVERFLOW_EXCEPTION_OK);
+#endif
   TEST_f_f (exp10, 0.75L, 5.62341325190349080394951039776481231L);
 
   END (exp10);
@@ -3138,7 +3184,24 @@ exp2_test (void)
   TEST_f_f (exp2, -1, 0.5);
   TEST_f_f (exp2, 1e6, plus_infty, OVERFLOW_EXCEPTION);
   TEST_f_f (exp2, -1e6, 0);
+  TEST_f_f (exp2, max_value, plus_infty, OVERFLOW_EXCEPTION);
+  TEST_f_f (exp2, -max_value, 0);
   TEST_f_f (exp2, 0.75L, 1.68179283050742908606225095246642979L);
+
+  TEST_f_f (exp2, 100.5, 1.792728671193156477399422023278661496394e+30L);
+  TEST_f_f (exp2, 127, 0x1p127);
+  TEST_f_f (exp2, -149, 0x1p-149);
+
+#ifndef TEST_FLOAT
+  TEST_f_f (exp2, 1000.25, 1.274245659452564874772384918171765416737e+301L);
+  TEST_f_f (exp2, 1023, 0x1p1023);
+  TEST_f_f (exp2, -1074, 0x1p-1074);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
+  TEST_f_f (exp2, 16383, 0x1p16383L);
+  TEST_f_f (exp2, -16400, 0x1p-16400L);
+#endif
 
   END (exp2);
 }
@@ -3175,6 +3238,11 @@ expm1_test (void)
   /* Bug 13787: OVERFLOW exception may be missing.  */
   TEST_f_f (expm1, 100000.0, plus_infty, OVERFLOW_EXCEPTION_OK);
   check_int ("errno for expm1(large) == ERANGE", errno, ERANGE, 0, 0, 0);
+  /* Bug 13787: OVERFLOW exception may be missing.  */
+  TEST_f_f (expm1, max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+#ifndef TEST_LDOUBLE /* Bug 13923.  */
+  TEST_f_f (expm1, -max_value, -1);
+#endif
 
   END (expm1);
 }
@@ -3937,6 +4005,8 @@ lgamma_test (void)
   TEST_f_f (lgamma, -3, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   check_int ("errno for lgamma(-integer) == ERANGE", errno, ERANGE, 0, 0, 0);
   TEST_f_f (lgamma, minus_infty, plus_infty);
+  TEST_f_f (lgamma, -max_value, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
+  TEST_f_f (lgamma, max_value, plus_infty, OVERFLOW_EXCEPTION);
 
   TEST_f_f1 (lgamma, 1, 0, 1);
 
@@ -4838,6 +4908,7 @@ log_test (void)
   TEST_f_f (log, 1, 0);
 
   TEST_f_f (log, -1, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (log, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (log, minus_infty, nan_value, INVALID_EXCEPTION);
   TEST_f_f (log, plus_infty, plus_infty);
   TEST_f_f (log, nan_value, nan_value);
@@ -4870,6 +4941,7 @@ log10_test (void)
 
   /* log10 (x) == NaN plus invalid exception if x < 0.  */
   TEST_f_f (log10, -1, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (log10, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (log10, minus_infty, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (log10, plus_infty, plus_infty);
@@ -4902,6 +4974,7 @@ log1p_test (void)
 
   TEST_f_f (log1p, -1, minus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   TEST_f_f (log1p, -2, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (log1p, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (log1p, minus_infty, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (log1p, plus_infty, plus_infty);
@@ -4933,6 +5006,7 @@ log2_test (void)
   TEST_f_f (log2, 1, 0);
 
   TEST_f_f (log2, -1, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (log2, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (log2, minus_infty, nan_value, INVALID_EXCEPTION);
 
   TEST_f_f (log2, plus_infty, plus_infty);
@@ -5541,8 +5615,7 @@ pow_test (void)
   TEST_ff_f (pow, 0, -0x1p127, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   check_int ("errno for pow(0,-num) == ERANGE", errno, ERANGE, 0, 0, 0);
   errno = 0;
-  /* Bug 13879: spurious OVERFLOW exception may be present.  */
-  TEST_ff_f (pow, 0, -max_value, plus_infty, DIVIDE_BY_ZERO_EXCEPTION|OVERFLOW_EXCEPTION_OK);
+  TEST_ff_f (pow, 0, -max_value, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   check_int ("errno for pow(0,-num) == ERANGE", errno, ERANGE, 0, 0, 0);
   errno = 0;
   TEST_ff_f (pow, minus_zero, -2, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
@@ -5557,8 +5630,7 @@ pow_test (void)
   TEST_ff_f (pow, minus_zero, -0x1p127, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   check_int ("errno for pow(-0,-num) == ERANGE", errno, ERANGE, 0, 0, 0);
   errno = 0;
-  /* Bug 13879: spurious OVERFLOW exception may be present.  */
-  TEST_ff_f (pow, minus_zero, -max_value, plus_infty, DIVIDE_BY_ZERO_EXCEPTION|OVERFLOW_EXCEPTION_OK);
+  TEST_ff_f (pow, minus_zero, -max_value, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   check_int ("errno for pow(-0,-num) == ERANGE", errno, ERANGE, 0, 0, 0);
 
   TEST_ff_f (pow, 0x1p72L, 0x1p72L, plus_infty, OVERFLOW_EXCEPTION);
@@ -5758,6 +5830,259 @@ pow_test (void)
 #if defined TEST_DOUBLE || defined TEST_LDOUBLE
   TEST_ff_f (pow, -7.49321e+133, -9.80818e+16, 0);
 #endif
+
+  TEST_ff_f (pow, -1.0, -0xffffff, -1.0);
+  TEST_ff_f (pow, -1.0, -0x1fffffe, 1.0);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -1.0, -0x1.fffffffffffffp+52L, -1.0);
+  TEST_ff_f (pow, -1.0, -0x1.fffffffffffffp+53L, 1.0);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -1.0, -0x1.fffffffffffffffep+63L, -1.0);
+  TEST_ff_f (pow, -1.0, -0x1.fffffffffffffffep+64L, 1.0);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -1.0, -0x1.ffffffffffffffffffffffffff8p+105L, -1.0);
+  TEST_ff_f (pow, -1.0, -0x1.ffffffffffffffffffffffffff8p+106L, 1.0);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -1.0, -0x1.ffffffffffffffffffffffffffffp+112L, -1.0);
+  TEST_ff_f (pow, -1.0, -0x1.ffffffffffffffffffffffffffffp+113L, 1.0);
+# endif
+#endif
+  TEST_ff_f (pow, -1.0, -max_value, 1.0);
+
+  TEST_ff_f (pow, -1.0, 0xffffff, -1.0);
+  TEST_ff_f (pow, -1.0, 0x1fffffe, 1.0);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -1.0, 0x1.fffffffffffffp+52L, -1.0);
+  TEST_ff_f (pow, -1.0, 0x1.fffffffffffffp+53L, 1.0);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -1.0, 0x1.fffffffffffffffep+63L, -1.0);
+  TEST_ff_f (pow, -1.0, 0x1.fffffffffffffffep+64L, 1.0);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -1.0, 0x1.ffffffffffffffffffffffffff8p+105L, -1.0);
+  TEST_ff_f (pow, -1.0, 0x1.ffffffffffffffffffffffffff8p+106L, 1.0);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -1.0, 0x1.ffffffffffffffffffffffffffffp+112L, -1.0);
+  TEST_ff_f (pow, -1.0, 0x1.ffffffffffffffffffffffffffffp+113L, 1.0);
+# endif
+#endif
+  TEST_ff_f (pow, -1.0, max_value, 1.0);
+
+  TEST_ff_f (pow, -2.0, 126, 0x1p126);
+  TEST_ff_f (pow, -2.0, 127, -0x1p127);
+  TEST_ff_f (pow, -2.0, -126, 0x1p-126);
+  TEST_ff_f (pow, -2.0, -127, -0x1p-127);
+
+  TEST_ff_f (pow, -2.0, -0xffffff, minus_zero);
+  TEST_ff_f (pow, -2.0, -0x1fffffe, plus_zero);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -2.0, -0x1.fffffffffffffp+52L, minus_zero);
+  TEST_ff_f (pow, -2.0, -0x1.fffffffffffffp+53L, plus_zero);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -2.0, -0x1.fffffffffffffffep+63L, minus_zero);
+  TEST_ff_f (pow, -2.0, -0x1.fffffffffffffffep+64L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -2.0, -0x1.ffffffffffffffffffffffffff8p+105L, minus_zero);
+  TEST_ff_f (pow, -2.0, -0x1.ffffffffffffffffffffffffff8p+106L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -2.0, -0x1.ffffffffffffffffffffffffffffp+112L, minus_zero);
+  TEST_ff_f (pow, -2.0, -0x1.ffffffffffffffffffffffffffffp+113L, plus_zero);
+# endif
+#endif
+  TEST_ff_f (pow, -2.0, -max_value, plus_zero);
+
+  TEST_ff_f (pow, -2.0, 0xffffff, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -2.0, 0x1fffffe, plus_infty, OVERFLOW_EXCEPTION);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -2.0, 0x1.fffffffffffffp+52L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -2.0, 0x1.fffffffffffffp+53L, plus_infty, OVERFLOW_EXCEPTION);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -2.0, 0x1.fffffffffffffffep+63L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -2.0, 0x1.fffffffffffffffep+64L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -2.0, 0x1.ffffffffffffffffffffffffff8p+105L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -2.0, 0x1.ffffffffffffffffffffffffff8p+106L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -2.0, 0x1.ffffffffffffffffffffffffffffp+112L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -2.0, 0x1.ffffffffffffffffffffffffffffp+113L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+#endif
+  /* Bug 13873: OVERFLOW exception may be missing.  */
+  TEST_ff_f (pow, -2.0, max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+
+  TEST_ff_f (pow, -max_value, 0.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 1.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 1000.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -max_value, -2, plus_zero);
+  TEST_ff_f (pow, -max_value, -3, minus_zero);
+  TEST_ff_f (pow, -max_value, 2, plus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 3, minus_infty, OVERFLOW_EXCEPTION);
+
+  TEST_ff_f (pow, -max_value, -0xffffff, minus_zero);
+  TEST_ff_f (pow, -max_value, -0x1fffffe, plus_zero);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -max_value, -0x1.fffffffffffffp+52L, minus_zero);
+  TEST_ff_f (pow, -max_value, -0x1.fffffffffffffp+53L, plus_zero);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -max_value, -0x1.fffffffffffffffep+63L, minus_zero);
+  TEST_ff_f (pow, -max_value, -0x1.fffffffffffffffep+64L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -max_value, -0x1.ffffffffffffffffffffffffff8p+105L, minus_zero);
+  TEST_ff_f (pow, -max_value, -0x1.ffffffffffffffffffffffffff8p+106L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -max_value, -0x1.ffffffffffffffffffffffffffffp+112L, minus_zero);
+  TEST_ff_f (pow, -max_value, -0x1.ffffffffffffffffffffffffffffp+113L, plus_zero);
+# endif
+#endif
+  /* Bug 13872: spurious OVERFLOW exception may be present.  */
+  TEST_ff_f (pow, -max_value, -max_value, plus_zero, OVERFLOW_EXCEPTION_OK);
+
+  TEST_ff_f (pow, -max_value, 0xffffff, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 0x1fffffe, plus_infty, OVERFLOW_EXCEPTION);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -max_value, 0x1.fffffffffffffp+52L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 0x1.fffffffffffffp+53L, plus_infty, OVERFLOW_EXCEPTION);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -max_value, 0x1.fffffffffffffffep+63L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 0x1.fffffffffffffffep+64L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -max_value, 0x1.ffffffffffffffffffffffffff8p+105L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 0x1.ffffffffffffffffffffffffff8p+106L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -max_value, 0x1.ffffffffffffffffffffffffffffp+112L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -max_value, 0x1.ffffffffffffffffffffffffffffp+113L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+#endif
+  /* Bug 13873: OVERFLOW exception may be missing.  */
+  TEST_ff_f (pow, -max_value, max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+
+  TEST_ff_f (pow, -0.5, 126, 0x1p-126);
+  TEST_ff_f (pow, -0.5, 127, -0x1p-127);
+  TEST_ff_f (pow, -0.5, -126, 0x1p126);
+  TEST_ff_f (pow, -0.5, -127, -0x1p127);
+
+  TEST_ff_f (pow, -0.5, -0xffffff, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -0.5, -0x1fffffe, plus_infty, OVERFLOW_EXCEPTION);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -0.5, -0x1.fffffffffffffp+52L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -0.5, -0x1.fffffffffffffp+53L, plus_infty, OVERFLOW_EXCEPTION);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -0.5, -0x1.fffffffffffffffep+63L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -0.5, -0x1.fffffffffffffffep+64L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -0.5, -0x1.ffffffffffffffffffffffffff8p+105L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -0.5, -0x1.ffffffffffffffffffffffffff8p+106L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -0.5, -0x1.ffffffffffffffffffffffffffffp+112L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -0.5, -0x1.ffffffffffffffffffffffffffffp+113L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+#endif
+  /* Bug 13873: OVERFLOW exception may be missing.  */
+  TEST_ff_f (pow, -0.5, -max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+
+  TEST_ff_f (pow, -0.5, 0xffffff, minus_zero);
+  TEST_ff_f (pow, -0.5, 0x1fffffe, plus_zero);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -0.5, 0x1.fffffffffffffp+52L, minus_zero);
+  TEST_ff_f (pow, -0.5, 0x1.fffffffffffffp+53L, plus_zero);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -0.5, 0x1.fffffffffffffffep+63L, minus_zero);
+  TEST_ff_f (pow, -0.5, 0x1.fffffffffffffffep+64L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -0.5, 0x1.ffffffffffffffffffffffffff8p+105L, minus_zero);
+  TEST_ff_f (pow, -0.5, 0x1.ffffffffffffffffffffffffff8p+106L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -0.5, 0x1.ffffffffffffffffffffffffffffp+112L, minus_zero);
+  TEST_ff_f (pow, -0.5, 0x1.ffffffffffffffffffffffffffffp+113L, plus_zero);
+# endif
+#endif
+  TEST_ff_f (pow, -0.5, max_value, plus_zero);
+
+  TEST_ff_f (pow, -min_value, 0.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -min_value, 1.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -min_value, 1000.5, nan_value, INVALID_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -2, plus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -3, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, 1, -min_value);
+  TEST_ff_f (pow, -min_value, 2, plus_zero);
+  TEST_ff_f (pow, -min_value, 3, minus_zero);
+
+  TEST_ff_f (pow, -min_value, -0xffffff, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -0x1fffffe, plus_infty, OVERFLOW_EXCEPTION);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -min_value, -0x1.fffffffffffffp+52L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -0x1.fffffffffffffp+53L, plus_infty, OVERFLOW_EXCEPTION);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -min_value, -0x1.fffffffffffffffep+63L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -0x1.fffffffffffffffep+64L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -min_value, -0x1.ffffffffffffffffffffffffff8p+105L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -0x1.ffffffffffffffffffffffffff8p+106L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -min_value, -0x1.ffffffffffffffffffffffffffffp+112L, minus_infty, OVERFLOW_EXCEPTION);
+  TEST_ff_f (pow, -min_value, -0x1.ffffffffffffffffffffffffffffp+113L, plus_infty, OVERFLOW_EXCEPTION);
+# endif
+#endif
+  /* Bug 13873: OVERFLOW exception may be missing.  */
+  TEST_ff_f (pow, -min_value, -max_value, plus_infty, OVERFLOW_EXCEPTION_OK);
+
+  TEST_ff_f (pow, -min_value, 0xffffff, minus_zero);
+  TEST_ff_f (pow, -min_value, 0x1fffffe, plus_zero);
+#ifndef TEST_FLOAT
+  TEST_ff_f (pow, -min_value, 0x1.fffffffffffffp+52L, minus_zero);
+  TEST_ff_f (pow, -min_value, 0x1.fffffffffffffp+53L, plus_zero);
+#endif
+#ifdef TEST_LDOUBLE
+# if LDBL_MANT_DIG >= 64
+  TEST_ff_f (pow, -min_value, 0x1.fffffffffffffffep+63L, minus_zero);
+  TEST_ff_f (pow, -min_value, 0x1.fffffffffffffffep+64L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 106
+  TEST_ff_f (pow, -min_value, 0x1.ffffffffffffffffffffffffff8p+105L, minus_zero);
+  TEST_ff_f (pow, -min_value, 0x1.ffffffffffffffffffffffffff8p+106L, plus_zero);
+# endif
+# if LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, -min_value, 0x1.ffffffffffffffffffffffffffffp+112L, minus_zero);
+  TEST_ff_f (pow, -min_value, 0x1.ffffffffffffffffffffffffffffp+113L, plus_zero);
+# endif
+#endif
+  /* Bug 13872: spurious OVERFLOW exception may be present.  */
+  TEST_ff_f (pow, -min_value, max_value, plus_zero, OVERFLOW_EXCEPTION_OK);
 
   END (pow);
 }
@@ -7052,6 +7377,7 @@ sqrt_test (void)
 
   /* sqrt (x) == NaN plus invalid exception for x < 0.  */
   TEST_f_f (sqrt, -1, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (sqrt, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (sqrt, minus_infty, nan_value, INVALID_EXCEPTION);
   TEST_f_f (sqrt, nan_value, nan_value);
 
@@ -7290,10 +7616,12 @@ tgamma_test (void)
   START (tgamma);
 
   TEST_f_f (tgamma, plus_infty, plus_infty);
+  TEST_f_f (tgamma, max_value, plus_infty, OVERFLOW_EXCEPTION);
   TEST_f_f (tgamma, 0, plus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   TEST_f_f (tgamma, minus_zero, minus_infty, DIVIDE_BY_ZERO_EXCEPTION);
   /* tgamma (x) == NaN plus invalid exception for integer x <= 0.  */
   TEST_f_f (tgamma, -2, nan_value, INVALID_EXCEPTION);
+  TEST_f_f (tgamma, -max_value, nan_value, INVALID_EXCEPTION);
   TEST_f_f (tgamma, minus_infty, nan_value, INVALID_EXCEPTION);
   TEST_f_f (tgamma, nan_value, nan_value);
 
@@ -7437,6 +7765,7 @@ y0_test (void)
   START (y0);
 
   TEST_f_f (y0, -1.0, minus_infty, INVALID_EXCEPTION);
+  TEST_f_f (y0, -max_value, minus_infty, INVALID_EXCEPTION);
   TEST_f_f (y0, 0.0, minus_infty);
   TEST_f_f (y0, nan_value, nan_value);
   TEST_f_f (y0, plus_infty, 0);
@@ -7477,6 +7806,7 @@ y1_test (void)
   START (y1);
 
   TEST_f_f (y1, -1.0, minus_infty, INVALID_EXCEPTION);
+  TEST_f_f (y1, -max_value, minus_infty, INVALID_EXCEPTION);
   TEST_f_f (y1, 0.0, minus_infty);
   TEST_f_f (y1, plus_infty, 0);
   TEST_f_f (y1, nan_value, nan_value);
@@ -7518,6 +7848,7 @@ yn_test (void)
 
   /* yn (0, x) == y0 (x)  */
   TEST_ff_f (yn, 0, -1.0, minus_infty, INVALID_EXCEPTION);
+  TEST_ff_f (yn, 0, -max_value, minus_infty, INVALID_EXCEPTION);
   TEST_ff_f (yn, 0, 0.0, minus_infty);
   TEST_ff_f (yn, 0, nan_value, nan_value);
   TEST_ff_f (yn, 0, plus_infty, 0);

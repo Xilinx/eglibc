@@ -42,12 +42,6 @@ endif
 
 include ../Rules
 
-ifeq (yes,$(build-static-nss))
-otherlibs += $(nssobjdir)/libnss_files.a $(resolvobjdir)/libnss_dns.a \
-	     $(resolvobjdir)/libresolv.a
-endif
-
-
 ifeq ($(have-thread-library),yes)
 
 OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1

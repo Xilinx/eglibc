@@ -81,7 +81,7 @@ $as_echo X/"$0" |
 }
 
 # This file is generated from configure.in by Autoconf.  DO NOT EDIT!
- # Local configure fragment for sysdeps/s390/elf.
+ # Local configure fragment for sysdeps/s390.
 
 # Check for support of thread-local storage handling in assembler and
 # linker.
@@ -94,16 +94,16 @@ else
 	.section ".tdata", "awT", @progbits
 foo:	.long	25
 	.text
-	.long	foo@TLSGD
-	.long	foo@TLSLDM
-	.long	foo@DTPOFF
-	.long	foo@NTPOFF
-	.long	foo@GOTNTPOFF
-	.long	foo@INDNTPOFF
-	l	%r1,foo@GOTNTPOFF(%r12)
-	l	%r1,0(%r1):tls_load:foo
-	bas	%r14,0(%r1,%r13):tls_gdcall:foo
-	bas	%r14,0(%r1,%r13):tls_ldcall:foo
+	.quad	foo@TLSGD
+	.quad	foo@TLSLDM
+	.quad	foo@DTPOFF
+	.quad	foo@NTPOFF
+	.quad	foo@GOTNTPOFF
+	.quad	foo@INDNTPOFF
+	lg	%r1,foo@GOTNTPOFF(%r12)
+	lg	%r1,0(%r1):tls_load:foo
+	brasl	%r14,__tls_get_offset@plt:tls_gdcall:foo
+	brasl	%r14,__tls_get_offset@plt:tls_ldcall:foo
 EOF
 if { ac_try='${CC-cc} -S $CFLAGS conftest.S 1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
@@ -124,4 +124,3 @@ if test $libc_cv_390_tls = no; then
 fi
 
 $as_echo "#define PI_STATIC_AND_HIDDEN 1" >>confdefs.h
-

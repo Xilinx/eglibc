@@ -1,3 +1,388 @@
+2012-03-28  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/Makefile: Add -fPIC to ASFLAGS-.os here....
+	* sysdeps/sparc/sparc32/Makefile: rather than here...
+	* sysdeps/sparc/sparc64/Makefile: and here.
+
+2012-03-28  Ulrich Drepper  <drepper@gmail.com>
+
+	* malloc/mallocbug.c: Avoid warnings about unused variables.
+
+2012-02-22  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #13760]
+	* resolv/nss_dns/dns-host.c (gaih_getanswer): Look for errno
+	in the right place. Discard and retry query if response is
+	larger than input buffer size.
+
+2012-03-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #369]
+	[BZ #2678]
+	[BZ #3866]
+	* sysdeps/i386/fpu/e_pow.S (__ieee754_pow): Take absolute value of
+	x for large integer exponent.
+	* sysdeps/i386/fpu/e_powf.S (__ieee754_powf): Likewise.
+	* sysdeps/i386/fpu/e_powl.S (__ieee754_powl): Likewise.  Adjust
+	sign of result as needed afterwards.
+	* sysdeps/x86_64/fpu/e_powl.S (__ieee754_powl): Likewise.
+	* sysdeps/ieee754/k_standard.c (__kernel_standard): Handle sign of
+	result for underflowing pow the same as for overflow.
+	(__kernel_standard_l): Handle powl overflow and underflow here
+	rather than calling __kernel_standard.
+	* math/libm-test.inc (pow_test): Add more tests.
+
+	[BZ #3868]
+	[BZ #13879]
+	[BZ #13910]
+	[BZ #13911]
+	[BZ #13912]
+	[BZ #13913]
+	[BZ #13915]
+	[BZ #13916]
+	[BZ #13917]
+	[BZ #13918]
+	[BZ #13919]
+	[BZ #13920]
+	[BZ #13921]
+	* sysdeps/generic/math_private.h (__kernel_standard_l): Declare.
+	* sysdeps/ieee754/k_standard.c: Include <float.h>.
+	(__kernel_standard_l): New function.
+	* math/w_acoshl.c (__acoshl): Use __kernel_standard_l instead of
+	__kernel_standard.
+	* math/w_acosl.c (__acosl): Likewise.
+	* math/w_asinl.c (__asinl): Likewise.
+	* math/w_atan2l.c (__atan2l): Likewise.
+	* math/w_atanhl.c (__atanhl): Likewise.
+	* math/w_coshl.c (__coshl): Likewise.
+	* math/w_exp10l.c (__exp10l): Likewise.
+	* math/w_exp2l.c (__exp2l): Likewise.
+	* math/w_fmodl.c (__fmodl): Likewise.
+	* math/w_hypotl.c (__hypotl): Likewise.
+	* math/w_j0l.c (__j0l, __y0l): Likewise.
+	* math/w_j1l.c (__j1l, __y1l): Likewise.
+	* math/w_jnl.c (__jnl, __ynl): Likewise.
+	* math/w_lgammal.c (__lgammal): Likewise.
+	* math/w_log10l.c (__log10l): Likewise.
+	* math/w_log2l.c (__log2l): Likewise.
+	* math/w_logl.c (__logl): Likewise.
+	* math/w_powl.c (__powl): Likewise.
+	* math/w_remainderl.c (__remainderl): Likewise.
+	* math/w_scalbl.c (sysv_scalbl): Likewise.
+	* math/w_sinhl.c (__sinhl): Likewise.
+	* math/w_sqrtl.c (__sqrtl): Likewise.
+	* math/w_tgammal.c (__tgammal): Likewise.
+	* sysdeps/ieee754/ldbl-128/w_expl.c (__expl): Likewise.
+	* sysdeps/ieee754/ldbl-96/w_expl.c (__expl): Likewise.
+	* math/libm-test.inc (acos_test): Add more tests.
+	(acosh_test): Likewise.
+	(asin_test): Likewise.
+	(atanh_test): Likewise.
+	(exp_test): Likewise.
+	(exp10_test): Likewise.
+	(exp2_test): Likewise.
+	(expm1_test): Likewise.
+	(lgamma_test): Likewise.
+	(log_test): Likewise.
+	(log10_test): Likewise.
+	(log1p_test): Likewise.
+	(log2_test): Likewise.
+	(pow_test): Do not allow some spurious overflow exceptions.
+	(sqrt_test): Add more tests.
+	(tgamma_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	(yn_test): Likewise.
+
+2012-03-27  Anton Blanchard  <anton@samba.org>
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/mman.h: Define MAP_STACK and
+	MAP_HUGETLB.
+	* sysdeps/unix/sysv/linux/s390/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/mman.h: Likewise.
+
+2012-03-27  David S. Miller  <davem@davemloft.net>
+
+	* conform/Makefile: Run run-conformtest.sh using $(BASH).
+
+	* sysdeps/sparc/sparc64/Makefile (ASFLAGS-.os): Move before
+	have-as-vis3 check.
+
+2012-03-27  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/x86_64/elf/configure.in: Moved to ...
+	* sysdeps/x86_64/configure.in: ... here.
+	* sysdeps/x86_64/elf/start.S: Moved to ...
+	* sysdeps/x86_64/start.S: ... here.
+	* sysdeps/x86_64/elf/configure: Delete.
+
+	* sysdeps/x86_64/configure.in: Merge contents from
+	sysdeps/i386/configure.in (without i686 check).
+
+	* sysdeps/i386/elf/Versions: Merge into ...
+	* sysdeps/i386/Versions: ... this.
+	* sysdeps/i386/elf/Versions: Delete file.
+	* sysdeps/i386/elf/start.S: Moved to ...
+	* sysdeps/i386/start.S: ...here.
+	* sysdeps/i386/elf/configure.in: Merge into...
+	* sysdeps/i386/configure.in: ...here.
+	* sysdeps/i386/elf/configure.in: Delete file.
+	* sysdeps/i386/elf/configure: Delete file.
+
+	* sysdeps/generic/elf/backtracesyms.c: Moved to ...
+	* debug/backtracesyms.c: ... here.
+	* sysdeps/generic/elf/backtracesymsfd.c: Moved to ...
+	* debug/backtracesymsfd.c: ... here.
+	* sysdeps/generic/elf/ifunc-sel.h: Moved to ...
+	* sysdeps/generic/ifunc-sel.h: ... here.
+
+	* sysdeps/unix/i386/start.c: Delete file.
+	* sysdeps/unix/sparc/start.c: Delete file.
+	* sysdeps/unix/start.c: Delete file.
+
+	* sysdeps/sh/elf/configure.in: Moved to ...
+	* sysdeps/sh/configure.in: ... here.
+	* sysdeps/sh/elf/start.S: Moved to ...
+	* sysdeps/sh/start.S: ... here.
+	* sysdeps/sh/elf/configure: Delete file.
+
+	* sysdeps/powerpc/powerpc64/elf/bzero.S: Moved to ...
+	* sysdeps/powerpc/powerpc64/bzero.S: ... here.
+	* sysdeps/powerpc/powerpc64/elf/entry.h: Moved to ...
+	* sysdeps/powerpc/powerpc64/entry.h: ... here.
+	* sysdeps/powerpc/powerpc64/elf/start.S: Moved to ...
+	* sysdeps/powerpc/powerpc64/start.S: here.
+	* sysdeps/powerpc/powerpc64/elf/Makefile: Merge into ...
+	* sysdeps/powerpc/powerpc64/Makefile: ... this.
+	* sysdeps/powerpc/powerpc64/elf/configure.in: Merge into ...
+	* sysdeps/powerpc/powerpc64/configure.in: ... this.
+	* sysdeps/powerpc/powerpc64/elf/configure: Delete file.
+
+	* sysdeps/powerpc/powerpc32/elf/bzero.S: Moved to ...
+	* sysdeps/powerpc/powerpc32/bzero.S: ... here.
+	* sysdeps/powerpc/powerpc32/elf/start.S: Moved to ...
+	* sysdeps/powerpc/powerpc32/start.S: ... here.
+	* sysdeps/powerpc/powerpc32/elf/configure.in: Merge into ...
+	* sysdeps/powerpc/powerpc32/configure.in: ... this.
+	* sysdeps/powerpc/powerpc32/elf/configure: Delete file.
+
+	* sysdeps/powerpc/elf/ifunc-sel.h: Moved to ...
+	* sysdeps/powerpc/ifunc-sel.h: ... here.
+	* sysdeps/powerpc/elf/rtld-global-offsets.sym: Moved to ...
+	* sysdeps/powerpc/rtld-global-offsets.sym: ... here.
+
+	* sysdeps/sparc/elf/configure.in: Moved to ...
+	* sysdeps/sparc/configure.in: ... here.
+	* sysdeps/sparc/elf/configure: Delete file.
+	* sysdeps/sparc/sparc32/elf/start.S: Moved to ...
+	* sysdeps/sparc/sparc32/start.S: ... here.
+	* sysdeps/sparc/sparc64/elf/start.S: Moved to ...
+	* sysdeps/sparc/sparc64/start.S: ... here.
+	* sysdeps/sparc/sparc32/elf/Makefile: Merged into ...
+	* sysdeps/sparc/sparc32/Makefile: ... this.
+	* sysdeps/sparc/sparc64/elf/Makefile: Merged into ...
+	* sysdeps/sparc/sparc64/Makefile: ... this.
+
+	* sysdeps/s390/s390-32/elf/bsd-_setjmp.S: Moved to ...
+	* sysdeps/s390/s390-32/bsd-_setjmp.S: ... here.
+	* sysdeps/s390/s390-32/elf/bsd-setjmp.S: Moved to ...
+	* sysdeps/s390/s390-32/bsd-setjmp.S: ... here.
+	* sysdeps/s390/s390-32/elf/setjmp.S: Moved to ...
+	* sysdeps/s390/s390-32/setjmp.S: ... here.
+	* sysdeps/s390/s390-32/elf/configure.in: Moved to ...
+	* sysdeps/s390/s390-32/configure.in: ... here.
+	* sysdeps/s390/s390-32/elf/configure: Delete file.
+	* sysdeps/s390/s390-32/elf/start.S: Moved to ...
+	* sysdeps/s390/s390-32/start.S: ... here.
+
+	* sysdeps/s390/s390-64/elf/bsd-_setjmp.S: Moved to ...
+	* sysdeps/s390/s390-64/bsd-_setjmp.S: ... here.
+	* sysdeps/s390/s390-64/elf/bsd-setjmp.S: Moved to ...
+	* sysdeps/s390/s390-64/bsd-setjmp.S: ... here.
+	* sysdeps/s390/s390-64/elf/setjmp.S: Moved to ...
+	* sysdeps/s390/s390-64/setjmp.S: ... here.
+	* sysdeps/s390/s390-64/elf/configure.in: Moved to ...
+	* sysdeps/s390/s390-64/configure.in: ... here
+	* sysdeps/s390/s390-64/elf/configure: Delete file.
+	* sysdeps/s390/s390-64/elf/start.S: Moved to ...
+	* sysdeps/s390/s390-64/start.S: ... here.
+	* sysdeps/s390/s390-64/elf/configure: Delete.
+
+	* configure.in: Remove support for elf directories in sysdeps.
+
+	* configure: Regenerated.
+	* sysdeps/i386/configure: Regenerated.
+	* sysdeps/powerpc/powerpc32/configure: Regenerated.
+	* sysdeps/powerpc/powerpc64/configure: Regenerated.
+	* sysdeps/s390/s390-32/configure: Regenerated.
+	* sysdeps/s390/s390-64/configure: Regenerated.
+	* sysdeps/sh/configure: Regenerated.
+	* sysdeps/sparc/configure: Regenerated.
+	* sysdeps/x86_64/configure: Regenerated.
+
+2012-03-26  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+	* sysdeps/ieee754/ldbl-128ibm/e_expl.c (lomark): Adjust to take
+	denormal result into account.
+
+2012-03-25  Roland McGrath  <roland@hack.frob.com>
+
+	* posix/confstr.c (confstr): Lift RESTENVS definition to function scope.
+	Reported by Allan McRae <allan@archlinux.org>.
+
+2012-03-23  Jeff Law  <law@redhat.com>
+
+	* nss/getnssent.c (__nss_getent): Fix typo.
+
+2012-03-23  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-03-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-tlsdesc.h (tlsdesc): Use anonymous union
+	to pad to uint64_t for each field.
+	(dl_tls_index): Replace unsigned long with uint64_t.
+
+2012-03-23  Daniel Jacobowitz  <dmj@google.com>
+	Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #6528]
+	* grp/Makefile (otherlibs): Don't set it.
+	* inet/Makefile (otherlibs): Likewise.
+	* login/Makefile (otherlibs): Likewise.
+	* nscd/Makefile (otherlibs): Likewise.
+	* posix/Makefile (otherlibs): Likewise.
+	* pwd/Makefile (otherlibs): Likewise.
+	* rt/Makefile (otherlibs): Likewise.
+	* sunrpc/Makefile (otherlibs): Likewise.
+	* nss/Makefile (otherlibs): Likewise.
+	Add libnss_files to routines and static-only-routines.
+	($(objpfx)getent): Remove rule.
+	* resolv/Makefile: Add libnss_dns and libresolv to routines and
+	static-only-routines.
+
+2012-03-22  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13892]
+	* math/s_cexp.c: Include <float.h>.
+	(__cexp): Handle exp result overflowing not necessarily
+	overflowing both real and imaginary parts of result.
+	* math/s_cexpf.c: Likewise.
+	* math/s_cexpl.c: Likewise.
+	* math/libm-test.inc (cexp_test): Add more tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2012-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* include/link.h (ELFW): New macro.
+	* sysdeps/x86_64/dl-irel.h: Replace Elf64_XXX with ElfW(XXX).
+	Replace ELF64_R_TYPE with ELFW(R_TYPE).
+
+2012-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-tls.h (dl_tls_index): Replace unsigned long
+	with uint64_t.
+
+2012-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/generic/ldsodefs.h (struct La_x32_regs): New forward
+	declaration.
+	(struct La_x32_retval): Likewise.
+
+2012-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/preconfigure.in: New file.
+	* sysdeps/x86_64/preconfigure: New generated file.
+
+2012-03-22  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13824]
+	* math/e_exp2l.c: Include <float.h>.
+	(__ieee754_exp2l): Handle overflow and underflow cases
+	separately.  Only pass fractional part of argument to
+	__ieee754_expl.
+	* math/libm-test.inc (exp2_test): Add more tests.
+
+	* sysdeps/ieee754/ldbl-128/k_cosl.c (__kernel_cosl): Negate y if
+	negating x to take absolute value.
+	* sysdeps/ieee754/ldbl-128/k_sincosl.c (__kernel_sincosl):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/k_cosl.c (__kernel_cosl): Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/k_sincosl.c (__kernel_sincosl):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128/k_sinl.c (__kernel_sinl): Negate y when
+	computing low part if x was negated.
+	* sysdeps/ieee754/ldbl-128ibm/k_sinl.c (__kernel_sinl): Likewise.
+
+2012-03-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/tst-auditmod1.c: Support la_x32_gnu_pltenter and
+	la_x32_gnu_pltexit.
+	(pltexit): Cast int_retval to ptrdiff_t.
+	* elf/tst-auditmod3b.c: Likewise.
+	* elf/tst-auditmod4b.c: Likewise.
+	* elf/tst-auditmod5b.c: Likewise.
+	* elf/tst-auditmod6b.c: Likewise.
+	* elf/tst-auditmod6c.c: Likewise.
+	* elf/tst-auditmod7b.c: Likewise.
+
+	* sysdeps/generic/ldsodefs.h (audit_ifaces): Add x32_gnu_pltenter
+	and x32_gnu_pltexit.
+
+	* sysdeps/x86_64/bits/link.h: Check __x86_64__ instead of
+	__ELF_NATIVE_CLASS.
+	(La_x32_regs): New macro.
+	(La_x32_retval): Likewise.
+	(la_x32_gnu_pltenter): New function prototype.
+	(la_x32_gnu_pltexit): Likewise.
+
+2012-03-21  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/ieee754/ldbl-128ibm/e_powl.c (huge, tiny): Correct
+	exponent.
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+	* configure.in (libc_cv_cc_nofma): Check for option to disable
+	generation of FMA instructions.
+	* configure: Regenerate.
+	* config.make.in (config-cflags-nofma): Set from libc_cv_cc_nofma.
+	* sysdeps/ieee754/dbl-64/Makefile: New file.
+	* sysdeps/x86_64/fpu/multiarch/Makefile (libm-sysdep_routines):
+	Remove brandred-fma4.
+	(CFLAGS-brandred-fma4.c): Remove.
+	* sysdeps/x86_64/fpu/multiarch/brandred-fma4.c: Remove.
+	* sysdeps/x86_64/fpu/multiarch/s_sin-fma4.c (__branred): Don't
+	define.
+	* sysdeps/x86_64/fpu/multiarch/s_tan-fma4.c (__branred): Don't
+	define.
+
+2012-03-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* stdio-common/_itoa.c: Check _ITOA_NEEDED instead of
+	LLONG_MAX != LONG_MAX.
+	(_itoa_word): Use _ITOA_WORD_TYPE on value.
+	(_fitoa_word): Likewise.
+	* stdio-common/_itowa.c: Check _ITOA_NEEDED instead of
+	LLONG_MAX != LONG_MAX.
+	* stdio-common/_itowa.h: Include <_itoa.h>.
+	(_itowa_word): Use _ITOA_WORD_TYPE on value.
+	(_itowa): New macro.  Defined only if _ITOA_NEEDED is false.
+	* sysdeps/generic/_itoa.h (_ITOA_NEEDED): New macro.  Defined
+	only if not defined.
+	(_ITOA_WORD_TYPE): Likewise.
+	(_itoa_word): Use _ITOA_WORD_TYPE on value.
+	Check !_ITOA_NEEDED instead of LONG_MAX == LLONG_MAX.
+
+2012-03-21  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
 2012-03-21  H.J. Lu  <hongjiu.lu@intel.com>
 
 	* sysdeps/unix/sysv/linux/configure.in: Check x86_64* instead
@@ -20,9 +405,9 @@
 
 2012-03-21  Thomas Schwinge  <thomas@codesourcery.com>
 
-        * conform/conformtest.pl: Handle --tmpdir argument, defaulting to /tmp.
-        * conform/run-conformtest.sh: Pass --tmpdir argument when invoking
-        conformtest.pl
+	* conform/conformtest.pl: Handle --tmpdir argument, defaulting to /tmp.
+	* conform/run-conformtest.sh: Pass --tmpdir argument when invoking
+	conformtest.pl
 
 2012-03-21  Joseph Myers  <joseph@codesourcery.com>
 

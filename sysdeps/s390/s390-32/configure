@@ -81,13 +81,13 @@ $as_echo X/"$0" |
 }
 
 # This file is generated from configure.in by Autoconf.  DO NOT EDIT!
- # Local configure fragment for sysdeps/sh/elf.
+ # Local configure fragment for sysdeps/s390.
 
 # Check for support of thread-local storage handling in assembler and
 # linker.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SH TLS support" >&5
-$as_echo_n "checking for SH TLS support... " >&6; }
-if ${libc_cv_sh_tls+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for s390 TLS support" >&5
+$as_echo_n "checking for s390 TLS support... " >&6; }
+if ${libc_cv_390_tls+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.S <<\EOF
@@ -97,8 +97,13 @@ foo:	.long	25
 	.long	foo@TLSGD
 	.long	foo@TLSLDM
 	.long	foo@DTPOFF
-	.long	foo@GOTTPOFF
-	.long	foo@TPOFF
+	.long	foo@NTPOFF
+	.long	foo@GOTNTPOFF
+	.long	foo@INDNTPOFF
+	l	%r1,foo@GOTNTPOFF(%r12)
+	l	%r1,0(%r1):tls_load:foo
+	bas	%r14,0(%r1,%r13):tls_gdcall:foo
+	bas	%r14,0(%r1,%r13):tls_ldcall:foo
 EOF
 if { ac_try='${CC-cc} -S $CFLAGS conftest.S 1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
@@ -106,17 +111,16 @@ if { ac_try='${CC-cc} -S $CFLAGS conftest.S 1>&5'
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; }; then
-  libc_cv_sh_tls=yes
+  libc_cv_390_tls=yes
 else
-  libc_cv_sh_tls=no
+  libc_cv_390_tls=no
 fi
 rm -f conftest*
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_sh_tls" >&5
-$as_echo "$libc_cv_sh_tls" >&6; }
-if test $libc_cv_sh_tls = no; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_390_tls" >&5
+$as_echo "$libc_cv_390_tls" >&6; }
+if test $libc_cv_390_tls = no; then
   as_fn_error $? "the assembler must support TLS" "$LINENO" 5
 fi
 
 $as_echo "#define PI_STATIC_AND_HIDDEN 1" >>confdefs.h
-
