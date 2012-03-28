@@ -93,6 +93,10 @@ cross_getconf (int name)
   const char *string = "";
   size_t string_len = 1;
 
+  /* Note that this buffer must be large enough for the longest strings
+     used below.  */
+  char restenvs[4 * sizeof "POSIX_V7_LPBIG_OFFBIG"];
+
   switch (name)
     {
 #include "confstr.inc"
