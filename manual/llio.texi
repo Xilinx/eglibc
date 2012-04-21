@@ -78,11 +78,11 @@ declared in @file{unistd.h}.
 @comment fcntl.h
 @comment POSIX.1
 @deftypefun int open (const char *@var{filename}, int @var{flags}[, mode_t @var{mode}])
-The @code{open} function creates and returns a new file descriptor
-for the file named by @var{filename}.  Initially, the file position
+The @code{open} function creates and returns a new file descriptor for
+the file named by @var{filename}.  Initially, the file position
 indicator for the file is at the beginning of the file.  The argument
-@var{mode} is used only when a file is created, but it doesn't hurt
-to supply the argument in any case.
+@var{mode} (@pxref{Permission Bits}) is used only when a file is
+created, but it doesn't hurt to supply the argument in any case.
 
 The @var{flags} argument controls how the file is to be opened.  This is
 a bit mask; you create the value by the bitwise OR of the appropriate
@@ -634,15 +634,15 @@ be one of the symbolic constants @code{SEEK_SET}, @code{SEEK_CUR}, or
 
 @table @code
 @item SEEK_SET
-Specifies that @var{whence} is a count of characters from the beginning
+Specifies that @var{offset} is a count of characters from the beginning
 of the file.
 
 @item SEEK_CUR
-Specifies that @var{whence} is a count of characters from the current
+Specifies that @var{offset} is a count of characters from the current
 file position.  This count may be positive or negative.
 
 @item SEEK_END
-Specifies that @var{whence} is a count of characters from the end of
+Specifies that @var{offset} is a count of characters from the end of
 the file.  A negative count specifies a position within the current
 extent of the file; a positive count specifies a position past the
 current end.  If you set the position past the current end, and

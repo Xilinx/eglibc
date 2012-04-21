@@ -1,6 +1,5 @@
 /* Macros to swap the order of bytes in integer values.
-   Copyright (C) 1997, 1998, 2000, 2002, 2003, 2006, 2007, 2008, 2010, 2011
-   Free Software Foundation, Inc.
+   Copyright (C) 1997-2012  Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -28,33 +27,8 @@
 #define __bswap_constant_16(x) \
      ((unsigned short int) ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)))
 
-#ifdef __GNUC__
-# if __GNUC__ >= 2
-#  define __bswap_16(x) \
-     (__extension__							      \
-      ({ register unsigned short int __v, __x = (unsigned short int) (x);     \
-	 if (__builtin_constant_p (__x))				      \
-	   __v = __bswap_constant_16 (__x);				      \
-	 else								      \
-	   __asm__ ("rorw $8, %w0"					      \
-		    : "=r" (__v)					      \
-		    : "0" (__x)						      \
-		    : "cc");						      \
-	 __v; }))
-# else
-/* This is better than nothing.  */
-#  define __bswap_16(x) \
-     (__extension__							      \
-      ({ register unsigned short int __x = (unsigned short int) (x);	      \
-	 __bswap_constant_16 (__x); }))
-# endif
-#else
-static __inline unsigned short int
-__bswap_16 (unsigned short int __bsx)
-{
-  return __bswap_constant_16 (__bsx);
-}
-#endif
+/* Get __bswap_16.  */
+#include <bits/byteswap-16.h>
 
 /* Swap bytes in 32 bit value.  */
 #define __bswap_constant_32(x) \
@@ -131,6 +105,22 @@ __bswap_32 (unsigned int __bsx)
 	     __r.__l[1] = __bswap_32 (__w.__l[0]);			      \
 	   }								      \
 	 __r.__ll; }))
+#elif __GLIBC_HAVE_LONG_LONG
+# define __bswap_constant_64(x) \
+     ((((x) & 0xff00000000000000ull) >> 56)				      \
+      | (((x) & 0x00ff000000000000ull) >> 40)				      \
+      | (((x) & 0x0000ff0000000000ull) >> 24)				      \
+      | (((x) & 0x000000ff00000000ull) >> 8)				      \
+      | (((x) & 0x00000000ff000000ull) << 8)				      \
+      | (((x) & 0x0000000000ff0000ull) << 24)				      \
+      | (((x) & 0x000000000000ff00ull) << 40)				      \
+      | (((x) & 0x00000000000000ffull) << 56))
+
+static __inline unsigned long long int
+__bswap_64 (unsigned long long int __bsx)
+{
+  return __bswap_constant_64 (__bsx);
+}
 #endif
 
 #endif /* _BITS_BYTESWAP_H */

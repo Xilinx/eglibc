@@ -1,5 +1,5 @@
 /* Checking memset for x86-64.
-   Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2005, 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 #include <sysdep.h>
 #include "asm-syntax.h"
 
-#ifndef PIC
+#ifndef SHARED
 	/* For libc.so this is defined in memset.S.
 	   For libc.a, this is a separate source to avoid
 	   memset bringing in __chk_fail and all routines

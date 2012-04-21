@@ -1,4 +1,4 @@
-/* Copyright (C) 1996-1999,2001-2007,2009,2010,2011
+/* Copyright (C) 1996-2012
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
@@ -356,7 +356,7 @@ nss_load_library (service_user *ni)
   if (ni->library->lib_handle == NULL)
     {
       /* Load the shared library.  */
-      size_t shlen = (7 + strlen (ni->library->name) + 3
+      size_t shlen = (7 + strlen (ni->name) + 3
 		      + strlen (__nss_shlib_revision) + 1);
       int saved_errno = errno;
       char shlib_name[shlen];
@@ -364,7 +364,7 @@ nss_load_library (service_user *ni)
       /* Construct shared object name.  */
       __stpcpy (__stpcpy (__stpcpy (__stpcpy (shlib_name,
 					      "libnss_"),
-				    ni->library->name),
+				    ni->name),
 			  ".so"),
 		__nss_shlib_revision);
 
@@ -378,14 +378,14 @@ nss_load_library (service_user *ni)
       else if (is_nscd)
 	{
 	  /* Call the init function when nscd is used.  */
-	  size_t initlen = (5 + strlen (ni->library->name)
+	  size_t initlen = (5 + strlen (ni->name)
 			    + strlen ("_init") + 1);
 	  char init_name[initlen];
 
 	  /* Construct the init function name.  */
 	  __stpcpy (__stpcpy (__stpcpy (init_name,
 					"_nss_"),
-			      ni->library->name),
+			      ni->name),
 		    "_init");
 
 	  /* Find the optional init function.  */
@@ -469,13 +469,13 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 	  else
 	    {
 	      /* Get the desired function.  */
-	      size_t namlen = (5 + strlen (ni->library->name) + 1
+	      size_t namlen = (5 + strlen (ni->name) + 1
 			       + strlen (fct_name) + 1);
 	      char name[namlen];
 
 	      /* Construct the function name.  */
 	      __stpcpy (__stpcpy (__stpcpy (__stpcpy (name, "_nss_"),
-					    ni->library->name),
+					    ni->name),
 				  "_"),
 			fct_name);
 
@@ -498,12 +498,12 @@ __nss_lookup_function (service_user *ni, const char *fct_name)
 # include "function.def"
 		{ NULL, NULL }
 	      };
-	    size_t namlen = (5 + strlen (ni->library->name) + 1
+	    size_t namlen = (5 + strlen (ni->name) + 1
 			     + strlen (fct_name) + 1);
 	    char name[namlen];
 
 	    /* Construct the function name.  */
-	    __stpcpy (__stpcpy (__stpcpy (name, ni->library->name),
+	    __stpcpy (__stpcpy (__stpcpy (name, ni->name),
 				"_"),
 		      fct_name);
 

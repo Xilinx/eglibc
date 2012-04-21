@@ -54,7 +54,8 @@ tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-btowc tst-mbrtowc tst-mbrtowc2 tst-wcrtomb tst-c16c32-1
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
       += tst-wcstof wcsmbs-tst1 tst-wcsnlen \
-	 tst-wcpncpy tst-mbsrtowcs wcsatcliff $(addprefix test-,$(strop-tests))
+	 tst-wcpncpy tst-mbsrtowcs tst-mbsnrtowcs \
+	 wcsatcliff $(addprefix test-,$(strop-tests))
 
 include ../Rules
 
@@ -94,3 +95,4 @@ tst-mbrtowc-ENV = LOCPATH=$(common-objpfx)localedata
 tst-wcrtomb-ENV = LOCPATH=$(common-objpfx)localedata
 tst-mbrtowc2-ENV = LOCPATH=$(common-objpfx)localedata
 tst-c16c32-1-ENV = LOCPATH=$(common-objpfx)localedata
+tst-mbsnrtowcs-ENV = LOCPATH=$(common-objpfx)localedata

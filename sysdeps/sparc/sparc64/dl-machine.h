@@ -125,9 +125,6 @@ elf_machine_plt_value (struct link_map *map, const Elf64_Rela *reloc,
 /* The SPARC never uses Elf64_Rel relocations.  */
 #define ELF_MACHINE_NO_REL 1
 
-/* The SPARC overlaps DT_RELA and DT_PLTREL.  */
-#define ELF_MACHINE_PLTREL_OVERLAP 1
-
 /* Set up the loaded object described by L so its unrelocated PLT
    entries will jump to the on-demand fixup code in dl-runtime.c.  */
 
@@ -388,6 +385,12 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
   if (__builtin_expect (r_type == R_SPARC_NONE, 0))
     return;
 
+  if (__builtin_expect (r_type == R_SPARC_SIZE64, 0))
+    {
+      *reloc_addr = sym->st_size + reloc->r_addend;
+      return;
+    }
+
 #if !defined RTLD_BOOTSTRAP || !defined HAVE_Z_COMBRELOC
   if (__builtin_expect (r_type == R_SPARC_RELATIVE, 0))
     {
@@ -554,6 +557,12 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 	((*(unsigned int *)reloc_addr & ~0x1fff) |
 	 (((value & 0x3ff) + ELF64_R_TYPE_DATA (reloc->r_info)) & 0x1fff));
       break;
+
+      /* ABS34 code model reloc */
+    case R_SPARC_H34:
+      *(unsigned int *) reloc_addr =
+	((*(unsigned int *)reloc_addr & 0xffc00000) |
+	 ((value >> 12) & 0x3fffff));
 
       /* MEDMID code model relocs */
     case R_SPARC_H44:

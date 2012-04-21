@@ -1,3 +1,24 @@
+2012-04-12  Mike Frysinger  <vapier@gentoo.org>
+
+        [BZ #3768]
+	* locales/en_GB (LC_TIME): Set am_pm and t_fmt_ampm fields.
+	* locales/cy_GB (LC_TIME): Likewise.  Also copy date_fmt from en_GB.
+
+2012-04-04  Jeff Law  <law@redhat.com>
+
+	[BZ #6770]
+	* locales/ca_ES (LC_TIME): Add first_weekday and first_workday.
+
+2012-04-04  Petr Baudis  <pasky@ucw.cz>
+
+	[BZ #6770]
+	* locales/ca_ES: This locale is now maintained by Jordi Mallach.
+
+2012-04-04  Dmitry V. Levin  <ldv@altlinux.org>
+
+	[BZ #10346]
+	* locales/ru_UA (LC_TIME): Add first_weekday and first_workday.
+
 2012-03-09  Paul Eggert  <eggert@cs.ucla.edu>
 
 	[BZ #13673]
