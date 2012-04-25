@@ -26,6 +26,10 @@ ifeq ($(subdir),elf)
 CFLAGS-rtld.c += -Wno-uninitialized -Wno-unused
 endif
 
+ifeq ($(subdir),gmon)
+sysdep_routines += _mcount
+endif
+
 # Without the following we get undefined references from these
 # various libs to __tls_get_addr. Not sure why only microblaze
 # needs this?
