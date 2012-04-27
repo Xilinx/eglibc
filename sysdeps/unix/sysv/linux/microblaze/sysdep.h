@@ -159,10 +159,11 @@ SYSCALL_ERROR_LABEL_DCL:					\
    call.  */
 #undef INLINE_SYSCALL
 #define INLINE_SYSCALL(name, nr, args...)				\
-  ({ unsigned int _sys_result = INTERNAL_SYSCALL (name, , nr, args);	\
-     if (__builtin_expect (INTERNAL_SYSCALL_ERROR_P (_sys_result, ), 0))\
+  ({ INTERNAL_SYSCALL_DECL (sc_err); \
+     unsigned int _sys_result = INTERNAL_SYSCALL (name, sc_err, nr, args);	\
+     if (INTERNAL_SYSCALL_ERROR_P (_sys_result, sc_err))\
        {								\
-	 __set_errno (INTERNAL_SYSCALL_ERRNO (_sys_result, ));		\
+	 __set_errno (INTERNAL_SYSCALL_ERRNO (_sys_result, sc_err));		\
 	 _sys_result = (unsigned int) -1;				\
        }								\
      (int) _sys_result; })

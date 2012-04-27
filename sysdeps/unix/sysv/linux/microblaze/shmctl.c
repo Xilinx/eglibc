@@ -29,7 +29,7 @@
 #include <shlib-compat.h>
 #include <bp-checks.h>
 
-#include "kernel-features.h"
+#include <kernel-features.h>
 
 struct __old_shmid_ds
 {
