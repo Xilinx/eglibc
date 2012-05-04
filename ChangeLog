@@ -1,3 +1,1220 @@
+2012-05-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/e_acosl.c (__ieee754_acosl): Fix
+	long double comparison inaccuracies.
+	* sysdeps/ieee754/ldbl-128ibm/e_asinl.c (__ieee754_asinl): Likewise.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2012-05-04  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/make-syscalls.sh: Fix check for version aliases.
+	* sysdeps/unix/sysv/linux/i386/syscalls.list: Revert last change.
+
+2012-05-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14049]
+	* stdlib/strtod_l.c (____STRTOF_INTERNAL): Check for trailing
+	nonzero digits before rounding a hex value.
+	* stdlib/tst-strtod.c (tests): Add another test.
+
+2012-05-03  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/fpu/libm-test-ulps: Update.
+
+2012-05-03  Andreas Jaeger  <aj@suse.de>
+
+	* malloc/mcheck.c (mcheck): Add barrier so that malloc/free pair
+	does not get optimized out.
+	(malloc_opt_barrier): New.
+
+2012-05-03  Andreas Jaeger  <aj@suse.de>
+	    Roland McGrath <roland@hack.frob.com>
+
+        * Makerules (.PRECIOUS): Add %.symlist pattern to prevent
+	intermediate file deletion.
+        (generated): Add .symlist files.
+
+2012-05-03  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13775]
+	* libio/bits/stdio-ldbl.h [__USE_XOPEN2K8] (__dprintf_chk):
+	Redirect under this condition.
+	[__USE_XOPEN2K8] (__vdprintf_chk): Likewise.
+	[__USE_GNU] (__dprintf_chk): Not under this condition.
+	[__USE_GNU] (__vdprintf_chk): Likewise.
+	* libio/bits/stdio2.h [__USE_XOPEN2K8] (__dprintf_chk): Declare
+	under this condition.
+	[__USE_XOPEN2K8] (__vdprintf_chk): Likewise.
+	[__USE_XOPEN2K8] (dprintf): Define under this condition.
+	[__USE_XOPEN2K8] (vdprintf): Likewise.
+	[__USE_GNU] (__dprintf_chk): Not under this condition.
+	[__USE_GNU] (__vdprintf_chk): Likewise.
+	[__USE_GNU] (dprintf): Likewise.
+	[__USE_GNU] (vdprintf): Likewise.
+
+2012-05-03  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/Makefile (common-generated): Set this instead of generated for
+	.dyn, .phdr, .jmprel files.  Remove $(common-objpfx) from the
+	$(all-built-dso)-derived lists.
+
+2012-05-03  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+	* FAQ: Removed.
+	* FAQ.in: Likewise.
+	* scripts/gen-FAQ.pl: Likewise.
+	* manual/install.texi (Installation): Point to online location of
+	FAQ.
+	* Makefile (files-for-dist): Remove FAQ.
+	(FAQ): Remove.
+
+2012-05-02  Allan McRae  <allan@archlinux.org>
+
+	* elf/Makefile: (LDFLAGS-nodel2mod3.so: Use $(no-as-needed).
+	(LDFLAGS-reldepmod5.so): Likewise.
+	(LDFLAGS-reldep6mod1.so): Likewise.
+	(LDFLAGS-reldep6mod4.so): Likewise.
+	(LDFLAGS-reldep8mod3.so): Likewise.
+	(LDFLAGS-unload4mod1.so): Likewise.
+	(LDFLAGS-unload4mod2.so): Likewise.
+	(LDFLAGS-tst-initorder): Likewise.
+	(LDFLAGS-tst-initordera2.so): Likewise.
+	(LDFLAGS-tst-initordera3.so): Likewise.
+	(LDFLAGS-tst-initordera4.so): Likewise.
+	(LDFLAGS-tst-initorderb2.so): Likewise.
+	(LDFLAGS-noload): Likewise.
+	(LDFLAGS-next): Likewise.
+	(LDFLAGS-order2mod1.so): Likewise.
+	(LDFLAGS-order2mod2.so): Likewise.
+	(LDFLAGS-tst-initorder2): Likewise.
+	(LDFLAGS-tst-initorder2a.so): Likewise.
+	(LDFLAGS-tst-initorder2b.so): Likewise.
+	(LDFLAGS-tst-initorder2c.so): Likewise.
+	* stdlib/Makefile: (LDFLAGS-tst-putenv): Likewise.
+
+2012-05-02  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-05-02  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #14055]
+	* elf/dl-sysdep.c (_dl_show_auxv): Add bounds check.
+
+2012-05-02  Andreas Jaeger  <aj@suse.de>
+
+	* math/Makefile (CPPFLAGS-test-ildoubl.c): Add -frounding-math
+	since we manipulate rounding mode.
+	(CPPFLAGS-test-idouble.c): Likewise.
+	(CPPFLAGS-test-ifloat.c): Likewise.
+	(CFLAGS-test-ldouble.c): Likewise.
+	(CFLAGS-test-double.c): Likewise.
+	(CFLAGS-test-float.c): Likewise.
+	(CFLAGS-test-misc.c): Likewise.
+	(CFLAGS-test-test-fenv.c): Likewise.
+
+2012-05-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+        [BZ #2550]
+        [BZ #2570]
+        * sysdeps/ieee754/ldbl-128ibm/s_nexttoward.c: Use floating-point
+        comparisons to determine direction to adjust input.
+
+2012-05-01  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/Makefile ($(objpfx)check-localplt.out): Redirect the test's
+	output to the target.
+
+	* scripts/localplt.awk: New file.
+	* elf/Makefile ($(objpfx)check-localplt): Target removed.
+	(check-localplt-CFLAGS): Variable removed.
+	($(all-built-dso:=.jmprel)): New static pattern rule.
+	(generated): Add those targets.
+	(localplt-built-dso): New variable.
+	($(objpfx)check-localplt.out): Use the script on the .jmprel files.
+
+	* elf/check-localplt.c: File removed.
+
+	* scripts/check-execstack.awk: New file.
+	* elf/Makefile ($(objpfx)check-execstack): Target removed.
+	(check-execstack-CFLAGS): Variable removed.
+	($(objpfx)check-execstack.h): Target removed.
+	($(objpfx)execstack-default): New target.
+	(generated): Add that instead of check-execstack.h.
+	($(all-built-dso:=.phdr)): New static pattern rule.
+	(generated): Add those targets.
+	* elf/check-execstack.c: File removed.
+
+	* scripts/check-textrel.awk: New file.
+	* elf/Makefile ($(objpfx)check-textrel): Target removed.
+	(check-textrel-CFLAGS): Variable removed.
+	(all-built-dso): Use := to define.o
+	($(all-built-dso:=.dyn)): New static pattern rule.
+	(generated): Add those targets.
+	($(objpfx)check-textrel.out): Use the script on the .dyn files.
+	* config.make.in (READELF): New substituted variable.
+	* elf/check-textrel.c: File removed.
+
+2012-05-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/data/assert.h-data [ISO || ISO99 || ISO11] (*_t): Do not
+	allow.
+	* conform/data/ctype.h-data [C99-based standards] (isblank):
+	Expect function.
+	(is*): Change to is[abcdefghijklmnopqrstuvwxyz]*.
+	(to*): Change to to[abcdefghijklmnopqrstuvwxyz]*.
+	[ISO || ISO99 || ISO11] (*_t): Do not allow.
+	* conform/data/errno.h-data (EDOM): Use macro-int-constant.
+	Specify type.  Require positive value.
+	(EILSEQ): Likewise.
+	(ERANGE): Likewise.
+	[ISO || POSIX] (EILSEQ): Do not expect.
+	[!ISO && !ISO99 && !ISO11] (E2BIG): Use macro-int-constant.
+	Specify type.  Require positive value.
+	[!ISO && !ISO99 && !ISO11] (EACCES): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EADDRINUSE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EADDRNOTAVAIL): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EAFNOSUPPORT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EAGAIN): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EALREADY): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EBADF): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EBADMSG): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EBUSY): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ECANCELED): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ECHILD): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ECONNABORTED): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ECONNREFUSED): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ECONNRESET): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EDEADLK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EDESTADDRREQ): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EDQUOT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EEXIST): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EFAULT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EFBIG): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EHOSTUNREACH): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EIDRM): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EINPROGRESS): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EINTR): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EINVAL): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EIO): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EISCONN): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EISDIR): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ELOOP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EMFILE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EMLINK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EMSGSIZE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EMULTIHOP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENAMETOOLONG): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENETDOWN): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENETUNREACH): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENFILE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOBUFS): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENODATA): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENODEV): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOENT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOEXEC): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOLCK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOLINK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOMEM): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOMSG): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOPROTOOPT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOSPC): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOSR): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOSTR): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOSYS): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTCONN): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTDIR): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTEMPTY): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTSOCK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTSUP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENOTTY): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ENXIO): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EOPNOTSUPP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EOVERFLOW): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EPERM): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EPIPE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EPROTO): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EPROTONOSUPPORT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EPROTOTYPE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EROFS): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ESPIPE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ESRCH): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ESTALE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ETIME): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ETIMEDOUT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (ETXTBSY): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EWOULDBLOCK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EXDEV): Likewise.
+	[XOPEN2K8 || defined POSIX2008] (ENOTRECOVERABLE): Likewise.
+	[XOPEN2K8 || defined POSIX2008] (EOWNERDEAD): Likewise.
+	* conform/data/float.h-data (FLT_RADIX): Use macro-int-constant.
+	Require >= 2.
+	(FLT_ROUNDS): Expect as macro, not constant.
+	(FLT_MANT_DIG): Use macro-int-constant.
+	(DBL_MANT_DIG): Likewise.
+	(LDBL_MANT_DIG): Likewise.
+	(FLT_DIG): Likewise.
+	(DBL_DIG): Likewise.
+	(LDBL_DIG): Likewise.
+	(FLT_MIN_EXP): Use macro-int-constant.  Require < 0.
+	(DBL_MIN_EXP): Likewise.
+	(LDBL_MIN_EXP): Likewise.
+	(FLT_MAX_EXP): Use macro-int-constant.
+	(DBL_MAX_EXP): Likewise.
+	(LDBL_MAX_EXP): Likewise.
+	(FLT_MAX_10_EXP): Likewise.
+	(DBL_MAX_10_EXP): Likewise.
+	(LDBL_MAX_10_EXP): Likewise.
+	(FLT_MAX): Use macro-constant.
+	(DBL_MAX): Likewise.
+	(LDBL_MAX): Likewise.
+	(FLT_EPSILON): Use macro-constant.  Give upper bound.
+	(DBL_EPSILON): Likewise.
+	(LDBL_EPSILON): Likewise.
+	(FLT_MIN): Likewise.
+	(DBL_MIN): Likewise.
+	(LDBL_MIN): Likewise.
+	[C99-based standards] (DECIMAL_DIG): Use macro-int-constant.
+	[C99-based standards] (FLT_EVAL_METHOD): Likewise.
+	[ISO11] (DBL_HAS_SUBNORM): Use macro-int-constant.
+	[ISO11] (FLT_HAS_SUBNORM): Likewise.
+	[ISO11] (LDBL_HAS_SUBNORM): Likewise.
+	[ISO11] (DBL_DECIMAL_DIG): Likewise.
+	[ISO11] (FLT_DECIMAL_DIG): Likewise.
+	[ISO11] (LDBL_DECIMAL_DIG): Likewise.
+	[ISO11] (DBL_TRUE_MIN): Use macro-constant.
+	[ISO11] (FLT_TRUE_MIN): Likewise.
+	[ISO11] (LDBL_TRUE_MIN): Likewise.
+	[ISO || ISO99 || ISO11] (*_t): Do not allow.
+	* conform/data/limits.h-data (CHAR_BIT): Use macro-int-constant.
+	(SCHAR_MIN): Use macro-int-constant.  Specify type.
+	(SCHAR_MAX): Likewise.
+	(UCHAR_MAX): Likewise.
+	(CHAR_MIN): Likewise.
+	(CHAR_MAX): Likewise.
+	(MB_LEN_MAX): Use macro-int-constant.
+	(SHRT_MIN): Use macro-int-constant.  Specify type.
+	(SHRT_MAX): Likewise.
+	(USHRT_MAX): Likewise.
+	(INT_MAX): Likewise.
+	(INT_MIN): Use macro-int-constant.  Specify type.  Make upper
+	bound negative.
+	(UINT_MAX): Use macro-int-constant.  Specify type.  Suffix lower
+	bound with "U".
+	(LONG_MAX): Use macro-int-constant.  Specify type.  Suffix lower
+	bound with "L".
+	(LONG_MIN): Use macro-int-constant.  Specify type.  Make upper
+	bound negative.  Suffix upper bound with "L".
+	(ULONG_MAX): Use macro-int-constant.  Specify type.  Suffix lower
+	bound with "UL".
+	[C99-based standards] (LLONG_MIN): Use macro-int-constant.
+	Specify type.
+	[C99-based standards] (LLONG_MAX): Likewise.
+	[C99-based standards] (ULLONG_MAX): Likewise.
+	* conform/data/stddef.h-data (NULL): Use macro-constant.  Require
+	== 0.
+	[ISO11] (max_align_t): Require type.
+	[ISO || ISO99 || ISO11] (*_t): Do not allow.
+
+	* conform/conformtest.pl ($CFLAGS_namespace): Define separately
+	from $CFLAGS, without defining away __attribute__ calls.
+	(checknamespace): Use $CFLAGS_namespace.
+
+	* conform/conformtest.pl (@keywords): Only include C99 keywords
+	for standards based on C99 or C11.
+
+	* conform/data/iso646.h-data [ISO || POSIX || XPG3 || XPG4]:
+	Disable tests.
+	* conform/data/stdint.h-data [ISO || POSIX || XPG3 || XPG4 ||
+	UNIX98]: Likewise.
+
+	* conform/conformtest.pl: Handle "macro-int-constant" and test for
+	usability of symbols in #if.
+
+	* conform/conformtest.pl: If macro or constant types start
+	"promoted:", expect the symbol to be of the following type
+	promoted by the integer promotions.
+
+	* conform/conformtest.pl: Parse all "constant" and "macro" lines
+	in one place.  Also handle "macro-constant".
+
+	* conform/conformtest.pl: Only accept expected macro values with
+	"==".  Parse all "macro" lines in one place.
+	* conform/data/stdlib.h-data: Use "==" form on "macro" lines.
+
+	* conform/conformtest.pl: Handle braced types on "constant" lines
+	instead of handling "typed-constant".
+	* conform/data/signal.h-data: Use "constant" instead of
+	"typed-constant".
+
+	* conform/conformtest.pl: Handle "optional-" at start of lines in
+	one place rather than duplicating several cases.  Handle each
+	format of "macro" line with initial "optional-".
+
+	* conform/conformtest.pl: Only accept expected constant or
+	optional-constant values with "==".  Parse all "constant" lines in
+	one place.  Parse all "optional-constant" lines in one place.
+	* conform/data/cpio.h-data: Use "==" form on "constant" lines.
+	* conform/data/fmtmsg.h-data: Likewise.
+	* conform/data/netinet/in.h-data: Likewise.
+	* conform/data/tar.h-data: Likewise.
+	* conform/data/limits.h-data: Use "==" form on "constant" and
+	"optional-constant" lines.
+
+	* conform/conformtest.pl: Use -ansi for XPG3, XPG4 and UNIX98.
+	Use -std=c99 for XOPEN2K.
+	(@knownproblems): Remove.
+	(newtoken): Don't check %isknown.
+
+	* conform/data/math.h-data [XPG3 || XPG4 || UNIX98] (fpclassify):
+	Do not expect macro.
+	[XPG3 || XPG4 || UNIX98] (isfinite): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isinf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isnan): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isnormal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (signbit): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isgreater): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isgreaterequal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isless): Likewise.
+	[XPG3 || XPG4 || UNIX98] (islessequal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (islessgreater): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isunordered): Likewise.
+	[XPG3 || XPG4 || UNIX98] (isnan): Expect as function.
+	[XPG3 || XPG4 || UNIX98] (HUGE_VALF): Do not expect.
+	[XPG3 || XPG4 || UNIX98] (HUGE_VALL): Likewise.
+	[XPG3 || XPG4 || UNIX98] (INFINITY): Likewise.
+	[XPG3 || XPG4 || UNIX98] (NAN): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_INFINITE): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_NAN): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_NORMAL): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_SUBNORMAL): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_ZERO): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_FAST_FMA): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_FAST_FMAF): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_FAST_FMAL): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_ILOGB0): Likewise.
+	[XPG3 || XPG4 || UNIX98] (FP_ILOGBNAN): Likewise.
+	[XPG3 || XPG4 || UNIX98] (copysign): Likewise.
+	[XPG3 || XPG4 || UNIX98] (exp2): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log2): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tgama): Likewise.
+	[XPG3] (acosh): Likewise.
+	[XPG3] (asinh): Likewise.
+	[XPG3] (atanh): Likewise.
+	[XPG3] (cbrt): Likewise.
+	[XPG3] (expm1): Likewise.
+	[XPG3] (ilogb): Likewise.
+	[XPG3] (log1p): Likewise.
+	[XPG3] (logb): Likewise.
+	[XPG3] (nextafter): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nexttoward): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nearbyint): Likewise.
+	[XPG3] (remainder): Likewise.
+	[XPG3] (rint): Likewise.
+	[XPG3 || XPG4 || UNIX98] (round): Likewise.
+	[XPG3 || XPG4 || UNIX98] (trunc): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lrint): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llrint): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lround): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llround): Likewise.
+	[XPG3 || XPG4 || UNIX98] (remquo): Likewise.
+	[UNIX98 || XOPEN2K] (scalb): Expect.
+	[XPG3 || XPG4 || UNIX98] (scalbn): Do not expect.
+	[XPG3 || XPG4 || UNIX98] (scalbln): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fdim): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmax): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmin): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fma): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nan): Likewise.
+	[XPG3 || XPG4 || UNIX98] (acosf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (asinf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atanf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atan2f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ceilf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (copysignf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (cosf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (coshf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (expf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (exp2f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fabsf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (floorf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmodf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (frexpf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ldexpf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (logf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log10f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log2f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (modff): Likewise.
+	[XPG3 || XPG4 || UNIX98] (powf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sinf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sinhf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sqrtf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tanf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tanhf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (erff): Likewise.
+	[XPG3 || XPG4 || UNIX98] (erfcf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (gammaf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (hypotf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (j0f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (j1f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (jnf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lgammaf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tgammaf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (y0f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (y1f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ynf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (acoshf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (asinhf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atanhf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (cbrtf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (expm1f): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ilogbf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log1pf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (logbf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nextafterf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nexttowardf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nearbyintf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (remainderf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (rintf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (roundf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (truncf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lrintf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llrintf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lroundf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llroundf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (remquof): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalbf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalbnf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalblnf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fdimf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmaxf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fminf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmaf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nanf): Likewise.
+	[XPG3 || XPG4 || UNIX98] (acosl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (asinl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atanl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atan2l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ceill): Likewise.
+	[XPG3 || XPG4 || UNIX98] (copysignl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (cosl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (coshl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (expl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (exp2l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fabsl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (floorl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmodl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (frexpl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ldexpl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (logl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log10l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log2l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (modfl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (powl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sinl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sinhl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (sqrtl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tanl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tanhl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (erfl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (erfcl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (gammal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (hypotl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (j0l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (j1l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (jnl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lgammal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (tgammal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (y0l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (y1l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ynl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (acoshl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (asinhl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (atanhl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (cbrtl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (expm1l): Likewise.
+	[XPG3 || XPG4 || UNIX98] (ilogbl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (log1pl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (logbl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nextafterl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nexttowardl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nearbyintl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (remainderl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (rintl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (roundl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (truncl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lrintl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llrintl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (lroundl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (llroundl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (remquol): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalbl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalbnl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (scalblnl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fdiml): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmaxl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fminl): Likewise.
+	[XPG3 || XPG4 || UNIX98] (fmal): Likewise.
+	[XPG3 || XPG4 || UNIX98] (nanl): Likewise.
+
+	* conform/conformtest.pl: Define _XOPEN_SOURCE as well as
+	_XOPEN_SOURCE_EXTENDED for XPG4.
+
+	* conform/conformtest.pl: Handle "symbol" lines for allow-header.
+
+	* Makeconfig (localtime): Remove variable.
+	(inst_localtime-file): Likewise.
+
+2012-05-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/ld.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libm.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libpthread.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/librt.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/ld.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libm.abilist:
+	Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libpthread.abilist:
+	Update.
+
+2012-05-01  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #2550]
+	[BZ #2570]
+	* math/s_nexttowardf.c (__nexttowardf): Use floating-point
+	comparisons to determine direction to adjust input.
+	* sysdeps/i386/fpu/s_nexttoward.c (__nexttoward): Likewise.
+	* sysdeps/i386/fpu/s_nexttowardf.c(__nexttowardf): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_nexttoward.c (__nexttoward):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128/s_nexttowardf.c (__nexttowardf):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_nexttowardf.c (__nexttowardf):
+	Likewise.
+	* sysdeps/ieee754/ldbl-96/s_nexttoward.c (__nexttoward): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_nexttowardf.c (__nexttowardf):
+	Likewise.
+	* sysdeps/ieee754/ldbl-opt/s_nexttowardfd.c (__nldbl_nexttowardf):
+	Likewise.
+	* math/libm-test.inc (nexttoward_test): Add more tests.
+
+2012-05-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #14040]
+	* sysdeps/powerpc/powerpc32/fpu/s_nearbyint.S (nearbyintl): Define
+	in version GLIBC_2.1, not GLIBC_2.0.
+	* sysdeps/powerpc/powerpc64/fpu/s_nearbyint.S (nearbyintl):
+	Likewise.
+
+2012-04-30  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13942]
+	* sysdeps/i386/fpu/e_acos.S (__ieee754_acos): Calculate 1 - x^2 as
+	(1 - x) * (1 + x).
+	* sysdeps/i386/fpu/e_acosl.c (__ieee754_acosl): Likewise.
+	* sysdeps/i386/fpu/e_asin.S (__ieee754_asin): Likewise.
+	* math/libm-test.inc (acos_test): Add more tests.
+	(asin_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	[BZ #14034]
+	* sysdeps/i386/fpu/e_acos.S (__ieee754_acos): Take absolute value
+	of square root.
+	* sysdeps/i386/fpu/e_acosf.S (__ieee754_acosf): Likewise.
+	* sysdeps/i386/fpu/e_acosl.c (__ieee754_acosl): Likewise.
+	* math/libm-test.inc (acos_test_tonearest): New function.
+	(acos_test_towardzero): Likewise.
+	(acos_test_downward): Likewise.
+	(acos_test_upward): Likewise.
+	(asin_test_tonearest): Likewise.
+	(asin_test_towardzero): Likewise.
+	(asin_test_downward): Likewise.
+	(asin_test_upward): Likewise.
+	(main): Call the new functions.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+	[BZ #13884]
+	[BZ #13924]
+	* math/e_exp10.c: Include <float.h>.
+	(__ieee754_exp10): Handle underflow here rather than multiplying
+	large negative argument by M_LN10.
+	* math/e_exp10f.c (__ieee754_exp10f): Call __ieee754_exp instead
+	of __ieee754_expf.
+	* math/e_exp10l.c: Include <float.h>.
+	(__ieee754_exp10l): Handle underflow here rather than multiplying
+	large negative argument by M_LN10l.
+	* math/libm-test.inc (exp10_test): Add another test.  Do not allow
+	spurious overflow exception on underflow.
+
+2012-04-29  Marek Polacek  <polacek@redhat.com>
+
+	* misc/sys/cdefs.h (__attribute_artificial__): New macro.
+	(__fortify_function): New macro.
+	(__extern_always_inline): Don't use __attribute__ ((__artificial__)).
+	* libio/bits/stdio-ldbl.h: Use __fortify_function in place of
+	__extern_always_inline.
+	* libio/bits/stdio2.h: Likewise.
+	* libio/bits/stdio.h: Likewise.
+	* string/string.h: Likewise.
+	* string/bits/string3.h: Likewise.
+	* include/stdio.h: Likewise.
+	* stdlib/bits/stdlib.h: Likewise.
+	* stdlib/stdlib.h: Likewise.
+	* rt/bits/mqueue2.h: Likewise.
+	* rt/mqueue.h: Likewise.
+	* posix/bits/unistd.h: Likewise.
+	* posix/unistd.h: Likewise.
+	* io/bits/poll2.h: Likewise.
+	* io/bits/fcntl2.h: Likewise.
+	* io/fcntl.h: Likewise.
+	* io/sys/poll.h: Likewise.
+	* misc/bits/syslog.h: Likewise.
+	* misc/bits/syslog-ldbl.h: Likewise.
+	* misc/sys/syslog.h: Likewise.
+	* socket/bits/socket2.h: Likewise.
+	* socket/sys/socket.h: Likewise.
+	* debug/tst-chk1.c: Likewise.
+	* wcsmbs/bits/wchar2.h: Likewise.
+	* wcsmbs/bits/wchar-ldbl.h: Likewise.
+	* wcsmbs/wchar.h: Likewise.
+
+2012-04-29  Andreas Jaeger  <aj@suse.de>
+
+	* Makerules (tests): Remove enable-check-abi protection.
+	(check-abi-warn): Remove.
+	(check-abi-%): Remove check-abi-warn usage.
+
+	* configure.in: Remove check-abi configure option.
+	* configure: Regenerated.
+	* config.make.in (enable-check-abi): Remove.
+
+2012-04-28  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #14033]
+	* math/bits/math-finite.h [__NO_LONG_DOUBLE_MATH]: Redirect long
+	double functions to double *_finite functions.
+
+	[BZ #13941]
+	* sysdeps/ieee754/ldbl-128ibm/ldbl2mpn.c
+	(__mpn_extract_long_double): Use DBL_MIN_EXP instead of
+	LDBL_MIN_EXP.
+	* stdio-common/Makefile (tests): Add tst-sprintf3.
+	* stdio-common/tst-sprintf3.c: New file.
+
+	* elf/Makefile ($(objpfx)tst-leaks1-mem, $(objpfx)noload-mem)
+	($(objpfx)tst-unused-dep.out): Don't run when cross-compiling.
+
+2012-04-28  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/conformtest.pl: Remove duplicate typed-constant
+	handling.
+
+2012-04-28  David S. Miller  <davem@davemloft.net>
+
+	* Makerules (%.abilist): Add vpath on sysdep_dirs.
+	(check-abi-%): Remove AWK script prerequisite and explicit
+	abilist directory.
+	(check-abi): Rewrite to just diff the symlist with the abilist.
+	(config-tls, config-abi-config): Delete, no longer used.
+	(update-abi-%): Remove AWK script and explicit abilist directory.
+	(update-abi): Rewrite to simply compare and conditionally copy the
+	symlist and the sysdep abilist file.  Remove update-abi-config
+	checks.
+	* abilist/ld.abilist: Remove.
+	* abilist/libBrokenLocale.abilist: Remove.
+	* abilist/libanl.abilist: Remove.
+	* abilist/libcrypt.abilist: Remove.
+	* abilist/libdl.abilist: Remove.
+	* abilist/librt.abilist: Remove.
+	* abilist/libthread_db.abilist: Remove.
+	* abilist/libutil.abilist: Remove.
+	* scripts/extract-abilist.awk: Remove.
+	* scripts/merge-abilist.awk: Remove.
+	* sysdeps/generic/libcidn.abilist: New file.
+	* sysdeps/generic/libnss_compat.abilist: New file.
+	* sysdeps/generic/libnss_db.abilist: New file.
+	* sysdeps/generic/libnss_dns.abilist: New file.
+	* sysdeps/generic/libnss_files.abilist: New file.
+	* sysdeps/generic/libnss_hesiod.abilist: New file.
+	* sysdeps/generic/libnss_nis.abilist: New file.
+	* sysdeps/generic/libnss_nisplus.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libanl.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libBrokenLocale.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libc.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libcrypt.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libdl.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libm.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libnsl.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libpthread.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libresolv.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/librt.abilist: New file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libthread_db.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/i386/nptl/libutil.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libanl.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libBrokenLocale.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libc.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libcrypt.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libdl.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libm.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libnsl.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libpthread.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libresolv.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/librt.abilist: New file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libthread_db.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libutil.abilist: New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/ld.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libanl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libc.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libcrypt.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libdl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libm.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libnsl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libresolv.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/librt.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powercp32/fpu/nptl/libutil.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/ld.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libanl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libcrypt.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libdl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libm.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libnsl.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libresolv.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/librt.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libutil.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libanl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libc.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libcrypt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libdl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libm.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libnsl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libresolv.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/librt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libutil.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libanl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libc.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libcrypt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libdl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libm.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libnsl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libresolv.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/librt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libutil.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sh/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libanl.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libBrokenLocale.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libc.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libcrypt.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libdl.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libm.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libnsl.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libpthread.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libresolv.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/librt.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libthread_db.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libutil.abilist: New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libanl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libc.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libcrypt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libdl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libm.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libnsl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libresolv.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/librt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libutil.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libanl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libBrokenLocale.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libc.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libcrypt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libdl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libm.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libnsl.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libpthread.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libresolv.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/librt.abilist: New
+	file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libthread_db.abilist:
+	New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libutil.abilist: New
+	file.
+
+2012-04-28  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/conformtest.pl: Fix typo in handling typed-constant from
+	allow-header.
+
+2012-04-27  Joseph Myers  <joseph@codesourcery.com>
+
+	* README: Cut down references to pre-2.6 Linux kernels and
+	Linuxthreads.  Update lists of configurations in libc and ports
+	and sort alphabetically.  Say "or newer" with Linux kernel version
+	requirements.
+
+	* config.h.in [IS_IN_build]: Allow compiling without optimization.
+
+2012-04-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	[BZ #887]
+	* math/libm-test.inc (logb_test_downward): New test to expose
+	erroneous negative sign on -0.0 result of logb[l](1) in FE_DOWNWARD
+	rounding mode.
+
+2012-04-27  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14027]
+	* math/fclrexcpt.c (__feclearexcept): Return zero if nothing needs
+	to be done.
+	* math/fraiseexcpt.c (__feraiseexcept): Likewise.
+	* math/fsetexcptflg.c (__fesetexceptflag): Likewise.
+
+2012-04-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/i386/brk.S: Remove file.
+	* sysdeps/unix/i386/dl-brk.S: Likewise.
+	* sysdeps/unix/i386/pipe.S: Likewise.
+	* sysdeps/unix/i386/sigreturn.S: Likewise.
+	* sysdeps/unix/i386/syscall.S: Likewise.
+	* sysdeps/unix/i386/vfork.S: Likewise.
+	* sysdeps/unix/i386/wait.S: Likewise.
+
+	* sysdeps/unix/common/tcsendbrk.c: Move to ...
+	* sysdeps/unix/sysv/linux/tcsendbrk.c: ... here.
+
+	* configure.in (arm*-none*): Do not allow without
+	--enable-hacker-mode.
+	(netbsd*): Remove case setting base_os.
+	(386bsd*): Likewise.
+	(freebsd*): Likewise.
+	(bsdi*): Likewise.
+	(osf*): Likewise.
+	(sunos*): Likewise.
+	(ultrix*): Likewise.
+	(newsos*): Likewise.
+	(dynix*): Likewise.
+	(*bsd*): Likewise.
+	(sysv*): Likewise.
+	(isc*): Likewise.
+	(esix*): Likewise.
+	(sco*): Likewise.
+	(minix*): Likewise.
+	(irix4*): Likewise.
+	(irix6*): Likewise.
+	(solaris[2-9]*): Likewise.
+	(none): Likewise.
+	* configure: Regenerated.
+
+2012-04-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #11521]
+	* sysdeps/ieee754/ldbl-128ibm/s_ctanhl.c (__ctanhl): Avoid internal
+	overflow or cancellation in calculating denominator.
+	* sysdeps/ieee754/ldbl-128ibm/s_ctanl.c (__ctanl): Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/e_sinhl.c (__ieee754_sinhl): Breaking
+	down expression to avoid unexpected rounding in newer GCCs.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update for ctan, ctanh fix.
+
+2012-04-26  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_ceil.S: Generate
+	long-double compat symbols.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_floor.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_fmax.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_fmin.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_llrint.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_rint.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_ceil.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_floor.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_fmax.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_fmin.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_isnan.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_llrint.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_lrint.S: Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/fpu/s_rint.S: Likewise.
+
+2012-04-25  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/bits/atomic.h: Include sysdep.h to get
+	HWCAP_* values only after the memory barriers have been defined.
+	(atomic_full_barrier): Define.
+	(atomic_read_barrier): Define.
+	(atomic_write_barrier): Define.
+
+2012-04-26  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* shlib-versions: Add libgcc_s version information.
+	* sysdeps/generic/libgcc_s.h: Remove.
+	* sysdeps/generic/framestate.c: Include gnu/lib-names.h instead of
+	libgcc_s.h.
+	* sysdeps/gnu/unwind-resume.c: Likewise.
+	* scripts/test-installation.pl: Remove libgcc_s from link_libs.
+
+2012-04-25  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sparc/brk.S: Delete.
+	* sysdeps/unix/sparc/dl-brk.S: Delete.
+	* sysdeps/unix/sparc/pipe.S: Delete.
+	* sysdeps/unix/sparc/sysdep.S: Delete.
+	* sysdeps/unix/sparc/sysdep.h: Delete.
+	* sysdeps/unix/sparc/vfork.S: Delete.
+	* sysdeps/sparc/sysdep.h (SPARC_PIC_THUNK, SPARC_PIC_REG,
+	SPARC_PIC_REG_LEAF, ENTRY, END, LOC): Define.
+	* sysdeps/unix/sysv/linux/sparc/sysdep.h (ret, ret_NOERRNO,
+	ret_ERRVAL, r0, r1, MOVE): Define.
+	(JUMPTARGET): Remove.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/sysdep.h: Don't include
+	sysdeps/unix/sparc/sysdep.h
+	(ENTRY, END): Remove.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sysdep.h: Likewise.
+
+2012-04-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makerules (native-compile): Use $(BUILD_LDFLAGS).
+	(ALL_BUILD_CFLAGS): Use $(BUILD_CPPFLAGS) -D_GNU_SOURCE
+	-DIS_IN_build.
+
+	* timezone/README: Update upstream location and email address for
+	tzcode and tzdata.
+	* timezone/zdump.c: Update from tzcode 2012b.
+	* timezone/zic.c: Likewise.
+
+	* configure.in (libc_cv_as_needed): Remove test.
+	* configure: Regenerated.
+	* Makeconfig [$(have-as-needed) != yes] (as-needed): Remove
+	conditional definition.
+	[$(have-as-needed) != yes] (no-as-needed): Likewise.
+	[$(have-as-needed) != yes] (libgcc_eh): Likewise.
+	* config.make.in (have-as-needed): Remove variable.
+
+2012-04-25  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/dl-minimal.c (__strtoul_internal): Parse hexadecimal and octal
+	strings correctly.
+
+2012-04-25  Chung-Lin Tang  <cltang@codesourcery.com>
+
+	* sysdeps/sh/memcpy.S: Remove include of endian.h, change
+	preprocessor endian tests to '#ifdef __BIG_ENDIAN__'.
+	* sysdeps/sh/strlen.S: Likewise.
+
+2012-04-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/fork.S: Remove file.
+	* sysdeps/unix/i386/fork.S: Likewise.
+	* sysdeps/unix/sparc/fork.S: Likewise.
+
+	* sysdeps/unix/system.c: Remove file.
+	* sysdeps/unix/bsd/bsd4.4/system.c: Likewise.
+
+	* sysdeps/unix/getegid.S: Remove file.
+	* sysdeps/unix/geteuid.S: Likewise.
+
+2012-04-24  Roland McGrath  <roland@hack.frob.com>
+
+	* scripts/check-localplt.awk: New file.
+	* elf/Makefile ($(objpfx)check-localplt.out): Use that script instead
+	of diff.
+	* scripts/data/localplt-generic.data: Add a comment.
+
+	* sysdeps/mach/hurd/symlink.c: Don't call __mach_port_deallocate on
+	NODE when __dir_mkfile failed.
+	* sysdeps/mach/hurd/symlinkat.c: Likewise.
+	Reported by Ludovic Courtès <ludo@gnu.org>.
+
+2012-04-24  Andreas Jaeger  <aj@suse.de>
+
+	* Makerules (common-clean): Also remove gen-as-const-headers
+	files.
+
+2012-04-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makerules (native-compile): Do not change working directory for
+	build.  Use $(OUTPUT_OPTION) in command.
+	(ALL_BUILD_CFLAGS): Use $(common-objpfx) to find config.h.
+
+2012-04-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #13886]
+	* sysdeps/powerpc/powerpc64/fpu/s_floorl.S: Delete file. Use the
+	sysdeps/ieee754/ldbl-128ibm/s_floorl.c version instead.
+	* math/libm-test.inc (floor_test): Add more tests.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update for pow tests.
+
+2012-04-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/getdents.c: Remove file.
+	* sysdeps/unix/sysv/getdents.c: Likewise.
+	* sysdeps/unix/sysv/syscalls.list (s_getdents): Remove.
+
+	* sysdeps/unix/syscalls.list (madvise): Add syscall from
+	sysdeps/unix/mman/syscalls.list.
+	(mmap): Likewise.
+	(mprotect): Likewise.
+	(msync): Likewise.
+	(munmap): Likewise.
+	* sysdeps/unix/bsd/bsd4.4/Implies: Remove.
+	* sysdeps/unix/mman/syscalls.list: Remove.
+	* sysdeps/unix/sysv/linux/Implies: Don't include unix/mman.
+
+	* configure.in (libc_cv_libgcc_s_suffix): Remove test.
+	(libc_cv_as_needed): Don't use $libc_cv_libgcc_s_suffix.
+	* configure: Regenerated.
+	* Makeconfig [$(have-as-needed) = yes] (libgcc_eh): Don't use
+	$(libgcc_s_suffix).
+	* config.make.in (libgcc_s_suffix): Remove variable.
+
+2012-04-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/gethostname.c: Move to ...
+	* sysdeps/posix/gethostname.c: ... here.
+
+	* sysdeps/unix/execve.S: Remove file.
+
+	* sysdeps/unix/_exit.S: Remove file.
+
+2012-04-23  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #13739]
+	* manual/Makefile: Remove make dist support, there's no
+	need for a stand-alone documentation tar ball.
+	(TEXI2DVI): Define always, it's not in Makeconfig.
+	(dist): Removed.
+	(tar-it): Removed.
+	(edition): Removed.
+	(glibc-doc-$(edition).tar): Removed
+	(%.Z): Removed.
+	(%.gz): Removed.
+	(%.uu): Removed.
+	(ETAGS): Remove, it's in Makeconfig.
+	(move-if-change): Remove, it's in Makeconfig.
+
+2013-04-23  Paul Eggert  <eggert@cs.ucla.edu>
+
+	[BZ #13970]
+	* stdlib/stdlib.h: Remove warn_unused_result attribute from strtol etc.
+	(strtod, strtof, strtold, strtol, strtoul, strtoq)
+	(strtouq, strtoll, strtoull, strtol_l, strtoul_l, strtoll_l, strtoull_l)
+	(strtod_l, strtof_l, strtold_l): Remove __wur.
+	It is not necessarily an error to ignore strtol's return value.
+	One can reliably look at the stored endptr to decide whether
+	the number had valid syntax.
+
+2012-04-21  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #13739]
+	* sysdeps/s390/s390-64/Makefile (distribute): Remove variable.
+
 2012-04-21  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/Versions (GLIBC_2.0): Add sysinfo.
@@ -8,7 +1225,7 @@
 	[BZ #13927]
 	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
 
-2012-04-21  Nix  <nix@esperi.org.uk>
+2012-04-21  Nick Alcock  <nick.alcock@oracle.com>
 
 	[BZ #7064]
 	* sysdeps/unix/sysv/linux/i386/syscalls.list: Omit explicit
@@ -2608,6 +3825,7 @@
 	* dlfcn/Makefile: Likewise.
 	* posix/Makefile: Likewise.
 
+	[BZ #6959]
 	* timezone/Makefile: Don't install timezone files, just the programs
 	and scripts.
 

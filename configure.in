@@ -104,14 +104,6 @@ AC_ARG_ENABLE([sanity-checks],
 	      [enable_sanity=$enableval],
 	      [enable_sanity=yes])
 
-AC_SUBST(enable_check_abi)
-AC_ARG_ENABLE([check-abi],
-	      AC_HELP_STRING([--enable-check-abi],
-			     [do "make check-abi" in "make check" (no/warn/yes)
-			      @<:@default=no@:>@]),
-	      [enable_check_abi=$enableval],
-	      [enable_check_abi=no])
-
 AC_ARG_ENABLE([shared],
 	      AC_HELP_STRING([--enable-shared],
 			     [build shared library @<:@default=yes if GNU ld@:>@]),
@@ -468,7 +460,7 @@ AC_SUBST(add_on_subdirs)
 ###
 if test -z "$enable_hacker_mode" && test x"$libc_config_ok" != xyes; then
   case "$machine-$host_os" in
-  *-linux* | *-gnu* | arm*-none*)
+  *-linux* | *-gnu*)
     ;;
   *)
     echo "*** The GNU C library is currently not available for this platform."
@@ -620,18 +612,8 @@ os="`echo $os | sed 's/\([0-9A-Z]\)[v_]\([0-9A-Z]\)/\1.\2/g'`"
 test "x$base_os" != x || case "$os" in
 gnu*)
   base_os=mach/hurd ;;
-netbsd* | 386bsd* | freebsd* | bsdi*)
-  base_os=unix/bsd/bsd4.4 ;;
-osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
-  base_os=unix/bsd ;;
-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
+linux*)
   base_os=unix/sysv ;;
-irix6*)
-  base_os=unix/sysv/irix6/$os ;;
-solaris[2-9]*)
-  base_os=unix/sysv/sysv4 ;;
-none)
-  base_os=standalone ;;
 esac
 
 # For sunos4.1.1, try sunos4.1.1, then sunos4.1, then sunos4, then sunos.
@@ -1551,37 +1533,6 @@ else
 fi
 rm -f conftest*])
 AC_SUBST(libc_cv_Bgroup)
-
-AC_CACHE_CHECK(for libgcc_s suffix,
-	       libc_cv_libgcc_s_suffix, [dnl
-cat > conftest.c <<EOF
-int main (void) { return 0; }
-EOF
-changequote(,)dnl
-libc_cv_libgcc_s_suffix=`${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS \
-			   -fPIC -shared -shared-libgcc -o conftest.so \
-			   conftest.c -v 2>&1 >/dev/null \
-			   | sed -n 's/^.* -lgcc_s\([^ ]*\) .*$/\1/p'`
-changequote([,])dnl
-rm -f conftest*])
-AC_SUBST(libc_cv_libgcc_s_suffix)
-
-AC_CACHE_CHECK(for --as-needed option,
-	       libc_cv_as_needed, [dnl
-cat > conftest.c <<EOF
-int main (void) { return 0; }
-EOF
-if AC_TRY_COMMAND([${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			      -fPIC -shared -o conftest.so conftest.c
-			      -lgcc_s$libc_cv_libgcc_s_suffix -Wl,--as-needed
-			      -nostdlib 1>&AS_MESSAGE_LOG_FD])
-then
-  libc_cv_as_needed=yes
-else
-  libc_cv_as_needed=no
-fi
-rm -f conftest*])
-AC_SUBST(libc_cv_as_needed)
 
 ASFLAGS_config=
 AC_CACHE_CHECK(whether --noexecstack is desirable for .S files,

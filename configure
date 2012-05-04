@@ -650,8 +650,6 @@ libc_cv_fpie
 libc_cv_z_execstack
 libc_cv_z_combreloc
 ASFLAGS_config
-libc_cv_as_needed
-libc_cv_libgcc_s_suffix
 libc_cv_Bgroup
 libc_cv_cc_with_libunwind
 VERSIONING
@@ -699,7 +697,6 @@ all_warnings
 force_install
 bindnow
 oldest_abi
-enable_check_abi
 use_default_link
 with_fp
 ac_ct_CXX
@@ -773,7 +770,6 @@ with_selinux
 with_headers
 with_default_link
 enable_sanity_checks
-enable_check_abi
 enable_shared
 enable_profile
 enable_versioning
@@ -1422,8 +1418,6 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-sanity-checks really do not use threads (should not be used except
                           in special situations) [default=yes]
-  --enable-check-abi      do "make check-abi" in "make check" (no/warn/yes)
-                          [default=no]
   --enable-shared         build shared library [default=yes if GNU ld]
   --enable-profile        build profiled library [default=no]
   --disable-versioning    do not include versioning information in the library
@@ -3564,15 +3558,6 @@ else
 fi
 
 
-
-# Check whether --enable-check-abi was given.
-if test "${enable_check_abi+set}" = set; then :
-  enableval=$enable_check_abi; enable_check_abi=$enableval
-else
-  enable_check_abi=no
-fi
-
-
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then :
   enableval=$enable_shared; shared=$enableval
@@ -4051,7 +4036,7 @@ fi
 ###
 if test -z "$enable_hacker_mode" && test x"$libc_config_ok" != xyes; then
   case "$machine-$host_os" in
-  *-linux* | *-gnu* | arm*-none*)
+  *-linux* | *-gnu*)
     ;;
   *)
     echo "*** The GNU C library is currently not available for this platform."
@@ -4246,18 +4231,8 @@ os="`echo $os | sed 's/\([0-9A-Z]\)[v_]\([0-9A-Z]\)/\1.\2/g'`"
 test "x$base_os" != x || case "$os" in
 gnu*)
   base_os=mach/hurd ;;
-netbsd* | 386bsd* | freebsd* | bsdi*)
-  base_os=unix/bsd/bsd4.4 ;;
-osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
-  base_os=unix/bsd ;;
-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
+linux*)
   base_os=unix/sysv ;;
-irix6*)
-  base_os=unix/sysv/irix6/$os ;;
-solaris[2-9]*)
-  base_os=unix/sysv/sysv4 ;;
-none)
-  base_os=standalone ;;
 esac
 
 # For sunos4.1.1, try sunos4.1.1, then sunos4.1, then sunos4, then sunos.
@@ -6399,52 +6374,6 @@ rm -f conftest*
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_Bgroup" >&5
 $as_echo "$libc_cv_Bgroup" >&6; }
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libgcc_s suffix" >&5
-$as_echo_n "checking for libgcc_s suffix... " >&6; }
-if ${libc_cv_libgcc_s_suffix+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
-int main (void) { return 0; }
-EOF
-libc_cv_libgcc_s_suffix=`${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS \
-			   -fPIC -shared -shared-libgcc -o conftest.so \
-			   conftest.c -v 2>&1 >/dev/null \
-			   | sed -n 's/^.* -lgcc_s\([^ ]*\) .*$/\1/p'`
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_libgcc_s_suffix" >&5
-$as_echo "$libc_cv_libgcc_s_suffix" >&6; }
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for --as-needed option" >&5
-$as_echo_n "checking for --as-needed option... " >&6; }
-if ${libc_cv_as_needed+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
-int main (void) { return 0; }
-EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			      -fPIC -shared -o conftest.so conftest.c
-			      -lgcc_s$libc_cv_libgcc_s_suffix -Wl,--as-needed
-			      -nostdlib 1>&5'
-  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }
-then
-  libc_cv_as_needed=yes
-else
-  libc_cv_as_needed=no
-fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_as_needed" >&5
-$as_echo "$libc_cv_as_needed" >&6; }
 
 
 ASFLAGS_config=

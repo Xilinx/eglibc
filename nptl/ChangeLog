@@ -1,3 +1,56 @@
+2012-05-03  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/pthread_spin_unlock.S: Fix thinko, we
+	always have to return 0, especially for the pthread_spin_init
+	alias.
+	* sysdeps/sparc/sparc32/pthread_spin_lock.S: Add missing trailing
+	newline.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_lock.S: Likewise.
+	* sysdeps/sparc/sparc64/pthread_spin_lock.S: Likewise.
+
+2012-05-02  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/pthread_spin_lock.S: New.
+	* sysdeps/sparc/sparc64/pthread_spin_lock.c: Delete.
+	* sysdeps/sparc/sparc64/pthread_spin_unlock.S: New.
+	* sysdeps/sparc/sparc64/pthread_spin_unlock.c: Delete.
+	* sysdeps/sparc/sparc64/pthread_spin_trylock.S: New.
+	* sysdeps/sparc/sparc64/pthread_spin_trylock.c: Delete.
+	* sysdeps/sparc/sparc64/pthread_spin_init.c: New.
+	* sysdeps/sparc/sparc32/pthread_spin_lock.S: New.
+	* sysdeps/sparc/sparc32/pthread_spin_lock.c: Delete.
+	* sysdeps/sparc/sparc32/pthread_spin_trylock.S: New.
+	* sysdeps/sparc/sparc32/pthread_spin_trylock.c: Delete.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_lock.S: New.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_lock.c: Delete.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_trylock.S: New.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_trylock.c: Delete.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_unlock.S: New.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_unlock.c: Delete.
+	* sysdeps/sparc/sparc32/sparcv9/pthread_spin_init.c: New.
+
+2012-05-02  Allan McRae  <allan@archlinux.org>
+
+	* Makefile: (LDFLAGS-tst-tls5): Use $(no-as-needed).
+	(LDFLAGS-tst-cancel24): Likewise.
+
+2012-05-02  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* sysdeps/i386/pthread_spin_lock.S: New.
+	* sysdeps/i386/pthread_spin_lock.c: Delete.
+	* sysdeps/x86_64/pthread_spin_lock.S: New.
+	* sysdeps/x86_64/pthread_spin_lock.c: Delete.
+
+2012-04-28  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* Makefile ($(objpfx)tst-stack3-mem, $(objpfx)tst-tls6.out): Don't
+	run when cross-compiling.
+
+2012-04-26  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/pthread/unwind-forcedunwind.c: Include gnu/lib-names.h
+	instead of libgcc_s.h.
+
 2012-04-20  Paul Pluzhnikov  <ppluzhnikov@google.com>
 
 	* sysdeps/x86_64/tls.h (TLS_GET_FS, TLS_SET_FS): Delete.

@@ -1181,17 +1181,16 @@ install-no-libc.a-nosubdir: install-bin-nosubdir install-bin-script-nosubdir \
 endif
 install: install-no-libc.a-nosubdir
 
-# Command to compile $< in $(objdir) using the native libraries.
+# Command to compile $< using the native libraries.
 define native-compile
 $(make-target-directory)
-$(patsubst %/,cd % &&,$(objpfx)) \
 $(BUILD_CC) $($(basename $(<F))-CFLAGS) $(ALL_BUILD_CFLAGS) \
-	    $(firstword $(filter /%,$< $(shell pwd)/$<)) -o $(@F)
+	    $< $(OUTPUT_OPTION) $(BUILD_LDFLAGS)
 endef
 
 # We always want to use configuration definitions.
-# Note that this is only used for commands running in $(objpfx).
-ALL_BUILD_CFLAGS = $(BUILD_CFLAGS) -include $(..)config.h
+ALL_BUILD_CFLAGS = $(BUILD_CFLAGS) $(BUILD_CPPFLAGS) -D_GNU_SOURCE \
+		   -DIS_IN_build -include $(common-objpfx)config.h
 
 # Support the GNU standard name for this target.
 .PHONY: check
@@ -1224,51 +1223,35 @@ ifeq ($(versioning),yes)
 	$(OBJDUMP) --dynamic-syms $< > $@T
 	mv -f $@T $@
 
-check-abi-%: $(..)scripts/extract-abilist.awk $(common-objpfx)config.make \
-	     $(..)abilist/%.abilist $(objpfx)%.symlist
+vpath %.abilist $(+sysdep_dirs)
+
+# The .PRECIOUS rule prevents the files built by an implicit rule whose
+# target pattern is %.symlist from being considered "intermediate files"
+# and automatically removed.  We only want these files to be removed by
+# 'make clean', which is handled by the 'generated' variable.
+.PRECIOUS: %.symlist
+generated += $(extra-libs:=.symlist)
+
+check-abi-%: $(common-objpfx)config.make %.abilist $(objpfx)%.symlist
 	$(check-abi)
-check-abi-%: $(..)scripts/extract-abilist.awk $(common-objpfx)config.make \
-	     $(..)abilist/%.abilist $(common-objpfx)%.symlist
+check-abi-%: $(common-objpfx)config.make %.abilist $(common-objpfx)%.symlist
 	$(check-abi)
 define check-abi
-	LC_ALL=C \
-	$(AWK) -f $< -v 'config=$(check-abi-config)' \
-	       $(patsubst %,-v 'lastversion=%',$($*-abi-frozen)) \
-	       $(filter %.abilist,$^) \
-	| { diff -p -U 0 - $(filter %.symlist,$^) $(check-abi-warn) ; }
+	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^)
 endef
-ifeq ($(enable-check-abi),warn)
-check-abi-warn = || echo '*** WARNING: $*.so failed ABI check'
-endif
 
-ifeq ($(firstword $(sysd-sorted-done) f)$(firstword $(generating) f),tf)
-config-tls := thread
-check-abi-config := \
-  $(config-machine)-$(config-vendor)-$(config-os)/$(config-tls)
-endif
-
-update-abi-%: $(..)scripts/merge-abilist.awk $(..)abilist/%.abilist \
-	      $(objpfx)%.symlist
+update-abi-%: $(objpfx)%.symlist %.abilist
 	$(update-abi)
-update-abi-%: $(..)scripts/merge-abilist.awk $(..)abilist/%.abilist \
-	      $(common-objpfx)%.symlist
+update-abi-%: $(common-objpfx)%.symlist %.abilist
 	$(update-abi)
-ifndef update-abi-config
 define update-abi
-	@echo 'Run $(MAKE) $@ update-abi-config=REGEXP'; exit 2
-endef
-else
-define update-abi
-LC_ALL=C $(AWK) -v config='$(update-abi-config)' -f $^ \
-	 > $(..)abilist/$*.abilist.new
-@if cmp -s $(..)abilist/$*.abilist.new $(..)abilist/$*.abilist 2> /dev/null; \
- then rm -f $(..)abilist/$*.abilist.new; \
-      echo '+++ $(..)abilist/$*.abilist is unchanged'; \
- else mv -f $(..)abilist/$*.abilist.new $(..)abilist/$*.abilist; \
-      echo '*** Now check $*.abilist changes for correctness ***'; \
+@if cmp -s $^ 2> /dev/null; \
+ then \
+      echo '+++ $(filter %.abilist,$^) is unchanged'; \
+ else cp -f $^; \
+      echo '*** Now check $(filter %.abilist,$^) changes for correctness ***'; \
  fi
 endef
-endif
 
 .PHONY: update-abi check-abi
 update-abi: $(patsubst %.so,update-abi-%,$(install-lib.so-versioned))
@@ -1288,10 +1271,8 @@ common-generated += libc.symlist
 endif
 
 ifeq ($(build-shared),yes)
-ifneq ($(enable-check-abi),no)
 ifdef subdir
 tests: check-abi
-endif
 endif
 endif
 
@@ -1397,6 +1378,7 @@ common-clean: common-mostlyclean
 	-rm -f $(objpfx)*.d $(objpfx)*.dt
 	-rm -fr $(addprefix $(objpfx),$(generated-dirs))
 	-rm -f $(addprefix $(common-objpfx),$(common-generated))
+	-rm -f $(gen-as-const-headers:%.sym=$(common-objpfx)%.h)
 
 # Produce a file `stubs' which contains `#define __stub_FUNCTION'
 # for each function which is a stub.  We grovel over all the .d files
