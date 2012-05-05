@@ -1,3 +1,122 @@
+2012-05-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (hypot_test) [TEST_DOUBLE && TEST_INLINE]:
+	Disable one test.
+
+	[BZ #13787]
+	[BZ #13922]
+	[BZ #14036]
+	* sysdeps/i386/fpu/e_expl.S (csat): New constant.
+	(__ieee754_expl): Allow for and saturate large arguments.
+	* sysdeps/ieee754/dbl-64/w_exp.c (o_threshold): Remove variable.
+	(u_threshold): Likewise.
+	(__exp): Call __ieee754_exp before checking for overflow and
+	underflow.
+	* sysdeps/ieee754/flt-32/w_expf.c (o_threshold): Remove variable.
+	(u_threshold): Likewise.
+	(__expf): Call __ieee754_expf before checking for overflow and
+	underflow.
+	* sysdeps/ieee754/ldbl-96/w_expl.c (o_threshold): Remove variable.
+	(u_threshold): Likewise.
+	(__expl): Call __ieee754_expl before checking for overflow and
+	underflow.
+	* sysdeps/x86_64/fpu/e_expl.S (csat): New constant.
+	(__ieee754_expl): Allow for and saturate large arguments.
+	* math/libm-test.inc (exp_test): Add another test.  Do not allow
+	missing overflow exception on overflow.
+	(expm1_test): Do not allow missing overflow exception on overflow.
+
+	* sysdeps/i386/fpu/e_expl.c: Move to ...
+	* sysdeps/i386/fpu/e_expl.S: ... here.  Write directly in assembly
+	rather than using inline asm.
+	* sysdeps/x86_64/fpu/e_expl.c: Remove file.
+	* sysdeps/x86_64/fpu/e_expl.S: Copy from
+	sysdeps/i386/fpu/e_expl.S, adjusted for x86_64.
+
+	* sysdeps/unix/sysv/syscalls.list (ftime): Remove.
+	(nice): Likewise.
+	(poll): Likewise.
+	(signal): Likewise.
+	(time): Likewise.
+	(times): Likewise.
+
+2012-05-04  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/syscalls.list (adjtime): Add entry from
+	sysdeps/unix/common/syscalls.list.
+	(fchmod): Likewise.
+	(fchown): Likewise.
+	(ftruncate): Likewise.
+	(getrusage): Likewise.
+	(gettimeofday): Likewise.
+	(setpgid): Likewise.
+	(setregid): Likewise.
+	(setreuid): Likewise.
+	(sigaction): Likewise.
+	(truncate): Likewise.
+	(vhangup): Likewise.
+	* sysdeps/unix/common/syscalls.list: Remove file.
+	* sysdeps/unix/bsd/Implies: Don't include unix/common.
+	* sysdeps/unix/sysv/linux/Implies: Likewise.
+
+2012-05-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/nptl/ld.abilist: Moved to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/ld.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libBrokenLocale.abilist:
+	Moved to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libBrokenLocale.abilist:
+	Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libanl.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libanl.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libc.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libc.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libcrypt.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libcrypt.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libdl.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libdl.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libm.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libm.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libnsl.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libnsl.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libpthread.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libpthread.abilist:
+	Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libresolv.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libresolv.abilist:
+	Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/librt.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/librt.abilist: Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libthread_db.abilist:
+	Moved to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libthread_db.abilist:
+	Here.
+	* sysdeps/unix/sysv/linux/x86_64/nptl/libutil.abilist: Moved
+	to ...
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libutil.abilist: Here.
+
+2012-05-04  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/common/bits/dirent.h: Remove file.
+	* sysdeps/unix/common/bits/fcntl.h: Likewise.
+
+	* sysdeps/unix/bsd/bits/dirent.h: Remove file.
+	* sysdeps/unix/bsd/bits/fcntl.h: Likewise.
+	* sysdeps/unix/bsd/bsd4.4/isatty.c: Likewise.
+	* sysdeps/unix/bsd/isatty.c: Likewise.
+	* sysdeps/unix/bsd/tcdrain.c: Likewise.
+	* sysdeps/unix/bsd/tcgetattr.c: Likewise.
+	* sysdeps/unix/bsd/tcsetattr.c: Likewise.
+
 2012-05-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/ieee754/ldbl-128ibm/e_acosl.c (__ieee754_acosl): Fix
@@ -28,11 +147,11 @@
 	(malloc_opt_barrier): New.
 
 2012-05-03  Andreas Jaeger  <aj@suse.de>
-	    Roland McGrath <roland@hack.frob.com>
+	    Roland McGrath  <roland@hack.frob.com>
 
-        * Makerules (.PRECIOUS): Add %.symlist pattern to prevent
+	* Makerules (.PRECIOUS): Add %.symlist pattern to prevent
 	intermediate file deletion.
-        (generated): Add .symlist files.
+	(generated): Add .symlist files.
 
 2012-05-03  Joseph Myers  <joseph@codesourcery.com>
 
@@ -117,10 +236,10 @@
 
 2012-05-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
-        [BZ #2550]
-        [BZ #2570]
-        * sysdeps/ieee754/ldbl-128ibm/s_nexttoward.c: Use floating-point
-        comparisons to determine direction to adjust input.
+	[BZ #2550]
+	[BZ #2570]
+	* sysdeps/ieee754/ldbl-128ibm/s_nexttoward.c: Use floating-point
+	comparisons to determine direction to adjust input.
 
 2012-05-01  Roland McGrath  <roland@hack.frob.com>
 
