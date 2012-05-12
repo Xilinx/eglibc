@@ -1,7 +1,6 @@
 /* Support macros for making weak and strong aliases for symbols,
    and for using symbol sets and linker warnings with GNU ld.
-   Copyright (C) 1995-1998,2000-2006,2008,2009,2011,2012
-   Free Software Foundation, Inc.
+   Copyright (C) 1995-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -571,13 +570,19 @@ for linking")
 # define hidden_data_weak(name)
 # define hidden_data_def(name)
 # define hidden_data_ver(local, name)
+# define hidden_nolink(name, lib, version)
 #endif
 
 #if !defined NOT_IN_libc
 # define libc_hidden_proto(name, attrs...) hidden_proto (name, ##attrs)
 # define libc_hidden_def(name) hidden_def (name)
 # define libc_hidden_weak(name) hidden_weak (name)
-# define libc_hidden_nolink(name, version) hidden_nolink (name, libc, version)
+# ifdef LINK_OBSOLETE_RPC
+   /* libc_hidden_nolink_sunrpc should only get used in sunrpc code.  */
+#  define libc_hidden_nolink_sunrpc(name, version) hidden_def (name)
+# else
+#  define libc_hidden_nolink_sunrpc(name, version) hidden_nolink (name, libc, version)
+# endif
 # define libc_hidden_ver(local, name) hidden_ver (local, name)
 # define libc_hidden_data_def(name) hidden_data_def (name)
 # define libc_hidden_data_weak(name) hidden_data_weak (name)

@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 2000, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 1997-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -20,6 +20,9 @@
 #ifndef _NETINET_IN_H
 # error "Never use <bits/in.h> directly; include <netinet/in.h> instead."
 #endif
+
+/* To select the IP level.  */
+#define SOL_IP		0
 
 /* Options for use with `getsockopt' and `setsockopt' at the IP level.
    The first word in the comment at the right is the data type used;
@@ -47,9 +50,13 @@ struct ip_opts
     char ip_opts[40];		/* Actually variable in size.  */
   };
 
+/* Socket-level values for IPv6.  */
+#define SOL_IPV6		41
+#define SOL_ICMPV6		58
+
 /* IPV6 socket options.  */
 #define IPV6_ADDRFORM		1
-#define IPV6_RXINFO		2
+#define IPV6_PKTINFO		2
 #define IPV6_HOPOPTS		3
 #define IPV6_DSTOPTS		4
 #define IPV6_RTHDR		5
@@ -57,8 +64,9 @@ struct ip_opts
 #define IPV6_CHECKSUM		7
 #define IPV6_HOPLIMIT		8
 
-#define IPV6_TXINFO		IPV6_RXINFO
-#define SCM_SRCINFO		IPV6_TXINFO
+#define IPV6_RXINFO		IPV6_PKTINFO
+#define IPV6_TXINFO		IPV6_PKTINFO
+#define SCM_SRCINFO		IPV6_PKTINFO
 #define SCM_SRCRT		IPV6_RXSRCRT
 
 #define IPV6_UNICAST_HOPS	16

@@ -53,22 +53,17 @@ void add_type(int len, const char *type);
 
 /* This header is the last one included in all rpc_*.c files,
    so we define stuff for cross-rpcgen here to avoid conflicts with
-   $build's C library and $host's GLIBC.  */
-#ifdef _CROSS_RPCGEN_
+   $build's C library and $host's glibc.  */
 
-/* Rather then defining _GNU_SOURCE before including $build's <string.h>
-   we just declare stpcpy here.  */
-extern char *stpcpy (char *, const char *);
+#ifdef IS_IN_build
 
-/* Use $build's i18n support as we can't use $host's.  */
-#define _(X) (gettext (X))
+/* Disable translated messages when built for $build and used in
+   building glibc.  */
+#define _(X) (X)
+#define textdomain(X) ((void) 0)
 
-/* rpcgen sources check for __GNU_LIBRARY__ to tweak for GLIBC code
-   that rpcgen generates.  The proper fix would be to rename all those checks
-   to something like '#if defined(TWEAK_FOR_GLIBC) || 1'.  */
-#ifndef __GNU_LIBRARY__
-#define __GNU_LIBRARY__
-#endif
+/* This is used in the definition of PACKAGE for --version output.  */
+#define _libc_intl_domainname "libc"
 
 #define REPORT_BUGS_TO ""
 #define PKGVERSION ""

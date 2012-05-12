@@ -1,5 +1,4 @@
-/* Copyright (C) 1993,1994,1995,1996,1997,1998,2001,2003,2005,2006
-	Free Software Foundation, Inc.
+/* Copyright (C) 1993-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,6 +28,7 @@
 #include <stdio.h>
 #include <hurd.h>
 #include <hurd/fd.h>
+#include <not-cancel.h>
 #include "dirstream.h"
 
 
@@ -50,9 +50,11 @@ _hurd_fd_opendir (struct hurd_fd *d)
     return NULL;
 
   /* Set the descriptor to close on exec. */
+  HURD_CRITICAL_BEGIN;
   __spin_lock (&d->port.lock);
   d->flags |= FD_CLOEXEC;
   __spin_unlock (&d->port.lock);
+  HURD_CRITICAL_END;
 
   dirp->__fd = d;
   dirp->__data = dirp->__ptr = NULL;
@@ -66,10 +68,45 @@ _hurd_fd_opendir (struct hurd_fd *d)
 }
 
 
+DIR *
+internal_function
+__opendirat (int dfd, const char *name)
+{
+  if (name[0] == '\0')
+    {
+      /* POSIX.1-1990 says an empty name gets ENOENT;
+	 but `open' might like it fine.  */
+      __set_errno (ENOENT);
+      return NULL;
+    }
+
+  int flags = O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC;
+  int fd;
+#ifdef IS_IN_rtld
+  assert (dfd == AT_FDCWD);
+  fd = open_not_cancel_2 (name, flags);
+#else
+  fd = openat_not_cancel_3 (dfd, name, flags);
+#endif
+  if (fd < 0)
+    return NULL;
+
+  /* Extract the pointer to the descriptor structure.  */
+  DIR *dirp = _hurd_fd_opendir (_hurd_fd_get (fd));
+  if (dirp == NULL)
+    __close (fd);
+
+  return dirp;
+}
+
+
 /* Open a directory stream on NAME.  */
 DIR *
 __opendir (const char *name)
 {
+#if 0 /* TODO.  */
+  return __opendirat (AT_FDCWD, name);
+#else
   if (name[0] == '\0')
     {
       /* POSIX.1-1990 says an empty name gets ENOENT;
@@ -88,5 +125,6 @@ __opendir (const char *name)
     __close (fd);
 
   return dirp;
+#endif
 }
 weak_alias (__opendir, opendir)

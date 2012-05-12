@@ -174,7 +174,7 @@ typedef struct
    do not get optimized away.  */
 # define THREAD_SELF \
   ({ struct pthread *__self;						      \
-     asm ("movq %%fs:%c1,%q0" : "=r" (__self)				      \
+     asm ("mov %%fs:%c1,%0" : "=r" (__self)				      \
 	  : "i" (offsetof (struct pthread, header.self)));	 	      \
      __self;})
 
@@ -261,7 +261,7 @@ typedef struct
 	   abort ();							      \
 									      \
 	 asm volatile ("movq %q0,%%fs:%P1" :				      \
-		       : IMM_MODE ((unsigned long int) value),		      \
+		       : IMM_MODE ((uint64_t) value),			      \
 			 "i" (offsetof (struct pthread, member)));	      \
        }})
 
@@ -286,7 +286,7 @@ typedef struct
 	   abort ();							      \
 									      \
 	 asm volatile ("movq %q0,%%fs:%P1(,%q2,8)" :			      \
-		       : IMM_MODE ((unsigned long int) value),		      \
+		       : IMM_MODE ((uint64_t) value),			      \
 			 "i" (offsetof (struct pthread, member[0])),	      \
 			 "r" (idx));					      \
        }})

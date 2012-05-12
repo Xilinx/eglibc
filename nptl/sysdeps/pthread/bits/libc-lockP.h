@@ -295,6 +295,8 @@ libc_hidden_proto (__libc_lock_unlock_fn);
     }									      \
   } while (0)
 
+/* Get once control variable.  */
+#define __libc_once_get(ONCE_CONTROL)	((ONCE_CONTROL) != PTHREAD_ONCE_INIT)
 
 /* Note that for I/O cleanup handling we are using the old-style
    cancel handling.  It does not have to be integrated with C++ snce

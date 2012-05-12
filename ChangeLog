@@ -1,3 +1,800 @@
+2012-05-12  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* io/dup3.c (dup3): Rename to __dup3, add weak alias for dup3.
+	* sysdeps/unix/syscalls.list (dup3): Likewise.
+	* libio/freopen.c (freopen): Invoke __dup3 instead of dup3.
+	* libio/freopen64.c (freopen64): Invoke __dup3 instead of dup3.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/stackguard-macros.h (STACK_CHK_GUARD) [__x86_64__]: Use
+	"%c1" with "i" (offsetof (tcbhead_t, stack_guard)).
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/tls-macros.h (TLS_LE): Use mov instead of movq to load
+	thread pointer.
+	(TLS_IE): Use mov/add instead of movq/addq to load thread
+	pointer.
+	(TLS_GD_PREFIX): New.
+	(TLS_GD): Use it.
+
+2012-05-11  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/bits/fenv.h (__fenv_stfsr): Add __volatile__.
+	* sysdeps/sparc/fpu/fpu_control.h (_FPU_GETCW):	Likewise.
+	(_FPU_SETCW): Likewise.
+
+2012-05-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-trampoline.S: Check if RTLD_SAVESPACE_SSE
+	is 32-byte aligned.
+
+2012-05-11  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #11837]
+	* iconvdata/gb18030.c: Update tables.
+	(BODY for FROM_LOOP): Update.  Handle two-byte encoded non-BMP
+	characters specially.
+	(BODY for TO_LOOP): Add encoding of missing ranges.
+
+2012-05-11  Thomas Schwinge  <thomas@codesourcery.com>
+
+	[BZ #13673]
+	* sysdeps/mach/hurd/accept4.c: Replace FSF snail mail address with URL.
+	* sysdeps/mach/hurd/dup3.c: Likewise.
+	* sysdeps/mach/hurd/readlinkat.c: Likewise.
+	* sysdeps/powerpc/memmove.c:: Likewise.
+
+2012-05-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela_relative): Handle
+	R_X86_64_RELATIVE64 only if RTLD_BOOTSTRAP isn't defined.
+
+2012-05-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/elf.h (R_X86_64_RELATIVE64): New.
+	(R_X86_64_NUM): Updated.
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela): Handle
+	R_X86_64_RELATIVE64.  Always use Elf64_Addr with R_X86_64_64.
+	(elf_machine_rela_relative): Handle R_X86_64_RELATIVE64.
+	* sysdeps/x86_64/Makefile (tests): Add tst-quad1 tst-quad2
+	tst-quad1pie tst-quad2pie
+	(modules-names): Add tst-quadmod1 tst-quadmod2.
+	($(objpfx)tst-quad1): New dependency.
+	($(objpfx)tst-quad2): Likewise.
+	($(objpfx)tst-quad1pie): Likewise.
+	($(objpfx)tst-quad2pie): Likewise.
+	* sysdeps/x86_64/tst-quad1.c: New file.
+	* sysdeps/x86_64/tst-quad1pie.c: New file.
+	* sysdeps/x86_64/tst-quad2.c: Likewise.
+	* sysdeps/x86_64/tst-quad2pie.c: Likewise.
+	* sysdeps/x86_64/tst-quadmod1.S: Likewise.
+	* sysdeps/x86_64/tst-quadmod1pie.S: Likewise.
+	* sysdeps/x86_64/tst-quadmod2.S: Likewise.
+	* sysdeps/x86_64/tst-quadmod2pie.S: Likewise.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* io/fcntl.h (mode_t, off_t, pid_t): Define types.
+	(__mode_t_defined, __off_t_defined, __pid_t_defined): Define macros.
+	* streams/stropts.h (t_scalar_t): Define type.
+
+	* sysdeps/generic/paths.h (_PATH_MAN): Set to "/usr/share/man"
+	(_PATH_PRESERVE): Set to "/var/lib".
+	(_PATH_RWHODIR): Set to "/var/spool/rwho".
+
+	* sysdeps/mach/hurd/openat.c (__openat): Set type of MODE to mode_t
+	instead of int.
+
+	* sysdeps/mach/hurd/xmknodat.c (__xmknodat): Deallocate NODE port only
+	if __dir_mkfile succeeded.
+
+	* sysdeps/mach/hurd/dup3.c: Lock _hurd_dtable_lock before
+	checking for _hurd_dtablesize.  Unlock it right after having
+	finished _hurd_dtable allocation.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/configure.in: Remove warning for --prefix=[...].
+	* sysdeps/mach/hurd/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/configure.in: Move --prefix=/usr
+	special-casing to...
+	* sysdeps/gnu/configure.in: ... this new file.
+	* sysdeps/unix/sysv/linux/configure: Regenerated.
+	* sysdeps/gnu/configure: New generated file.
+
+	* sysdeps/mach/hurd/bits/stat.h (struct stat): Align to what is done
+	for Linux: use nsec instead of usec, as well as:
+	[__USE_MISC || __USE_XOPEN2K8] (st_atim, st_mtim, st_ctim): New
+	members of type struct timespec.
+	[__USE_MISC || __USE_XOPEN2K8] (st_atime, st_mtime, st_ctime):
+	New macros.
+	(struct stat64): Likewise.
+	(_STATBUF_ST_NSEC): New macro.
+	* sysdeps/mach/hurd/xstatconv.c (xstat64_conv): Adapt to that.
+
+	* hurd/lookup-retry.c (__hurd_file_name_lookup_retry): Use
+	__strtoul_internal rather than strtoul.
+
+2012-05-10  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* hurd/hurdsock.c (_hurd_socket_server): Check for negative domains,
+	and reject them.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/setresgid.c (__setresgid): Handle the -1 case,
+	which preserves existing values.
+	* sysdeps/mach/hurd/setresuid.c (__setresuid): Likewise.
+
+2012-05-10  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* hurd/hurdselect.c (_hurd_select): Return EINVAL for negative
+	TIMEOUT values.  Return EINVAL for NFDS values either negative or
+	greater than FD_SETSIZE.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/brk.c (_hurd_set_brk): When more space needs to be
+	allocated, call __vm_protect to finish enabling the existing space, and
+	pass a copy of _hurd_data_end instead of PAGEBRK to __vm_allocate to
+	allocate the remainder.
+
+2012-05-10  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/mach/hurd/recvfrom.c (__recvfrom): Check also for a null
+	address port.  Set ADDR_LEN to 0 when not filling ADDRARG.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/readlinkat.c: New file, heavily derived from
+	sysdeps/mach/hurd/readlink.c.
+
+	* posix/tst-sysconf.c (posix_options): Only use
+	_POSIX_PRIORITIZED_IO, _POSIX_PRIORITY_SCHEDULING, and
+	_POSIX_SYNCHRONIZED_IO when they are defined
+	* sysdeps/mach/hurd/bits/posix_opt.h:
+	(_POSIX_PRIORITY_SCHEDULING): Undefine macro.
+	(_XOPEN_REALTIME): Undefine macro.
+	(_XOPEN_REALTIME_THREADS): Undefine macro.
+	(_XOPEN_SHM): Undefine macro.
+	[__USE_XOPEN2K8] (_POSIX_THREAD_ROBUST_PRIO_INHERIT): Define
+	macro to -1.
+	[__USE_XOPEN2K8] (_POSIX_THREAD_ROBUST_PRIO_PROTECT): Define
+	macro to -1.
+	(_POSIX_ASYNC_IO): Undefine macro.
+	(_POSIX_PRIORITIZED_IO): Undefine macro.
+	(_POSIX_SPIN_LOCKS): Define macro to -1.
+
+	* bits/sigaction.h [__USE_XOPEN2K8]: Define SA_RESTART,
+	SA_NODEFER, SA_RESETHAND.
+	* sysdeps/mach/hurd/bits/fcntl.h [__USE_XOPEN2K8]: Define
+	O_NOFOLLOW, O_DIRECTORY, O_CLOEXEC, F_GETOWN, F_SETOWN,
+	F_DUPFD_CLOEXEC.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* elf/Makefile (pldd-modules): Define unconditionally.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/opendir.c (__opendirat): New function.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* hurd/hurdchdir.c (_hurd_change_directory_port_from_name):
+	Return ENOENT when name is empty.
+	* sysdeps/mach/hurd/chroot.c (chroot): Likewise.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* include/libc-symbols.h [NO_HIDDEN] (hidden_nolink): New macro.
+
+	* nss/makedb.c (MAP_POPULATE): If not defined, define to zero.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	Fix mlock in all cases except non-readable pages.
+	* sysdeps/mach/hurd/mlock.c (mlock): Give VM_PROT_READ
+	instead of VM_PROT_ALL as parameter to __vm_wire function.
+
+	* sysdeps/mach/hurd/mkdir.c: Include <string.h>.
+	(__mkdir): When path is `/', just fail with EEXIST.
+	* sysdeps/mach/hurd/mkdirat.c: Likewise.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* nss/makedb.c: Include <sys/param.h> (for MAX and roundup), and
+	<sys/uio.h> (for writev).
+	* nss/nss_db/db-initgroups.c: Include <limits.h> (for ULONG_MAX),
+	and <sys/param.h> (for MIN).
+
+2012-05-10  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/mach/nanosleep.c: Return EINVAL for invalid values of
+	REQUESTED_TIME.  Properly set the remaining time and return EINTR
+	if interrupted.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/Makefile ($(common-objpfx)linkobj/libc.so):
+	Depend on against $(link-rpcuserlibs).
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/generic/ldsodefs.h [LIBC_STACK_END_NOT_RELRO]
+	(__libc_stack_end): Do not use attribute_relro.
+	* sysdeps/mach/hurd/dl-sysdep.h (LIBC_STACK_END_NOT_RELRO): Define.
+	* sysdeps/mach/hurd/i386/init-first.c (init): Update __libc_stack_end
+	to libthread-provided value.
+	* sysdeps/mach/hurd/dl-sysdep.c (__libc_stack_end): Do not use
+	attribute_relro.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	[BZ #3748]
+	* bits/libc-lock.h (__libc_once_get): New macro.
+	* sysdeps/mach/bits/libc-lock.h: Likewise.
+	* sysdeps/mach/hurd/bits/libc-lock.h: Likewise.
+	* sysdeps/posix/getaddrinfo.c (getaddrinfo): Use __libc_once_get
+	instead of using implementation details.
+
+	* libio/fileops.c: Unconditionally include <kernel-features.h>.
+	* libio/freopen.c: Likewise.
+	* libio/freopen64.c: Likewise.
+	* misc/syslog.c: Likewise.
+	* nscd/connections.c: Likewise.
+	* nscd/netgroupcache.c: Likewise.
+	* sysdeps/posix/getcwd.c: Likewise.
+
+2012-05-10  Roland McGrath  <roland@hack.frob.com>
+
+	* math/w_ilogbf.c: Add #include <limits.h>.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/setitimer.c (setitimer_locked): Use common exit
+	path instead of returning without unlocking.
+
+	* sysdeps/mach/hurd/bits/ioctls.h (_IOIW): New macro for
+	immediate-write ioctls.
+	* sysdeps/mach/hurd/ioctl.c: Handle cases with no arguments.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/i386/init-first.c (init): Use
+	__builtin_frame_address instead of making assumptions about the
+	location of the return address relative to DATA.  Force early load of
+	the return address.
+	(_dl_init_first, doinit1 in doinit in _hurd_stack_setup): Don't use
+	__builtin_frame_address.
+
+	dup3 for GNU Hurd.
+	* include/unistd.h: Declare __dup3 and use libc_hidden_proto on it.
+	* sysdeps/mach/hurd/dup3.c: New file, copy from dup2.c.  Evolve it to
+	implement dup3 and do some further code clean-ups.
+	* sysdeps/mach/hurd/dup2.c (__dup2): Reimplement using __dup3.
+	* sysdeps/mach/hurd/kernel-features.h (__ASSUME_DUP3): Define.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/dl-sysdep.c: Conditionalize contents on [SHARED].
+
+	* hurd/hurd/fd.h (_hurd_fd_get): Call HURD_CRITICAL_BEGIN/
+	HURD_CRITICAL_END around holding _hurd_dtable_lock.
+	* sysdeps/mach/hurd/dirfd (dirfd): Likewise.
+	* sysdeps/mach/hurd/opendir.c (_hurd_fd_opendir): Call
+	HURD_CRITICAL_BEGIN/HURD_CRITICAL_END around holding
+	d->port.lock.
+
+	* hurd/catch-signal.c (hurd_catch_signal): Use sigsetjmp/siglongjmp
+	instead of setjmp/longjmp to restore the signal mask.  Call sigsetjmp
+	when handler == SIG_ERR, not when handler != SIG_ERR.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/bits/socket.h: New file, copy from the bsd4.4 one.
+	(SOCK_MAX, SOCK_TYPE_MASK, SOCK_CLOEXEC, SOCK_NONBLOCK): New
+	definitions.
+
+	accept4 for GNU Hurd.
+	* include/sys/socket.h (__libc_accept4): New prototype.
+	* sysdeps/mach/hurd/accept4.c: New file, copy from accept.c.  Evolve it
+	to implement __libc_accept4.
+	* sysdeps/mach/hurd/accept.c (accept): Reimplement using
+	__libc_accept4.
+	* sysdeps/mach/hurd/kernel-features.h (__ASSUME_ACCEPT4): Define.
+
+	* sysdeps/mach/hurd/i386/____longjmp_chk.S: New file.
+	* sysdeps/mach/hurd/i386/signal-defines.sym: New file.
+	* sysdeps/mach/hurd/i386/Makefile (gen-as-const-headers): Add
+	signal-defines.sym.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* bits/in.h (SOL_IP, SOL_IPV6, SOL_ICMPV6): New macros.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	* sysdeps/mach/hurd/dl-sysdep.c (open_file): Do not raise
+	assertion on O_CLOEXEC flag.
+	* hurd/hurd/fd.h: Update comment to mention O_CLOEXEC.
+	* hurd/intern-fd.c: Likewise.
+	* hurd/port2fd.c: Likewise.
+
+2012-05-10  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	[BZ #3906]
+	* bits/in.h (IPV6_PKTINFO): Define new macro.
+	(IPV6_RXINFO,IPV6_TXINFO,SCM_SRCINFO): Redefine to IPV6_PKTINFO.
+
+2012-05-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #13954]
+	[BZ #13955]
+	[BZ #13956]
+	* sysdeps/ieee754/dbl-64/s_logb.c (__logb): Fix for subnormal number.
+	* sysdeps/ieee754/dbl-64/wordsize-64/s_logb.c (__logb): Likewise.
+	* sysdeps/ieee754/flt-32/s_logbf.c (__logf): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_logbl.c (__logbl): Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_logbl.c (__logbl): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_logbl.c (__logbl): Likewise.
+	* math/libm-test.inc (logb_test) : Additional logb tests.
+
+2012-05-09  Andreas Schwab  <schwab@linux-m68k.org>
+	    Andreas Jaeger  <aj@suse.de>
+
+	* configure.in (obsolete-rpc): Add new option --enable-obsolete-rpc.
+	* configure: Regenerated.
+	* config.h.in (LINK_OBSOLETE_RPC): New macro.
+	* config.make.in (link-obsolete-rpc): New substituted variable.
+	* include/libc-symbols.h (libc_hidden_nolink_sunrpc): Rename from
+	libc_hidden_nolink and define based on LINK_OBSOLETE_RPC.
+	* sunrpc/Makefile (headers) [link-obsolete-rpc]: Add rpc headers.
+	(shared-only-routines): Don't set it under [link-obsolete-rpc],
+	so that libc.a contains the symbols.
+	* nis/Makefile (headers) [link-obsolete-rpc]: Add rpc headers.
+	* sunrpc/auth_des.c: Use libc_hidden_nolink_sunrpc.
+	* sunrpc/auth_none.c: Likewise.
+	* sunrpc/auth_unix.c: Likewise.
+	* sunrpc/authdes_prot.c: Likewise.
+	* sunrpc/authuxprot.c: Likewise.
+	* sunrpc/clnt_gen.c: Likewise.
+	* sunrpc/clnt_perr.c: Likewise.
+	* sunrpc/clnt_raw.c: Likewise.
+	* sunrpc/clnt_simp.c: Likewise.
+	* sunrpc/clnt_tcp.c: Likewise.
+	* sunrpc/clnt_udp.c: Likewise.
+	* sunrpc/clnt_unix.c: Likewise.
+	* sunrpc/des_crypt.c: Likewise.
+	* sunrpc/des_soft.c: Likewise.
+	* sunrpc/get_myaddr.c: Likewise.
+	* sunrpc/key_call.c: Likewise.
+	* sunrpc/key_prot.c: Likewise.
+	* sunrpc/netname.c: Likewise.
+	* sunrpc/pm_getmaps.c: Likewise.
+	* sunrpc/pm_getport.c: Likewise.
+	* sunrpc/pmap_clnt.c: Likewise.
+	* sunrpc/pmap_prot.c: Likewise.
+	* sunrpc/pmap_prot2.c: Likewise.
+	* sunrpc/pmap_rmt.c: Likewise.
+	* sunrpc/publickey.c: Likewise.
+	* sunrpc/rpc_cmsg.c: Likewise.
+	* sunrpc/rpc_common.c: Likewise.
+	* sunrpc/rpc_dtable.c: Likewise.
+	* sunrpc/rpc_prot.c: Likewise.
+	* sunrpc/rpc_thread.c: Likewise.
+	* sunrpc/rtime.c: Likewise.
+	* sunrpc/svc.c: Likewise.
+	* sunrpc/svc_auth.c: Likewise.
+	* sunrpc/svc_raw.c: Likewise.
+	* sunrpc/svc_run.c: Likewise.
+	* sunrpc/svc_tcp.c: Likewise.
+	* sunrpc/svc_udp.c: Likewise.
+	* sunrpc/svc_unix.c: Likewise.
+	* sunrpc/svcauth_des.c: Likewise.
+	* sunrpc/xcrypt.c: Likewise.
+	* sunrpc/xdr.c: Likewise.
+	* sunrpc/xdr_array.c: Likewise.
+	* sunrpc/xdr_float.c: Likewise.
+	* sunrpc/xdr_intXX_t.c: Likewise.
+	* sunrpc/xdr_mem.c: Likewise.
+	* sunrpc/xdr_rec.c: Likewise.
+	* sunrpc/xdr_ref.c: Likewise.
+	* sunrpc/xdr_sizeof.c: Likewise.
+	* sunrpc/xdr_stdio.c: Likewise.
+
+2012-05-10  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela): Fix typo in last
+	change.  Update copyright years.
+
+2012-05-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* include/stdc-predef.h (__STDC_NO_THREADS__): Define.
+
+2012-05-10  Maxim Kuvyrkov  <maxim@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+	    Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #14012]
+	* sunrpc/Makefile [cross-compiling] (headers): Enable additions
+	requiring rpcgen.
+	[cross-compiling] (extra-libs): Likewise.
+	[cross-compiling] (extra-libs-others): Likewise.
+	[cross-compiling] (librpcsvc-routines): Likewise.
+	[cross-compiling] (librpcsvc-inhibit-o): Likewise.
+	[cross-compiling] (omit-deps): Likewise.
+	(sunrpc-CPPFLAGS): New variable.
+	(CPPFLAGS): Define using $(sunrpc-CPPFLAGS).
+	(BUILD_CPPFLAGS): Append $(sunrpc-CPPFLAGS).
+	(cross-rpcgen-objs): New variable.
+	(extra-objs): Append $(cross-rpcgen-objs).
+	($(cross-rpcgen-objs)): New rule.
+	($(objpfx)cross-rpcgen): Likewise.
+	(rpcgen-cmd): Define to use $(built-program-file).  Expand
+	comment.
+	($(objpfx)rpcsvc/%.stmp): Depend on cross-rpcgen.
+	($(objpfx)x%.stmp): Likewise.
+	* sunrpc/proto.h [IS_IN_build] (_): Define.
+	[IS_IN_build] (_libc_intl_domainname): Likewise.
+
+2012-05-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela) [__ILP32__]:
+	Sign extend relocation result to 64 bits for R_X86_64_DTPOFF64
+	and R_X86_64_TPOFF64.
+
+2012-05-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/syscalls.list (alarm): Add entry from
+	sysdeps/unix/sysv/syscalls.list.
+	(stime): Likewise.
+	(utime): Likewise.
+	* sysdeps/unix/sysv/syscalls.list: Remove file.
+
+2012-05-10  Paul Eggert  <eggert@cs.ucla.edu>
+
+	[BZ #3440]
+	* locale/bits/locale.h (__LC_CTYPE, __LC_NUMERIC, __LC_TIME)
+	(__LC_COLLATE, __LC_MONETARY, __LC_MESSAGES, __LC_ALL, __LC_PAPER)
+	(__LC_NAME, __LC_ADDRESS, __LC_TELEPHONE, __LC_MEASUREMENT)
+	(__LC_IDENTIFICATION): Make these macros useful in #if
+	expressions, as required by C99.
+
+2012-05-10  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sunrpc/Makefile (extra-objs) [$(build-shared) = yes]: Add
+	$(addsuffix .os,$(rpc-compat-routines)).  Move include ../Rules
+	after this.
+
+2012-05-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* stdlib/longlong.h: Updated from GCC.
+
+2012-05-09  Andreas Jaeger  <aj@suse.de>
+
+	* nscd/nscd.c (run_modes): Make named enum, reorder so that
+	default is first entry.
+	(run_mode): Set type.
+	(main): Remove informal message about syslog.
+	(options): Fix typo.
+
+	[BZ #14053]
+	* sysdeps/x86_64/fpu/bits/mathinline.h (lrintf): Add __volatile
+	to asm.
+	(lrint): Likewise.
+	(llrintf): Likewise.
+	(llrint): Likewise.
+	(rint): Likewise.
+	(rintf): Likewise.
+	(nearbyint): Likewise.
+	(nearbyintf): Likewise.
+
+2012-05-09  Andreas Jaeger  <aj@suse.de>
+	    Pedro Alves  <palves@redhat.com>
+
+	* nscd/nscd.c (run_mode): Use enum.
+	(main): Cleanup coding style issue.
+
+2012-05-09  Alexandre Oliva  <aoliva@redhat.com>
+	    Andreas Jaeger  <aj@suse.de>
+
+	* nscd/nscd.c (go_background): Replaced with...
+	(run_mode): ... this.
+	(RUN_FOREGROUND, RUN_DAEMONIZE, RUN_DEBUG): Add.
+	(options): Add -F --foreground.
+	(main): Implement it.
+	(parse_opt): Parse it.
+
+2012-05-09  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #14083]
+	* string/bits/string2.h (strspn) [__GNUC_PREREQ(3, 2) &&
+	!_HAVE_STRING_ARCH_strspn]: Cast zero to size_t to avoid
+	-Wconversion warning.
+	(strspn) [!__GNUC_PREREQ(3, 2) && !_HAVE_STRING_ARCH_strspn]:
+	Likewise.
+
+2012-05-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/data/locale.h-data (NULL): Use macro-constant.  Require
+	== 0.
+	(LC_ALL): Use macro-int-constant.
+	(LC_COLLATE): Likewise.
+	(LC_CTYPE): Likewise.
+	(LC_MESSAGES): Likewise.
+	(LC_MONETARY): Likewise.
+	(LC_NUMERIC): Likewise.
+	(LC_TIME): Likewise.
+	[ISO || ISO99 || ISO11] (LC_MESSAGES): Do not require.
+	(LC_*): Change to LC_[ABCDEFGHIJKLMNOPQRSTUVWXYZ]*.
+	[ISO || ISO99 || ISO11] (*_t): Do not allow.
+	* conform/data/math.h-data (HUGE_VAL): Use macro-constant.
+	Specify type.
+	[C99-based standards] (float_t): Expect type.
+	[C99-based standards] (double_t): Expect type.
+	[C99-based standards] (HUGE_VALF): Use macro-constant.  Specify
+	type.
+	[C99-based standards] (HUGE_VALL): Likewise.
+	[C99-based standards] (INFINITY): Likewise.
+	[C99-based standards] (NAN): Likewise.
+	[C99-based standards] (FP_INFINITE): Use macro-int-constant.
+	[C99-based standards] (FP_NAN): Likewise.
+	[C99-based standards] (FP_NORMAL): Likewise.
+	[C99-based standards] (FP_SUBNORMAL): Likewise.
+	[C99-based standards] (FP_ZERO): Likewise.
+	[C99-based standards] (FP_FAST_FMA): Use
+	optional-macro-int-constant.  Specify type.  Require == 1.
+	[C99-based standards] (FP_FAST_FMAF): Likewise.
+	[C99-based standards] (FP_FAST_FMAL): Likewise.
+	[C99-based standards] (FP_ILOGB0): Use macro-int-constant.
+	[C99-based standards] (FP_ILOGBNAN): Likewise.
+	[C99-based standards] (MATH_ERRNO): Use macro-int-constant.
+	Specify type.
+	[C99-based standards] (MATH_ERREXCEPT): Likewise.
+	[C99-based standards] (math_errhandling): Specify type.
+	[ISO99 || ISO11] (signgam): Do not allow.
+	[non-C99-based standards] (copysignf): Do not allow.
+	[non-C99-based standards] (exp2f): Likewise.
+	[non-C99-based standards] (log2f): Likewise.
+	[non-C99-based standards] (modff): Allow.
+	[non-C99-based standards] (erff): Do not allow.
+	[non-C99-based standards] (erfcf): Likewise.
+	[non-C99-based standards] (gammaf): Likewise.
+	[non-C99-based standards] (hypotf): Likewise.
+	[non-C99-based standards] (j0f): Likewise.
+	[non-C99-based standards] (j1f): Likewise.
+	[non-C99-based standards] (jnf): Likewise.
+	[non-C99-based standards] (lgammaf): Likewise.
+	[non-C99-based standards] (tgammaf): Likewise.
+	[non-C99-based standards] (y0f): Likewise.
+	[non-C99-based standards] (y1f): Likewise.
+	[non-C99-based standards] (ynf): Likewise.
+	[non-C99-based standards] (isnanf): Likewise.
+	[non-C99-based standards] (acoshf): Likewise.
+	[non-C99-based standards] (asinhf): Likewise.
+	[non-C99-based standards] (atanhf): Likewise.
+	[non-C99-based standards] (cbrtf): Likewise.
+	[non-C99-based standards] (expm1f): Likewise.
+	[non-C99-based standards] (ilogbf): Likewise.
+	[non-C99-based standards] (log1pf): Likewise.
+	[non-C99-based standards] (logbf): Likewise.
+	[non-C99-based standards] (nextafterf): Likewise.
+	[non-C99-based standards] (remainderf): Likewise.
+	[non-C99-based standards] (rintf): Likewise.
+	[non-C99-based standards] (scalbf): Likewise.
+	[non-C99-based standards] (copysignl): Likewise.
+	[non-C99-based standards] (exp2l): Likewise.
+	[non-C99-based standards] (log2l): Likewise.
+	[non-C99-based standards] (modfl): Allow.
+	[non-C99-based standards] (erfl): Do not allow.
+	[non-C99-based standards] (erfcl): Likewise.
+	[non-C99-based standards] (gammal): Likewise.
+	[non-C99-based standards] (hypotl): Likewise.
+	[non-C99-based standards] (j0l): Likewise.
+	[non-C99-based standards] (j1l): Likewise.
+	[non-C99-based standards] (jnl): Likewise.
+	[non-C99-based standards] (lgammal): Likewise.
+	[non-C99-based standards] (tgammal): Likewise.
+	[non-C99-based standards] (y0l): Likewise.
+	[non-C99-based standards] (y1l): Likewise.
+	[non-C99-based standards] (ynl): Likewise.
+	[non-C99-based standards] (isnanl): Likewise.
+	[non-C99-based standards] (acoshl): Likewise.
+	[non-C99-based standards] (asinhl): Likewise.
+	[non-C99-based standards] (atanhl): Likewise.
+	[non-C99-based standards] (cbrtl): Likewise.
+	[non-C99-based standards] (expm1l): Likewise.
+	[non-C99-based standards] (ilogbl): Likewise.
+	[non-C99-based standards] (log1pl): Likewise.
+	[non-C99-based standards] (logbl): Likewise.
+	[non-C99-based standards] (nextafterl): Likewise.
+	[non-C99-based standards] (remainderl): Likewise.
+	[non-C99-based standards] (rintl): Likewise.
+	[non-C99-based standards] (scalbl): Likewise.
+	[ISO || ISO99 || ISO11] (*_t): Do not allow.
+	[non-C99-based standards] (FP_*): Do not allow.
+	[C99-based standards] (FP_*): Change to
+	FP_[ABCDEFGHIJKLMNOPQRSTUVWXYZ]*.
+	* conform/data/setjmp.h-data [ISO || ISO99 || ISO11] (*_t): Do not
+	allow.
+	* conform/data/signal.h-data (SIG_DFL): Use macro-constant.
+	(SIG_ERR): Likewise.
+	[X/Open-based standards] (SIG_HOLD): Likewise.
+	(SIG_IGN): Likewise.
+	(SIGABRT): Use macro-int-constant.  Specify type.  Require
+	positive value.
+	(SIGFPE): Likewise.
+	(SIGILL): Likewise.
+	(SIGINT): Likewise.
+	(SIGSEGV): Likewise.
+	(SIGTER): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGALRM): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGHUP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGIO): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGKILL): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGPIPE): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGQUIT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGUSR1): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGUSR2): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGCHLD): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGCONT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGSTOP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGTSTP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGTTIN): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGTTOU): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGBUS): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGPOLL): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGPROF): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGSYS): Likewise.
+	[X/Open-based standards] (SIGTRAP): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGURG): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGVTALRM): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGXCPU): Likewise.
+	[!ISO && !ISO99 && !ISO11] (SIGXFSZ): Likewise.
+	* conform/data/stdarg.h-data [ISO || ISO99 || ISO11] (*_t): Do not
+	allow.
+
+2012-05-08  Ian Wienand  <ianw@vmware.com>
+
+	[BZ #14080]
+	* time/tzset.c (__tzset_parse_tz): Update default rules for
+	daylight time changes in the Energy Policy Act of 2005.
+
+2012-05-09  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #13983]
+	* elf/ldconfig.c (parse_conf): Change string to make clear that
+	ldconfig only issued a warning if ld.so.conf does not exist.
+
+2012-05-08  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/sparcv9/fpu/multiarch/s_floor-vis3.S: Use
+	movxtod instead of popping the value on the stack.
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-05-08  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* config.h.in: Add HAVE_ARM_PCS_VFP.
+
+2012-05-08  Roland Mc Grath  <roland@hack.frob.com>
+
+	[BZ #13979]
+	* include/features.h: Warn if user requests __FORTIFY_SOURCE
+	checking but the checks are disabled for any reason.
+
+2012-05-08  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-machine.h: Replace Elf64_XXX with ElfW(XXX)
+	and ELF64_R_TYPE with ELFW(R_TYPE).
+
+2012-05-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/syscalls.list (pause): Remove.
+	(ulimit): Likewise.
+
+	* sysdeps/unix/sysv/syscalls.list (setrlimit): Remove.
+	(settimeofday): Likewise.
+
+2012-05-08  Mike Frysinger  <vapier@gentoo.org>
+
+	* inet/arpa/tftp.h (struct tftphdr): Rename th_u to th_u1.  Add
+	a struct th_u2 inside the union, and move tu_block/tu_code into
+	a new th_u3 union of tu_block/tu_code inside of that.  Move
+	th_data[1] into the th_u2 as tu_data[0].  Change tu_stuff[1] to
+	tu_stuff[0].  Add a new tu_padding[4] to keep sizeof() the same.
+	(th_block): Change to th_u1.th_u2.th_u3.tu_block.
+	(th_code): Change to th_u1.th_u2.th_u3.tu_code.
+	(th_stuff): Change to th_u1.tu_stuff.
+	(th_data): Define.
+	(th_msg): Change to th_u1.th_u2.tu_data.
+
+2012-05-07  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+	[BZ #14074]
+	* sysdeps/sparc/sysdep.h (SPARC_PIC_THUNK_CALL): New macro.
+	(SETUP_PIC_REG): Use it.
+	(SETUP_PIC_REG_LEAF): Use it.
+
+2012-05-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13885]
+	[BZ #13923]
+	* sysdeps/i386/fpu/e_expl.S (IEEE754_EXPL): Define conditional on
+	USE_AS_EXPM1L.
+	(EXPL_FINITE): Likewise.
+	(FLDLOG): Likewise.
+	(IEEE754_EXPL) [USE_AS_EXPM1L]: Support use as expm1l.
+	* sysdeps/i386/fpu/s_expm1l.S: Define USE_AS_EXPM1L and include
+	e_expl.S.
+	* sysdeps/x86_64/fpu/e_expl.S (IEEE754_EXPL): Define conditional on
+	USE_AS_EXPM1L.
+	(EXPL_FINITE): Likewise.
+	(FLDLOG): Likewise.
+	(IEEE754_EXPL) [USE_AS_EXPM1L]: Support use as expm1l.
+	* sysdeps/x86_64/fpu/s_expm1l.S: Define USE_AS_EXPM1L and include
+	e_expl.S.
+	* math/libm-test.inc (expm1_test): Add more tests.  Do not disable
+	test of -max_value argument for long double.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2012-05-06  David S. Miller  <davem@davemloft.net>
+
+	* scripts/data/localplt-sparc-linux-gnu.data: Add '?' markers to
+	quad soft-float symbols whose references which are compiler
+	generated.
+	* scripts/data/localplt-sparc64-linux-gnu.data: Likewise.
+
+2012-05-06  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13884]
+	[BZ #13914]
+	* sysdeps/i386/fpu/e_expl.S (IEEE754_EXPL): Define conditional on
+	USE_AS_EXP10L.
+	(EXPL_FINITE): Likewise.
+	(FLDLOG): Likewise.
+	(c0): Likewise.
+	(c1): Likewise.
+	(__ieee754_expl): Change to IEEE754_EXPL.  Use FLDLOG macro.
+	Adjust comments for base varying.
+	(__expl_finite): Change alias to EXPL_FINITE.
+	* sysdeps/i386/fpu/e_exp10l.S: Define USE_AS_EXP10L and include
+	e_expl.S.
+	* sysdeps/ieee754/dbl-64/e_exp10.c: New file.
+	* sysdeps/ieee754/ldbl-128/e_exp10l.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/e_exp10l.c: Likewise.
+	* sysdeps/x86_64/fpu/e_exp10l.S: Likewise.
+	* sysdeps/x86_64/fpu/e_expl.S (IEEE754_EXPL): Define conditional on
+	USE_AS_EXP10L.
+	(EXPL_FINITE): Likewise.
+	(FLDLOG): Likewise.
+	(c0): Likewise.
+	(c1): Likewise.
+	(__ieee754_expl): Change to IEEE754_EXPL.  Use FLDLOG macro.
+	Adjust comments for base varying.
+	(__expl_finite): Change alias to EXPL_FINITE.
+	* math/libm-test.inc (exp10_test): Add more tests.  Do not disable
+	tests for bugs.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+	[BZ #14064]
+	* math/libm-test.inc (check_float_internal): Correct ulp
+	calculation for subnormal expected results.
+
+2012-05-06  Andreas Jaeger  <aj@suse.de>
+
+	* Makeconfig (+math-flags): New, set to -frounding-math.
+	(+cflags): Add +math-flags so that all of glibc gets compiled with
+	it.
+
+	* sysdeps/x86_64/fpu/libm-test-ulps: Updated.
+
 2012-05-05  Joseph Myers  <joseph@codesourcery.com>
 
 	* math/libm-test.inc (hypot_test) [TEST_DOUBLE && TEST_INLINE]:
@@ -117,8 +914,9 @@
 	* sysdeps/unix/bsd/tcgetattr.c: Likewise.
 	* sysdeps/unix/bsd/tcsetattr.c: Likewise.
 
-2012-05-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2012-05-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	[BZ #13563]
 	* sysdeps/ieee754/ldbl-128ibm/e_acosl.c (__ieee754_acosl): Fix
 	long double comparison inaccuracies.
 	* sysdeps/ieee754/ldbl-128ibm/e_asinl.c (__ieee754_asinl): Likewise.

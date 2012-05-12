@@ -1,3 +1,51 @@
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/x32/tls.h: New file.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/tls.h (THREAD_SETMEM): Use uint64_t on 64-bit
+	integer.
+	(THREAD_SETMEM_NC): Likewise.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/tls.h (THREAD_SELF): Replace movq/%q0 with
+	mov/%0.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/pthreadtypes.h
+	(__cleanup_fct_attribute): Check __x86_64__ instead of
+	__WORDSIZE.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/pthread/pthread.h (PTHREAD_MUTEX_INITIALIZER): Check
+	__PTHREAD_MUTEX_HAVE_PREV instead of __WORDSIZE.
+	(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP): Likewise.
+	(PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP): Likewise.
+	(PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP): Likewise.
+
+2012-05-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* pthread_create.c (start_thread): Check __PTHREAD_MUTEX_HAVE_PREV
+	instead of __WORDSIZE.
+
+2012-05-10  Thomas Schwinge  <thomas@schwinge.name>
+
+	[BZ #3748]
+	* sysdeps/pthread/bits/libc-lockP.h (__libc_once_get): New macro.
+
+2012-05-09  Chung-Lin Tang  <cltang@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Use CFI directives.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_wait.S
+	(__pthread_cond_wait): Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_timedwait.S (sem_timedwait): Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_wait.S (__new_sem_wait): Likewise.
+
 2012-05-03  David S. Miller  <davem@davemloft.net>
 
 	* sysdeps/sparc/sparc64/pthread_spin_unlock.S: Fix thinko, we

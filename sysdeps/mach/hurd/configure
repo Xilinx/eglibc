@@ -130,11 +130,6 @@ $as_echo "#define NO_HIDDEN 1" >>confdefs.h
 # existing system library, because we are the only system library.
 inhibit_glue=yes
 
-if test "x$prefix" != x; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: --prefix= (empty) is required for GNU/Hurd to work normally" >&5
-$as_echo "$as_me: WARNING: --prefix= (empty) is required for GNU/Hurd to work normally" >&2;}
-fi
-
 case "$machine" in
   i386*)
     # The default oldest ABI is 2.2.6.

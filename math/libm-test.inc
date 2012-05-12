@@ -511,8 +511,9 @@ check_float_internal (const char *test_name, FLOAT computed, FLOAT expected,
 	  ulp = diff / FUNC(ldexp) (1.0, FUNC(ilogb) (expected) - MANT_DIG);
 	  break;
 	case FP_SUBNORMAL:
-	  ulp = (FUNC(ldexp) (diff, MANT_DIG)
-		 / FUNC(ldexp) (1.0, FUNC(ilogb) (expected)));
+	  /* 1ulp for a subnormal value, shifted by MANT_DIG, is the
+	     least normal value.  */
+	  ulp = (FUNC(ldexp) (diff, MANT_DIG) / min_value);
 	  break;
 	default:
 	  /* It should never happen. */
@@ -3476,15 +3477,20 @@ exp10_test (void)
   TEST_f_f (exp10, nan_value, nan_value);
   TEST_f_f (exp10, 3, 1000);
   TEST_f_f (exp10, -1, 0.1L);
-#ifdef TEST_FLOAT /* Bug 13884: inaccurate results except for float.  */
   TEST_f_f (exp10, 36, 1.0e36L);
+  TEST_f_f (exp10, -36, 1.0e-36L);
+#ifndef TEST_FLOAT
+  TEST_f_f (exp10, 305, 1.0e305L);
+  TEST_f_f (exp10, -305, 1.0e-305L);
+#endif
+#if defined TEST_LDOUBLE && LDBL_MAX_10_EXP >= 4932
+  TEST_f_f (exp10, 4932, 1.0e4932L);
+  TEST_f_f (exp10, -4932, 1.0e-4932L);
 #endif
   TEST_f_f (exp10, 1e6, plus_infty, OVERFLOW_EXCEPTION);
   TEST_f_f (exp10, -1e6, 0);
-#ifndef TEST_LDOUBLE /* Bug 13914: spurious exceptions.  */
   TEST_f_f (exp10, max_value, plus_infty, OVERFLOW_EXCEPTION);
   TEST_f_f (exp10, -max_value, 0);
-#endif
   TEST_f_f (exp10, 0.75L, 5.62341325190349080394951039776481231L);
 
   END (exp10);
@@ -3558,6 +3564,13 @@ expm1_test (void)
   TEST_f_f (expm1, 1, M_El - 1.0);
   TEST_f_f (expm1, 0.75L, 1.11700001661267466854536981983709561L);
 
+  TEST_f_f (expm1, 50.0L, 5.1847055285870724640864533229334853848275e+21L);
+
+#ifndef TEST_FLOAT
+  TEST_f_f (expm1, 127.0L, 1.4302079958348104463583671072905261080748e+55L);
+  TEST_f_f (expm1, 500.0L, 1.4035922178528374107397703328409120821806e+217L);
+#endif
+
 #if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
   TEST_f_f (expm1, 11356.25L, 9.05128237311923300051376115753226014206e+4931L);
 #endif
@@ -3566,9 +3579,7 @@ expm1_test (void)
   TEST_f_f (expm1, 100000.0, plus_infty, OVERFLOW_EXCEPTION);
   check_int ("errno for expm1(large) == ERANGE", errno, ERANGE, 0, 0, 0);
   TEST_f_f (expm1, max_value, plus_infty, OVERFLOW_EXCEPTION);
-#ifndef TEST_LDOUBLE /* Bug 13923.  */
   TEST_f_f (expm1, -max_value, -1);
-#endif
 
   END (expm1);
 }
@@ -5377,6 +5388,22 @@ logb_test (void)
   TEST_f_f (logb, M_El, 1);
   TEST_f_f (logb, 1024, 10);
   TEST_f_f (logb, -2000, 10);
+
+  TEST_f_f (logb, 0x0.1p-127, -131);
+  TEST_f_f (logb, 0x0.01p-127, -135);
+  TEST_f_f (logb, 0x0.011p-127, -135);
+#ifndef TEST_FLOAT
+  TEST_f_f (logb, 0x0.8p-1022, -1023);
+  TEST_f_f (logb, 0x0.1p-1022, -1026);
+  TEST_f_f (logb, 0x0.00111p-1022, -1034);
+  TEST_f_f (logb, 0x0.00001p-1022, -1042);
+  TEST_f_f (logb, 0x0.000011p-1022, -1042);
+  TEST_f_f (logb, 0x0.0000000000001p-1022, -1074);
+#endif
+#if defined TEST_LDOUBLE && LDBL_MIN_EXP - LDBL_MANT_DIG <= -16400
+  TEST_f_f (logb, 0x1p-16400L, -16400);
+  TEST_f_f (logb, 0x.00000000001p-16382L, -16426);
+#endif
 
   END (logb);
 }

@@ -61,6 +61,10 @@ generated-dirs := rpcsvc
 
 include ../Makeconfig
 
+ifeq ($(link-obsolete-rpc),yes)
+headers += $(headers-in-tirpc) $(headers-not-in-tirpc)
+endif
+
 ifeq ($(versioning),yes)
 need-export-routines-$(OPTION_EGLIBC_SUNRPC) += \
 			auth_des auth_unix clnt_gen clnt_perr clnt_tcp \
@@ -84,8 +88,10 @@ routines-$(OPTION_EGLIBC_SUNRPC) \
 # xdecrypt is also used by nss/nss_files/files-key.c.
 routines-y += des_crypt des_impl des_soft $(need-export-routines)
 
+ifneq ($(link-obsolete-rpc),yes)
 # We only add the RPC for compatibility to libc.so.
 shared-only-routines = $(routines)
+endif
 endif
 
 # We do not build rpcinfo anymore.  It is not needed for a bootstrap
@@ -110,7 +116,6 @@ ifeq ($(have-thread-library),yes)
 xtests-$(OPTION_EGLIBC_SUNRPC) += thrsvc
 endif
 
-ifneq (yes,$(install-bootstrap-headers))
 headers += $(rpcsvc:%.x=rpcsvc/%.h)
 extra-libs-$(OPTION_EGLIBC_SUNRPC) += librpcsvc
 # Make it in `others' pass, not `lib' pass.
@@ -118,14 +123,17 @@ extra-libs-others-y += $(extra-libs-y)
 librpcsvc-routines = $(rpcsvc:%.x=x%)
 librpcsvc-inhibit-o = .os # Build no shared rpcsvc library.
 omit-deps = $(librpcsvc-routines)
-endif
-
-include ../Rules
 
 ifeq (yes,$(build-shared))
 rpc-compat-routines = $(addprefix compat-,$(need-export-routines))
 rpc-compat-routines.os = $(addprefix $(objpfx), \
 				     $(addsuffix .os,$(rpc-compat-routines)))
+extra-objs += $(addsuffix .os,$(rpc-compat-routines))
+endif
+
+include ../Rules
+
+ifeq (yes,$(build-shared))
 subdir_lib: $(objpfx)librpc_compat_pic.a
 $(objpfx)librpc_compat_pic.a: $(rpc-compat-routines.os)
 	$(AR) cr$(verbose) $@ $^
@@ -152,7 +160,9 @@ CFLAGS-pmap_rmt.c = -fexceptions
 CFLAGS-clnt_perr.c = -fexceptions
 CFLAGS-openchild.c = -fexceptions
 
-CPPFLAGS += -D_RPC_THREAD_SAFE_
+sunrpc-CPPFLAGS = -D_RPC_THREAD_SAFE_
+CPPFLAGS += $(sunrpc-CPPFLAGS)
+BUILD_CPPFLAGS += $(sunrpc-CPPFLAGS)
 
 $(objpfx)tst-getmyaddr: $(common-objpfx)linkobj/libc.so
 $(objpfx)tst-xdrmem: $(common-objpfx)linkobj/libc.so
@@ -160,30 +170,30 @@ $(objpfx)tst-xdrmem2: $(common-objpfx)linkobj/libc.so
 
 $(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs))
 
-$(addprefix $(objpfx)cross-,$(rpcgen-objs)): $(objpfx)cross-%.o: %.c
-	$(BUILD_CC) $< -c -D_RPC_THREAD_SAFE_ -D_CROSS_RPCGEN_ \
-		$(OUTPUT_OPTION) $(compile-mkdep-flags)
+cross-rpcgen-objs := $(addprefix $(objpfx)cross-,$(rpcgen-objs))
+extra-objs += $(cross-rpcgen-objs)
 
-$(objpfx)cross-rpcgen: $(addprefix $(objpfx)cross-,$(rpcgen-objs))
-	$(BUILD_CC) $^ -o $@
+# When generic makefile support for build system programs is
+# available, it should replace this code.  See
+# <http://sourceware.org/bugzilla/show_bug.cgi?id=14087>.
+$(cross-rpcgen-objs): $(objpfx)cross-%.o: %.c
+	$(make-target-directory)
+	$(BUILD_CC) $($(basename $(<F))-CFLAGS) $(ALL_BUILD_CFLAGS) $< \
+		$(OUTPUT_OPTION) $(compile-mkdep-flags) -c
+
+$(objpfx)cross-rpcgen: $(cross-rpcgen-objs)
+	$(BUILD_CC) $^ $(BUILD_LDFLAGS) -o $@
 
 # This makes sure -DNOT_IN_libc is passed for all these modules.
 cpp-srcs-left := $(rpcgen-objs:.o=.c)
 lib := nonlib
 include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 
-ifeq (no,$(cross-compiling))
-# Tell rpcgen where to find the C preprocessor.
-rpcgen-cmd = CPP='$(CC) -E -x c-header' $(built-program-cmd) -Y ../scripts
-# Depend rpcsvc headers and sources on rpcgen.
-rpcgen-dep = $(objpfx)rpcgen
-else
-# Tell rpcgen where to find the C preprocessor.
-rpcgen-cmd = CPP='$(CC) -E -x c-header' $(objpfx)cross-rpcgen -Y ../scripts
-# Depend rpcsvc headers and sources on cross-rpcgen and rpcgen (to trigger
-# its build).
-rpcgen-dep = $(objpfx)rpcgen $(objpfx)cross-rpcgen
-endif
+# How we run rpcgen to generate sources and headers in the rules below.
+# Setting CPP tells it how to run the C preprocessor correctly.  Note
+# that $(built-program-file) requires that the just-built cross-rpcgen
+# binary be the second dependency listed in each rule using rpcgen-cmd.
+rpcgen-cmd = CPP='$(CC) -E -x c-header' $(built-program-file) -Y ../scripts
 
 # Install the rpc data base file.
 $(inst_sysconfdir)/rpc: etc.rpc $(+force)
@@ -194,7 +204,7 @@ $(inst_sysconfdir)/rpc: etc.rpc $(+force)
 # relinked.
 $(rpcsvc:%.x=$(objpfx)rpcsvc/%.h): $(objpfx)rpcsvc/%.h: $(objpfx)rpcsvc/%.stmp
 	@:
-$(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(rpcgen-dep)
+$(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(objpfx)cross-rpcgen
 	$(make-target-directory)
 	-@rm -f ${@:stmp=T} $@
 	$(rpcgen-cmd) -h $< -o ${@:stmp=T}
@@ -204,7 +214,7 @@ $(objpfx)rpcsvc/%.stmp: rpcsvc/%.x $(rpcgen-dep)
 # Generate the rpcsvc XDR functions with rpcgen.
 $(rpcsvc:%.x=$(objpfx)x%.c): $(objpfx)x%.c: $(objpfx)x%.stmp
 	@:
-$(objpfx)x%.stmp: rpcsvc/%.x $(rpcgen-dep)
+$(objpfx)x%.stmp: rpcsvc/%.x $(objpfx)cross-rpcgen
 	-@rm -f ${@:stmp=T} $@
 	$(rpcgen-cmd) -c $< -o ${@:stmp=T}
 	$(move-if-change) $(@:stmp=T) $(@:stmp=c)

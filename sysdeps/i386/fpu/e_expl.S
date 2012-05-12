@@ -24,9 +24,33 @@
 
 #include <machine/asm.h>
 
+#ifdef USE_AS_EXP10L
+# define IEEE754_EXPL __ieee754_exp10l
+# define EXPL_FINITE __exp10l_finite
+# define FLDLOG fldl2t
+#elif defined USE_AS_EXPM1L
+# define IEEE754_EXPL __expm1l
+# undef EXPL_FINITE
+# define FLDLOG fldl2e
+#else
+# define IEEE754_EXPL __ieee754_expl
+# define EXPL_FINITE __expl_finite
+# define FLDLOG fldl2e
+#endif
+
 	.section .rodata.cst16,"aM",@progbits,16
 
 	.p2align 4
+#ifdef USE_AS_EXP10L
+	ASM_TYPE_DIRECTIVE(c0,@object)
+c0:	.byte 0, 0, 0, 0, 0, 0, 0x9a, 0xd4, 0x00, 0x40
+	.byte 0, 0, 0, 0, 0, 0
+	ASM_SIZE_DIRECTIVE(c0)
+	ASM_TYPE_DIRECTIVE(c1,@object)
+c1:	.byte 0x58, 0x92, 0xfc, 0x15, 0x37, 0x9a, 0x97, 0xf0, 0xef, 0x3f
+	.byte 0, 0, 0, 0, 0, 0
+	ASM_SIZE_DIRECTIVE(c1)
+#else
 	ASM_TYPE_DIRECTIVE(c0,@object)
 c0:	.byte 0, 0, 0, 0, 0, 0, 0xaa, 0xb8, 0xff, 0x3f
 	.byte 0, 0, 0, 0, 0, 0
@@ -35,6 +59,7 @@ c0:	.byte 0, 0, 0, 0, 0, 0, 0xaa, 0xb8, 0xff, 0x3f
 c1:	.byte 0x20, 0xfa, 0xee, 0xc2, 0x5f, 0x70, 0xa5, 0xec, 0xed, 0x3f
 	.byte 0, 0, 0, 0, 0, 0
 	ASM_SIZE_DIRECTIVE(c1)
+#endif
 	ASM_TYPE_DIRECTIVE(csat,@object)
 csat:	.byte 0, 0, 0, 0, 0, 0, 0, 0x80, 0x0e, 0x40
 	.byte 0, 0, 0, 0, 0, 0
@@ -47,7 +72,13 @@ csat:	.byte 0, 0, 0, 0, 0, 0, 0, 0x80, 0x0e, 0x40
 #endif
 
 	.text
-ENTRY(__ieee754_expl)
+ENTRY(IEEE754_EXPL)
+#ifdef USE_AS_EXPM1L
+	movzwl	4+8(%esp), %eax
+	xorb	$0x80, %ah	// invert sign bit (now 1 is "positive")
+	cmpl	$0xc006, %eax	// is num positive and exp >= 6 (number is >= 128.0)?
+	jae	HIDDEN_JUMPTARGET (__expl) // (if num is denormal, it is at least >= 64.0)
+#endif
 	fldt	4(%esp)
 /* I added the following ugly construct because expl(+-Inf) resulted
    in NaN.  The ugliness results from the bright minds at Intel.
@@ -57,7 +88,9 @@ ENTRY(__ieee754_expl)
 #ifdef PIC
 	LOAD_PIC_REG (cx)
 #endif
+#ifndef USE_AS_EXPM1L
 	movzwl	4+8(%esp), %eax
+#endif
 	andl	$0x7fff, %eax
 	cmpl	$0x400d, %eax
 	jle	3f
@@ -75,8 +108,17 @@ ENTRY(__ieee754_expl)
 	andb	$2, %ah
 	jz	3f
 	fchs
-3:	fldl2e			/* 1  log2(e)         */
-	fmul	%st(1), %st	/* 1  x log2(e)       */
+3:
+#ifdef USE_AS_EXPM1L
+	/* Test for +-0 as argument.  */
+	fstsw	%ax
+	movb	$0x45, %dh
+	andb	%ah, %dh
+	cmpb	$0x40, %dh
+	je	2f
+#endif
+	FLDLOG			/* 1  log2(base)      */
+	fmul	%st(1), %st	/* 1  x log2(base)    */
 	frndint			/* 1  i               */
 	fld	%st(1)		/* 2  x               */
 	frndint			/* 2  xi              */
@@ -92,18 +134,40 @@ ENTRY(__ieee754_expl)
 	fldt	MO(c1)		/* 4                  */
 	fmul	%st(4), %st	/* 4  c1 * x          */
 	faddp	%st, %st(1)	/* 3  f = f + c1 * x  */
-	f2xm1			/* 3 2^(fract(x * log2(e))) - 1 */
+	f2xm1			/* 3 2^(fract(x * log2(base))) - 1 */
+#ifdef USE_AS_EXPM1L
+	fstp	%st(1)		/* 2                  */
+	fscale			/* 2 scale factor is st(1); base^x - 2^i */
+	fxch			/* 2 i                */
+	fld1			/* 3 1.0              */
+	fscale			/* 3 2^i              */
 	fld1			/* 4 1.0              */
-	faddp			/* 3 2^(fract(x * log2(e))) */
+	fsubrp	%st, %st(1)	/* 3 2^i - 1.0        */
+	fstp	%st(1)		/* 2                  */
+	faddp	%st, %st(1)	/* 1 base^x - 1.0     */
+#else
+	fld1			/* 4 1.0              */
+	faddp			/* 3 2^(fract(x * log2(base))) */
 	fstp	%st(1)		/* 2  */
-	fscale			/* 2 scale factor is st(1); e^x */
+	fscale			/* 2 scale factor is st(1); base^x */
 	fstp	%st(1)		/* 1  */
+#endif
 	fstp	%st(1)		/* 0  */
 	jmp	2f
 1:	testl	$0x200, %eax	/* Test sign.  */
 	jz	2f		/* If positive, jump.  */
 	fstp	%st
+#ifdef USE_AS_EXPM1L
+	fld1
+	fchs
+#else
 	fldz			/* Set result to 0.  */
+#endif
 2:	ret
-END(__ieee754_expl)
-strong_alias (__ieee754_expl, __expl_finite)
+END(IEEE754_EXPL)
+#ifdef USE_AS_EXPM1L
+libm_hidden_def (__expm1l)
+weak_alias (__expm1l, expm1l)
+#else
+strong_alias (IEEE754_EXPL, EXPL_FINITE)
+#endif
