@@ -9,5 +9,5 @@ install-bin += lddlibc4
 endif
 
 ifeq ($(subdir),resource)
-sysdep_routines += oldgetrlimit64
+sysdep_routines += oldgetrlimit64 backtrace_linux
 endif
