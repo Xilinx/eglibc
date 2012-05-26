@@ -1,3 +1,7 @@
+2012-05-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* nss/nsswitch.c (__nss_database_lookup): Update for last merge.
+
 2012-03-28  Joseph Myers  <joseph@codesourcery.com>
 
 	* posix/cross-getconf.c (cross_getconf): Update after last merge.

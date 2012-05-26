@@ -192,7 +192,7 @@ __nss_database_lookup (const char *database, const char *alternate_name,
 	    {
 	      entry->next = defconfig_entries;
 	      entry->service = *ni;
-	      entry->name[0] = '\0';
+	      entry->name = "";
 	      defconfig_entries = entry;
 	    }
 	}
