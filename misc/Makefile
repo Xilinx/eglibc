@@ -35,7 +35,7 @@ headers	:= sys/uio.h bits/uio.h sys/ioctl.h bits/ioctls.h bits/ioctl-types.h \
 	   regexp.h bits/select.h bits/mman.h sys/xattr.h \
 	   syslog.h sys/syslog.h \
 	   bits/syslog.h bits/syslog-ldbl.h bits/syslog-path.h bits/error.h \
-	   bits/select2.h
+	   bits/select2.h bits/hwcap.h sys/auxv.h
 
 routines := brk sbrk sstk ioctl \
 	    readv writev preadv preadv64 pwritev pwritev64 \
@@ -66,7 +66,7 @@ routines := brk sbrk sstk ioctl \
 	    getloadavg getclktck \
 	    fgetxattr flistxattr fremovexattr fsetxattr getxattr \
 	    listxattr lgetxattr llistxattr lremovexattr lsetxattr \
-	    removexattr setxattr
+	    removexattr setxattr getauxval
 
 routines-$(OPTION_POSIX_REGEXP) += regexp
 routines-$(OPTION_EGLIBC_FSTAB) += fstab

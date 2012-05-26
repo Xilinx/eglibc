@@ -5,6 +5,11 @@ AC_CONFIG_SRCDIR([include/features.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([scripts])
 
+# Glibc should not depend on any header files
+AC_DEFUN([_AC_INCLUDES_DEFAULT_REQUIREMENTS],
+  [m4_divert_text([DEFAULTS],
+    [ac_includes_default='/* none */'])])
+
 dnl This is here so we can set $subdirs directly based on configure fragments.
 AC_CONFIG_SUBDIRS()
 
@@ -257,6 +262,7 @@ else
 fi
 AC_SUBST(libc_cv_nss_crypt)
 
+
 AC_ARG_ENABLE([obsolete-rpc],
               AC_HELP_STRING([--enable-obsolete-rpc],
                              [build and install the obsolete RPC code for link-time usage]),
@@ -266,6 +272,29 @@ AC_SUBST(link_obsolete_rpc)
 
 if test "$link_obsolete_rpc" = yes; then
   AC_DEFINE(LINK_OBSOLETE_RPC)
+fi
+
+AC_ARG_ENABLE([systemtap],
+              [AS_HELP_STRING([--enable-systemtap],
+	       [enable systemtap static probe points @<:@default=no@:>@])],
+              [systemtap=$enableval],
+	      [systemtap=no])
+if test "x$systemtap" != xno; then
+  AC_CACHE_CHECK([for systemtap static probe support], libc_cv_sdt, [dnl
+  old_CFLAGS="$CFLAGS"
+  CFLAGS="-std=gnu99 $CFLAGS"
+  AC_COMPILE_IFELSE([#include <sys/sdt.h>
+void foo (int i, void *p)
+{
+  asm ("" STAP_PROBE_ASM (foo, bar, STAP_PROBE_ASM_TEMPLATE (2)) ""
+       :: STAP_PROBE_ASM_OPERANDS (2, i, p));
+}], [libc_cv_sdt=yes], [libc_cv_sdt=no])
+  CFLAGS="$old_CFLAGS"])
+  if test $libc_cv_sdt = yes; then
+    AC_DEFINE([USE_STAP_PROBE])
+  elif test "x$systemtap" != xauto; then
+    AC_MSG_FAILURE([systemtap support needs sys/sdt.h with asm support])
+  fi
 fi
 
 # The way shlib-versions is used to generate soversions.mk uses a
@@ -771,59 +800,60 @@ while test $# -gt 0; do
   test -n "$enable_debug_configure" &&
   echo "[DEBUG]: name/Implies $xsrcdir$name/Implies" >&2
 
-  if test -f $xsrcdir$name/Implies; then
-    # Collect more names from the `Implies' file (removing comments).
-    implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/Implies`"
-    implied=
-    for x in $implied_candidate; do
-      found=no
-      if test -d $xsrcdir$name_base/$x; then
-	# If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
-	# ieee754/dbl-64.
-	if test "$use_dbl_wrap" = "0"; then
-	  case $x in
-	    ieee754/dbl-64) implied="$implied $name_base/ieee754/dbl-wrap" ;;
-	    ieee754/ldbl-*) implied="$implied $name_base/ieee754/ldbl-wrap" ;;
-	  esac
-	fi
-	implied="$implied $name_base/$x";
-	found=yes
-      fi
-      for d in $add_ons_pfx ''; do
-	try="${d}sysdeps/$x"
-	case $d in
-	 /*) try_srcdir= ;;
-	 *) try_srcdir=$srcdir/ ;;
-	esac
-	test -n "$enable_debug_configure" &&
-	 echo "[DEBUG]: $name implied $x try($d) {$try_srcdir}$try" >&2
-	if test $try != $xsrcdir$name_base/$x && test -d $try_srcdir$try;
-	then
+  for implies_file in Implies Implies-before Implies-after; do
+    implies_type=`echo $implies_file | sed s/-/_/`
+    eval ${implies_type}=
+    if test -f $xsrcdir$name/$implies_file; then
+      # Collect more names from the `Implies' file (removing comments).
+      implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/$implies_file`"
+      for x in $implied_candidate; do
+	found=no
+	if test -d $xsrcdir$name_base/$x; then
 	  # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
 	  # ieee754/dbl-64.
 	  if test "$use_dbl_wrap" = "0"; then
-	    case $try in
-	    sysdeps/ieee754/dbl-64)
-	      implied="$implied sysdeps/ieee754/dbl-wrap" ;;
-	    sysdeps/ieee754/ldbl-*)
-	      implied="$implied sysdeps/ieee754/ldbl-wrap" ;;
+	    case $x in
+	      ieee754/dbl-64) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/dbl-wrap\"" ;;
+	      ieee754/ldbl-*) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/ldbl-wrap\"" ;;
 	    esac
 	  fi
-	  implied="$implied $try"
+	  eval "${implies_type}=\"\$${implies_type} \$name_base/\$x\""
 	  found=yes
-	  case "$sysnames_add_ons" in
-	  *" $d "*) ;;
-	  *|'') sysnames_add_ons="$sysnames_add_ons $d" ;;
+	fi
+	for d in $add_ons_pfx ''; do
+	  try="${d}sysdeps/$x"
+	  case $d in
+	   /*) try_srcdir= ;;
+	   *) try_srcdir=$srcdir/ ;;
 	  esac
+	  test -n "$enable_debug_configure" &&
+	   echo "[DEBUG]: $name $implies_file $x try($d) {$try_srcdir}$try" >&2
+	  if test $try != $xsrcdir$name_base/$x && test -d $try_srcdir$try;
+	  then
+	    # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
+	    # ieee754/dbl-64.
+	    if test "$use_dbl_wrap" = "0"; then
+	      case $try in
+	      sysdeps/ieee754/dbl-64)
+	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/dbl-wrap\"" ;;
+	      sysdeps/ieee754/ldbl-*)
+	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/ldbl-wrap\"" ;;
+	      esac
+	    fi
+	    eval "${implies_type}=\"\$${implies_type} \$try\""
+	    found=yes
+	    case "$sysnames_add_ons" in
+	    *" $d "*) ;;
+	    *|'') sysnames_add_ons="$sysnames_add_ons $d" ;;
+	    esac
+	  fi
+	done
+	if test $found = no; then
+	  AC_MSG_WARN($name/$implies_file specifies nonexistent $x)
 	fi
       done
-      if test $found = no; then
-	AC_MSG_WARN($name/Implies specifies nonexistent $x)
-      fi
-    done
-  else
-    implied=
-  fi
+    fi
+  done
 
   # Add NAME to the list of names.
   names="$names $name"
@@ -833,6 +863,10 @@ changequote(,)dnl
   parent="`echo $name | sed -n -e 's=/[^/]*$==' -e '/sysdeps$/q' -e p`"
 changequote([,])dnl
 
+  test -n "$enable_debug_configure" &&
+    echo "[DEBUG]: $name Implies='$Implies' rest='$*' parent='$parent' \
+Implies_before='$Implies_after' Implies_after='$Implies_after'" >&2
+
   # Add the names implied by NAME, and NAME's parent (if it has one), to
   # the list of names to be processed (the argument list).  We prepend the
   # implied names to the list and append the parent.  We want implied
@@ -840,7 +874,7 @@ changequote([,])dnl
   # configuration components; this ensures that for sysv4, unix/common
   # (implied by unix/sysv/sysv4) comes before unix/sysv (in ostry (here $*)
   # after sysv4).
-  sysnames="`echo $implied $* $parent`"
+  sysnames="`echo $Implies $* $Implies_before $parent $Implies_after`"
   test -n "$sysnames" && set $sysnames
 done
 
@@ -942,7 +976,7 @@ AC_CHECK_PROG_VER(MSGFMT, gnumsgfmt gmsgfmt msgfmt, --version,
   MSGFMT=: aux_missing="$aux_missing msgfmt")
 AC_CHECK_PROG_VER(MAKEINFO, makeinfo, --version,
   [GNU texinfo.* \([0-9][0-9.]*\)],
-  [4.*],
+  [4.[5-9]*|4.[1-9][0-9]*|[5-9].*],
   MAKEINFO=: aux_missing="$aux_missing makeinfo")
 AC_CHECK_PROG_VER(SED, sed, --version,
   [GNU sed version \([0-9]*\.[0-9.]*\)],
@@ -950,6 +984,7 @@ AC_CHECK_PROG_VER(SED, sed, --version,
   SED=: aux_missing="$aux_missing sed")
 
 AC_CHECK_TOOL(READELF, readelf, false)
+AC_CHECK_TOOL(NM, nm, false)
 
 AC_CHECK_PROGS(AUTOCONF, autoconf, no)
 case "x$AUTOCONF" in
@@ -2054,6 +2089,62 @@ dnl check for the size of 'long double'.
 AC_CHECK_SIZEOF(long double, 0)
 sizeof_long_double=$ac_cv_sizeof_long_double
 AC_SUBST(sizeof_long_double)
+
+CPPUNDEFS=
+dnl Check for silly hacked compilers predefining _FORTIFY_SOURCE.
+dnl Since we are building the implementations of the fortified functions here,
+dnl having the macro defined interacts very badly.
+AC_CACHE_CHECK([for _FORTIFY_SOURCE predefine], libc_cv_predef_fortify_source,
+[AC_TRY_COMPILE([], [
+#ifdef _FORTIFY_SOURCE
+# error bogon
+#endif],
+		[libc_cv_predef_fortify_source=no],
+		[libc_cv_predef_fortify_source=yes])])
+if test $libc_cv_predef_fortify_source = yes; then
+  CPPUNDEFS="${CPPUNDEFS:+$CPPUNDEFS }-U_FORTIFY_SOURCE"
+fi
+AC_SUBST(CPPUNDEFS)
+
+dnl Check for silly hacked compilers inserting -fstack-protector.
+dnl This breaks badly for the early startup code we compile, since
+dnl the compiled code can refer to a magic machine-dependent location
+dnl for the canary value before we have sufficient setup for that to
+dnl work.  It's also questionable to build all of libc with this flag
+dnl even when you're doing that for most applications you build, since
+dnl libc's code is so heavily-used and performance-sensitive.  If we
+dnl ever really want to make that work, it should be enabled explicitly
+dnl in the libc build, not inherited from implicit compiler settings.
+AC_CACHE_CHECK([whether $CC implicitly enables -fstack-protector],
+	       libc_cv_predef_stack_protector, [
+AC_TRY_COMPILE([extern void foobar (char *);],
+	       [char large_array[2048]; foobar (large_array);], [
+libc_undefs=`$NM -u conftest.o |
+  LC_ALL=C $AWK '$1 == "U" { print $2 | "sort -u"; next } { exit(1) }' \
+    2>&AS_MESSAGE_LOG_FD` || {
+  AC_MSG_ERROR([confusing output from $NM -u])
+}
+echo >&AS_MESSAGE_LOG_FD "libc_undefs='$libc_undefs'"
+# On some architectures, there are architecture-specific undefined
+# symbols (resolved by the linker), so filter out unknown symbols.
+# This will fail to produce the correct result if the compiler
+# defaults to -fstack-protector but this produces an undefined symbol
+# other than __stack_chk_fail.  However, compilers like that have not
+# been encountered in practice.
+libc_undefs=`echo "$libc_undefs" | egrep '^(foobar|__stack_chk_fail)$'`
+case "$libc_undefs" in
+foobar) libc_cv_predef_stack_protector=no ;;
+'__stack_chk_fail
+foobar') libc_cv_predef_stack_protector=yes ;;
+*) AC_MSG_ERROR([unexpected symbols in test: $libc_undefs]) ;;
+esac],
+	       [AC_MSG_ERROR([test compilation failed])])
+])
+libc_extra_cflags=
+if test $libc_cv_predef_stack_protector = yes; then
+  libc_extra_cflags=-fno-stack-protector
+fi
+AC_SUBST(libc_extra_cflags)
 
 ### End of automated tests.
 ### Now run sysdeps configure fragments.

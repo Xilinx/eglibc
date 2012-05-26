@@ -9,23 +9,26 @@ Version 2.16
 
 * The following bugs are resolved with this release:
 
-  174, 350, 369, 411, 706, 766, 887, 2074, 2541, 2547, 2548, 2550, 2551,
-  2552, 2553, 2554, 2562, 2563, 2565, 2566, 2570, 2576, 2636, 2678, 3335,
-  3440, 3748, 3768, 3866, 3868, 3906, 3976, 3992, 4026, 4108, 4596, 4822,
-  5077, 5461, 5805, 5993, 6471, 6486, 6578, 6649, 6730, 6770, 6794, 6884,
-  6890, 6894, 6895, 6907, 6911, 6959, 7064, 9739, 9902, 10110, 10135, 10140,
-  10153, 10210, 10254, 10346, 10545, 10716, 11174, 11322, 11365, 11451,
-  11494, 11521, 11837, 11959, 12047, 12340, 13058, 13525, 13526, 13527,
-  13528, 13529, 13530, 13531, 13532, 13533, 13547, 13551, 13552, 13553,
-  13555, 13559, 13563, 13566, 13583, 13592, 13618, 13637, 13656, 13658,
-  13673, 13691, 13695, 13704, 13705, 13706, 13726, 13738, 13739, 13758,
-  13760, 13761, 13775, 13786, 13787, 13792, 13806, 13824, 13840, 13841,
-  13844, 13846, 13851, 13852, 13854, 13871, 13872, 13873, 13879, 13883,
-  13884, 13885, 13886, 13892, 13895, 13908, 13910, 13911, 13912, 13913,
-  13914, 13915, 13916, 13917, 13918, 13919, 13920, 13921, 13922, 13923,
-  13924, 13926, 13927, 13928, 13938, 13941, 13942, 13954, 13955, 13956,
-  13963, 13967, 13970, 13973, 13979, 13983, 14012, 14027, 14033, 14034,
-  14040, 14049, 14053, 14055, 14064, 14080, 14083
+  174, 208, 350, 369, 411, 706, 766, 887, 2074, 2541, 2547, 2548, 2550,
+  2551, 2552, 2553, 2554, 2562, 2563, 2565, 2566, 2570, 2576, 2636, 2678,
+  3335, 3440, 3748, 3768, 3866, 3868, 3906, 3976, 3992, 4026, 4108, 4596,
+  4822, 5077, 5461, 5805, 5993, 6471, 6486, 6578, 6649, 6730, 6770, 6794,
+  6884, 6890, 6894, 6895, 6907, 6911, 6959, 7064, 9739, 9902, 10110, 10135,
+  10140, 10153, 10210, 10254, 10346, 10375, 10545, 10716, 10846, 11174,
+  11322, 11365, 11451, 11494, 11521, 11677, 11837, 11959, 12047, 12097,
+  12193, 12297, 12298, 12301, 12340, 12354, 12416, 12495, 13058, 13361,
+  13525, 13526, 13527, 13528, 13529, 13530, 13531, 13532, 13533, 13547,
+  13551, 13552, 13553, 13555, 13556, 13559, 13563, 13566, 13576, 13583,
+  13592, 13594, 13613, 13618, 13637, 13656, 13658, 13673, 13691, 13695,
+  13704, 13705, 13706, 13726, 13738, 13739, 13750, 13758, 13760, 13761,
+  13775, 13786, 13787, 13792, 13806, 13824, 13840, 13841, 13844, 13846,
+  13851, 13852, 13854, 13871, 13872, 13873, 13879, 13883, 13884, 13885,
+  13886, 13892, 13895, 13908, 13910, 13911, 13912, 13913, 13914, 13915,
+  13916, 13917, 13918, 13919, 13920, 13921, 13922, 13923, 13924, 13926,
+  13927, 13928, 13938, 13941, 13942, 13954, 13955, 13956, 13963, 13967,
+  13968, 13970, 13973, 13979, 13983, 13986, 14012, 14027, 14033, 14034,
+  14036, 14040, 14043, 14044, 14049, 14053, 14055, 14059, 14064, 14080,
+  14083, 14103, 14104, 14109, 14122, 14123, 14153
 
 * ISO C11 support:
 
@@ -48,7 +51,7 @@ Version 2.16
 
   Implemented by Ulrich Drepper.
 
-* Support for the IA-64 is removed and could live in ports.
+* Support for the IA-64 has been moved to ports.
 
 * Remove support for anything but ELF binary format
 
@@ -63,6 +66,22 @@ Version 2.16
   version 2.14.  This option will be removed at some time in the future
   after the TI-RPC library becomes fully sufficient for the needs of
   existing applications.
+
+* Compatibility code for Linux kernel versions before 2.4 has been removed.
+  Note that glibc is not expected to work with any Linux kernel version
+  before 2.6.
+
+* New header <sys/auxv.h> and function getauxval allowing easy access to
+  the AT_* key-value pairs passed from the Linux kernel.  The header also
+  defines the HWCAP_* bits associated with the AT_HWCAP key.
+
+* New locales: mag_IN
+
+* New configure option --enable-systemtap builds SystemTap static probes
+  into libc for setjmp and longjmp and into libpthread for various operations.
+  So far the setjmp/longjmp probes and some of the libpthread probes are
+  provided only for i*86 and x86_64.
+  Implemented by Roland McGrath and Rayson Ho.
 
 Version 2.15
 
@@ -425,7 +444,7 @@ Version 2.8
   Implemented by Ulrich Drepper.
 
 * Faster sqrt and sqrtf implemention for some PPC variants.
-  Implemented by Stephen Munroe.
+  Implemented by Steven Munroe.
 
 Version 2.7
 
@@ -989,68 +1008,6 @@ Version 2.2
   Masahide Washizawa.
 
 * IA-64 port by Jes Sorensen and HJ Lu.
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Compiling the GNU C Library for Linux/ia64
-******************************************
-
-   Please refer to the file INSTALL in the same directory as you found
-this file for general information about configuring and compiling
-glibc.
-
-   For general inquiries about glibc under Linux/ia64 please use the
-following mailing list linux-ia64@linuxia64.org or one of the relevant
-glibc mailing lists.
-
-Recommended Tools for Compilation
-=================================
-
-   In order for glibc-2.2 to build correctly on the ia64 you need at
-least the following versions of the GNU tools (the :
-
-   * The Cygnus toolchain snapshot for the ia64 as of August 4
-     including the provided set of patches.  It is however recommend
-     you use the October 24 toolchain snapshot or a more recent version.
-
-   OR alternatively you can try the following (the Cygnus toolchain is
-   the recommended solution):
-
-   * GCC and binutils, GAS and GNU LD out of CVS from
-     sources.redhat.com as of August 28, 2000 or later.  The CVS tree
-     may require special patches to work properly on the ia64.
-
-Configuring and compiling GNU Libc for Linux/ia64
-=================================================
-
-   The library requires Linux kernel version 2.4.0-test4-000728 or
-later to funtion properly. Besides that it support for debug libraries
-is currently untested. Hence the following options
-are required for configuring the library:
-
-   --disable-debug --enable-kernel=2.4.0
-
-   It is also important that you make sure the library picks up the
-appropriate kernel header files, if you do not have recent enough
-kernel headers in /usr/src/linux/include, you should use the
---with-headers=<path> option to specify the location.
-
-   As an example I personally use the following options to configure
-the library:
-
-   --disable-debug
-   --disable-cvs
-   --enable-kernel=2.4.0
-   --host=ia64-linux
-   --enable-add-ons=yes
-   --prefix=/usr
-   --with-headers=/home/jes/linux/include
-
-
-Good luck
-
-Jes Sorensen <jes@linuxcare.com>,
-November 14th, 2000
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Version 2.1.3
 

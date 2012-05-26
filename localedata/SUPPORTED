@@ -285,6 +285,7 @@ lt_LT.UTF-8/UTF-8 \
 lt_LT/ISO-8859-13 \
 lv_LV.UTF-8/UTF-8 \
 lv_LV/ISO-8859-13 \
+mag_IN/UTF-8 \
 mai_IN/UTF-8 \
 mg_MG.UTF-8/UTF-8 \
 mg_MG/ISO-8859-15 \
@@ -409,7 +410,6 @@ ur_PK/UTF-8 \
 uz_UZ/ISO-8859-1 \
 uz_UZ@cyrillic/UTF-8 \
 ve_ZA/UTF-8 \
-vi_VN.TCVN/TCVN5712-1 \
 vi_VN/UTF-8 \
 wa_BE/ISO-8859-1 \
 wa_BE@euro/ISO-8859-15 \

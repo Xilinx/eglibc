@@ -20,6 +20,9 @@
 
 #ifndef NOT_IN_libc
 # ifndef TLS_MULTIPLE_THREADS_IN_TCB
+/* Variable set to a nonzero value either if more than one thread runs or ran,
+   or if a single-threaded process is trying to cancel itself.  See
+   nptl/descr.h for more context on the single-threaded process case.  */
 int __libc_multiple_threads attribute_hidden;
 # endif
 #endif

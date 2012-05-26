@@ -567,42 +567,7 @@ PACKAGE_URL='http://www.gnu.org/software/glibc/'
 
 ac_unique_file="include/features.h"
 enable_option_checking=no
-# Factoring default headers for most tests.
-ac_includes_default="\
-#include <stdio.h>
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-# include <sys/stat.h>
-#endif
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else
-# ifdef HAVE_STDLIB_H
-#  include <stdlib.h>
-# endif
-#endif
-#ifdef HAVE_STRING_H
-# if !defined STDC_HEADERS && defined HAVE_MEMORY_H
-#  include <memory.h>
-# endif
-# include <string.h>
-#endif
-#ifdef HAVE_STRINGS_H
-# include <strings.h>
-#endif
-#ifdef HAVE_INTTYPES_H
-# include <inttypes.h>
-#endif
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif"
-
+ac_includes_default='/* none */'
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 RELEASE
@@ -632,9 +597,9 @@ libc_cv_localedir
 libc_cv_slibdir
 old_glibc_headers
 libc_cv_gcc_unwind_find_fde
+libc_extra_cflags
+CPPUNDEFS
 sizeof_long_double
-EGREP
-GREP
 have_selinux
 have_libcap
 have_libaudit
@@ -788,6 +753,7 @@ with_bugurl
 enable_multi_arch
 enable_nss_crypt
 enable_obsolete_rpc
+enable_systemtap
 with_cpu
 '
       ac_precious_vars='build_alias
@@ -1445,6 +1411,7 @@ Optional Features:
   --enable-nss-crypt      enable libcrypt to use nss
   --enable-obsolete-rpc   build and install the obsolete RPC code for
                           link-time usage
+  --enable-systemtap      enable systemtap static probe points [default=no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1934,37 +1901,6 @@ rm -f conftest.val
   as_fn_set_status $ac_retval
 
 } # ac_fn_c_compute_int
-
-# ac_fn_c_check_header_compile LINENO HEADER VAR INCLUDES
-# -------------------------------------------------------
-# Tests whether HEADER exists and can be compiled using the include files in
-# INCLUDES, setting the cache variable VAR accordingly.
-ac_fn_c_check_header_compile ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-#include <$2>
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_header_compile
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -2348,6 +2284,9 @@ ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
+
+
+# Glibc should not depend on any header files
 
 
 
@@ -3817,6 +3756,7 @@ else
 fi
 
 
+
 # Check whether --enable-obsolete-rpc was given.
 if test "${enable_obsolete_rpc+set}" = set; then :
   enableval=$enable_obsolete_rpc; link_obsolete_rpc=$enableval
@@ -3829,6 +3769,51 @@ fi
 if test "$link_obsolete_rpc" = yes; then
   $as_echo "#define LINK_OBSOLETE_RPC 1" >>confdefs.h
 
+fi
+
+# Check whether --enable-systemtap was given.
+if test "${enable_systemtap+set}" = set; then :
+  enableval=$enable_systemtap; systemtap=$enableval
+else
+  systemtap=no
+fi
+
+if test "x$systemtap" != xno; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for systemtap static probe support" >&5
+$as_echo_n "checking for systemtap static probe support... " >&6; }
+if ${libc_cv_sdt+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+    old_CFLAGS="$CFLAGS"
+  CFLAGS="-std=gnu99 $CFLAGS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/sdt.h>
+void foo (int i, void *p)
+{
+  asm ("" STAP_PROBE_ASM (foo, bar, STAP_PROBE_ASM_TEMPLATE (2)) ""
+       :: STAP_PROBE_ASM_OPERANDS (2, i, p));
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  libc_cv_sdt=yes
+else
+  libc_cv_sdt=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CFLAGS="$old_CFLAGS"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_sdt" >&5
+$as_echo "$libc_cv_sdt" >&6; }
+  if test $libc_cv_sdt = yes; then
+    $as_echo "#define USE_STAP_PROBE 1" >>confdefs.h
+
+  elif test "x$systemtap" != xauto; then
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "systemtap support needs sys/sdt.h with asm support
+See \`config.log' for more details" "$LINENO" 5; }
+  fi
 fi
 
 # The way shlib-versions is used to generate soversions.mk uses a
@@ -4396,66 +4381,71 @@ while test $# -gt 0; do
   test -n "$enable_debug_configure" &&
   echo "DEBUG: name/Implies $xsrcdir$name/Implies" >&2
 
-  if test -f $xsrcdir$name/Implies; then
-    # Collect more names from the `Implies' file (removing comments).
-    implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/Implies`"
-    implied=
-    for x in $implied_candidate; do
-      found=no
-      if test -d $xsrcdir$name_base/$x; then
-	# If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
-	# ieee754/dbl-64.
-	if test "$use_dbl_wrap" = "0"; then
-	  case $x in
-	    ieee754/dbl-64) implied="$implied $name_base/ieee754/dbl-wrap" ;;
-	    ieee754/ldbl-*) implied="$implied $name_base/ieee754/ldbl-wrap" ;;
-	  esac
-	fi
-	implied="$implied $name_base/$x";
-	found=yes
-      fi
-      for d in $add_ons_pfx ''; do
-	try="${d}sysdeps/$x"
-	case $d in
-	 /*) try_srcdir= ;;
-	 *) try_srcdir=$srcdir/ ;;
-	esac
-	test -n "$enable_debug_configure" &&
-	 echo "DEBUG: $name implied $x try($d) {$try_srcdir}$try" >&2
-	if test $try != $xsrcdir$name_base/$x && test -d $try_srcdir$try;
-	then
+  for implies_file in Implies Implies-before Implies-after; do
+    implies_type=`echo $implies_file | sed s/-/_/`
+    eval ${implies_type}=
+    if test -f $xsrcdir$name/$implies_file; then
+      # Collect more names from the `Implies' file (removing comments).
+      implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/$implies_file`"
+      for x in $implied_candidate; do
+	found=no
+	if test -d $xsrcdir$name_base/$x; then
 	  # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
 	  # ieee754/dbl-64.
 	  if test "$use_dbl_wrap" = "0"; then
-	    case $try in
-	    sysdeps/ieee754/dbl-64)
-	      implied="$implied sysdeps/ieee754/dbl-wrap" ;;
-	    sysdeps/ieee754/ldbl-*)
-	      implied="$implied sysdeps/ieee754/ldbl-wrap" ;;
+	    case $x in
+	      ieee754/dbl-64) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/dbl-wrap\"" ;;
+	      ieee754/ldbl-*) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/ldbl-wrap\"" ;;
 	    esac
 	  fi
-	  implied="$implied $try"
+	  eval "${implies_type}=\"\$${implies_type} \$name_base/\$x\""
 	  found=yes
-	  case "$sysnames_add_ons" in
-	  *" $d "*) ;;
-	  *|'') sysnames_add_ons="$sysnames_add_ons $d" ;;
+	fi
+	for d in $add_ons_pfx ''; do
+	  try="${d}sysdeps/$x"
+	  case $d in
+	   /*) try_srcdir= ;;
+	   *) try_srcdir=$srcdir/ ;;
 	  esac
+	  test -n "$enable_debug_configure" &&
+	   echo "DEBUG: $name $implies_file $x try($d) {$try_srcdir}$try" >&2
+	  if test $try != $xsrcdir$name_base/$x && test -d $try_srcdir$try;
+	  then
+	    # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
+	    # ieee754/dbl-64.
+	    if test "$use_dbl_wrap" = "0"; then
+	      case $try in
+	      sysdeps/ieee754/dbl-64)
+	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/dbl-wrap\"" ;;
+	      sysdeps/ieee754/ldbl-*)
+	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/ldbl-wrap\"" ;;
+	      esac
+	    fi
+	    eval "${implies_type}=\"\$${implies_type} \$try\""
+	    found=yes
+	    case "$sysnames_add_ons" in
+	    *" $d "*) ;;
+	    *|'') sysnames_add_ons="$sysnames_add_ons $d" ;;
+	    esac
+	  fi
+	done
+	if test $found = no; then
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $name/$implies_file specifies nonexistent $x" >&5
+$as_echo "$as_me: WARNING: $name/$implies_file specifies nonexistent $x" >&2;}
 	fi
       done
-      if test $found = no; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $name/Implies specifies nonexistent $x" >&5
-$as_echo "$as_me: WARNING: $name/Implies specifies nonexistent $x" >&2;}
-      fi
-    done
-  else
-    implied=
-  fi
+    fi
+  done
 
   # Add NAME to the list of names.
   names="$names $name"
 
   # Find the parent of NAME, using the empty string if it has none.
   parent="`echo $name | sed -n -e 's=/[^/]*$==' -e '/sysdeps$/q' -e p`"
+
+  test -n "$enable_debug_configure" &&
+    echo "DEBUG: $name Implies='$Implies' rest='$*' parent='$parent' \
+Implies_before='$Implies_after' Implies_after='$Implies_after'" >&2
 
   # Add the names implied by NAME, and NAME's parent (if it has one), to
   # the list of names to be processed (the argument list).  We prepend the
@@ -4464,7 +4454,7 @@ $as_echo "$as_me: WARNING: $name/Implies specifies nonexistent $x" >&2;}
   # configuration components; this ensures that for sysv4, unix/common
   # (implied by unix/sysv/sysv4) comes before unix/sysv (in ostry (here $*)
   # after sysv4).
-  sysnames="`echo $implied $* $parent`"
+  sysnames="`echo $Implies $* $Implies_before $parent $Implies_after`"
   test -n "$sysnames" && set $sysnames
 done
 
@@ -5072,7 +5062,7 @@ $as_echo_n "checking version of $MAKEINFO... " >&6; }
   ac_prog_version=`$MAKEINFO --version 2>&1 | sed -n 's/^.*GNU texinfo.* \([0-9][0-9.]*\).*$/\1/p'`
   case $ac_prog_version in
     '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
-    4.*)
+    4.[5-9]*|4.[1-9][0-9]*|[5-9].*)
        ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
     *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
 
@@ -5238,6 +5228,98 @@ esac
   fi
 else
   READELF="$ac_cv_prog_READELF"
+fi
+
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}nm", so it can be a program name with args.
+set dummy ${ac_tool_prefix}nm; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_NM+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$NM"; then
+  ac_cv_prog_NM="$NM" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_NM="${ac_tool_prefix}nm"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+NM=$ac_cv_prog_NM
+if test -n "$NM"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NM" >&5
+$as_echo "$NM" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_NM"; then
+  ac_ct_NM=$NM
+  # Extract the first word of "nm", so it can be a program name with args.
+set dummy nm; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_NM+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_NM"; then
+  ac_cv_prog_ac_ct_NM="$ac_ct_NM" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_NM="nm"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_NM=$ac_cv_prog_ac_ct_NM
+if test -n "$ac_ct_NM"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_NM" >&5
+$as_echo "$ac_ct_NM" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_NM" = x; then
+    NM="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    NM=$ac_ct_NM
+  fi
+else
+  NM="$ac_cv_prog_NM"
 fi
 
 
@@ -7313,265 +7395,6 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
-$as_echo_n "checking for grep that handles long lines and -e... " >&6; }
-if ${ac_cv_path_GREP+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -z "$GREP"; then
-  ac_path_GREP_found=false
-  # Loop through the user's path and test for each of PROGNAME-LIST
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH$PATH_SEPARATOR/usr/xpg4/bin
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_prog in grep ggrep; do
-    for ac_exec_ext in '' $ac_executable_extensions; do
-      ac_path_GREP="$as_dir/$ac_prog$ac_exec_ext"
-      { test -f "$ac_path_GREP" && $as_test_x "$ac_path_GREP"; } || continue
-# Check for GNU ac_path_GREP and select it if it is found.
-  # Check for GNU $ac_path_GREP
-case `"$ac_path_GREP" --version 2>&1` in
-*GNU*)
-  ac_cv_path_GREP="$ac_path_GREP" ac_path_GREP_found=:;;
-*)
-  ac_count=0
-  $as_echo_n 0123456789 >"conftest.in"
-  while :
-  do
-    cat "conftest.in" "conftest.in" >"conftest.tmp"
-    mv "conftest.tmp" "conftest.in"
-    cp "conftest.in" "conftest.nl"
-    $as_echo 'GREP' >> "conftest.nl"
-    "$ac_path_GREP" -e 'GREP$' -e '-(cannot match)-' < "conftest.nl" >"conftest.out" 2>/dev/null || break
-    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
-    as_fn_arith $ac_count + 1 && ac_count=$as_val
-    if test $ac_count -gt ${ac_path_GREP_max-0}; then
-      # Best one so far, save it but keep looking for a better one
-      ac_cv_path_GREP="$ac_path_GREP"
-      ac_path_GREP_max=$ac_count
-    fi
-    # 10*(2^10) chars as input seems more than enough
-    test $ac_count -gt 10 && break
-  done
-  rm -f conftest.in conftest.tmp conftest.nl conftest.out;;
-esac
-
-      $ac_path_GREP_found && break 3
-    done
-  done
-  done
-IFS=$as_save_IFS
-  if test -z "$ac_cv_path_GREP"; then
-    as_fn_error $? "no acceptable grep could be found in $PATH$PATH_SEPARATOR/usr/xpg4/bin" "$LINENO" 5
-  fi
-else
-  ac_cv_path_GREP=$GREP
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_path_GREP" >&5
-$as_echo "$ac_cv_path_GREP" >&6; }
- GREP="$ac_cv_path_GREP"
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for egrep" >&5
-$as_echo_n "checking for egrep... " >&6; }
-if ${ac_cv_path_EGREP+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if echo a | $GREP -E '(a|b)' >/dev/null 2>&1
-   then ac_cv_path_EGREP="$GREP -E"
-   else
-     if test -z "$EGREP"; then
-  ac_path_EGREP_found=false
-  # Loop through the user's path and test for each of PROGNAME-LIST
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH$PATH_SEPARATOR/usr/xpg4/bin
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_prog in egrep; do
-    for ac_exec_ext in '' $ac_executable_extensions; do
-      ac_path_EGREP="$as_dir/$ac_prog$ac_exec_ext"
-      { test -f "$ac_path_EGREP" && $as_test_x "$ac_path_EGREP"; } || continue
-# Check for GNU ac_path_EGREP and select it if it is found.
-  # Check for GNU $ac_path_EGREP
-case `"$ac_path_EGREP" --version 2>&1` in
-*GNU*)
-  ac_cv_path_EGREP="$ac_path_EGREP" ac_path_EGREP_found=:;;
-*)
-  ac_count=0
-  $as_echo_n 0123456789 >"conftest.in"
-  while :
-  do
-    cat "conftest.in" "conftest.in" >"conftest.tmp"
-    mv "conftest.tmp" "conftest.in"
-    cp "conftest.in" "conftest.nl"
-    $as_echo 'EGREP' >> "conftest.nl"
-    "$ac_path_EGREP" 'EGREP$' < "conftest.nl" >"conftest.out" 2>/dev/null || break
-    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
-    as_fn_arith $ac_count + 1 && ac_count=$as_val
-    if test $ac_count -gt ${ac_path_EGREP_max-0}; then
-      # Best one so far, save it but keep looking for a better one
-      ac_cv_path_EGREP="$ac_path_EGREP"
-      ac_path_EGREP_max=$ac_count
-    fi
-    # 10*(2^10) chars as input seems more than enough
-    test $ac_count -gt 10 && break
-  done
-  rm -f conftest.in conftest.tmp conftest.nl conftest.out;;
-esac
-
-      $ac_path_EGREP_found && break 3
-    done
-  done
-  done
-IFS=$as_save_IFS
-  if test -z "$ac_cv_path_EGREP"; then
-    as_fn_error $? "no acceptable egrep could be found in $PATH$PATH_SEPARATOR/usr/xpg4/bin" "$LINENO" 5
-  fi
-else
-  ac_cv_path_EGREP=$EGREP
-fi
-
-   fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_path_EGREP" >&5
-$as_echo "$ac_cv_path_EGREP" >&6; }
- EGREP="$ac_cv_path_EGREP"
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
-$as_echo_n "checking for ANSI C header files... " >&6; }
-if ${ac_cv_header_stdc+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <float.h>
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_header_stdc=yes
-else
-  ac_cv_header_stdc=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-if test $ac_cv_header_stdc = yes; then
-  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <string.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "memchr" >/dev/null 2>&1; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
-
-fi
-
-if test $ac_cv_header_stdc = yes; then
-  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdlib.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "free" >/dev/null 2>&1; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
-
-fi
-
-if test $ac_cv_header_stdc = yes; then
-  # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
-  if test "$cross_compiling" = yes; then :
-  :
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ctype.h>
-#include <stdlib.h>
-#if ((' ' & 0x0FF) == 0x020)
-# define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
-# define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
-#else
-# define ISLOWER(c) \
-		   (('a' <= (c) && (c) <= 'i') \
-		     || ('j' <= (c) && (c) <= 'r') \
-		     || ('s' <= (c) && (c) <= 'z'))
-# define TOUPPER(c) (ISLOWER(c) ? ((c) | 0x40) : (c))
-#endif
-
-#define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
-int
-main ()
-{
-  int i;
-  for (i = 0; i < 256; i++)
-    if (XOR (islower (i), ISLOWER (i))
-	|| toupper (i) != TOUPPER (i))
-      return 2;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stdc" >&5
-$as_echo "$ac_cv_header_stdc" >&6; }
-if test $ac_cv_header_stdc = yes; then
-
-$as_echo "#define STDC_HEADERS 1" >>confdefs.h
-
-fi
-
-# On IRIX 5.3, sys/types and inttypes.h are conflicting.
-for ac_header in sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h \
-		  inttypes.h stdint.h unistd.h
-do :
-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default
-"
-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-
-done
-
-
 # The cast to long int works around a bug in the HP C Compiler
 # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
 # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
@@ -7606,6 +7429,92 @@ _ACEOF
 
 
 sizeof_long_double=$ac_cv_sizeof_long_double
+
+
+CPPUNDEFS=
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for _FORTIFY_SOURCE predefine" >&5
+$as_echo_n "checking for _FORTIFY_SOURCE predefine... " >&6; }
+if ${libc_cv_predef_fortify_source+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+#ifdef _FORTIFY_SOURCE
+# error bogon
+#endif
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  libc_cv_predef_fortify_source=no
+else
+  libc_cv_predef_fortify_source=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_predef_fortify_source" >&5
+$as_echo "$libc_cv_predef_fortify_source" >&6; }
+if test $libc_cv_predef_fortify_source = yes; then
+  CPPUNDEFS="${CPPUNDEFS:+$CPPUNDEFS }-U_FORTIFY_SOURCE"
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC implicitly enables -fstack-protector" >&5
+$as_echo_n "checking whether $CC implicitly enables -fstack-protector... " >&6; }
+if ${libc_cv_predef_stack_protector+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+extern void foobar (char *);
+int
+main ()
+{
+char large_array[2048]; foobar (large_array);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+libc_undefs=`$NM -u conftest.o |
+  LC_ALL=C $AWK '$1 == "U" { print $2 | "sort -u"; next } { exit(1) }' \
+    2>&5` || {
+  as_fn_error $? "confusing output from $NM -u" "$LINENO" 5
+}
+echo >&5 "libc_undefs='$libc_undefs'"
+# On some architectures, there are architecture-specific undefined
+# symbols (resolved by the linker), so filter out unknown symbols.
+# This will fail to produce the correct result if the compiler
+# defaults to -fstack-protector but this produces an undefined symbol
+# other than __stack_chk_fail.  However, compilers like that have not
+# been encountered in practice.
+libc_undefs=`echo "$libc_undefs" | egrep '^(foobar|__stack_chk_fail)$'`
+case "$libc_undefs" in
+foobar) libc_cv_predef_stack_protector=no ;;
+'__stack_chk_fail
+foobar') libc_cv_predef_stack_protector=yes ;;
+*) as_fn_error $? "unexpected symbols in test: $libc_undefs" "$LINENO" 5 ;;
+esac
+else
+  as_fn_error $? "test compilation failed" "$LINENO" 5
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_predef_stack_protector" >&5
+$as_echo "$libc_cv_predef_stack_protector" >&6; }
+libc_extra_cflags=
+if test $libc_cv_predef_stack_protector = yes; then
+  libc_extra_cflags=-fno-stack-protector
+fi
 
 
 ### End of automated tests.

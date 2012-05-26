@@ -63,9 +63,9 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-sprintf2 bug18 \
 	 bug19 tst-popen2 scanf14 scanf15 bug21 bug22 scanf16 scanf17 \
-	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs tst-sprintf3
+	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs tst-sprintf3 bug25
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
-      += tst-sscanf tst-swprintf bug15 test-vfprintf bug14 scanf13 tst-grouping
+      += tst-sscanf tst-swprintf test-vfprintf bug14 scanf13 tst-grouping
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
       += tst-perror bug19a bug20 tst-long-dbl-fphex tst-fphex-wide
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
@@ -133,7 +133,6 @@ tst-swprintf-ENV = LOCPATH=$(common-objpfx)localedata
 test-vfprintf-ENV = LOCPATH=$(common-objpfx)localedata
 scanf13-ENV = LOCPATH=$(common-objpfx)localedata
 bug14-ENV = LOCPATH=$(common-objpfx)localedata
-bug15-ENV = LOCPATH=$(common-objpfx)localedata
 tst-grouping-ENV = LOCPATH=$(common-objpfx)localedata
 
 ifneq (,$(filter %REENTRANT, $(defines)))

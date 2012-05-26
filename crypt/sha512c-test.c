@@ -58,7 +58,7 @@ do_test (void)
   return result;
 }
 
-#define TIMEOUT 6
+#define TIMEOUT 32
 #define TEST_FUNCTION do_test ()
 #define TIMEOUT 4
 #include "../test-skeleton.c"

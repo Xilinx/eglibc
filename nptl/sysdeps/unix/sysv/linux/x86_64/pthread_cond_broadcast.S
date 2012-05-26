@@ -1,5 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2009
-   Free Software Foundation, Inc.
+/* Copyright (C) 2002-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -24,7 +23,7 @@
 #include <kernel-features.h>
 #include <pthread-pi-defines.h>
 #include <pthread-errnos.h>
-
+#include <stap-probe.h>
 
 	.text
 
@@ -33,6 +32,8 @@
 	.type	__pthread_cond_broadcast, @function
 	.align	16
 __pthread_cond_broadcast:
+
+	LIBC_PROBE (cond_broadcast, 1, %rdi)
 
 	/* Get internal lock.  */
 	movl	$1, %esi
@@ -59,14 +60,14 @@ __pthread_cond_broadcast:
 	incl	broadcast_seq-cond_futex(%rdi)
 
 	/* Get the address of the mutex used.  */
-	movq	dep_mutex-cond_futex(%rdi), %r8
+	mov	dep_mutex-cond_futex(%rdi), %R8_LP
 
 	/* Unlock.  */
 	LOCK
 	decl	cond_lock-cond_futex(%rdi)
 	jne	7f
 
-8:	cmpq	$-1, %r8
+8:	cmp	$-1, %R8_LP
 	je	9f
 
 	/* Do not use requeue for pshared condvars.  */
@@ -128,7 +129,7 @@ __pthread_cond_broadcast:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -140,7 +141,7 @@ __pthread_cond_broadcast:
 
 	/* Unlock in loop requires wakeup.  */
 5:	addq	$cond_lock-cond_futex, %rdi
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -149,7 +150,7 @@ __pthread_cond_broadcast:
 
 	/* Unlock in loop requires wakeup.  */
 7:	addq	$cond_lock-cond_futex, %rdi
-	cmpq	$-1, %r8
+	cmp	$-1, %R8_LP
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -158,7 +159,7 @@ __pthread_cond_broadcast:
 	jmp	8b
 
 9:	/* The futex requeue functionality is not available.  */
-	cmpq	$-1, %r8
+	cmp	$-1, %R8_LP
 	movl	$0x7fffffff, %edx
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax

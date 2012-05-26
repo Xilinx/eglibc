@@ -13,10 +13,10 @@ Here are the original GLIBC installation instructions:
 Installing the GNU C Library
 ****************************
 
-Before you do anything else, you should read the file `FAQ' located at
-the top level of the source tree.  This file answers common questions
+Before you do anything else, you should read the FAQ at
+`http://sourceware.org/glibc/wiki/FAQ'.  It answers common questions
 and describes problems you may experience with compilation and
-installation.  It is updated more frequently than this manual.
+installation.
 
    Features can be added to the GNU C Library via "add-on" bundles.
 These are separate tar files, which you unpack into the top level of
@@ -43,8 +43,8 @@ at the top level of the source tree.  In the scenario above, you'd type
      $ ../glibc-VERSION/configure ARGS...
 
    Please note that even though you're building in a separate build
-directory, the compilation needs to modify a few files in the source
-directory, especially some files in the manual subdirectory.
+directory, the compilation may need to create or modify files and
+directories in the source directory.
 
 `configure' takes many options, but the only one that is usually
 mandatory is `--prefix'.  This option tells `configure' where you want
@@ -189,9 +189,9 @@ files must all contain correct and sensible content.
 
    To format the `GNU C Library Reference Manual' for printing, type
 `make dvi'.  You need a working TeX installation to do this.  The
-distribution already includes the on-line formatted version of the
-manual, as Info files.  You can regenerate those with `make info', but
-it shouldn't be necessary.
+distribution builds the on-line formatted version of the manual, as
+Info files, as part of the build process.  You can build them manually
+with `make info'.
 
    The library has a number of special-purpose configuration parameters
 which you can find in `Makeconfig'.  These can be overwritten with the
@@ -256,9 +256,9 @@ well.
 permissions on a pseudoterminal so it can be used by the calling
 process.  This means programs like `xterm' and `screen' do not have to
 be setuid to get a pty.  (There may be other reasons why they need
-privileges.)  If you are using a 2.1 or newer Linux kernel with the
-`devptsfs' or `devfs' filesystems providing pty slaves, you don't need
-this program; otherwise you do.  The source for `pt_chown' is in
+privileges.)  If you are using a Linux kernel with the `devptsfs' or
+`devfs' filesystems providing pty slaves, you don't need this program;
+otherwise you do.  The source for `pt_chown' is in
 `login/programs/pt_chown.c'.
 
    After installation you might want to configure the timezone and
@@ -309,7 +309,7 @@ build the GNU C Library:
      No other assembler or linker has the necessary functionality at the
      moment.
 
-   * GNU `texinfo' 3.12f
+   * GNU `texinfo' 4.5 or later
 
      To correctly translate and install the Texinfo documentation you
      need this version of the `texinfo' package.  Earlier versions do
@@ -389,11 +389,6 @@ C Library with `--prefix=/usr'.  If you set some other prefix or allow
 it to default to `/usr/local', then all the components are installed
 there.
 
-   You cannot use `nscd' with 2.0 kernels, due to bugs in the
-kernel-side thread support.  `nscd' happens to hit these bugs
-particularly hard, but you might have problems with any threaded
-program.
-
 Reporting Bugs
 ==============
 
@@ -405,7 +400,7 @@ remain unfixed for all eternity, if not longer.
    It is a good idea to verify that the problem has not already been
 reported.  Bugs are documented in two places: The file `BUGS' describes
 a number of well known bugs and the bug tracking system has a WWW
-interface at `http://sources.redhat.com/bugzilla/'.  The WWW interface
+interface at `http://sourceware.org/bugzilla/'.  The WWW interface
 gives you access to open and closed reports.  A closed report normally
 includes a patch or a hint on solving the problem.
 

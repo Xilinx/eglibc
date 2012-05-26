@@ -49,5 +49,6 @@ libnldbl-calls += $(libnldbl-calls-y)
 libnldbl-routines = $(libnldbl-calls:%=nldbl-%)
 libnldbl-inhibit-o = $(object-suffixes)
 libnldbl-static-only-routines = $(libnldbl-routines)
+extra-objs += $(addsuffix .oS, $(libnldbl-routines))
 
 endif

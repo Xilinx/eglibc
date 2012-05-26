@@ -29,8 +29,9 @@
 /* Define __STDC_IEC_559__ and other similar macros.  */
 #include <bits/predefs.h>
 
-/* wchar_t uses ISO 10646-1 (2nd ed., published 2000-09-15) / Unicode 3.1.  */
-#define __STDC_ISO_10646__		200009L
+/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
+   Unicode 6.0.  */
+#define __STDC_ISO_10646__		201103L
 
 /* We do not support C11 <threads.h>.  */
 #define __STDC_NO_THREADS__		1

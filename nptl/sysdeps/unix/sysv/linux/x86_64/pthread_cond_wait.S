@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2007, 2009, 2011 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -23,6 +23,7 @@
 #include <tcb-offsets.h>
 #include <pthread-pi-defines.h>
 #include <pthread-errnos.h>
+#include <stap-probe.h>
 
 #include <kernel-features.h>
 
@@ -54,25 +55,27 @@ __pthread_cond_wait:
 	   rsp + 32
 		    +--------------------------+
 	   rsp + 24 | old wake_seq value       |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp + 16 | mutex pointer            |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  8 | condvar pointer          |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  4 | old broadcast_seq value  |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  0 | old cancellation mode    |
-	            +--------------------------+
+		    +--------------------------+
 	*/
 
-	cmpq	$-1, dep_mutex(%rdi)
+	LIBC_PROBE (cond_wait, 2, %rdi, %rsi)
 
-		/* Prepare structure passed to cancellation handler.  */
+	LP_OP(cmp) $-1, dep_mutex(%rdi)
+
+	/* Prepare structure passed to cancellation handler.  */
 	movq	%rdi, 8(%rsp)
 	movq	%rsi, 16(%rsp)
 
 	je	15f
-	movq	%rsi, dep_mutex(%rdi)
+	mov	%RSI_LP, dep_mutex(%rdi)
 
 	/* Get internal lock.  */
 15:	movl	$1, %esi
@@ -120,12 +123,12 @@ __pthread_cond_wait:
 	movl	%eax, (%rsp)
 
 	xorq	%r10, %r10
-	cmpq	$-1, dep_mutex(%rdi)
+	LP_OP(cmp) $-1, dep_mutex(%rdi)
 	leaq	cond_futex(%rdi), %rdi
 	movl	$FUTEX_WAIT, %esi
 	je	60f
 
-	movq	dep_mutex-cond_futex(%rdi), %r8
+	mov	dep_mutex-cond_futex(%rdi), %R8_LP
 	/* Requeue to a non-robust PI mutex if the PI bit is set and
 	the robust bit is not set.  */
 	movl	MUTEX_KIND(%r8), %eax
@@ -206,7 +209,7 @@ __pthread_cond_wait:
 	jne	17f
 
 	addq	$cond_nwaiters, %rdi
-	cmpq	$-1, dep_mutex-cond_nwaiters(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_nwaiters(%rdi)
 	movl	$1, %edx
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
@@ -255,7 +258,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -267,7 +270,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -283,7 +286,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -298,7 +301,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -319,7 +322,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -348,7 +351,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -374,7 +377,7 @@ __pthread_cond_wait:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -386,7 +389,7 @@ __pthread_cond_wait:
 93:
 	/* Set the rest of SYS_futex args for FUTEX_WAIT_REQUEUE_PI. */
 	xorq	%r10, %r10
-	movq	dep_mutex(%rdi), %r8
+	mov	dep_mutex(%rdi), %R8_LP
 	leaq	cond_futex(%rdi), %rdi
 	jmp	90b
 .LcleanupEND2:
@@ -406,15 +409,15 @@ __condvar_cleanup1:
 	   rsp + 32
 		    +--------------------------+
 	   rsp + 24 | unused                   |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp + 16 | mutex pointer            |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  8 | condvar pointer          |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  4 | old broadcast_seq value  |
-	            +--------------------------+
+		    +--------------------------+
 	   rsp +  0 | old cancellation mode    |
-	            +--------------------------+
+		    +--------------------------+
 	*/
 
 	movq	%rax, 24(%rsp)
@@ -434,7 +437,7 @@ __condvar_cleanup1:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -467,7 +470,7 @@ __condvar_cleanup1:
 	andl	$~((1 << nwaiters_shift) - 1), %eax
 	jne	4f
 
-	cmpq	$-1, dep_mutex(%rdi)
+	LP_OP(cmp) $-1, dep_mutex(%rdi)
 	leaq	cond_nwaiters(%rdi), %rdi
 	movl	$1, %edx
 #ifdef __ASSUME_PRIVATE_FUTEX
@@ -495,7 +498,7 @@ __condvar_cleanup1:
 #if cond_lock != 0
 	addq	$cond_lock, %rdi
 #endif
-	cmpq	$-1, dep_mutex-cond_lock(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
 	cmovne	%eax, %esi
@@ -506,7 +509,7 @@ __condvar_cleanup1:
 2:	testl	%ecx, %ecx
 	jnz	5f
 	addq	$cond_futex, %rdi
-	cmpq	$-1, dep_mutex-cond_futex(%rdi)
+	LP_OP(cmp) $-1, dep_mutex-cond_futex(%rdi)
 	movl	$0x7fffffff, %edx
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
@@ -559,9 +562,9 @@ __condvar_cleanup1:
 	.hidden	DW.ref.__gcc_personality_v0
 	.weak	DW.ref.__gcc_personality_v0
 	.section .gnu.linkonce.d.DW.ref.__gcc_personality_v0,"aw",@progbits
-	.align	8
+	.align	LP_SIZE
 	.type	DW.ref.__gcc_personality_v0, @object
-	.size	DW.ref.__gcc_personality_v0, 8
+	.size	DW.ref.__gcc_personality_v0, LP_SIZE
 DW.ref.__gcc_personality_v0:
-	.quad	__gcc_personality_v0
+	ASM_ADDR __gcc_personality_v0
 #endif

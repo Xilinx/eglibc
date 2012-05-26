@@ -1,5 +1,5 @@
 /* bits/typesizes.h -- underlying types for *_t.  Linux/s390 version.
-   Copyright (C) 2003 Free Software Foundation, Inc.
+   Copyright (C) 2003-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -44,6 +44,7 @@
 #define	__FSBLKCNT64_T_TYPE	__UQUAD_TYPE
 #define	__FSFILCNT_T_TYPE	__ULONGWORD_TYPE
 #define	__FSFILCNT64_T_TYPE	__UQUAD_TYPE
+#define	__FSWORD_T_TYPE		__SWORD_TYPE
 #define	__ID_T_TYPE		__U32_TYPE
 #define __CLOCK_T_TYPE		__SLONGWORD_TYPE
 #define __TIME_T_TYPE		__SLONGWORD_TYPE
@@ -63,7 +64,8 @@
 /* size_t is unsigned long int on s390 -m31.  */
 #define __SSIZE_T_TYPE		__SLONGWORD_TYPE
 #endif
-#define __SNSECONDS_T_TYPE	__SLONGWORD_TYPE
+#define __SYSCALL_SLONG_TYPE	__SLONGWORD_TYPE
+#define __SYSCALL_ULONG_TYPE	__ULONGWORD_TYPE
 
 /* Number of descriptors that can fit in an `fd_set'.  */
 #define	__FD_SETSIZE		1024

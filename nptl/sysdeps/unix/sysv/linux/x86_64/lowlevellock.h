@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2004, 2006-2008, 2009 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -18,6 +18,8 @@
 
 #ifndef _LOWLEVELLOCK_H
 #define _LOWLEVELLOCK_H	1
+
+#include <stap-probe.h>
 
 #ifndef __ASSEMBLER__
 # include <time.h>
@@ -119,7 +121,7 @@
 	".byte	0x12	# DW_CFA_def_cfa_sf\n\t" 		\
 	".uleb128 0x7\n\t" 					\
 	".sleb128 16\n\t" 					\
-	".align 8\n" 						\
+	".align " LP_SIZE "\n" 					\
 "9:\t"	".long	23f-10f	# FDE Length\n" 			\
 "10:\t"	".long	10b-7b	# FDE CIE offset\n\t" 			\
 	".long	1b-.	# FDE initial location\n\t" 		\
@@ -166,7 +168,7 @@
 	".uleb128 22f-21f\n" 					\
 "21:\t"	".byte	0x80	# DW_OP_breg16\n\t" 			\
 	".sleb128 4b-5b\n" 					\
-"22:\t"	".align 8\n" 						\
+"22:\t"	".align " LP_SIZE "\n" 					\
 "23:\t"	".previous\n"
 
 /* Unwind info for
@@ -226,6 +228,7 @@ LLL_STUB_UNWIND_INFO_END
   do {									      \
     int __ignore;							      \
     register __typeof (nr) _nr __asm ("edx") = (nr);			      \
+    LIBC_PROBE (lll_futex_wake, 3, futex, nr, private);                       \
     __asm __volatile ("syscall"						      \
 		      : "=a" (__ignore)					      \
 		      : "0" (SYS_futex), "D" (futex),			      \
@@ -285,7 +288,7 @@ LLL_STUB_UNWIND_INFO_END
 			      "je 0f\n\t"				      \
 			      "lock; cmpxchgl %4, %2\n\t"		      \
 			      "jnz 1f\n\t"				      \
-		  	      "jmp 24f\n"				      \
+			      "jmp 24f\n"				      \
 			      "0:\tcmpxchgl %4, %2\n\t"			      \
 			      "jnz 1f\n\t"
 #endif
@@ -298,10 +301,10 @@ LLL_STUB_UNWIND_INFO_END
 			   ".subsection 1\n\t"				      \
 			   ".type _L_lock_%=, @function\n"		      \
 			   "_L_lock_%=:\n"				      \
-			   "1:\tleaq %2, %%rdi\n"			      \
-			   "2:\tsubq $128, %%rsp\n"			      \
+			   "1:\tlea %2, %%" RDI_LP "\n"			      \
+			   "2:\tsub $128, %%" RSP_LP "\n"		      \
 			   "3:\tcallq __lll_lock_wait_private\n"	      \
-			   "4:\taddq $128, %%rsp\n"			      \
+			   "4:\tadd $128, %%" RSP_LP "\n"		      \
 			   "5:\tjmp 24f\n"				      \
 			   "6:\t.size _L_lock_%=, 6b-1b\n\t"		      \
 			   ".previous\n"				      \
@@ -316,10 +319,10 @@ LLL_STUB_UNWIND_INFO_END
 			   ".subsection 1\n\t"				      \
 			   ".type _L_lock_%=, @function\n"		      \
 			   "_L_lock_%=:\n"				      \
-			   "1:\tleaq %2, %%rdi\n"			      \
-			   "2:\tsubq $128, %%rsp\n"			      \
+			   "1:\tlea %2, %%" RDI_LP "\n"			      \
+			   "2:\tsub $128, %%" RSP_LP "\n"		      \
 			   "3:\tcallq __lll_lock_wait\n"		      \
-			   "4:\taddq $128, %%rsp\n"			      \
+			   "4:\tadd $128, %%" RSP_LP "\n"		      \
 			   "5:\tjmp 24f\n"				      \
 			   "6:\t.size _L_lock_%=, 6b-1b\n\t"		      \
 			   ".previous\n"				      \
@@ -338,10 +341,10 @@ LLL_STUB_UNWIND_INFO_END
 		      ".subsection 1\n\t"				      \
 		      ".type _L_robust_lock_%=, @function\n"		      \
 		      "_L_robust_lock_%=:\n"				      \
-		      "1:\tleaq %2, %%rdi\n"				      \
-		      "2:\tsubq $128, %%rsp\n"				      \
+		      "1:\tlea %2, %%" RDI_LP "\n"			      \
+		      "2:\tsub $128, %%" RSP_LP "\n"			      \
 		      "3:\tcallq __lll_robust_lock_wait\n"		      \
-		      "4:\taddq $128, %%rsp\n"				      \
+		      "4:\tadd $128, %%" RSP_LP "\n"			      \
 		      "5:\tjmp 24f\n"					      \
 		      "6:\t.size _L_robust_lock_%=, 6b-1b\n\t"		      \
 		      ".previous\n"					      \
@@ -361,10 +364,10 @@ LLL_STUB_UNWIND_INFO_END
 			 ".subsection 1\n\t"				      \
 			 ".type _L_cond_lock_%=, @function\n"		      \
 			 "_L_cond_lock_%=:\n"				      \
-			 "1:\tleaq %2, %%rdi\n"				      \
-			 "2:\tsubq $128, %%rsp\n"			      \
+			 "1:\tlea %2, %%" RDI_LP "\n"			      \
+			 "2:\tsub $128, %%" RSP_LP "\n"			      \
 			 "3:\tcallq __lll_lock_wait\n"			      \
-			 "4:\taddq $128, %%rsp\n"			      \
+			 "4:\tadd $128, %%" RSP_LP "\n"			      \
 			 "5:\tjmp 24f\n"				      \
 			 "6:\t.size _L_cond_lock_%=, 6b-1b\n\t"		      \
 			 ".previous\n"					      \
@@ -383,10 +386,10 @@ LLL_STUB_UNWIND_INFO_END
 		      ".subsection 1\n\t"				      \
 		      ".type _L_robust_cond_lock_%=, @function\n"	      \
 		      "_L_robust_cond_lock_%=:\n"			      \
-		      "1:\tleaq %2, %%rdi\n"				      \
-		      "2:\tsubq $128, %%rsp\n"				      \
+		      "1:\tlea %2, %%" RDI_LP "\n"			      \
+		      "2:\tsub $128, %%" RSP_LP "\n"			      \
 		      "3:\tcallq __lll_robust_lock_wait\n"		      \
-		      "4:\taddq $128, %%rsp\n"				      \
+		      "4:\tadd $128, %%" RSP_LP "\n"			      \
 		      "5:\tjmp 24f\n"					      \
 		      "6:\t.size _L_robust_cond_lock_%=, 6b-1b\n\t"	      \
 		      ".previous\n"					      \
@@ -406,11 +409,11 @@ LLL_STUB_UNWIND_INFO_END
 		       ".subsection 1\n\t"				      \
 		       ".type _L_timedlock_%=, @function\n"		      \
 		       "_L_timedlock_%=:\n"				      \
-		       "1:\tleaq %4, %%rdi\n"				      \
-		       "0:\tmovq %8, %%rdx\n"				      \
-		       "2:\tsubq $128, %%rsp\n"				      \
+		       "1:\tlea %4, %%" RDI_LP "\n"			      \
+		       "0:\tmov %8, %%" RDX_LP "\n"			      \
+		       "2:\tsub $128, %%" RSP_LP "\n"			      \
 		       "3:\tcallq __lll_timedlock_wait\n"		      \
-		       "4:\taddq $128, %%rsp\n"				      \
+		       "4:\tadd $128, %%" RSP_LP "\n"			      \
 		       "5:\tjmp 24f\n"					      \
 		       "6:\t.size _L_timedlock_%=, 6b-1b\n\t"		      \
 		       ".previous\n"					      \
@@ -430,11 +433,11 @@ LLL_STUB_UNWIND_INFO_END
 		       ".subsection 1\n\t"				      \
 		       ".type _L_robust_timedlock_%=, @function\n"	      \
 		       "_L_robust_timedlock_%=:\n"			      \
-		       "1:\tleaq %4, %%rdi\n"				      \
-		       "0:\tmovq %8, %%rdx\n"				      \
-		       "2:\tsubq $128, %%rsp\n"				      \
+		       "1:\tlea %4, %%" RDI_LP "\n"			      \
+		       "0:\tmov %8, %%" RDX_LP "\n"			      \
+		       "2:\tsub $128, %%" RSP_LP "\n"			      \
 		       "3:\tcallq __lll_robust_timedlock_wait\n"	      \
-		       "4:\taddq $128, %%rsp\n"				      \
+		       "4:\tadd $128, %%" RSP_LP "\n"			      \
 		       "5:\tjmp 24f\n"					      \
 		       "6:\t.size _L_robust_timedlock_%=, 6b-1b\n\t"	      \
 		       ".previous\n"					      \
@@ -468,10 +471,10 @@ LLL_STUB_UNWIND_INFO_END
 			   ".subsection 1\n\t"				      \
 			   ".type _L_unlock_%=, @function\n"		      \
 			   "_L_unlock_%=:\n"				      \
-			   "1:\tleaq %0, %%rdi\n"			      \
-			   "2:\tsubq $128, %%rsp\n"			      \
+			   "1:\tlea %0, %%" RDI_LP "\n"			      \
+			   "2:\tsub $128, %%" RSP_LP "\n"		      \
 			   "3:\tcallq __lll_unlock_wake_private\n"	      \
-			   "4:\taddq $128, %%rsp\n"			      \
+			   "4:\tadd $128, %%" RSP_LP "\n"		      \
 			   "5:\tjmp 24f\n"				      \
 			   "6:\t.size _L_unlock_%=, 6b-1b\n\t"		      \
 			   ".previous\n"				      \
@@ -485,10 +488,10 @@ LLL_STUB_UNWIND_INFO_END
 			   ".subsection 1\n\t"				      \
 			   ".type _L_unlock_%=, @function\n"		      \
 			   "_L_unlock_%=:\n"				      \
-			   "1:\tleaq %0, %%rdi\n"			      \
-			   "2:\tsubq $128, %%rsp\n"			      \
+			   "1:\tlea %0, %%" RDI_LP "\n"			      \
+			   "2:\tsub $128, %%" RSP_LP "\n"		      \
 			   "3:\tcallq __lll_unlock_wake\n"		      \
-			   "4:\taddq $128, %%rsp\n"			      \
+			   "4:\tadd $128, %%" RSP_LP "\n"		      \
 			   "5:\tjmp 24f\n"				      \
 			   "6:\t.size _L_unlock_%=, 6b-1b\n\t"		      \
 			   ".previous\n"				      \
@@ -508,10 +511,10 @@ LLL_STUB_UNWIND_INFO_END
 			".subsection 1\n\t"				      \
 			".type _L_robust_unlock_%=, @function\n"	      \
 			"_L_robust_unlock_%=:\n"			      \
-			"1:\tleaq %0, %%rdi\n"				      \
-			"2:\tsubq $128, %%rsp\n"			      \
+			"1:\tlea %0, %%" RDI_LP "\n"			      \
+			"2:\tsub $128, %%" RSP_LP "\n"			      \
 			"3:\tcallq __lll_unlock_wake\n"			      \
-			"4:\taddq $128, %%rsp\n"			      \
+			"4:\tadd $128, %%" RSP_LP "\n"			      \
 			"5:\tjmp 24f\n"					      \
 			"6:\t.size _L_robust_unlock_%=, 6b-1b\n\t"	      \
 			".previous\n"					      \

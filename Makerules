@@ -244,7 +244,7 @@ $(common-objpfx)sysd-rules: $(common-objpfx)config.make $(..)Makerules \
 	   /*) ;;							      \
 	   *) dir="\$$(..)$$dir" ;;					      \
 	   esac;							      \
-	   asm='.S .s';							      \
+	   asm='.S';							      \
 	   $(check-inhibit-asm)						      \
 	   for o in $(all-object-suffixes); do				      \
 	     set $(subst :, ,$(sysd-rules-patterns));			      \
@@ -276,12 +276,6 @@ object-suffixes-left := $(all-object-suffixes)
 include $(o-iterator)
 
 define o-iterator-doit
-$(objpfx)%$o: %.s $(before-compile); $$(compile-command.s)
-endef
-object-suffixes-left := $(all-object-suffixes)
-include $(o-iterator)
-
-define o-iterator-doit
 $(objpfx)%$o: %.c $(before-compile); $$(compile-command.c)
 endef
 object-suffixes-left := $(all-object-suffixes)
@@ -300,12 +294,6 @@ ifdef objpfx
 # Generated source files will end up there.
 define o-iterator-doit
 $(objpfx)%$o: $(objpfx)%.S $(before-compile); $$(compile-command.S)
-endef
-object-suffixes-left := $(all-object-suffixes)
-include $(o-iterator)
-
-define o-iterator-doit
-$(objpfx)%$o: $(objpfx)%.s $(before-compile); $$(compile-command.s)
 endef
 object-suffixes-left := $(all-object-suffixes)
 include $(o-iterator)
@@ -369,23 +357,30 @@ endif # sysd-sorted-done
 # Generate .dT files as we compile.
 compile-mkdep-flags = -MD -MP -MF $@.dt -MT $@
 compile-command.S = $(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.s = $(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
 compile-command.c = $(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
 compile-command.cc = $(compile.cc) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+
+# Like compile-mkdep-flags, but for use with $(BUILD_CC).  We don't want to
+# track system includes here, they may spuriously trigger an install rule,
+# and would cause the check-local-headers test to fail.
+native-compile-mkdep-flags = -MMD -MP -MF $@.dt -MT $@
 
 # GCC can grok options after the file name, and it looks nicer that way.
 compile.c = $(CC) $< -c $(CFLAGS) $(CPPFLAGS)
 compile.cc = $(CXX) $< -c $(CXXFLAGS) $(CPPFLAGS)
 compile.S = $(CC) $< -c $(CPPFLAGS) $(S-CPPFLAGS) \
 		  $(ASFLAGS) $(ASFLAGS-$(suffix $@))
+COMPILE.c = $(CC) -c $(CFLAGS) $(CPPFLAGS)
 COMPILE.S = $(CC) -c $(CPPFLAGS) $(S-CPPFLAGS) \
 		  $(ASFLAGS) $(ASFLAGS-$(suffix $@))
-COMPILE.s = $(filter-out -pipe,$(CC)) -c $(ASFLAGS)
 
 # We need this for the output to go in the right place.  It will default to
 # empty if make was configured to work with a cc that can't grok -c and -o
 # together.  You can't compile the C library with such a compiler.
 OUTPUT_OPTION = -o $@
+
+# This is the end of the pipeline for compiling generated C code.
+compile-stdin.c = $(COMPILE.c) -o $@ -x c - $(compile-mkdep-flags)
 
 # We need the $(CFLAGS) to be in there to have the right predefines during
 # the dependency run for C sources.  But having it for assembly sources can
@@ -674,6 +669,7 @@ endif
 
 +depfiles := $(sources:.c=.d) \
 	     $(patsubst %.o,%.d,$(filter %.o,$(extra-objs:.os=.o))) \
+	     $(patsubst %.oS,%.d,$(filter %.oS,$(extra-objs))) \
 	     $(patsubst %.o,%.d,$(filter %.o,$(extra-test-objs:.os=.o))) \
 	     $(addsuffix .d,$(tests) $(xtests) $(test-srcs))
 ifeq ($(build-programs),yes)
@@ -1294,7 +1290,7 @@ $(stdio_lim:h=st): $(..)stdio-common/stdio_lim.h.in $(..)Rules \
 	  echo '#define _LIBC 1';					\
 	  echo '#include "$(..)misc/sys/uio.h"'; } |			\
 	$(CC) -E -dM -MD -MP -MF $(@:st=dT) -MT '$(@:st=h) $(@:st=d)' 	\
-	      $(+includes) -xc - -o $(@:st=hT)
+	      $(CPPUNDEFS) $(+includes) -xc - -o $(@:st=hT)
 	sed $(sed-remove-objpfx) $(sed-remove-dotdot)			\
 	    $(@:st=dT) > $(@:st=dt)
 	mv -f $(@:st=dt) $(@:st=d)

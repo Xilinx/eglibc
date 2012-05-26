@@ -116,11 +116,10 @@
 #  define SYSCALL_ERROR_HANDLER						      \
 0:SETUP_PIC_REG(cx);							      \
   addl $_GLOBAL_OFFSET_TABLE_, %ecx;					      \
-  xorl %edx, %edx;							      \
-  subl %eax, %edx;							      \
-  movl %edx, rtld_errno@GOTOFF(%ecx);					      \
+  negl %eax;								      \
+  movl %eax, rtld_errno@GOTOFF(%ecx);					      \
   orl $-1, %eax;							      \
-  jmp L(pseudo_end);
+  ret;
 
 # elif defined _LIBC_REENTRANT
 
@@ -133,11 +132,10 @@
 0:SETUP_PIC_REG (cx);							      \
   addl $_GLOBAL_OFFSET_TABLE_, %ecx;					      \
   movl SYSCALL_ERROR_ERRNO@GOTNTPOFF(%ecx), %ecx;			      \
-  xorl %edx, %edx;							      \
-  subl %eax, %edx;							      \
-  SYSCALL_ERROR_HANDLER_TLS_STORE (%edx, %ecx);				      \
+  negl %eax;								      \
+  SYSCALL_ERROR_HANDLER_TLS_STORE (%eax, %ecx);				      \
   orl $-1, %eax;							      \
-  jmp L(pseudo_end);
+  ret;
 #  ifndef NO_TLS_DIRECT_SEG_REFS
 #   define SYSCALL_ERROR_HANDLER_TLS_STORE(src, destoff)		      \
   movl src, %gs:(destoff)
@@ -151,12 +149,11 @@
 #  define SYSCALL_ERROR_HANDLER						      \
 0:SETUP_PIC_REG(cx);							      \
   addl $_GLOBAL_OFFSET_TABLE_, %ecx;					      \
-  xorl %edx, %edx;							      \
-  subl %eax, %edx;							      \
+  negl %eax;								      \
   movl errno@GOT(%ecx), %ecx;						      \
-  movl %edx, (%ecx);							      \
+  movl %eax, (%ecx);							      \
   orl $-1, %eax;							      \
-  jmp L(pseudo_end);
+  ret;
 # endif	/* _LIBC_REENTRANT */
 #endif	/* PIC */
 

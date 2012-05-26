@@ -228,6 +228,8 @@
 #include <stdio.h>    /* needed for malloc_stats */
 #include <errno.h>
 
+#include <shlib-compat.h>
+
 /* For uintptr_t.  */
 #include <stdint.h>
 
@@ -337,16 +339,20 @@ __malloc_assert (const char *assertion, const char *file, unsigned int line,
 
 
 #ifndef MALLOC_ALIGNMENT
-/* XXX This is the correct definition.  It differs from 2*SIZE_SZ only on
-   powerpc32.  For the time being, changing this is causing more
-   compatibility problems due to malloc_get_state/malloc_set_state than
-   will returning blocks not adequately aligned for long double objects
-   under -mlong-double-128.
+# if !SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_16)
+/* This is the correct definition when there is no past ABI to constrain it.
 
-#define MALLOC_ALIGNMENT       (2 * SIZE_SZ < __alignof__ (long double) \
-				? __alignof__ (long double) : 2 * SIZE_SZ)
-*/
-#define MALLOC_ALIGNMENT       (2 * SIZE_SZ)
+   Among configurations with a past ABI constraint, it differs from
+   2*SIZE_SZ only on powerpc32.  For the time being, changing this is
+   causing more compatibility problems due to malloc_get_state and
+   malloc_set_state than will returning blocks not adequately aligned for
+   long double objects under -mlong-double-128.  */
+
+#  define MALLOC_ALIGNMENT       (2 * SIZE_SZ < __alignof__ (long double) \
+				  ? __alignof__ (long double) : 2 * SIZE_SZ)
+# else
+#  define MALLOC_ALIGNMENT       (2 * SIZE_SZ)
+# endif
 #endif
 
 /* The corresponding bit mask value */
@@ -1466,18 +1472,23 @@ typedef struct malloc_chunk* mbinptr;
 
     The bins top out around 1MB because we expect to service large
     requests via mmap.
+
+    Bin 0 does not exist.  Bin 1 is the unordered list; if that would be
+    a valid chunk size the small bins are bumped up one.
 */
 
 #define NBINS             128
 #define NSMALLBINS         64
 #define SMALLBIN_WIDTH    MALLOC_ALIGNMENT
-#define MIN_LARGE_SIZE    (NSMALLBINS * SMALLBIN_WIDTH)
+#define SMALLBIN_CORRECTION (MALLOC_ALIGNMENT > 2 * SIZE_SZ)
+#define MIN_LARGE_SIZE    ((NSMALLBINS - SMALLBIN_CORRECTION) * SMALLBIN_WIDTH)
 
 #define in_smallbin_range(sz)  \
   ((unsigned long)(sz) < (unsigned long)MIN_LARGE_SIZE)
 
 #define smallbin_index(sz) \
-  (SMALLBIN_WIDTH == 16 ? (((unsigned)(sz)) >> 4) : (((unsigned)(sz)) >> 3))
+  ((SMALLBIN_WIDTH == 16 ? (((unsigned)(sz)) >> 4) : (((unsigned)(sz)) >> 3)) \
+   + SMALLBIN_CORRECTION)
 
 #define largebin_index_32(sz)                                                \
 (((((unsigned long)(sz)) >>  6) <= 38)?  56 + (((unsigned long)(sz)) >>  6): \
@@ -1486,6 +1497,14 @@ typedef struct malloc_chunk* mbinptr;
  ((((unsigned long)(sz)) >> 15) <=  4)? 119 + (((unsigned long)(sz)) >> 15): \
  ((((unsigned long)(sz)) >> 18) <=  2)? 124 + (((unsigned long)(sz)) >> 18): \
 					126)
+
+#define largebin_index_32_big(sz)                                            \
+(((((unsigned long)(sz)) >>  6) <= 45)?  49 + (((unsigned long)(sz)) >>  6): \
+ ((((unsigned long)(sz)) >>  9) <= 20)?  91 + (((unsigned long)(sz)) >>  9): \
+ ((((unsigned long)(sz)) >> 12) <= 10)? 110 + (((unsigned long)(sz)) >> 12): \
+ ((((unsigned long)(sz)) >> 15) <=  4)? 119 + (((unsigned long)(sz)) >> 15): \
+ ((((unsigned long)(sz)) >> 18) <=  2)? 124 + (((unsigned long)(sz)) >> 18): \
+                                        126)
 
 // XXX It remains to be seen whether it is good to keep the widths of
 // XXX the buckets the same or whether it should be scaled by a factor
@@ -1499,7 +1518,9 @@ typedef struct malloc_chunk* mbinptr;
 					126)
 
 #define largebin_index(sz) \
-  (SIZE_SZ == 8 ? largebin_index_64 (sz) : largebin_index_32 (sz))
+  (SIZE_SZ == 8 ? largebin_index_64 (sz)                                     \
+   : MALLOC_ALIGNMENT == 16 ? largebin_index_32_big (sz)                     \
+   : largebin_index_32 (sz))
 
 #define bin_index(sz) \
  ((in_smallbin_range(sz)) ? smallbin_index(sz) : largebin_index(sz))
@@ -2267,8 +2288,12 @@ static void* sysmalloc(INTERNAL_SIZE_T nb, mstate av)
       is no following chunk whose prev_size field could be used.
 
       See the front_misalign handling below, for glibc there is no
-      need for further alignments.  */
-    size = (nb + SIZE_SZ + pagemask) & ~pagemask;
+      need for further alignments unless we have have high alignment.
+    */
+    if (MALLOC_ALIGNMENT == 2 * SIZE_SZ)
+      size = (nb + SIZE_SZ + pagemask) & ~pagemask;
+    else
+      size = (nb + SIZE_SZ + MALLOC_ALIGN_MASK + pagemask) & ~pagemask;
     tried_mmap = true;
 
     /* Don't try if size wraps around 0 */
@@ -2284,14 +2309,29 @@ static void* sysmalloc(INTERNAL_SIZE_T nb, mstate av)
 	  returned start address to meet alignment requirements here
 	  and in memalign(), and still be able to compute proper
 	  address argument for later munmap in free() and realloc().
+	*/
 
-	  For glibc, chunk2mem increases the address by 2*SIZE_SZ and
-	  MALLOC_ALIGN_MASK is 2*SIZE_SZ-1.  Each mmap'ed area is page
-	  aligned and therefore definitely MALLOC_ALIGN_MASK-aligned.  */
-	assert (((INTERNAL_SIZE_T)chunk2mem(mm) & MALLOC_ALIGN_MASK) == 0);
-
-	p = (mchunkptr)mm;
-	set_head(p, size|IS_MMAPPED);
+	if (MALLOC_ALIGNMENT == 2 * SIZE_SZ)
+	  {
+	    /* For glibc, chunk2mem increases the address by 2*SIZE_SZ and
+	       MALLOC_ALIGN_MASK is 2*SIZE_SZ-1.  Each mmap'ed area is page
+	       aligned and therefore definitely MALLOC_ALIGN_MASK-aligned.  */
+	    assert (((INTERNAL_SIZE_T)chunk2mem(mm) & MALLOC_ALIGN_MASK) == 0);
+	    front_misalign = 0;
+	  }
+	else
+	  front_misalign = (INTERNAL_SIZE_T)chunk2mem(mm) & MALLOC_ALIGN_MASK;
+	if (front_misalign > 0) {
+	  correction = MALLOC_ALIGNMENT - front_misalign;
+	  p = (mchunkptr)(mm + correction);
+	  p->prev_size = correction;
+	  set_head(p, (size - correction) |IS_MMAPPED);
+	}
+	else
+	  {
+	    p = (mchunkptr)mm;
+	    set_head(p, size|IS_MMAPPED);
+	  }
 
 	/* update statistics */
 
@@ -2356,11 +2396,12 @@ static void* sysmalloc(INTERNAL_SIZE_T nb, mstate av)
       top(av) = chunk_at_offset(heap, sizeof(*heap));
       set_head(top(av), (heap->size - sizeof(*heap)) | PREV_INUSE);
 
-      /* Setup fencepost and free the old top chunk. */
+      /* Setup fencepost and free the old top chunk with a multiple of
+	 MALLOC_ALIGNMENT in size. */
       /* The fencepost takes at least MINSIZE bytes, because it might
 	 become the top chunk again later.  Note that a footer is set
 	 up, too, although the chunk is marked in use. */
-      old_size -= MINSIZE;
+      old_size = (old_size - MINSIZE) & ~MALLOC_ALIGN_MASK;
       set_head(chunk_at_offset(old_top, old_size + 2*SIZE_SZ), 0|PREV_INUSE);
       if (old_size >= MINSIZE) {
 	set_head(chunk_at_offset(old_top, old_size), (2*SIZE_SZ)|PREV_INUSE);
@@ -2559,8 +2600,24 @@ static void* sysmalloc(INTERNAL_SIZE_T nb, mstate av)
 
       /* handle non-contiguous cases */
       else {
-	/* MORECORE/mmap must correctly align */
-	assert(((unsigned long)chunk2mem(brk) & MALLOC_ALIGN_MASK) == 0);
+	if (MALLOC_ALIGNMENT == 2 * SIZE_SZ)
+	  /* MORECORE/mmap must correctly align */
+	  assert(((unsigned long)chunk2mem(brk) & MALLOC_ALIGN_MASK) == 0);
+	else {
+	  front_misalign = (INTERNAL_SIZE_T)chunk2mem(brk) & MALLOC_ALIGN_MASK;
+	  if (front_misalign > 0) {
+
+	    /*
+	      Skip over some bytes to arrive at an aligned position.
+	      We don't need to specially mark these wasted front bytes.
+	      They will never be accessed anyway because
+	      prev_inuse of av->top (and any chunk created from its start)
+	      is always true after initialization.
+	    */
+
+	    aligned_brk += MALLOC_ALIGNMENT - front_misalign;
+	  }
+	}
 
 	/* Find out current end of memory */
 	if (snd_brk == (char*)(MORECORE_FAILURE)) {
@@ -3753,8 +3810,9 @@ _int_free(mstate av, mchunkptr p, int have_lock)
       malloc_printerr (check_action, errstr, chunk2mem(p));
       return;
     }
-  /* We know that each chunk is at least MINSIZE bytes in size.  */
-  if (__builtin_expect (size < MINSIZE, 0))
+  /* We know that each chunk is at least MINSIZE bytes in size or a
+     multiple of MALLOC_ALIGNMENT.  */
+  if (__builtin_expect (size < MINSIZE || !aligned_OK (size), 0))
     {
       errstr = "free(): invalid size";
       goto errout;
@@ -4513,12 +4571,12 @@ __malloc_usable_size(void* m)
 
 /*
   ------------------------------ mallinfo ------------------------------
+  Accumulate malloc statistics for arena AV into M.
 */
 
-static struct mallinfo
-int_mallinfo(mstate av)
+static void
+int_mallinfo(mstate av, struct mallinfo *m)
 {
-  struct mallinfo mi;
   size_t i;
   mbinptr b;
   mchunkptr p;
@@ -4558,29 +4616,40 @@ int_mallinfo(mstate av)
     }
   }
 
-  mi.smblks = nfastblocks;
-  mi.ordblks = nblocks;
-  mi.fordblks = avail;
-  mi.uordblks = av->system_mem - avail;
-  mi.arena = av->system_mem;
-  mi.hblks = mp_.n_mmaps;
-  mi.hblkhd = mp_.mmapped_mem;
-  mi.fsmblks = fastavail;
-  mi.keepcost = chunksize(av->top);
-  mi.usmblks = mp_.max_total_mem;
-  return mi;
+  m->smblks += nfastblocks;
+  m->ordblks += nblocks;
+  m->fordblks += avail;
+  m->uordblks += av->system_mem - avail;
+  m->arena += av->system_mem;
+  m->fsmblks += fastavail;
+  if (av == &main_arena)
+    {
+      m->hblks = mp_.n_mmaps;
+      m->hblkhd = mp_.mmapped_mem;
+      m->usmblks = mp_.max_total_mem;
+      m->keepcost = chunksize(av->top);
+    }
 }
 
 
 struct mallinfo __libc_mallinfo()
 {
   struct mallinfo m;
+  mstate ar_ptr;
 
   if(__malloc_initialized < 0)
     ptmalloc_init ();
-  (void)mutex_lock(&main_arena.mutex);
-  m = int_mallinfo(&main_arena);
-  (void)mutex_unlock(&main_arena.mutex);
+
+  memset(&m, 0, sizeof (m));
+  ar_ptr = &main_arena;
+  do {
+    (void)mutex_lock(&ar_ptr->mutex);
+    int_mallinfo(ar_ptr, &m);
+    (void)mutex_unlock(&ar_ptr->mutex);
+
+    ar_ptr = ar_ptr->next;
+  } while (ar_ptr != &main_arena);
+
   return m;
 }
 
@@ -4593,7 +4662,6 @@ __malloc_stats()
 {
   int i;
   mstate ar_ptr;
-  struct mallinfo mi;
   unsigned int in_use_b = mp_.mmapped_mem, system_b = in_use_b;
 #if THREAD_STATS
   long stat_lock_direct = 0, stat_lock_loop = 0, stat_lock_wait = 0;
@@ -4605,8 +4673,11 @@ __malloc_stats()
   int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
   ((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
   for (i=0, ar_ptr = &main_arena;; i++) {
+    struct mallinfo mi;
+
+    memset(&mi, 0, sizeof(mi));
     (void)mutex_lock(&ar_ptr->mutex);
-    mi = int_mallinfo(ar_ptr);
+    int_mallinfo(ar_ptr, &mi);
     fprintf(stderr, "Arena %d:\n", i);
     fprintf(stderr, "system bytes     = %10u\n", (unsigned int)mi.arena);
     fprintf(stderr, "in use bytes     = %10u\n", (unsigned int)mi.uordblks);

@@ -1,5 +1,5 @@
 /* *printf* family compatibility routines for IEEE double as long double
-   Copyright (C) 2006, 2007, 2008 Free Software Foundation, Inc.
+   Copyright (C) 2006-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Jakub Jelinek <jakub@cygnus.com>, 2006.
 
@@ -173,7 +173,7 @@ __nldbl_vfprintf (FILE *s, const char *fmt, va_list ap)
 {
   int done;
   set_no_long_double ();
-  done = INTUSE(_IO_vfprintf) (s, fmt, ap);
+  done = _IO_vfprintf (s, fmt, ap);
   clear_no_long_double ();
   return done;
 }
@@ -186,7 +186,7 @@ __nldbl__IO_vsprintf (char *string, const char *fmt, va_list ap)
 {
   int done;
   __no_long_double = 1;
-  done = INTUSE(_IO_vsprintf) (string, fmt, ap);
+  done = _IO_vsprintf (string, fmt, ap);
   __no_long_double = 0;
   return done;
 }
@@ -350,7 +350,7 @@ __nldbl__IO_vfscanf (FILE *s, const char *fmt, _IO_va_list ap,
 {
   int res;
   set_no_long_double ();
-  res = INTUSE(_IO_vfscanf) (s, fmt, ap, errp);
+  res = _IO_vfscanf (s, fmt, ap, errp);
   clear_no_long_double ();
   return res;
 }
@@ -361,7 +361,7 @@ __nldbl___vfscanf (FILE *s, const char *fmt, va_list ap)
 {
   int res;
   set_no_long_double ();
-  res = INTUSE(_IO_vfscanf) (s, fmt, ap, NULL);
+  res = _IO_vfscanf (s, fmt, ap, NULL);
   clear_no_long_double ();
   return res;
 }
