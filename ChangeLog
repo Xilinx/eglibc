@@ -1,4 +1,175 @@
+2012-05-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14183]
+	* sysdeps/unix/sysv/linux/x86_64/bits/typesizes.h (__NLINK_T_TYPE):
+	Defined with __UWORD_TYPE if __x86_64__ isn't defined.
+
+2012-05-30  Richard Henderson  <rth@twiddle.net>
+
+	* sysdeps/unix/make-syscalls.sh: Protect symbol_version output
+	with #ifndef NOT_IN_libc.
+
+	* scripts/abilist.awk: Accept 8 fields.  Handle Alpha functions
+	marked to avoid plt entry.
+
+2012-05-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14112]
+	* Makeconfig (default-abi): New macro.
+	(abi-includes): Likewise.
+	($(common-objpfx)soversions.mk): Remove WORDSIZE check.  Use
+	$(abi-$(default-abi)-lib-soname) for soname if defined.
+	($(common-objpfx)gnu/lib-names.stmp): Generate from
+	abi-variants.
+	* Makefile (installed-stubs): Likewise.
+	* include/stubs-biarch.h: Removed.
+	* scripts/lib-names.awk: Only handle one library at a time.
+	* scripts/soversions.awk: Remove WORDSIZE support.
+	* shlib-versions: Remove WORDSIZE and i.86/s390x/powerpc64 ld
+	entries.
+	* sysdeps/unix/sysv/linux/Makefile (syscall-list-variants):
+	Removed.
+	(syscall-list-default-condition): Likewise.
+	(syscall-list-default-condition): Likewise.
+	(syscall-list-includes): Likewise.
+	($(objpfx)bits/syscall%h $(objpfx)bits/syscall%d): Replace
+	syscall-list-* with abi-*.  Handle undefined abi-variants.
+	* sysdeps/unix/sysv/linux/i386/Makefile (default-abi): New macro.
+	* sysdeps/unix/sysv/linux/i386/Implies: New file.
+	* sysdeps/unix/sysv/linux/x86/Makefile: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/64/Makefile: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/Implies: Add unix/sysv/linux/x86.
+	* sysdeps/unix/sysv/linux/x86_64/Makefile (syscall-list-variants):
+	Removed.
+	(syscall-list-32-options): Likewise.
+	(syscall-list-32-condition): Likewise.
+	(syscall-list-64-options): Likewise.
+	(syscall-list-64-condition): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/x32/Makefile (default-abi): New
+	macro.
+	* sysdeps/unix/sysv/linux/powerpc/Makefile (syscall-list-*):
+	Renamed to ...
+	(abi-*): This.
+	(abi-64-ld-soname): New macro.
+	* sysdeps/unix/sysv/linux/s390/Makefile: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/Makefile (syscall-list-*):
+	Renamed to ...
+	(abi-*): This.
+	* sysdeps/x86_64/64/shlib-versions: Remove ld entry.
+	* sysdeps/x86_64/x32/shlib-versions: Likewise.
+
+2012-05-30  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_TRUNCATE64_SYSCALL): Remove all definitions.
+	* sysdeps/unix/sysv/linux/ftruncate64.c: Do not
+	include <kernel-features.h>.
+	[!__NR_ftruncate64]: Remove conditional code.
+	[!__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	[__NR_ftruncate64]: Make code unconditional.
+	[__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	* sysdeps/unix/sysv/linux/truncate64.c: Do not
+	include <kernel-features.h>.
+	[!__NR_ftruncate64]: Remove conditional code.
+	[!__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	[__NR_ftruncate64]: Make code unconditional.
+	[__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/ftruncate64.c: Do not
+	include <kernel-features.h>.
+	[!__NR_ftruncate64]: Remove conditional code.
+	[!__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	[__NR_ftruncate64]: Make code unconditional.
+	[__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/truncate64.c: Do not
+	include <kernel-features.h>.
+	[!__NR_ftruncate64]: Remove conditional code.
+	[!__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+	[__NR_ftruncate64]: Make code unconditional.
+	[__ASSUME_TRUNCATE64_SYSCALL]: Likewise.
+
+	* configure.in (libc_cv_fpie): Weaken to a compile test using
+	LIBC_TRY_CC_OPTION.
+	* configure: Regenerated.
+
+2012-05-29  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/ld.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libc.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libm.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libpthread.abilist:
+	Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/librt.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libutil.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/ld.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libc.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libm.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libpthread.abilist:
+	Refreshed.
+
+2012-05-27  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/soft-fp/q_util.c (___Q_numbers): Delete.
+	(___Q_zero): New.
+	(__Q_simulate_exceptions): Return void.  Change to simulate
+	exceptions by writing into the %fsr.
+	* sysdeps/sparc/sparc64/soft-fp/qp_util.c
+	(__Qp_handle_exceptions): Likewise.
+	(numbers): Delete.
+	* sysdeps/sparc/sparc64/soft-fp/Versions: Remove entry for
+	__Qp_handle_exceptions.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libc.abilist: Remove
+	__Qp_handle_exceptions.
+	* sysdeps/sparc/sparc32/soft-fp/sfp-machine.h (_FP_DECL_EX): Mark
+	as unused and give dummy FP_RND_NEAREST initializer.
+	(FP_INHIBIT_RESULTS): Define.
+	(___Q_simulate_exceptions): Update declaration.
+	(FP_HANDLE_EXCEPTIONS): Use ___Q_zero and tidy inline asm
+	formatting.
+	* sysdeps/sparc/sparc64/soft-fp/sfp-machine.h (_FP_DECL_EX): Mark
+	as unused and give dummy FP_RND_NEAREST initializer.
+	(__Qp_handle_exceptions): Update declaration.
+	(FP_HANDLE_EXCEPTIONS, QP_NO_EXCEPTIONS): Tidy inline asm
+	formatting.
+
+2012-05-27  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/sh/sh4/fpu/fclrexcpt.c (feclearexcept): Use fpu_control_t for
+	the temporary FPU control word.
+	* sysdeps/sh/sh4/fpu/fedisblxcpt.c (fedisableexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/feenablxcpt.c (feenableexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/fegetenv.c (fegetenv): Likewise.
+	* sysdeps/sh/sh4/fpu/fegetexcept.c (fegetexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/sh/sh4/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/fesetenv.c (fesetenv): Likewise.
+	* sysdeps/sh/sh4/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/sh/sh4/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sh/sh4/fpu/fsetexcptflg.c (fesetexceptflag): Likewise.
+	* sysdeps/sh/sh4/fpu/ftestexcept.c (fetestexcept): Likewise.
+
+2012-05-27  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/sh/sh4/fpu/fraiseexcpt.c (feraiseexcept): Restore fpscr flag
+	fields.
+
+2012-05-27  Chung-Lin Tang  <cltang@codesourcery.com>
+
+	* sysdeps/sh/_mcount.S (_mount): Add CFI directives.
+	* sysdeps/unix/sh/sysdep.S (__syscall_error): Likewise.
+	* sysdeps/unix/sysv/linux/sh/sh3/setcontext.S (__setcontext): Likewise.
+	* sysdeps/unix/sysv/linux/sh/sh3/swapcontext.S (__swapcontext):
+	Likewise.
+	* sysdeps/unix/sysv/linux/sh/sh4/setcontext.S (__setcontext): Likewise.
+	* sysdeps/unix/sysv/linux/sh/sh4/swapcontext.S (__swapcontext):
+	Likewise.
+
+2012-05-27  Ulrich Drepper  <drepper@gmail.com>
+
+	* po/h.po: Update from translation team.
+
 2012-05-26  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/powerpc32/dl-irel.h: Include <ldsodefs.h>.
 
 	* sysdeps/ieee754/dbl-64/s_logb.c (__logb): Optimize
 	handling of denormals.

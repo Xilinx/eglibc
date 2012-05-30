@@ -1650,11 +1650,10 @@ fi
 rm -f conftest*])
 AC_SUBST(libc_cv_z_execstack)
 
-dnl A build-and-link test for this fails during a bootstrap build,
-dnl since we haven't yet built startup files needed for the link.
-dnl However, we require versions of GCC and binutils that are new
-dnl enough that -fpie should always work.
-libc_cv_fpie=yes
+AC_CACHE_CHECK(for -fpie, libc_cv_fpie, [dnl
+LIBC_TRY_CC_OPTION([-fpie], [libc_cv_fpie=yes], [libc_cv_fpie=no])
+])
+
 AC_SUBST(libc_cv_fpie)
 
 AC_CACHE_CHECK(for --hash-style option,

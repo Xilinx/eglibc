@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2003-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,11 +29,20 @@
 	.globl	__pthread_rwlock_wrlock
 	.type	__pthread_rwlock_wrlock,@function
 	.align	5
+	cfi_startproc
 __pthread_rwlock_wrlock:
 	mov.l	r12, @-r15
+	cfi_adjust_cfa_offset (4)
+	cfi_rel_offset (r12, 0)
 	mov.l	r9, @-r15
+	cfi_adjust_cfa_offset (4)
+	cfi_rel_offset (r9, 0)
 	mov.l	r8, @-r15
+	cfi_adjust_cfa_offset (4)
+	cfi_rel_offset (r8, 0)
 	sts.l	pr, @-r15
+	cfi_adjust_cfa_offset (4)
+	cfi_rel_offset (pr, 0)
 	mov	r4, r8
 
 	/* Get the lock.  */
@@ -128,12 +137,22 @@ __pthread_rwlock_wrlock:
 	tst	r2, r2
 	bf	6f
 7:
+	cfi_remember_state
 	lds.l	@r15+, pr
+	cfi_adjust_cfa_offset (-4)
+	cfi_restore (pr)
 	mov.l	@r15+, r8
+	cfi_adjust_cfa_offset (-4)
+	cfi_restore (r8)
 	mov.l	@r15+, r9
+	cfi_adjust_cfa_offset (-4)
+	cfi_restore (r9)
 	mov.l	@r15+, r12
+	cfi_adjust_cfa_offset (-4)
+	cfi_restore (r12)
 	rts
 	 mov	r3, r0
+	cfi_restore_state
 
 1:
 	mov	r8, r5
@@ -217,6 +236,8 @@ __pthread_rwlock_wrlock:
 	bra	13b
 	 nop
 
+	cfi_endproc
+
 	.align	2
 .Lwait4:
 	.long	__lll_lock_wait-.Lwait4b
@@ -226,8 +247,6 @@ __pthread_rwlock_wrlock:
 	.long	__lll_lock_wait-.Lwait5b
 .Lwake5:
 	.long	__lll_unlock_wake-.Lwake5b
-	.globl	pthread_rwlock_wrlock
-pthread_rwlock_wrlock = __pthread_rwlock_wrlock
 
-	.globl	__pthread_rwlock_wrlock_internal
-__pthread_rwlock_wrlock_internal = __pthread_rwlock_wrlock
+strong_alias (__pthread_rwlock_wrlock, pthread_rwlock_wrlock)
+hidden_def (__pthread_rwlock_wrlock)
