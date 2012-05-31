@@ -1,3 +1,97 @@
+2012-05-31  Marek Polacek  <polacek@redhat.com>
+
+	[BZ #14132]
+	* include/mntent.h (__setmntent_internal, __getmntent_r_internal
+	__endmntent_internal): Remove declaration.
+	(__setmntent, __endmntent, __getmntent_r) [NOT_IN_libc]: Remove macro.
+	(__setmntent, __endmntent, __getmntent_r): Declare hidden proto.
+	* misc/mntent_r.c: Replace INTDEF with libc_hidden_def.
+
+2012-05-30  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/soft-fp/q_util.c
+	(___Q_simulate_exceptions): Use real FP ops rather than writing
+	into the %fsr.
+	* sysdeps/sparc/sparc32/soft-fp/q_util.c (__Qp_handle_exceptions):
+	Likewise.
+
+2012-05-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/x86_64/bits/xtitypes.h: Renamed to ...
+	* sysdeps/x86/bits/xtitypes.h: This.
+
+	* sysdeps/x86_64/bits/wordsize.h: Renamed to ...
+	* sysdeps/x86/bits/wordsize.h: This.
+
+	* sysdeps/i386/bits/huge_vall.h: Renamed to ...
+	* sysdeps/x86/bits/huge_vall.h: This.
+
+	* sysdeps/i386/bits/select.h: Removed.
+	* sysdeps/x86_64/bits/select.h: Renamed to ...
+	* sysdeps/x86/bits/select.h: This.
+
+	* sysdeps/i386/bits/setjmp.h: Removed.
+	* sysdeps/x86_64/bits/setjmp.h: Renamed to ...
+	* sysdeps/x86/bits/setjmp.h: This.
+
+	* sysdeps/i386/bits/mathdef.h: Removed.
+	* sysdeps/x86_64/bits/mathdef.h: Renamed to ...
+	* sysdeps/x86/bits/mathdef.h: This.
+
+2012-05-30  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #14132]
+	* include/sys/socket.h (__connect_internal)
+	(__libc_sa_len_internal): Remove declaration.
+	(__connect, __libc_sa_len): Declare hidden_proto.
+	(SA_LEN): Remove use of INTUSE.
+	* socket/connect.c: Add libc_hidden_def.
+	* sysdeps/mach/hurd/connect.c: Replace INTDEF by libc_hidden_def.
+	* sysdeps/unix/sysv/linux/sa_len.c: Likewise.
+	* sysdeps/unix/inet/syscalls.list: Remove __connect_internal
+	alias.
+	* sysdeps/unix/sysv/linux/s390/s390-64/syscalls.list: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/syscalls.list: Likewise.
+	* sysdeps/unix/sysv/linux/connect.S: Use libc_hidden_weak instead
+	of adding _internal alias.
+
+2012-05-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/i386/bits/link.h: Removed.
+	* sysdeps/i386/bits/linkmap.h: Likewise.
+	* sysdeps/x86_64/bits/link.h: Renamed to ...
+	* sysdeps/x86/bits/link.h: This.
+	* sysdeps/x86_64/bits/linkmap.h: Renamed to ...
+	* sysdeps/x86/bits/linkmap.h: This.
+
+	* sysdeps/i386/bits/endian.h: Removed.
+	* sysdeps/x86_64/bits/endian.h: Renamed to ...
+	* sysdeps/x86/bits/endian.h: This.
+
+	* sysdeps/i386/bits/byteswap.h: Removed.
+	* sysdeps/i386/bits/byteswap-16.h: Likewise.
+	* sysdeps/x86_64/bits/byteswap.h: Renamed to ...
+	* sysdeps/x86/bits/byteswap.h: This.
+	* sysdeps/x86_64/bits/byteswap-16.h: Renamed to ...
+	* sysdeps/x86/bits/byteswap-16.h: This.
+	* sysdeps/i386/Implies: Add x86.
+	* sysdeps/x86_64/Implies: Likewise.
+
+2012-05-30  David S. Miller  <davem@davemloft.net>
+
+	* soft-fp/soft-fp.h (FP_CUR_EXCEPTIONS): Define.
+	(FP_TRAPPING_EXCEPTIONS): Provide default implementation.
+	* sysdeps/sparc/sparc32/soft-fp/sfp-machine.h
+	(FP_TRAPPING_EXCEPTIONS): Define.
+	* sysdeps/sparc/sparc64/soft-fp/sfp-machine.h
+	(FP_TRAPPING_EXCEPTIONS): Define.
+	* soft-fp/op-common.h (_FP_PACK_SEMIRAW): Signal underflow for
+	subnormals only when inexact has been signalled or underflow
+	exceptions are enabled.
+	(_FP_PACK_CANONICAL): Likewise.
+
 2012-05-30  H.J. Lu  <hongjiu.lu@intel.com>
 
 	[BZ #14183]
