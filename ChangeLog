@@ -1,3 +1,69 @@
+2012-06-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/Makefile
+	(default-abi): New variable.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/Makefile: New file.
+	* sysdeps/unix/sysv/linux/s390/s390-32/Makefile (default-abi): New
+	variable.
+	* sysdeps/unix/sysv/linux/s390/s390-64/Makefile (default-abi):
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/Makefile (default-abi):
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/Makefile (default-abi):
+	Likewise.
+
+	* Makeconfig [abi-variants && !default-abi] (default-abi): Remove
+	definition.  Document in comment.
+
+2012-06-01  David S. Miller  <davem@davemloft.net>
+
+	* stdlib/longlong.h: Updated from GCC.
+
+2012-06-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/unix/sysv/linux/i386/Makefile (sysdep_headers):
+	Don't add sys/elf.h sys/perm.h sys/reg.h sys/vm86.h
+	sys/debugreg.h sys/io.h here.
+	* sysdeps/unix/sysv/linux/x86/Makefile (sysdep_headers): Add
+	sys/elf.h sys/perm.h sys/reg.h sys/vm86.h sys/debugreg.h
+	sys/io.h.
+	* sysdeps/unix/sysv/linux/x86_64/Makefile (sysdep_headers):
+	Don't add sys/perm.h sys/reg.h sys/debugreg.h sys/io.h here.
+	* sysdeps/unix/sysv/linux/i386/sys/elf.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/elf.h: This.
+	* sysdeps/unix/sysv/linux/i386/sys/vm86.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/vm86.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/sys/debugreg.h (DR_LEN_8):
+	Define only if __x86_64__ is defined.
+
+2012-06-01  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14048]
+	* sysdeps/ieee754/dbl-64/wordsize-64/e_fmod.c (__ieee754_fmod):
+	Use int64_t for variable i.
+	* math/libm-test.inc (fmod_test): Add more tests.
+
+	* sysdeps/ieee754/dbl-64/s_fmaf.c (__fmaf): Ensure temp + (double)
+	z computation is not scheduled after fetestexcept.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c: Include <math_private.h>.
+	Use math_force_eval instead of asm to ensure calculation scheduled
+	before exception test.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c: Include <math_private.h>.
+	Ensure a1 + u.d computation is not scheduled after fetestexcept.
+
+2012-06-01  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Ensure a1 + u.d
+	computation is not scheduled after fetestexcept.
+
+2012-06-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/unix/sysv/linux/i386/bits/wchar.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/wchar.h: This.
+
 2012-06-01  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/fpu/k_cosf.c: Fix underflow generation.
