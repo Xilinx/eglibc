@@ -1,3 +1,163 @@
+2012-06-01  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/k_cosf.c: Fix underflow generation.
+	* sysdeps/powerpc/fpu/k_sinf.c: Likewise.
+
+2012-05-31  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/unix/sysv/linux/i386/bits/wchar.h: Include
+	<bits/wordsize.h>.
+	(__WCHAR_MIN): Support __WORDSIZE == 64.
+	(__WCHAR_MAX): Likewise.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/typesizes.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/typesizes.h: This.
+
+	[BZ #14183]
+	* sysdeps/unix/sysv/linux/x86_64/bits/typesizes.h (__FSWORD_T_TYPE):
+	Defined with __SWORD_TYPE if __x86_64__ isn't defined.
+
+	[BZ #14117]
+	* sysdeps/unix/sysv/linux/x86_64/bits/siginfo.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/siginfo.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/stat.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/stat.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/stat.h (_STAT_VER_KERNEL):
+	Defined to 1 if __x86_64__ isn't defined.
+	(_STAT_VER_LINUX_OLD): New.
+	(st_atime): Remove duplicate.
+	(st_mtime): Likewise.
+	(st_ctime): Likewise.
+
+2012-05-31  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Remove sqrt(2) and sqrt test
+	entries.
+
+2012-06-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Sort through
+	gen-libm-test.pl.
+
+	[BZ #14132]
+	* elf/dl-reloc.c: Include <_itoa.h>.
+	(_dl_reloc_bad_type): Remove use of INTUSE.
+	* elf/dl-minimal.c (_itoa, _itoa_lower_digits): Likewise.
+	* stdio-common/_itoa.c (_itoa_word, _itoa): Likewise.
+	* stdio-common/psiginfo.c (psiginfo): Likewise.
+	* stdio-common/psignal.c (psignal): Likewise.
+	* string/strsignal.c (strsignal): Likewise.
+	* include/signal.h (_sys_siglist): Declare hidden proto.
+	* stdio-common/itoa-digits.c: Include <_itoa.h>.  Replace
+	INTVARDEF with libc_hidden_data_def.
+	* stdio-common/itoa-udigits.c: Likewise.
+	* sysdeps/generic/_itoa.h (_itoa_upper_digits_internal)
+	(_itoa_lower_digits_internal): Remove declaration.
+	(_itoa_upper_digits, _itoa_lower_digits): Declare hidden proto.
+	* sysdeps/gnu/siglist.c (_sys_siglist_internal)
+	(_sys_sigabbrev_internal): Remove aliases.
+	(_sys_siglist): Define hidden alias.
+
+2012-05-31  Markus Trippelsdorf  <markus@trippelsdorf.de>
+
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/sysctl.h.
+
+2012-05-31  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/unix/sysv/linux/x86_64/bits/sysctl.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/sysctl.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/sys/ucontext.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/sys/ucontext.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/ucontext.h: This.
+	* sysdeps/unix/sysv/linux/i386/sys/user.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/sys/user.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/user.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/sys/procfs.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/sys/procfs.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/procfs.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/sys/io.h (insb): Replace addr
+	with __addr.
+	(insw): Likewise.
+	(insl): Likewise.
+	(outsb): Likewise.
+	(outsw): Likewise.
+	(outsl): Likewise.
+
+	* sysdeps/unix/sysv/linux/i386/bits/mman.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/bits/mman.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/mman.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/msq.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/msq.h: This.
+	* sysdeps/unix/sysv/linux/x86_64/bits/sem.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/sem.h: This.
+	* sysdeps/unix/sysv/linux/x86_64/bits/shm.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/shm.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/ipctypes.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/ipctypes.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/epoll.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/epoll.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/bits/fcntl.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/bits/fcntl.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/fcntl.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/bits/environments.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/bits/environments.h: Renamed
+	to ...
+	* sysdeps/unix/sysv/linux/x86/bits/environments.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/bits/a.out.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/bits/a.out.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/a.out.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/sys/elf.h: Error when compiling
+	for x86-64.
+	* sysdeps/unix/sysv/linux/i386/sys/vm86.h: Likewise.
+
+2012-05-31  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/math.h (M_El): Use two more decimal places.
+	(M_LOG2El): Likewise.
+	(M_LOG10El): Likewise.
+	(M_LN2l): Likewise.
+	(M_LN10l): Likewise.
+	(M_PIl): Likewise.
+	(M_PI_2l): Likewise.
+	(M_PI_4l): Likewise.
+	(M_1_PIl): Likewise.
+	(M_2_PIl): Likewise.
+	(M_2_SQRTPIl): Likewise.
+	(M_SQRT2l): Likewise.
+	(M_SQRT1_2l): Likewise.
+
+2012-05-31  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/memcpy.S: Use fsrc2 to move 64-bit
+	values between float registers.
+	* sysdeps/sparc/sparc64/memset.S: Likewise.
+	* sysdeps/sparc/sparc64/multiarch/memcpy-niagara2.S: Likewise.
+
+2012-05-31  Mike Frysinger  <vapier@gentoo.org>
+
+	* debug/Makefile (CFLAGS-tst-longjmp_chk.c): Delete
+	-D_FORTIFY_SOURCE=1.
+	(CPPFLAGS-tst-longjmp_chk.c): Define.
+	(CFLAGS-tst-longjmp_chk2.c): Delete -D_FORTIFY_SOURCE=1.
+	(CPPFLAGS-tst-longjmp_chk2.c): Define.
+	* wcsmbs/Makefile (CPPFLAGS-tst-wchar-h.c): Rename from
+	CFLAGS-tst-wchar-h.c.
+
 2012-05-31  Marek Polacek  <polacek@redhat.com>
 
 	[BZ #14132]
