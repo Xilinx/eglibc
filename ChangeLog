@@ -1,3 +1,148 @@
+2012-06-12  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/unix/Makefile ($(objpfx)stub-syscalls.c): Fix case for
+	non-default versions.
+
+2012-06-11  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14218]
+	* manual/argp.texi (Argp): Reword argp_parse description slightly.
+
+2012-06-09  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/sh/sh4/fpu/bits/fenv.h (__FE_UNDEFINED): Define.
+	(FE_UPWARD, FE_DOWNWARD): Don't define.
+	* sysdeps/sh/sh4/fpu/fegetround.c (fegetround): Adapt to that.
+	* sysdeps/sh/sh4/fpu/fesetround.c (fesetround): Likewise.
+
+	* sysdeps/sh/sh4/fpu/fegetenv.c (fegetenv): Do not re-write fpscr after
+	reading it.
+	* sysdeps/sh/sh4/fpu/fegetexcept.c (fegetexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/ftestexcept.c (fetestexcept): Likewise.
+
+2012-06-09  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/nptl/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/sh/nptl/libc.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/sh/nptl/libm.abilist: Refreshed.
+	* sysdeps/unix/sysv/linux/sh/nptl/librt.abilist: Refreshed.
+
+2012-06-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/i386/fpu/bits/fenv.h: Removed.
+	* sysdeps/i386/fpu/Implies: New file.
+	* sysdeps/x86_64/fpu/Implies: Likewise.
+	* sysdeps/x86_64/fpu/bits/fenv.h: Renamed to ...
+	* sysdeps/x86/fpu/bits/fenv.h: This.
+
+	* sysdeps/x86_64/fpu/bits/fenv.h (feraiseexcept): Check
+	__SSE_MATH__.
+
+2012-06-06  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14134]
+	* iconvdata/ibm930.c (BODY) [FROM_LOOP]: Check for invalid
+	character 0xffff that matches the last element of the
+	conversion table.
+
+2012-06-05  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/e_fmodl.c: Fix for wrong ldbl128-ibm
+	fmodl commit.
+
+2012-06-05  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/s_erfl.c: Fix spurious underflow for
+	values higher than 25.6283.
+
+2012-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/e_fmodl.c (__ieee754_fmodl): Fix
+	subnormal exponent extraction and add some __builtin_expect.
+	* sysdeps/ieee754/ldbl-128ibm/math_ldbl.h (ldbl_extract_mantissa):
+	Fix for subnormal mantissa calculation.
+
+2012-06-04  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/tst-getcpu.c (do_test): Call perror when
+	cpu2 is -1 and errno is not ENOSYS.
+
+2012-06-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/i386/i486/bits/string.h: Renamed to ...
+	* sysdeps/x86/bits/string.h: This.
+	* sysdeps/x86_64/bits/string.h: Removed.
+
+	* sysdeps/i386/i486/bits/string.h: Define inline functions only
+	if not compiling for x86-64, but compiling for >= i486.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/sigcontext.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/bits/sigcontext.h: This.
+
+	* sysdeps/unix/sysv/linux/x86_64/bits/sigcontext.h (FP_XSTATE_MAGIC1):
+	New macro from Linux kernel 3.4.0.
+	(FP_XSTATE_MAGIC2): Likewise.
+	(FP_XSTATE_MAGIC2_SIZE): Likewise.
+	(X86_FXSR_MAGIC): New macro from Linux i386 kernel.
+	(struct _fpx_sw_bytes): New struct.
+	(struct _xsave_hdr): Likewise.
+	(struct _ymmh_state): Likewise.
+	(struct _xstate): Likewise.
+
+	* sysdeps/unix/sysv/linux/i386/sys/debugreg.h: Removed.
+	* sysdeps/unix/sysv/linux/i386/sys/reg.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sys/debugreg.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/debugreg.h: This.
+	* sysdeps/unix/sysv/linux/x86_64/sys/reg.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/reg.h: This.
+
+	* sysdeps/unix/sysv/linux/i386/sys/io.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/sys/io.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/io.h: This.
+	* sysdeps/unix/sysv/linux/i386/sys/perm.h: Removed.
+	* sysdeps/unix/sysv/linux/x86_64/sys/perm.h: Renamed to ...
+	* sysdeps/unix/sysv/linux/x86/sys/perm.h: This.
+
+2012-06-04  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	[BZ #13743]
+	* sysdeps/powerpc/sys/platform/ppc.h: New file for PowerPC features.
+	* sysdeps/powerpc/Makefile (tests): Add test-gettimebase.
+	(sysdep_headers): Include sys/platform/ppc.h.
+	* sysdeps/powerpc/test-gettimebase.c: Test for
+	__ppc_get_timebase() to catch future ISA opcode/insn changes.
+	* manual/Makefile (appendices): Include platform.texi.
+	* manual/contrib.texi (Contributors): Update @node pointers.
+	* manual/maint.texi (Maintenance): Likewise.
+	(Platform): New node.
+	* manual/platform.texi: New file.  Document the new features.
+
+2012-06-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Jakub Jelinek  <jakub@redhat.com>
+
+	[BZ #14188]
+	* misc/sys/cdefs.h (__glibc_unlikely): New macro to wrap cases
+	where __builtin_expect is unavailable.
+
+2012-06-03  David S. Miller  <davem@davemloft.net>
+
+	* stdlib/longlong.h: Updated from GCC.
+
+2012-06-02  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #14042]
+	* sysdeps/powerpc/powerpc32/mcount.c: New file.
+	* sysdeps/powerpc/powerpc32/Versions (GLIBC_2.16): Add
+	__mcount_internal.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist
+	(GLIBC_2.16): Likewise.
+
+2012-06-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/sys/io.h (outsw): Fix a typo.
+
 2012-06-01  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/powerpc/powerpc32/Makefile

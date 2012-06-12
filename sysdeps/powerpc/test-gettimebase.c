@@ -1,7 +1,6 @@
-/* Get enabled floating-point exceptions.
+/* Check __ppc_get_timebase() for architecture changes
    Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, 2012.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,16 +16,31 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
+/* Test if __ppc_get_timebase() is compatible with the current processor and if
+   it's changing between reads.  A read failure might indicate a Power ISA or
+   binutils change.  */
 
-int
-fegetexcept (void)
+#include <inttypes.h>
+#include <stdio.h>
+
+#include <sys/platform/ppc.h>
+
+static int
+do_test (void)
 {
-  fpu_control_t temp;
+  uint64_t t1, t2, t3;
+  t1 = __ppc_get_timebase ();
+  printf ("Time Base = %"PRIu64"\n", t1);
+  t2 = __ppc_get_timebase ();
+  printf ("Time Base = %"PRIu64"\n", t2);
+  t3 = __ppc_get_timebase ();
+  printf ("Time Base = %"PRIu64"\n", t3);
+  if (t1 != t2 && t1 != t3 && t2 != t3)
+    return 0;
 
-  /* Get current exceptions.  */
-  _FPU_GETCW (temp);
-
-  return (temp >> 5) & FE_ALL_EXCEPT;
+  printf ("Fail: timebase reads should always be different.");
+  return 1;
 }
+
+#define TEST_FUNCTION do_test ()
+#include "../test-skeleton.c"
