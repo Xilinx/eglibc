@@ -59,7 +59,8 @@ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
 		   tst-strtok tst-strfry	\
 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
-		   tst-strxfrm2 tst-endian tst-svc2 bug-strstr1 bug-strchr1
+		   tst-strxfrm2 tst-endian tst-svc2 bug-strstr1 bug-strchr1 \
+		   tst-strtok_r
 tests-$(OPTION_EGLIBC_ENVZ) += bug-envz1 
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strxfrm bug-strcoll1

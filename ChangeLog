@@ -1,3 +1,98 @@
+2012-06-15  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14117]
+	* sysdeps/i386/fpu/bits/mathinline.h: Renamed to ...
+	* sysdeps/x86/fpu/bits/mathinline.h: This.
+	* sysdeps/x86_64/fpu/bits/mathinline.h: Removed.
+
+	[BZ #14050]
+	[BZ #14117]
+	* sysdeps/i386/fpu/bits/mathinline.h: Disable x87 inline
+	functions if __x86_64__ is defined.
+
+2012-06-15  Chung-Lin Tang  <cltang@codesourcery.com>
+
+	* string/endian.h: Add !__ASSEMBLER__ condition for including
+	conversion interfaces.
+
+2012-06-15  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14241]
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Use 0.0 instead
+	of ABS(x) in calculating zero to negative powers other than odd
+	integers.
+	* math/libm-test.inc (pow_test): Add more tests.
+
+2012-06-15  Andreas Jaeger  <aj@suse.de>
+
+	* manual/contrib.texi (Contributors): Update entry of Liubov
+	Dmitrieva and add entries for Will Schmidt and Tulio Magno Quites
+	Machado Filho.
+
+2012-06-15  Cyril Hrubis  <metan@ucw.cz>
+
+	* string/string.h: Add __wur to GNU version of strerror_r.
+
+2012-06-14  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14229]
+	* string/Makefile (tests): Add tst-strtok_r.
+	* string/tst-strtok_r.c: New file.
+	* sysdeps/x86_64/strtok.S: Use LP_SIZE on save_ptr and use
+	RAX_LP/RDX_LP on SAVE_PTR.
+
+2012-06-14  Roland McGrath  <roland@hack.frob.com>
+
+	* manual/Makefile ($(objpfx)texis): Do $(make-target-directory).
+
+2012-06-14  Joseph Myers  <joseph@codesourcery.com>
+
+	* libm_test.inc (csqrt_test): Allow more spurious underflow
+	exceptions.
+	(j0_test): Likewise.
+	(j1_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+
+2012-06-13  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* po/Makefile (libc.pot): Use UTF-8 charset.
+
+2012-06-13  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #14210]
+	Suppress sign-conversion warning from FD_SET.
+	See <http://sourceware.org/ml/libc-alpha/2012-05/msg01794.html>.
+	* debug/fdelt_chk.c (__fdelt_chk): Accept and return long int,
+	not unsigned long int.
+	* misc/bits/select2.h (__fdelt_chk, __fdelt_warn, __FD_ELT): Likewise.
+
+2012-06-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14050]
+	[BZ #14117]
+	* sysdeps/i386/fpu/bits/mathinline.h (__MATH_INLINE): Check
+	__extern_always_inline instead of __extern_inline.
+	(__signbitf): Support __SSE2_MATH__ and C++ namespace.
+	(__signbit): Likewise.
+	(__signbitl): Support C++ namespace.
+	(lrintf): New inline function.
+	(lrint): Likewise.
+	(llrintf): Likewise.
+	(llrint): Likewise.
+	(fmaxf): Likewise.
+	(fmax): Likewise.
+	(fminf): Likewise.
+	(fmin): Likewise.
+	(rint): Likewise.
+	(rintf): Likewise.
+	(ceil): Likewise.
+	(ceilf): Likewise.
+	(floor): Likewise.
+	(floorf): Likewise.
+	(nearbyint): Likewise.
+	(nearbyintf): Likewise.
+
 2012-06-12  Thomas Schwinge  <thomas@codesourcery.com>
 
 	* sysdeps/unix/Makefile ($(objpfx)stub-syscalls.c): Fix case for
