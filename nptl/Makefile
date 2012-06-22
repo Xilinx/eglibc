@@ -249,7 +249,7 @@ tests = tst-typesizes \
 	tst-exec2 tst-exec3 tst-exec4 \
 	tst-exit1 tst-exit2 tst-exit3 \
 	tst-stdio1 tst-stdio2 \
-	tst-stack1 tst-stack2 tst-stack3 \
+	tst-stack1 tst-stack2 tst-stack3 tst-pthread-getattr \
 	tst-unload \
 	tst-dlsym1 \
 	tst-sysconf \

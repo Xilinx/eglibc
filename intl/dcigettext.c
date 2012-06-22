@@ -1,5 +1,5 @@
 /* Implementation of the internal dcigettext function.
-   Copyright (C) 1995-2005, 2006, 2007, 2008, 2009, 2011
+   Copyright (C) 1995-2005, 2006, 2007, 2008, 2009, 2011, 2012
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -1171,7 +1171,7 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 							     freemem_size);
 # ifdef _LIBC
 		      if (newmem != NULL)
-			transmem_list = transmem_list->next;
+			transmem_list = newmem;
 		      else
 			{
 			  struct transmem_list *old = transmem_list;
@@ -1186,6 +1186,12 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 		      malloc_count = 1;
 		      freemem_size = INITIAL_BLOCK_SIZE;
 		      newmem = (transmem_block_t *) malloc (freemem_size);
+# ifdef _LIBC
+		      /* Add the block to the list of blocks we have to free
+			 at some point.  */
+		      newmem->next = transmem_list;
+		      transmem_list = newmem;
+# endif
 		    }
 		  if (__builtin_expect (newmem == NULL, 0))
 		    {
@@ -1196,11 +1202,6 @@ _nl_find_msg (domain_file, domainbinding, msgid, convert, lengthp)
 		    }
 
 # ifdef _LIBC
-		  /* Add the block to the list of blocks we have to free
-		     at some point.  */
-		  newmem->next = transmem_list;
-		  transmem_list = newmem;
-
 		  freemem = (unsigned char *) newmem->data;
 		  freemem_size -= offsetof (struct transmem_list, data);
 # else
