@@ -1,3 +1,93 @@
+2012-06-25  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/s390/fpu/libm-test-ulps: Update.
+
+2012-06-23  Andreas Schwab  <schwab@linux-m68k.org>
+	    Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/sh/syscalls.list: Add fanotify_mark.
+	* sysdeps/unix/sysv/linux/sh/Versions (GLIBC_2.16): Add fanotify_mark.
+	* sysdeps/unix/sysv/linux/sh/nptl/libc.abilist (GLIBC_2.16): Add
+	fanotify_mark.
+
+2012-06-23  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/mach/start.c: Remove file.
+	* sysdeps/mach/hurd/i386/static-start.S: Fix start.S include.
+	* sysdeps/i386/init-first.c: Fix comment regarding start.S.
+	* sysdeps/sh/init-first.c: Likewise.
+
+	* sysdeps/sh/____longjmp_chk.S (CALL_FAIL): Preserve r12 and pr
+	registers for frame unwinding purposes, add CFI directives.
+	* sysdeps/unix/sysv/linux/sh/____longjmp_chk.S (CALL_FAIL): Likewise.
+	* sysdeps/unix/sysv/linux/sh/makecontext.S (.Lexitcode): Likewise
+	* sysdeps/unix/sysv/linux/sh/sysdep.h (SYSCALL_ERROR_HANDLER):
+	Likewise.
+
+	* sysdeps/sh/____longjmp_chk.S (CALL_FAIL): Don't plan for the call to
+	__fortify_fail returning.
+	* sysdeps/unix/sysv/linux/sh/____longjmp_chk.S (CALL_FAIL): Likewise.
+
+	* sysdeps/unix/sysv/linux/sh/____longjmp_chk.S: New file, based on
+	sysdeps/sh/____longjmp_chk.S.
+	* sysdeps/unix/sysv/linux/sh/sigaltstack-offsets.sym: New file, based
+	on sysdeps/unix/sysv/linux/x86_64/sigaltstack-offsets.sym.
+	* sysdeps/unix/sysv/linux/sh/Makefile [subdir=misc]
+	(gen-as-const-headers): Append sigaltstack-offsets.sym.
+
+	* sysdeps/sh/abort-instr.h: New file.
+	* sysdeps/unix/sysv/linux/sh/makecontext.S (.Lexitcode): Terminate the
+	process in case exit returns.
+
+	* sysdeps/unix/sysv/linux/sh/makecontext.S (.Lexitcode): Always
+	initialize the GOT register before use.
+
+	* sysdeps/unix/sysv/linux/sh/makecontext.S (__makecontext): Fix
+	calculation of ARGC > 4.
+
+	* sysdeps/unix/sysv/linux/sh/makecontext.S: Add comments and give more
+	meaningful names to some local labels.
+
+2012-06-22  Nobuhiro Iwamatsu  <iwamatsu@nigauri.org>
+	    Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/unix/sysv/linux/sh/bits/atomic.h
+	(__arch_compare_and_exchange_val_8_acq): Remove explicit nop.
+	(__arch_compare_and_exchange_val_16_acq): Likewise.
+	(__arch_compare_and_exchange_val_32_acq): Likewise.
+	(atomic_exchange_and_add): Fix gUSA sequence.
+	(atomic_add): Likewise.
+	(atomic_add_negative): Likewise.
+	(atomic_add_zero): Likewise.
+	(atomic_bit_test_set): Likewise.
+
+2012-06-22  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #13579]
+	* include/link.h (struct link_map): Add l_free_initfini.
+	* elf/dl-deps.c (_dl_map_object_deps): Set it when assigning
+	l_initfini.
+	* elf/dl-close.c (_dl_close_worker): Don't free l_initfini.
+	* elf/rtld.c (dl_main): Clear it on all objects loaded on startup.
+	* elf/dl-libc.c (free_mem): Free l_initfini if l_free_initfini is
+	set.
+
+2012-06-22  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* configure.in: Use AC_LANG_SOURCE.
+	* configure: Regenerate.
+
+2012-06-22  Roland McGrath  <roland@hack.frob.com>
+
+	* configure.in (libc_cv_localstatedir): New substituted variable.
+	* configure: Regenerated.
+	* config.make.in (localstatedir): New variable, substituted from
+	libc_cv_localstatedir.
+	* Makeconfig (vardbdir): Use $(localstatedir) in place of /var.
+	* sysdeps/gnu/configure.in (libc_cv_localstatedir): Change
+	${prefix}/var to /var when we change ${prefix}/etc to /etc.
+	* sysdeps/gnu/configure: Regenerated.
+
 2012-06-21  Jeff Law  <law@redhat.com>
 
 	[BZ #14277]
@@ -23,7 +113,7 @@
 	[BZ #13882]
 	* elf/dl-deps.c (_dl_map_object_deps): Fix cycle detection.  Use
 	uint16_t for elements in the "seen" array to avoid char overflows.
-        * elf/dl-fini.c (_dl_sort_fini): Likewise.
+	* elf/dl-fini.c (_dl_sort_fini): Likewise.
 	* elf/dl-open.c (dl_open_worker): Likewise.
 
 2012-06-21  Carlos O'Donell  <carlos_odonell@mentor.com>

@@ -283,12 +283,12 @@ if test "x$systemtap" != xno; then
   AC_CACHE_CHECK([for systemtap static probe support], libc_cv_sdt, [dnl
   old_CFLAGS="$CFLAGS"
   CFLAGS="-std=gnu99 $CFLAGS"
-  AC_COMPILE_IFELSE([#include <sys/sdt.h>
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sys/sdt.h>
 void foo (int i, void *p)
 {
   asm ("" STAP_PROBE_ASM (foo, bar, STAP_PROBE_ASM_TEMPLATE (2)) ""
        :: STAP_PROBE_ASM_OPERANDS (2, i, p));
-}], [libc_cv_sdt=yes], [libc_cv_sdt=no])
+}]])], [libc_cv_sdt=yes], [libc_cv_sdt=no])
   CFLAGS="$old_CFLAGS"])
   if test $libc_cv_sdt = yes; then
     AC_DEFINE([USE_STAP_PROBE])
@@ -2152,6 +2152,7 @@ AC_SUBST(libc_extra_cflags)
 use_ldconfig=no
 ldd_rewrite_script=no
 libc_cv_sysconfdir=$sysconfdir
+libc_cv_localstatedir=$localstatedir
 libc_cv_gcc_unwind_find_fde=no
 libc_cv_idn=no
 
@@ -2192,6 +2193,7 @@ AC_SUBST(old_glibc_headers)
 AC_SUBST(libc_cv_slibdir)
 AC_SUBST(libc_cv_localedir)
 AC_SUBST(libc_cv_sysconfdir)
+AC_SUBST(libc_cv_localstatedir)
 AC_SUBST(libc_cv_rootsbindir)
 AC_SUBST(libc_cv_forced_unwind)
 
