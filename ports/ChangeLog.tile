@@ -1,3 +1,44 @@
+2012-07-26  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/tile/sys/ptrace.h (__ptrace_eventcodes):
+	Add new value PTRACE_EVENT_SECCOMP from Linux 3.5.
+	(__ptrace_setoptions): Add new value PTRACE_O_TRACESECCOMP, adjust
+	PTRACE_O_MASK.
+
+	* sysdeps/unix/sysv/linux/tile/bits/siginfo.h (siginfo_t): Add
+	_sigsys.
+	(si_call_addr, si_syscall, si_arch): Define new macro.
+
+2012-07-25  Florian Weimer  <fweimer@redhat.com>
+
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx64/nptl/libc.abilist:
+	Add secure_getenv.
+	* sysdeps/unix/sysv/linux/tile/tilepro/nptl/libc.abilist:
+	Likewise.
+
+2012-07-17  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/unix/sysv/linux/tile/setcontext.S: Ensure exit status is
+	zero if uc_link is NULL.
+
+	* sysdeps/tile/libm-test-ulps: Account for new tests.
+
+	* data/c++-types-tilepro-linux-gnu.data: Move to ...
+	* sysdeps/unix/sysv/linux/tile/tilepro/nptl/c++-types.data: ... here.
+	* data/c++-types-tilegx-linux-gnu.data: Move to ...
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx64/nptl/c++-types.data:
+	... here.
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx32/nptl/c++-types.data:
+	New file.
+
+2012-07-10  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/unix/sysv/linux/tile/makecontext.c (__makecontext):
+	Correct typo in comment.
+
+	* sysdeps/tile/sysdep.h (ENTRY): Use .globl, not
+	ASM_GLOBAL_DIRECTIVE.
+
 2012-05-30  Chris Metcalf  <cmetcalf@tilera.com>
 
 	* sysdeps/unix/sysv/linux/tile/tilegx/Makefile: Remove test

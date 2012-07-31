@@ -21,3 +21,4 @@
 #define pltexit la_alpha_gnu_pltexit
 #define La_regs La_alpha_regs
 #define La_retval La_alpha_retval
+#define int_retval lrv_r0

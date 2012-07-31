@@ -1,7 +1,6 @@
 /* Set a block of memory to some byte value.  For IBM S390
-   Copyright (C) 2000, 2001, 2003 Free Software Foundation, Inc.
+   Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Martin Schwidefsky (schwidefsky@de.ibm.com).
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,28 +16,50 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-/*
- * R2 = address to memory area
- * R3 = byte to fill memory with
- * R4 = number of bytes to fill
- */
 
 #include "sysdep.h"
 #include "asm-syntax.h"
 
-	.text
+/* INPUT PARAMETERS
+     %r2 = address to memory area
+     %r3 = byte to fill memory with
+     %r4 = number of bytes to fill.  */
+
+       .text
+
+#ifdef USE_MULTIARCH
+ENTRY(memset_g5)
+#else
 ENTRY(memset)
-	ltr     %r4,%r4
-	jz      .L1
-	lr      %r0,%r2             # save source address
-	lr      %r1,%r3             # move pad byte to R1
-	lr      %r3,%r4
-	sr      %r4,%r4             # no source for MVCLE, only a pad byte
-	sr      %r5,%r5
-.L0:    mvcle   %r2,%r4,0(%r1)      # thats it, MVCLE is your friend
-	jo      .L0
-	lr      %r2,%r0             # return value is source address
-.L1:
-	br      %r14
+#endif
+	.machine "g5"
+        basr    %r5,0
+.L_G5_19:
+        ltr     %r4,%r4
+        je      .L_G5_4
+        stc     %r3,0(%r2)
+        chi     %r4,1
+        lr      %r1,%r2
+        je      .L_G5_4
+        ahi     %r4,-2
+        lr      %r3,%r4
+        srl     %r3,8
+        ltr     %r3,%r3
+        jne     .L_G5_14
+        ex      %r4,.L_G5_20-.L_G5_19(%r5)
+.L_G5_4:
+        br      %r14
+.L_G5_14:
+        mvc     1(256,%r1),0(%r1)
+        la      %r1,256(%r1)
+        brct    %r3,.L_G5_14
+        ex      %r4,.L_G5_20-.L_G5_19(%r5)
+        j       .L_G5_4
+.L_G5_20:
+        mvc     1(1,%r1),0(%r1)
+#ifdef USE_MULTIARCH
+END(memset_g5)
+#else
 END(memset)
 libc_hidden_builtin_def (memset)
+#endif

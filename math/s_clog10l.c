@@ -43,27 +43,44 @@ __clog10l (__complex__ long double x)
   else if (__builtin_expect (rcls != FP_NAN && icls != FP_NAN, 1))
     {
       /* Neither real nor imaginary part is NaN.  */
-      long double d;
+      long double absx = fabsl (__real__ x), absy = fabsl (__imag__ x);
       int scale = 0;
 
-      if (fabsl (__real__ x) > LDBL_MAX / 2.0L
-	  || fabsl (__imag__ x) > LDBL_MAX / 2.0L)
+      if (absx < absy)
+	{
+	  long double t = absx;
+	  absx = absy;
+	  absy = t;
+	}
+
+      if (absx > LDBL_MAX / 2.0L)
 	{
 	  scale = -1;
-	  __real__ x = __scalbnl (__real__ x, scale);
-	  __imag__ x = __scalbnl (__imag__ x, scale);
+	  absx = __scalbnl (absx, scale);
+	  absy = (absy >= LDBL_MIN * 2.0L ? __scalbnl (absy, scale) : 0.0L);
 	}
-      else if (fabsl (__real__ x) < LDBL_MIN
-	       && fabsl (__imag__ x) < LDBL_MIN)
+      else if (absx < LDBL_MIN && absy < LDBL_MIN)
 	{
 	  scale = LDBL_MANT_DIG;
-	  __real__ x = __scalbnl (__real__ x, scale);
-	  __imag__ x = __scalbnl (__imag__ x, scale);
+	  absx = __scalbnl (absx, scale);
+	  absy = __scalbnl (absy, scale);
 	}
 
-      d = __ieee754_hypotl (__real__ x, __imag__ x);
+      if (absx == 1.0L && scale == 0)
+	{
+	  long double absy2 = absy * absy;
+	  if (absy2 <= LDBL_MIN * 2.0L * M_LN10l)
+	    __real__ result
+	      = (absy2 / 2.0L - absy2 * absy2 / 4.0L) * M_LOG10El;
+	  else
+	    __real__ result = __log1pl (absy2) * (M_LOG10El / 2.0L);
+	}
+      else
+	{
+	  long double d = __ieee754_hypotl (absx, absy);
+	  __real__ result = __ieee754_log10l (d) - scale * M_LOG10_2l;
+	}
 
-      __real__ result = __ieee754_log10l (d) - scale * M_LOG10_2l;
       __imag__ result = M_LOG10El * __ieee754_atan2l (__imag__ x, __real__ x);
     }
   else

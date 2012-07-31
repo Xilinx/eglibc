@@ -13,7 +13,7 @@ cat > conftest.S <<EOF
 /* comment on
    two lines */
 	${libc_cv_dot_text}
-	${libc_cv_asm_global_directive} foo
+	.globl foo
 foo:
 	/* Unfortunately this test only works for a real instruction,
 	   not for any of the machine-independent pseudo-ops.
@@ -78,32 +78,6 @@ LIBC_TRY_CC_OPTION([-mno-vzeroupper],
 		   [libc_cv_cc_novzeroupper=yes],
 		   [libc_cv_cc_novzeroupper=no])
 ])
-
-# Check for support of thread-local storage handling in assembler and linker.
-AC_CACHE_CHECK(for x86-64 TLS support, libc_cv_x86_64_tls, [dnl
-cat > conftest.s <<\EOF
-	.section ".tdata", "awT", @progbits
-	.globl foo
-foo:	.quad	1
-	.section ".tbss", "awT", @nobits
-	.globl bar
-bar:	.skip	8
-	.text
-baz:	leaq	bar@TLSLD(%rip), %rdi
-	leaq	bar@DTPOFF(%rax), %rcx
-	addq	foo@GOTTPOFF(%rip), %rax
-	movq	$bar@TPOFF, %rdx
-EOF
-dnl
-if AC_TRY_COMMAND(${CC-cc} -c $CFLAGS conftest.s 1>&AS_MESSAGE_LOG_FD); then
-  libc_cv_x86_64_tls=yes
-else
-  libc_cv_x86_64_tls=no
-fi
-rm -f conftest*])
-if test $libc_cv_x86_64_tls = no; then
-  AC_MSG_ERROR([the assembler must support TLS])
-fi
 
 dnl It is always possible to access static and hidden symbols in an
 dnl position independent way.

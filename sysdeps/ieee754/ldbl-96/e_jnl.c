@@ -56,6 +56,7 @@
  *
  */
 
+#include <errno.h>
 #include <math.h>
 #include <math_private.h>
 
@@ -360,7 +361,8 @@ __ieee754_ynl (int n, long double x)
       b = __ieee754_y1l (x);
       /* quit if b is -inf */
       GET_LDOUBLE_WORDS (se, i0, i1, b);
-      for (i = 1; i < n && se != 0xffff; i++)
+      /* Use 0xffffffff since GET_LDOUBLE_WORDS sign-extends SE.  */
+      for (i = 1; i < n && se != 0xffffffff; i++)
 	{
 	  temp = b;
 	  b = ((long double) (i + i) / x) * b - a;
@@ -368,6 +370,9 @@ __ieee754_ynl (int n, long double x)
 	  a = temp;
 	}
     }
+  /* If B is +-Inf, set up errno accordingly.  */
+  if (! __finitel (b))
+    __set_errno (ERANGE);
   if (sign > 0)
     return b;
   else

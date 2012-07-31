@@ -88,9 +88,9 @@ $(objpfx)tst-gettext6.out: tst-gettext6.sh $(objpfx)tst-gettext6
 endif
 # eglibc: endif
 
-$(objpfx)msgs.h: po2test.sed ../po/de.po
+$(objpfx)msgs.h: po2test.awk ../po/de.po
 	$(make-target-directory)
-	LC_ALL=C sed -f $^ > $@
+	LC_ALL=C $(AWK) -f $^ > $@
 
 CFLAGS-tst-gettext.c = -DTESTSTRS_H=\"$(objpfx)msgs.h\"
 CFLAGS-tst-translit.c = -DOBJPFX=\"$(objpfx)\"

@@ -76,85 +76,40 @@
 # define __ASSUME_STAT64_SYSCALL	1
 #endif
 
-/* The changed st_ino field appeared in 2.4.0-test6.  But we cannot
-   distinguish this version from other 2.4.0 releases.  Therefore play
-   save and assume it available is for 2.4.1 and up.  However, SH is lame,
+/* The changed st_ino field appeared in 2.4.0-test6.  However, SH is lame,
    and still does not have a 64-bit inode field.  */
-#if __LINUX_KERNEL_VERSION >= 132097 && !defined __sh__
+#ifndef __sh__
 # define __ASSUME_ST_INO_64_BIT		1
 #endif
 
 /* To support locking of large files a new fcntl() syscall was introduced
-   in 2.4.0-test7.  We test for 2.4.1 for the earliest version we know
-   the syscall is available.  */
-#if __LINUX_KERNEL_VERSION >= 132097 && (defined __i386__ || defined __sparc__)
+   in 2.4.0-test7.  */
+#if defined __i386__ || defined __sparc__
 # define __ASSUME_FCNTL64		1
-#endif
-
-/* The AT_CLKTCK auxiliary vector entry was introduction in the 2.4.0
-   series.  */
-#if __LINUX_KERNEL_VERSION >= 132097
-# define __ASSUME_AT_CLKTCK		1
 #endif
 
 /* Arm got fcntl64 in 2.4.4, PowerPC and SH have it also in 2.4.4 (I
    don't know when it got introduced).  But PowerPC64 does not support
    separate FCNTL64 call, FCNTL is already 64-bit */
-#if __LINUX_KERNEL_VERSION >= 132100 \
-    && (defined __powerpc__ || defined __sh__) \
+#if (defined __powerpc__ || defined __sh__) \
     && !defined __powerpc64__
 # define __ASSUME_FCNTL64		1
 #endif
 
-/* The getdents64 syscall was introduced in 2.4.0-test7.  We test for
-   2.4.1 for the earliest version we know the syscall is available.  */
-#if __LINUX_KERNEL_VERSION >= 132097
-# define __ASSUME_GETDENTS64_SYSCALL	1
-#endif
+/* The getdents64 syscall was introduced in 2.4.0-test7 (but later for
+   MIPS n32).  */
+#define __ASSUME_GETDENTS64_SYSCALL	1
 
-/* Starting with one of the 2.4.0 pre-releases the Linux kernel passes
-   up the page size information.  */
-#if __LINUX_KERNEL_VERSION >= 132097
-# define __ASSUME_AT_PAGESIZE		1
-#endif
-
-/* Starting with at least 2.4.0 the kernel passes the uid/gid unconditionally
-   up to the child.  */
-#if __LINUX_KERNEL_VERSION >= 132097
-# define __ASSUME_AT_XID		1
-#endif
-
-/* Starting with 2.4.5 kernels PPC passes the AUXV in the standard way
-   and the vfork syscall made it into the official kernel.  */
-#if __LINUX_KERNEL_VERSION >= (132096+5) && defined __powerpc__
-# define __ASSUME_STD_AUXV		1
+/* Starting with 2.4.5 kernels the vfork syscall made it into the
+   official kernel for PPC.  */
+#ifdef __powerpc__
 # define __ASSUME_VFORK_SYSCALL		1
 #endif
 
 /* Starting with 2.4.5 kernels the mmap2 syscall made it into the official
    kernel.  But PowerPC64 does not support a separate MMAP2 call.  */
-#if __LINUX_KERNEL_VERSION >= (132096+5) && defined __powerpc__ \
-    && !defined __powerpc64__
+#if defined __powerpc__ && !defined __powerpc64__
 # define __ASSUME_MMAP2_SYSCALL		1
-#endif
-
-/* Starting with 2.4.21 PowerPC implements the new prctl syscall.
-   This allows applications to get/set the Floating Point Exception Mode.  */
-#if __LINUX_KERNEL_VERSION >= (132096+21) && defined __powerpc__
-# define __ASSUME_NEW_PRCTL_SYSCALL		1
-#endif
-
-/* Starting with 2.4.21 the PowerPC32 clone syscall works as expected.  */
-#if __LINUX_KERNEL_VERSION >= (132096+21) && defined __powerpc__ \
-    && !defined __powerpc64__
-# define __ASSUME_FIXED_CLONE_SYSCALL		1
-#endif
-
-/* Starting with 2.4.21 PowerPC64 implements the new rt_sigreturn syscall.
-   The new rt_sigreturn takes an ucontext pointer allowing rt_sigreturn
-   to be used in the set/swapcontext implementation.  */
-#if __LINUX_KERNEL_VERSION >= (132096+21) && defined __powerpc64__
-# define __ASSUME_NEW_RT_SIGRETURN_SYSCALL		1
 #endif
 
 /* On x86, the set_thread_area syscall was introduced in 2.5.29, but its
@@ -164,7 +119,7 @@
 #endif
 
 /* The vfork syscall on x86 and arm was definitely available in 2.4.  */
-#if __LINUX_KERNEL_VERSION >= 132097 && defined __i386__
+#ifdef __i386__
 # define __ASSUME_VFORK_SYSCALL		1
 #endif
 
@@ -190,11 +145,6 @@
 /* Beginning with 2.6.12 the clock and timer supports CPU clocks.  */
 #if __LINUX_KERNEL_VERSION >= 0x2060c
 # define __ASSUME_POSIX_CPU_TIMERS	1
-#endif
-
-/* With kernel 2.4.17 we always have netlink support.  */
-#if __LINUX_KERNEL_VERSION >= (132096+17)
-# define __ASSUME_NETLINK_SUPPORT	1
 #endif
 
 /* The requeue futex functionality was introduced in 2.5.70.  */

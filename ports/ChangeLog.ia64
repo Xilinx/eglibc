@@ -1,3 +1,25 @@
+2012-07-26  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/ia64/sys/ptrace.h (__ptrace_eventcodes):
+	Add new value PTRACE_EVENT_SECCOMP from Linux 3.5.
+	(__ptrace_setoptions): Add new value PTRACE_O_TRACESECCOMP, adjust
+	PTRACE_O_MASK.
+
+2012-07-25  Florian Weimer  <fweimer@redhat.com>
+
+	* sysdeps/unix/sysv/linux/ia64/nptl/libc.abilist: Add
+	secure_getenv.
+
+2012-07-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* data/localplt-ia64-linux-gnu.data: Move to ...
+	* sysdeps/unix/sysv/linux/ia64/nptl/localplt.data: ... here.
+
+2012-07-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/ia64/nptl/c++-types.data: Move from
+	../scripts/data/c++-types-ia64-linux-gnu.data.
+
 2012-05-30  Mike Frysinger  <vapier@gentoo.org>
 
 	* sysdeps/unix/sysv/linux/ia64/syscalls.list: Remove

@@ -40,6 +40,7 @@
 #include <dl-osinfo.h>
 #include <dl-procinfo.h>
 #include <tls.h>
+#include <stap-probe.h>
 #include <stackinfo.h>
 
 #include <assert.h>
@@ -133,8 +134,10 @@ struct rtld_global _rtld_global =
     ._dl_nns = 1,
     ._dl_ns =
     {
+#ifdef _LIBC_REENTRANT
       [LM_ID_BASE] = { ._ns_unique_sym_table
 		       = { .lock = _RTLD_LOCK_RECURSIVE_INITIALIZER } }
+#endif
     }
   };
 /* If we would use strong_alias here the compiler would see a
@@ -1684,6 +1687,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
   /* We start adding objects.  */
   r->r_state = RT_ADD;
   _dl_debug_state ();
+  LIBC_PROBE (init_start, 2, LM_ID_BASE, r);
 
   /* Auditing checkpoint: we are ready to signal that the initial map
      is being constructed.  */
@@ -2403,6 +2407,7 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
   r = _dl_debug_initialize (0, LM_ID_BASE);
   r->r_state = RT_CONSISTENT;
   _dl_debug_state ();
+  LIBC_PROBE (init_complete, 2, LM_ID_BASE, r);
 
 #ifndef MAP_COPY
   /* We must munmap() the cache file.  */

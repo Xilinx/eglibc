@@ -32,6 +32,7 @@
 #include <caller.h>
 #include <sysdep-cancel.h>
 #include <tls.h>
+#include <stap-probe.h>
 
 #include <dl-dst.h>
 
@@ -45,7 +46,7 @@ weak_extern (BP_SYM (_dl_sysdep_start))
 
 extern int __libc_multiple_libcs;	/* Defined in init-first.c.  */
 
-/* We must be carefull not to leave us in an inconsistent state.  Thus we
+/* We must be careful not to leave us in an inconsistent state.  Thus we
    catch any error and re-raise it after cleaning up.  */
 
 struct dl_open_args
@@ -54,7 +55,7 @@ struct dl_open_args
   int mode;
   /* This is the caller of the dlopen() function.  */
   const void *caller_dlopen;
-  /* This is the caller if _dl_open().  */
+  /* This is the caller of _dl_open().  */
   const void *caller_dl_open;
   struct link_map *map;
   /* Namespace ID.  */
@@ -291,6 +292,7 @@ dl_open_worker (void *a)
   struct r_debug *r = _dl_debug_initialize (0, args->nsid);
   r->r_state = RT_CONSISTENT;
   _dl_debug_state ();
+  LIBC_PROBE (map_complete, 3, args->nsid, r, new);
 
   /* Print scope information.  */
   if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_SCOPES, 0))
@@ -376,9 +378,18 @@ dl_open_worker (void *a)
 	}
     }
 
+  int relocation_in_progress = 0;
+
   for (size_t i = nmaps; i-- > 0; )
     {
       l = maps[i];
+
+      if (! relocation_in_progress)
+	{
+	  /* Notify the debugger that relocations are about to happen.  */
+	  LIBC_PROBE (reloc_start, 2, args->nsid, r);
+	  relocation_in_progress = 1;
+	}
 
 #ifdef SHARED
       if (__builtin_expect (GLRO(dl_profile) != NULL, 0))
@@ -511,7 +522,7 @@ dl_open_worker (void *a)
 TLS generation counter wrapped!  Please report this."));
 
   /* We need a second pass for static tls data, because _dl_update_slotinfo
-     must not be run while calls to _dl_add_to_slotinfo are still pending. */
+     must not be run while calls to _dl_add_to_slotinfo are still pending.  */
   for (unsigned int i = first_static_tls; i < new->l_searchlist.r_nlist; ++i)
     {
       struct link_map *imap = new->l_searchlist.r_list[i];
@@ -522,7 +533,7 @@ TLS generation counter wrapped!  Please report this."));
 	{
 	  /* For static TLS we have to allocate the memory here and
 	     now.  This includes allocating memory in the DTV.  But we
-	     cannot change any DTV other than our own. So, if we
+	     cannot change any DTV other than our own.  So, if we
 	     cannot guarantee that there is room in the DTV we don't
 	     even try it and fail the load.
 
@@ -543,6 +554,10 @@ cannot load any more object with static TLS"));
 	  assert (imap->l_need_tls_init == 0);
 	}
     }
+
+  /* Notify the debugger all new objects have been relocated.  */
+  if (relocation_in_progress)
+    LIBC_PROBE (reloc_complete, 3, args->nsid, r, new);
 
   /* Run the initializer functions of new objects.  */
   _dl_init (new, args->argc, args->argv, args->env);
