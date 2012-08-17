@@ -89,10 +89,6 @@ uses-callbacks = $(exceptions)
 # What flags to give to tests which test stack alignment
 stack-align-test-flags =
 
-# We have a special subdir for each binary format.
-# For now, only ELF is fully supported.
-binfmt-subdir = elf
-
 # Complete path to sysdep dirs.
 # `configure' writes a definition of `config-sysdirs' in `config.make'.
 sysdirs := $(foreach D,$(config-sysdirs),$(firstword $(filter /%,$D) $(..)$D))
@@ -963,7 +959,6 @@ endif
 endif # build-shared
 
 
-dlfcn = dlfcn
 ifeq ($(build-shared),yes)
 libdl = $(common-objpfx)dlfcn/libdl.so$(libdl.so-version)
 else
@@ -1002,7 +997,7 @@ all-subdirs = csu assert ctype locale intl catgets math setjmp signal	    \
 	      grp pwd posix io termios resource misc socket sysvipc gmon    \
 	      gnulib iconv iconvdata wctype manual shadow gshadow po argp   \
 	      crypt nss localedata timezone rt conform debug		    \
-	      $(add-on-subdirs) $(dlfcn) $(binfmt-subdir)
+	      $(add-on-subdirs) dlfcn elf
 
 ifndef avoid-generated
 all-Depend-files := $(wildcard $(foreach dir,$(all-subdirs),\
@@ -1035,6 +1030,13 @@ endif
 # Compute just the target patterns.  Makeconfig has set sysd-rules-patterns.
 sysd-rules-targets := $(sort $(foreach p,$(sysd-rules-patterns),\
 					 $(firstword $(subst :, ,$p))))
+
+# A sysdeps Makeconfig fragment may set libc-reentrant to yes.
+ifeq (yes,$(libc-reentrant))
+defines += -D_LIBC_REENTRANT
+
+libio-mtsafe = -D_IO_MTSAFE_IO
+endif
 
 endif # Makeconfig not yet included
 

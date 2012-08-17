@@ -186,13 +186,16 @@ extern void __libc_lock_lock_fn (__libc_lock_t *);
 libc_hidden_proto (__libc_lock_lock_fn);
 # endif /* __OPTION_EGLIBC_BIG_MACROS != 1 */
 # if __OPTION_EGLIBC_BIG_MACROS
-# define __libc_lock_lock(NAME) \
+#  ifndef __libc_lock_lock
+#   define __libc_lock_lock(NAME) \
   ({ lll_lock (NAME, LLL_PRIVATE); 0; })
+#  endif
 # else
 #  define __libc_lock_lock(NAME)		\
   __libc_lock_lock_fn (&(NAME))
 # endif /* __OPTION_EGLIBC_BIG_MACROS */
 #else
+# undef __libc_lock_lock
 # define __libc_lock_lock(NAME) \
   __libc_maybe_call (__pthread_mutex_lock, (&(NAME)), 0)
 #endif
@@ -211,13 +214,16 @@ extern int __libc_lock_trylock_fn (__libc_lock_t *);
 libc_hidden_proto (__libc_lock_trylock_fn);
 # endif /* __OPTION_EGLIBC_BIG_MACROS != 1 */
 # if __OPTION_EGLIBC_BIG_MACROS
-# define __libc_lock_trylock(NAME) \
+#  ifndef __libc_lock_trylock
+#   define __libc_lock_trylock(NAME) \
   lll_trylock (NAME)
+#  endif
 # else
 # define __libc_lock_trylock(NAME) \
   __libc_lock_trylock_fn (&(NAME))
 # endif /* __OPTION_EGLIBC_BIG_MACROS */
 #else
+# undef __libc_lock_trylock
 # define __libc_lock_trylock(NAME) \
   __libc_maybe_call (__pthread_mutex_trylock, (&(NAME)), 0)
 #endif

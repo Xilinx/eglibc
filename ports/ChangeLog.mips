@@ -1,3 +1,69 @@
+2012-08-16  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* sysdeps/mips/ldsodefs.h (ARCH_PLTENTER_MEMBERS)
+	<mips_o32_gnu_pltenter, mips_n32_gnu_pltenter, mips_n64_gnu_pltenter>:
+	struct La_mips_32_regs and struct La_mips_64_regs are not constant.
+
+2012-08-15  Tom de Vries  <vries@codesourcery.com>
+	    Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/nptl/lowlevellock.h (__libc_lock_lock)
+	(__libc_lock_trylock): Define versions optimized for MIPS.
+
+2012-08-15  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/mips/nptl/pthread_spin_lock.S: Remove, use generic version.
+	* sysdeps/mips/nptl/pthread_spin_lock.c: New file.
+	* sysdeps/mips/nptl/pthread_spin_trylock.S: Remove, use generic version.
+
+2012-08-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/dl-lookup.c: Update from generic version.
+
+2012-08-13  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+        [__GNUC_PREREQ (4, 8)]
+        (atomic_exchange_and_add): Split into ...
+        (atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
+        New atomic macros.
+        [!__GNUC_PREREQ (4, 8)]
+        (atomic_exchange_and_add): Split into ...
+        (atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
+        New atomic macros.
+
+2012-08-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	(__ASSUME_UTIMES): Define.
+
+2012-08-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/configure.in (arch_minimum_kernel):
+	Remove.
+	* sysdeps/unix/sysv/linux/mips/configure: Regenerated.
+
+2012-08-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	(__ASSUME_FCNTL64): Remove.
+
+2012-08-01  Steve Ellcey  <sellcey@mips.com>
+
+	* sysdeps/mips/sys/asm.h [_MIPS_ISA != _MIPS_ISA_MIPS4 &&
+	_MIPS_ISA != _MIPS_ISA_MIPS5 && _MIPS_ISA != _MIPS_ISA_MIPS32 &&
+	_MIPS_ISA != _MIPS_ISA_MIPS64] (PREF): Define as function-like
+	macro.
+	(PREFX): Likewise.
+
+2012-07-31  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/fcntl.c: Remove.
+	* sysdeps/unix/sysv/linux/mips/lockf64.c: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips32/fcntl.c: New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/lockf64.c: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/fcntl.c: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/lockf64.c: Likewise.
+
 2012-07-27  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/mips/mips64/syscalls.list (mmap): New.

@@ -20,12 +20,6 @@
 #ifndef _KERNEL_FEATURES_H
 #define _KERNEL_FEATURES_H 1
 
-/* The late 2.5 kernels saw a lot of new CLONE_* flags.  Summarize
-   their availability with one define.  */
-#if __LINUX_KERNEL_VERSION >= 132416
-# define __ASSUME_CLONE_THREAD_FLAGS   1
-#endif
-
 /* The utimes syscall has been available for some architectures
    forever.  */
 #define __ASSUME_UTIMES	1

@@ -1,6 +1,5 @@
 /* longjmp for ARM.
-   Copyright (C) 1997, 1998, 2005, 2006, 2009, 2010
-     Free Software Foundation, Inc.
+   Copyright (C) 1997-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,6 +21,7 @@
 #define _ASM
 #include <bits/setjmp.h>
 #include <rtld-global-offsets.h>
+#include <arm-features.h>
 
 /* __longjmp(jmpbuf, val) */
 
@@ -47,27 +47,35 @@ ENTRY (__longjmp)
 	cfi_restore (sp)
 	cfi_restore (lr)
 
-#ifdef IS_IN_rtld
-  	ldr	a2, 1f
-	ldr	a3, Lrtld_local_ro
+#if !defined ARM_ASSUME_NO_IWMMXT || defined __SOFTFP__
+# define NEED_HWCAP 1
+#endif
+
+#ifdef NEED_HWCAP
+# ifdef IS_IN_rtld
+	ldr	a2, 1f
+	ldr	a3, .Lrtld_local_ro
 0:	add	a2, pc, a2
 	add	a2, a2, a3
 	ldr	a2, [a2, #RTLD_GLOBAL_RO_DL_HWCAP_OFFSET]
-#else
-#ifdef PIC
-  	ldr	a2, 1f
-	ldr	a3, Lrtld_global_ro
+# else
+#  ifdef PIC
+	ldr	a2, 1f
+	ldr	a3, .Lrtld_global_ro
 0:	add	a2, pc, a2
 	ldr	a2, [a2, a3]
 	ldr	a2, [a2, #RTLD_GLOBAL_RO_DL_HWCAP_OFFSET]
-#else
-	ldr	a2, Lhwcap
+#  else
+	ldr	a2, .Lhwcap
 	ldr	a2, [a2, #0]
-#endif
+#  endif
+# endif
 #endif
 
+#ifdef __SOFTFP__
 	tst	a2, #HWCAP_ARM_VFP
-	beq	Lno_vfp
+	beq	.Lno_vfp
+#endif
 
 	/* Restore the VFP registers.  */
 	/* Following instruction is vldmia ip!, {d8-d15}.  */
@@ -76,10 +84,11 @@ ENTRY (__longjmp)
 	ldr     a3, [ip], #4
 	/* Following instruction is fmxr fpscr, a3.  */
 	mcr	p10, 7, a3, cr1, cr0, 0
-Lno_vfp:
+.Lno_vfp:
 
+#ifndef ARM_ASSUME_NO_IWMMXT
 	tst	a2, #HWCAP_ARM_IWMMXT
-	beq	Lno_iwmmxt
+	beq	.Lno_iwmmxt
 
 	/* Restore the call-preserved iWMMXt registers.  */
 	/* Following instructions are wldrd wr10, [ip], #8 (etc.)  */
@@ -89,23 +98,26 @@ Lno_vfp:
 	ldcl	p1, cr13, [r12], #8
 	ldcl	p1, cr14, [r12], #8
 	ldcl	p1, cr15, [r12], #8
-Lno_iwmmxt:
+.Lno_iwmmxt:
+#endif
 
 	DO_RET(lr)
 
-#ifdef IS_IN_rtld
+#ifdef NEED_HWCAP
+# ifdef IS_IN_rtld
 1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - 8
-Lrtld_local_ro:
+.Lrtld_local_ro:
 	.long	C_SYMBOL_NAME(_rtld_local_ro)(GOTOFF)
-#else
-#ifdef PIC
+# else
+#  ifdef PIC
 1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - 8
-Lrtld_global_ro:
+.Lrtld_global_ro:
 	.long	C_SYMBOL_NAME(_rtld_global_ro)(GOT)
-#else
-Lhwcap:
+#  else
+.Lhwcap:
 	.long	C_SYMBOL_NAME(_dl_hwcap)
-#endif
+#  endif
+# endif
 #endif
 
 END (__longjmp)

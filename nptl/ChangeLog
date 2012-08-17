@@ -1,3 +1,98 @@
+2012-08-15  Roland McGrath  <roland@hack.frob.com>
+
+2012-08-15  Roland McGrath  <roland@hack.frob.com>
+
+2012-08-15  Roland McGrath  <roland@hack.frob.com>
+
+	* Makefile (CFLAGS-flockfile.c): Use $(libio-mtsafe) instead
+	of -D_IO_MTSAFE_IO.
+	(CFLAGS-ftrylockfile.c, CFLAGS-funlockfile.c): Likewise.
+	* sysdeps/unix/sysv/linux/Makefile (CFLAGS-fork.c): Likewise.
+
+2012-08-16  Joseph Myers  <joseph@codesourcery.com>
+
+	* pthread_cond_timedwait.c (__pthread_cond_timedwait)
+	[!__ASSUME_POSIX_TIMERS]: Remove conditional code.
+	* pthread_condattr_setclock.c (pthread_condattr_setclock)
+	[!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/pthread_getcpuclockid.c
+	[!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/timer_create.c [__NR_timer_create]: Make
+	code unconditional.
+	[!__NR-timer_create]: Remove conditional code.
+	(timer_create) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/timer_delete.c [__NR_timer_delete]: Make
+	code unconditional.
+	[!__NR_timer_delete]: Remove conditional code.
+	(timer_delete) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/timer_getoverr.c
+	[__NR_timer_getoverrun]: Make code unconditional.
+	[!__NR_timer_getoverrun]: Remove conditional code.
+	(timer_getoverrun) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/timer_gettime.c [__NR_timer_gettime]:
+	Make code unconditional.
+	[!__NR_timer_gettime]: Remove conditional code.
+	(timer_gettime) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/timer_routines.c [__NR_timer_create]:
+	Make code unconditional.
+	[!__ASSUME_POSIX_TIMERS]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/timer_settime.c [__NR_timer_settime]:
+	Make code unconditional.
+	[!__NR_timer_settime]: Remove conditional code.
+	(timer_settime) [!__ASSUME_POSIX_TIMERS]: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait) [!__ASSUME_POSIX_TIMERS]: Remove
+	conditional code.
+
+2012-08-15  Tom de Vries  <vries@codesourcery.com>
+	    Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/pthread/bits/libc-lockP.h (__libc_lock_lock)
+	(__libc_lock_trylock): Allow pre-existing definitions.
+
+2012-08-15  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* pthread_spin_lock.c: New file.
+	* pthread_spin_trylock.c: New file.
+
+2012-08-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* allocatestack.c (setxid_signal_thread) [__ASSUME_TGKILL]: Make
+	code unconditional.
+	(setxid_signal_thread) [!__ASSUME_TGKILL]: Remove conditional code.
+	* pthread_cancel.c (pthread_cancel) [__ASSUME_TGKILL]: Make code
+	unconditional.
+	(pthread_cancel) [!__ASSUME_TGKILL]: Remove conditional code.
+	* sysdeps/pthread/createthread.c (do_clone) [__ASSUME_TGKILL]:
+	Make code unconditional.
+	(do_clone) [!__ASSUME_TGKILL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/pt-raise.c (raise) [__ASSUME_TGKILL ||
+	__NR_tgkill]: Make code unconditional.
+	(raise) [__ASSUME_TGKILL]: Likewise.
+	(raise) [!__ASSUME_TGKILL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/pthread_kill.c (__pthread_kill)
+	[__ASSUME_TGKILL]: Make code unconditional.
+	(__pthread_kill) [!__ASSUME_TGKILL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/raise.c (raise) [__ASSUME_TGKILL ||
+	__NR_tgkill]: Make code unconditional.
+	(raise) [__ASSUME_TGKILL]: Likewise.
+	(raise) [!__ASSUME_TGKILL]: Remove conditional code.
+
+2012-08-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/pthread/createthread.c (create_thread)
+	[!__ASSUME_NO_CLONE_DETACHED]: Remove conditional code.
+
+2012-08-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* nptl-init.c (sigcancel_handler) [__ASSUME_CORRECT_SI_PID]: Make
+	code unconditional.
+	(sighandler_setxid) [__ASSUME_CORRECT_SI_PID]: Likewise.
+
 2012-07-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
 
 	* tst-pthread-getattr.c (MAX_STACK_SIZE): New macro.

@@ -82,29 +82,9 @@
 # define __ASSUME_ST_INO_64_BIT		1
 #endif
 
-/* To support locking of large files a new fcntl() syscall was introduced
-   in 2.4.0-test7.  */
-#if defined __i386__ || defined __sparc__
-# define __ASSUME_FCNTL64		1
-#endif
-
-/* Arm got fcntl64 in 2.4.4, PowerPC and SH have it also in 2.4.4 (I
-   don't know when it got introduced).  But PowerPC64 does not support
-   separate FCNTL64 call, FCNTL is already 64-bit */
-#if (defined __powerpc__ || defined __sh__) \
-    && !defined __powerpc64__
-# define __ASSUME_FCNTL64		1
-#endif
-
 /* The getdents64 syscall was introduced in 2.4.0-test7 (but later for
    MIPS n32).  */
 #define __ASSUME_GETDENTS64_SYSCALL	1
-
-/* Starting with 2.4.5 kernels the vfork syscall made it into the
-   official kernel for PPC.  */
-#ifdef __powerpc__
-# define __ASSUME_VFORK_SYSCALL		1
-#endif
 
 /* Starting with 2.4.5 kernels the mmap2 syscall made it into the official
    kernel.  But PowerPC64 does not support a separate MMAP2 call.  */
@@ -112,155 +92,41 @@
 # define __ASSUME_MMAP2_SYSCALL		1
 #endif
 
-/* On x86, the set_thread_area syscall was introduced in 2.5.29, but its
-   semantics was changed in 2.5.30, and again after 2.5.31.  */
-#if __LINUX_KERNEL_VERSION >= 132384 && defined __i386__
-# define __ASSUME_SET_THREAD_AREA_SYSCALL	1
-#endif
-
-/* The vfork syscall on x86 and arm was definitely available in 2.4.  */
-#ifdef __i386__
-# define __ASSUME_VFORK_SYSCALL		1
-#endif
-
-/* The late 2.5 kernels saw a lot of new CLONE_* flags.  Summarize
-   their availability with one define.  The changes were made first
-   for i386 and the have to be done separately for the other archs.
-   For i386 we pick 2.5.50 as the first version with support.
-   For s390*, SPARC, PPC, x86-64, and SH we pick 2.5.64 as the first
-   version with support.  */
-#if ((__LINUX_KERNEL_VERSION >= 132402 && defined __i386__)		\
-     || (__LINUX_KERNEL_VERSION >= 132416				\
-	 && (defined __s390__ || defined __sparc__			\
-	     || defined __powerpc__ || defined __x86_64__ || defined __sh__)))
-# define __ASSUME_CLONE_THREAD_FLAGS	1
-#endif
-
-/* Beginning with 2.5.63 support for realtime and monotonic clocks and
-   timers based on them is available.  */
-#if __LINUX_KERNEL_VERSION >= 132415
-# define __ASSUME_POSIX_TIMERS		1
-#endif
-
 /* Beginning with 2.6.12 the clock and timer supports CPU clocks.  */
-#if __LINUX_KERNEL_VERSION >= 0x2060c
-# define __ASSUME_POSIX_CPU_TIMERS	1
-#endif
+#define __ASSUME_POSIX_CPU_TIMERS	1
 
-/* The requeue futex functionality was introduced in 2.5.70.  */
-#if __LINUX_KERNEL_VERSION >= 132422
-# define __ASSUME_FUTEX_REQUEUE	1
-#endif
-
-/* The statfs64 syscalls are available in 2.5.74.  */
-#if __LINUX_KERNEL_VERSION >= 132426
-# define __ASSUME_STATFS64	1
-#endif
-
-/* Starting with at least 2.5.74 the kernel passes the setuid-like exec
-   flag unconditionally up to the child.  */
-#if __LINUX_KERNEL_VERSION >= 132426
-# define __ASSUME_AT_SECURE	1
-#endif
-
-/* Starting with the 2.5.75 kernel the kernel fills in the correct value
-   in the si_pid field passed as part of the siginfo_t struct to signal
-   handlers.  */
-#if __LINUX_KERNEL_VERSION >= 132427
-# define __ASSUME_CORRECT_SI_PID	1
-#endif
-
-/* The tgkill syscall was instroduced for i386 in 2.5.75.  On x86-64,
-   sparc, SH, ppc, and ppc64 it was introduced in 2.6.0-test3. */
-#if (__LINUX_KERNEL_VERSION >= 132427 && defined __i386__) \
-    || (__LINUX_KERNEL_VERSION >= 132609 \
-        && (defined __x86_64__ || defined __powerpc__ \
-            || defined __sh__ || defined __sparc__))
-# define __ASSUME_TGKILL	1
-#endif
+/* The statfs64 syscalls are available in 2.5.74 (but not for alpha).  */
+#define __ASSUME_STATFS64	1
 
 /* The utimes syscall has been available for some architectures
    forever.  For x86 it was introduced after 2.5.75, for x86-64,
    ppc, and ppc64 it was introduced in 2.6.0-test3.  */
 #if defined __sparc__ \
-    || (__LINUX_KERNEL_VERSION > 132427 && defined __i386__) \
-    || (__LINUX_KERNEL_VERSION > 132609 && defined __x86_64__) \
-    || (__LINUX_KERNEL_VERSION >= 132609 && defined __powerpc__) \
-    || (__LINUX_KERNEL_VERSION >= 132609 && defined __sh__)
+    || defined __i386__ \
+    || defined __x86_64__ \
+    || defined __powerpc__ \
+    || defined __sh__
 # define __ASSUME_UTIMES	1
-#endif
-
-// XXX Disabled for now since the semantics we want is not achieved.
-#if 0
-/* The CLONE_STOPPED flag was introduced in the 2.6.0-test1 series.  */
-#if __LINUX_KERNEL_VERSION >= 132609
-# define __ASSUME_CLONE_STOPPED	1
-#endif
 #endif
 
 /* The fixed version of the posix_fadvise64 syscall appeared in
    2.6.0-test3.  At least for x86 and sparc.  Powerpc support appeared
    in 2.6.2, but for 32-bit userspace only.  */
-#if (__LINUX_KERNEL_VERSION >= 132609				\
-     && (defined __i386__ || defined __sparc__))		\
-    || (__LINUX_KERNEL_VERSION >= 132610 && defined __powerpc__ \
-       && !defined __powerpc64__)
+#if (defined __i386__ || defined __sparc__			\
+     || (defined __powerpc__ && !defined __powerpc64__))
 # define __ASSUME_FADVISE64_64_SYSCALL	1
-#endif
-
-/* The PROT_GROWSDOWN/PROT_GROWSUP flags were introduced in the 2.6.0-test
-   series.  */
-#if __LINUX_KERNEL_VERSION >= 132609
-# define __ASSUME_PROT_GROWSUPDOWN	1
 #endif
 
 /* Starting with 2.6.0 PowerPC adds signal/swapcontext support for Vector
    SIMD (AKA Altivec, VMX) instructions and register state.  This changes
    the overall size of the sigcontext and adds the swapcontext syscall.  */
-#if __LINUX_KERNEL_VERSION >= 132608 && defined __powerpc__
+#ifdef __powerpc__
 # define __ASSUME_SWAPCONTEXT_SYSCALL	1
 #endif
 
-/* The CLONE_DETACHED flag is not necessary in 2.6.2 kernels, it is
-   implied.  */
-#if __LINUX_KERNEL_VERSION >= 132610
-# define __ASSUME_NO_CLONE_DETACHED	1
-#endif
-
-/* Starting with version 2.6.4-rc1 the getdents syscall returns d_type
-   information as well and in between 2.6.5 and 2.6.8 most compat wrappers
-   were fixed too.  Except s390{,x} which was fixed in 2.6.11.  */
-#if (__LINUX_KERNEL_VERSION >= 0x020608 && !defined __s390__) \
-    || (__LINUX_KERNEL_VERSION >= 0x02060b && defined __s390__)
-# define __ASSUME_GETDENTS32_D_TYPE	1
-#endif
-
-/* Starting with version 2.5.3, the initial location returned by `brk'
-   after exec is always rounded up to the next page.  */
-#if __LINUX_KERNEL_VERSION >= 132355
-# define __ASSUME_BRK_PAGE_ROUNDED	1
-#endif
-
-/* Starting with version 2.6.9, the waitid system call is available.
-   Except for powerpc{,64} and s390{,x}, where it is available in 2.6.12.  */
-#if (__LINUX_KERNEL_VERSION >= 0x020609 \
-     && !defined __powerpc__ && !defined __s390__) \
-    || (__LINUX_KERNEL_VERSION >= 0x02060c \
-	&& (defined __powerpc__ || defined __s390__))
-# define __ASSUME_WAITID_SYSCALL	1
-#endif
-
 /* On sparc64 stat64/lstat64/fstat64 syscalls were introduced in 2.6.12.  */
-#if __LINUX_KERNEL_VERSION >= 0x02060c && defined __sparc__ \
-    && defined __arch64__
+#if defined __sparc__ && defined __arch64__
 # define __ASSUME_STAT64_SYSCALL	1
-#endif
-
-/* Early kernel used "shm" as the filesystem name for the filesystem used
-   for shm_open etc.  Later it is "tmpfs".  2.4.20 is a safe bet for the
-   cutover.  */
-#if __LINUX_KERNEL_VERSION >= 0x02041a
-# define __ASSUME_TMPFS_NAME	1
 #endif
 
 /* pselect/ppoll were introduced just after 2.6.16-rc1.  Due to the way
@@ -327,6 +193,13 @@
     && (defined __i386__ || defined __x86_64__ || defined __powerpc__ \
 	|| defined __sparc__ || defined __s390__)
 # define __ASSUME_O_CLOEXEC	1
+#endif
+
+/* From 2.6.23 onwards the value of ARG_MAX depends on the stack
+   size.  */
+#define __LINUX_ARG_MAX_STACK_BASED_MIN_KERNEL	0x020617
+#if __LINUX_KERNEL_VERSION >= __LINUX_ARG_MAX_STACK_BASED_MIN_KERNEL
+# define __ASSUME_ARG_MAX_STACK_BASED	1
 #endif
 
 /* Support for ADJ_OFFSET_SS_READ was added in 2.6.24.  */

@@ -37,10 +37,6 @@
 /* Define if the assembler supports the `.set' directive.  */
 #undef	HAVE_ASM_SET_DIRECTIVE
 
-/* Define to the prefix before `object' or `function' in the
-   assembler's `.type' directive, if it has one.  */
-#undef	ASM_TYPE_DIRECTIVE_PREFIX
-
 /* Define if the assembler supports the gnu_unique_object symbol type.  */
 #undef	HAVE_ASM_UNIQUE_OBJECT
 
@@ -49,9 +45,6 @@
 
 /* On powerpc64, use overlapping .opd entries.  */
 #undef  USE_PPC64_OVERLAPPING_OPD
-
-/* Define if the assembler generates debugging information directly.  */
-#undef	HAVE_CPP_ASM_DEBUGINFO
 
 /* Define if _Unwind_Find_FDE should be exported from glibc.  */
 #undef  EXPORT_UNWIND_FIND_FDE

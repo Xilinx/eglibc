@@ -1,5 +1,5 @@
 /* Set the FPU control word.
-   Copyright (C) 1996, 1997, 1999, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1996-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,16 +18,13 @@
 
 #include <math.h>
 #include <fpu_control.h>
+#include <arm-features.h>
 
-#include <unistd.h>
-#include <ldsodefs.h>
-#include <dl-procinfo.h>
-#include <sysdep.h>
 
 void
 __setfpucw (fpu_control_t set)
 {
-  if (GLRO (dl_hwcap) & HWCAP_ARM_VFP)
+  if (ARM_HAVE_VFP)
     {
       fpu_control_t cw;
 

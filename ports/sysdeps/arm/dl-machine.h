@@ -1,6 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  ARM version.
-   Copyright (C) 1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,
-	2006, 2009, 2010, 2011 Free Software Foundation, Inc.
+   Copyright (C) 1995-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,8 +26,9 @@
 #include <dl-tlsdesc.h>
 #include <dl-irel.h>
 
-#define CLEAR_CACHE(BEG,END)						\
-  INTERNAL_SYSCALL_ARM (cacheflush, , 3, (BEG), (END), 0)
+#ifndef CLEAR_CACHE
+# error CLEAR_CACHE definition required to handle TEXTREL
+#endif
 
 /* Return nonzero iff ELF header is compatible with the running host.  */
 static inline int __attribute__ ((unused))
@@ -70,7 +70,7 @@ elf_machine_dynamic (void)
 static inline Elf32_Addr __attribute__ ((unused))
 elf_machine_load_address (void)
 {
-  extern void __dl_start asm ("_dl_start");
+  extern Elf32_Addr internal_function __dl_start (void *) asm ("_dl_start");
   Elf32_Addr got_addr = (Elf32_Addr) &__dl_start;
   Elf32_Addr pcrel_addr;
 #ifdef __thumb__
@@ -413,6 +413,10 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 	  break;
 	case R_ARM_ABS32:
 	  {
+	    struct unaligned
+	      {
+		Elf32_Addr x;
+	      } __attribute__ ((packed, may_alias));
 # ifndef RTLD_BOOTSTRAP
 	   /* This is defined in rtld.c, but nowhere in the static
 	      libc.a; make the reference weak so static programs can
@@ -431,7 +435,8 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 		 used while loading those libraries.  */
 	      value -= map->l_addr + refsym->st_value;
 # endif
-	    *reloc_addr += value;
+	    /* Support relocations on mis-aligned offsets.  */
+	    ((struct unaligned *) reloc_addr)->x += value;
 	    break;
 	  }
 	case R_ARM_TLS_DESC:

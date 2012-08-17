@@ -1,3 +1,66 @@
+2012-08-15  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/m68k/nptl/pthread_spin_lock.c: Use generic code.
+	* sysdeps/m68k/nptl/pthread_spin_trylock.c: Remove, use generic version.
+
+2012-08-10  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/ldsodefs.h (m68k_gnu_pltenter): Remove const on
+	fifth parameter.
+
+2012-08-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_TGKILL): Remove.
+
+2012-08-08  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/coldfire/fpu/bits/mathinline.h: New file.
+
+	* sysdeps/unix/sysv/linux/m68k/coldfire/nptl/bits/atomic.h
+	(atomic_compare_and_exchange_val_acq) [!SHARED]: Add cast to avoid
+	warning.
+
+2012-08-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/m68k/configure.in (arch_minimum_kernel):
+	Remove.
+	* sysdeps/unix/sysv/linux/m68k/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_TGKILL): Define unconditionally.
+	(__ASSUME_UTIMES): Likewise.
+	(__ASSUME_FADVISE64_64_SYSCALL): Likewise.
+
+2012-08-03  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/sysdep.h (ALIGNARG, ASM_TYPE_DIRECTIVE)
+	(ASM_SIZE_DIRECTIVE): Remove.
+	(ENTRY, END): Use .p2align.  Use .type and .size instead of
+	ASM_TYPE_DIRECTIVE and ASM_SIZE_DIRECTIVE.
+	* sysdeps/m68k/asm-syntax.h (ALIGNARG, PROLOG, EPILOG, ALIGN)
+	(GLOBL): Remove unused macros.
+
+2012-08-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_FCNTL64): Remove.
+
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_VFORK_SYSCALL): Remove.
+	* sysdeps/unix/sysv/linux/m68k/vfork.S (__vfork) [__NR_vfork]:
+	Make code unconditional.
+	(__vfork) [__ASSUME_VFORK_SYSCALL]: Likewise.
+	(__vfork) [!__ASSUME_VFORK_SYSCALL]: Remove conditional code.
+
+2012-08-01  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14138]
+	* sysdeps/unix/sysv/linux/m68k/getrlimit.c: File removed.
+
+2012-08-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/m680x0/fpu/libm-test-ulps: Update.
+
 2012-07-26  Andreas Schwab  <schwab@linux-m68k.org>
 
 	* sysdeps/m68k/m680x0/fpu/libm-test-ulps: Update.

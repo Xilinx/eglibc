@@ -1,3 +1,53 @@
+2012-08-16  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* sysdeps/ia64/ldsodefs.h (ARCH_PLTENTER_MEMBERS)
+	<ia64_gnu_pltenter>: struct La_ia64_regs is not constant.
+
+2012-08-14  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/ia64/configure.in: Remove assembler-with-cpp debug check.
+	* sysdeps/ia64/configure: Regenerated.
+
+2012-08-14  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/ia64/kernel-features.h
+	(__ASSUME_CLONE_THREAD_FLAGS): Remove.
+	* sysdeps/unix/sysv/linux/ia64/system.c (FORK): Define
+	unconditionally.
+
+2012-08-12  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/ia64/configure.in: Remove TLS check.
+	* sysdeps/ia64/configure: Regenerated.
+
+2012-08-12  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/ia64/fpu/libm-symbols.h (ASM_TYPE_DIRECTIVE): Remove.
+	(LOCAL_OBJECT_START): Do not use ASM_TYPE_DIRECTIVE.
+	(WEAK_LIBM_END): Likewise.
+	(GLOBAL_IEEE754_END): Likewise.
+	* sysdeps/ia64/fpu/libm_tan.S: Likewise.
+
+2012-08-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/ia64/nptl/dl-sysdep.h
+	(_dl_discover_osversion): Do not condition on
+	__LINUX_KERNEL_VERSION < 0x020617.
+	(HAVE_DL_DISCOVER_OSVERSION): Likewise.
+
+2012-08-03  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #12194]
+	* sysdeps/ia64/bits/byteswap-16.h (__bswap_16): Avoid -Wconversion
+	warning.
+	* sysdeps/ia64/bits/byteswap.h (__bswap_constant_16): Likewise.
+
+2012-08-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/ia64/configure.in (arch_minimum_kernel):
+	Remove.
+	* sysdeps/unix/sysv/linux/ia64/configure: Regenerated.
+
 2012-07-26  Andreas Jaeger  <aj@suse.de>
 
 	* sysdeps/unix/sysv/linux/ia64/sys/ptrace.h (__ptrace_eventcodes):
