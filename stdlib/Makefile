@@ -78,7 +78,7 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
 		   tst-makecontext tst-qsort2 tst-makecontext2 tst-strtod6  \
 		   tst-unsetenv1 tst-makecontext3 bug-getcontext bug-fmtmsg1 \
-		   tst-secure-getenv
+		   tst-secure-getenv tst-strtod-overflow tst-strtod-round
 tests-static	:= tst-secure-getenv
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2

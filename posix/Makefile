@@ -155,8 +155,6 @@ endif
 endif
 # eglibc: endif
 
-OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
-
 # If we will use the generic uname implementation, we must figure out what
 # it will say by examining the system, and write the results in config-name.h.
 uname.c: $(objpfx)config-name.h
@@ -166,7 +164,7 @@ $(objpfx)config-name.h: $(..)scripts/config-uname.sh $(common-objpfx)config.make
 	mv -f $@.new $@
 
 CFLAGS-regex.c = -Wno-strict-prototypes
-CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions $(OPTION_EGLIBC_INET-CFLAGS-y)
+CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions
 CFLAGS-pread.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pread64.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pwrite.c = -fexceptions -fasynchronous-unwind-tables

@@ -173,12 +173,9 @@ extern int __libc_pause (void);
 /* Not cancelable variant.  */
 extern int __pause_nocancel (void) attribute_hidden;
 
-extern int __have_sock_cloexec;
-/* At lot of other functionality became available at the same time as
-   SOCK_CLOEXEC.  Avoid defining separate variables for all of them
-   unless it is really necessary.  */
-#define __have_pipe2 __have_sock_cloexec
-#define __have_dup3 __have_sock_cloexec
+extern int __have_sock_cloexec attribute_hidden;
+extern int __have_pipe2 attribute_hidden;
+extern int __have_dup3 attribute_hidden;
 
 extern int __getlogin_r_loginuid (char *name, size_t namesize)
      attribute_hidden;

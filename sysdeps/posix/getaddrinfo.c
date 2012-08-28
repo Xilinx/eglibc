@@ -832,8 +832,13 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	  while (!no_more)
 	    {
 	      no_data = 0;
-	      nss_gethostbyname4_r fct4
-		= __nss_lookup_function (nip, "gethostbyname4_r");
+	      nss_gethostbyname4_r fct4 = NULL;
+
+	      /* gethostbyname4_r sends out parallel A and AAAA queries and
+		 is thus only suitable for PF_UNSPEC.  */
+	      if (req->ai_family == PF_UNSPEC)
+		fct4 = __nss_lookup_function (nip, "gethostbyname4_r");
+
 	      if (fct4 != NULL)
 		{
 		  int herrno;
@@ -1855,7 +1860,40 @@ static int gaiconf_reload_flag;
 static int gaiconf_reload_flag_ever_set;
 
 /* Last modification time.  */
+#ifdef _STATBUF_ST_NSEC
+
 static struct timespec gaiconf_mtime;
+
+static inline void
+save_gaiconf_mtime (const struct stat64 *st)
+{
+  gaiconf_mtime = st->st_mtim;
+}
+
+static inline bool
+check_gaiconf_mtime (const struct stat64 *st)
+{
+  return (st->st_mtim.tv_sec == gaiconf_mtime.tv_sec
+          && st->st_mtim.tv_nsec == gaiconf_mtime.tv_nsec);
+}
+
+#else
+
+static time_t gaiconf_mtime;
+
+static inline void
+save_gaiconf_mtime (const struct stat64 *st)
+{
+  gaiconf_mtime = st->st_mtime;
+}
+
+static inline bool
+check_gaiconf_mtime (const struct stat64 *st)
+{
+  return st->st_mtime == gaiconf_mtime;
+}
+
+#endif
 
 
 libc_freeres_fn(fini)
@@ -2298,7 +2336,7 @@ gaiconf_init (void)
       if (oldscope != default_scopes)
 	free ((void *) oldscope);
 
-      gaiconf_mtime = st.st_mtim;
+      save_gaiconf_mtime (&st);
     }
   else
     {
@@ -2320,7 +2358,7 @@ gaiconf_reload (void)
 {
   struct stat64 st;
   if (__xstat64 (_STAT_VER, GAICONF_FNAME, &st) != 0
-      || memcmp (&st.st_mtim, &gaiconf_mtime, sizeof (gaiconf_mtime)) != 0)
+      || !check_gaiconf_mtime (&st))
     gaiconf_init ();
 }
 

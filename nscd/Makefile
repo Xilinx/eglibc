@@ -22,12 +22,14 @@ include ../option-groups.mak
 
 subdir	:= nscd
 
+include ../Makeconfig
+
+ifneq ($(use-nscd),no)
 routines-$(OPTION_EGLIBC_INET) += \
 	     nscd_getpw_r nscd_getgr_r nscd_gethst_r nscd_getai \
 	    nscd_initgroups nscd_getserv_r nscd_netgroup
 aux-$(OPTION_EGLIBC_INET) += nscd_helper
-
-include ../Makeconfig
+endif
 
 # To find xmalloc.c
 vpath %.c ../locale/programs
@@ -43,7 +45,7 @@ ifneq (y,$(OPTION_EGLIBC_NIS))
 # own copy of nis_hash.
 nscd-modules += nis_hash
 endif
-ifeq ($(have-thread-library),yes)
+ifeq ($(build-nscd)$(have-thread-library),yesyes)
 
 others-$(OPTION_EGLIBC_INET) += nscd
 others-pie-$(OPTION_EGLIBC_INET) += nscd

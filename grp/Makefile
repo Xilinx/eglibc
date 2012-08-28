@@ -43,16 +43,14 @@ include ../Rules
 
 ifeq ($(have-thread-library),yes)
 
-OPTION_EGLIBC_INET-CFLAGS-$(OPTION_EGLIBC_INET) = -DUSE_NSCD=1
-
-CFLAGS-getgrgid_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
-CFLAGS-getgrnam_r.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
+CFLAGS-getgrgid_r.c = -fexceptions
+CFLAGS-getgrnam_r.c = -fexceptions
 CFLAGS-getgrent_r.c = -fexceptions
 CFLAGS-getgrent.c = -fexceptions
 CFLAGS-fgetgrent.c = -fexceptions
 CFLAGS-fgetgrent_r.c = -fexceptions $(libio-mtsafe)
 CFLAGS-putgrent.c = -fexceptions $(libio-mtsafe)
-CFLAGS-initgroups.c = $(OPTION_EGLIBC_INET-CFLAGS-y) -fexceptions
+CFLAGS-initgroups.c = -fexceptions
 CFLAGS-getgrgid.c = -fexceptions
 
 endif

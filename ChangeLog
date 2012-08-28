@@ -1,4 +1,468 @@
+2012-08-27  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_STAT64_SYSCALL): Remove all definitions.
+	* sysdeps/unix/sysv/linux/fxstat64.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/fxstatat64.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/i386/fxstat.c
+	[!__ASSUME_STAT64_SYSCALL]: Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/i386/fxstatat.c
+	[!__ASSUME_STAT64_SYSCALL]: Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/i386/lxstat.c
+	[!__ASSUME_STAT64_SYSCALL]: Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/i386/xstat.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/lxstat64.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/xstat.c: Do not include
+	<kernel-features.h>.
+	[__NR_stat64 && !__ASSUME_STAT64_SYSCALL] (__have_no_stat64):
+	Remove.
+	* sysdeps/unix/sysv/linux/xstat64.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional code.
+	[__ASSUME_STAT64_SYSCALL]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/xstatconv.c [!__ASSUME_STAT64_SYSCALL]:
+	Remove conditional.
+
+2012-08-27  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #5400]
+	* NEWS: Add fixed bug number.
+
+2012-08-27  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14519]
+	* stdlib/strtod_l.c (round_and_return): Return -0.0 for
+	underflowing exponent in case of negative sign.
+	* stdlib/tst-strtod-round-data: Add more tests.
+	* stdlib/tst-strtod-round.c (tests): Regenerated.
+
+	[BZ #3479]
+	* stdlib/strtod_l.c (NDIG): Remove.
+	(HEXNDIG): Likewise.
+	(MPNSIZE): Increase to represent 10^n where 2^-n is 1/4 ulp of the
+	smallest representable value.
+	(____STRTOF_INTERNAL): Use all fractional decimal digits that may
+	lie within an exact representation of 1/2 ulp of the result.
+	* stdlib/fpioconst.c (__tens): Include 10^2^9 and 10^2^10
+	unconditionally.
+	(TENS_P9_IDX): Define unconditionally.
+	(TENS_P9_SIZE): Likewise.
+	(TENS_P10_IDX): Likewise.
+	(TENS_P10_SIZE): Likewise.
+	[BITS_PER_MP_LIMB == 32]: Change condition for larger powers of 10
+	to !defined __NO_LONG_DOUBLE_MATH && __LDBL_MAX_EXP__ > 1024.
+	[!__NO_LONG_DOUBLE_MATH && __LDBL_MAX_EXP__ > 1024] (__tens): Add
+	entries for 10^2^13 and 10^2^14.
+	[!__NO_LONG_DOUBLE_MATH && __LDBL_MAX_EXP__ > 1024]
+	(TENS_P13_IDX): Define.
+	(TENS_P13_SIZE): Likewise.
+	(TENS_P14_IDX): Likewise.
+	(TENS_P14_SIZE): Likewise.
+	(_fpioconst_pow10): Change array size to
+	FPIOCONST_POW10_ARRAY_SIZE.  Make entries for 10^2^9 and 10^2^10
+	unconditional.
+	(_fpioconst_pow10) [!__NO_LONG_DOUBLE_MATH && __LDBL_MAX_EXP__ >
+	1024]: Add entries for 10^2^13 and 10^2^14.
+	[LAST_POW10 > _LAST_POW10]: Remove #error.
+	* stdlib/fpioconst.h (FPIOCONST_POW10_ARRAY_SIZE): Define.
+	(_fpioconst_pow10): Change array size to
+	FPIOCONST_POW10_ARRAY_SIZE.
+	* stdlib/gen-fpioconst.c: New file.
+	* stdlib/gen-tst-strtod-round.c: Likewise.
+	* stdlib/tst-strtod-round-data: Likewise.
+	* stdlib/tst-strtod-round.c: Likewise.
+	* stdlib/Makefile (tests): Add tst-strtod-round.
+
+	[BZ #14459]
+	* stdlib/strtod_l.c: Include <stdint.h>.
+	(NDEBUG): Do not define.
+	(round_and_return): Change EXPONENT parameter to type intmax_t.
+	Rearrange calculations to avoid internal overflow possibilities.
+	(str_to_mpn): Change EXPONENT parameter to type intmax_t *.
+	Rearrange calculations to avoid internal overflow possibilities.
+	Assert that number fits inside MPNSIZE limbs.
+	(____STRTOF_INTERNAL): Change EXPONENT variable to type intmax_t.
+	Change DIG_NO, INT_NO and LEAD_ZERO to type size_t.  Rearrange
+	calculations and add assertions to avoid internal overflow
+	possibilities.  Add casts to avoid signed/unsigned operations.
+	* stdlib/tst-strtod-overflow.c: New file.
+	* stdlib/Makefile (tests): Add tst-strtod-overflow.
+
+2012-08-25  Marek Polacek  <polacek@redhat.com>
+
+	* time/time.h: Fix some typos in comments.
+
+2012-08-23  Roland McGrath  <roland@hack.frob.com>
+
+	* posix/tst-rfc3484.c: #undef USE_NSCD before including getaddrinfo.c.
+	* posix/tst-rfc3484-2.c: Likewise.
+	* posix/tst-rfc3484-3.c: Likewise.
+
+2012-08-23  Steve McIntyre  <steve.mcintyre@linaro.org>
+
+	* elf/elf.h (EF_ARM_ABI_FLOAT_SOFT): New macro.
+	(EF_ARM_ABI_FLOAT_HARD): Likewise.
+
+2012-08-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/dl-fxstatat64.c: Use <> instead of "" in
+	#include of fxstatat64.c.
+
+2012-08-22  Roland McGrath  <roland@hack.frob.com>
+
+	* shadow/getspent.c: #undef USE_NSCD before #include that gets the code.
+	* shadow/getspent_r.c: Likewise.
+	* shadow/getspnam.c: Likewise.
+	* shadow/getspnam_r.c: Likewise.
+	* gshadow/getsgent.c: Likewise.
+	* gshadow/getsgent_r.c: Likewise.
+	* gshadow/getsgnam.c: Likewise.
+	* gshadow/getsgnam_r.c: Likewise.
+	* inet/getnetbyad.c: Likewise.
+	* inet/getnetbyad_r.c: Likewise.
+	* inet/getnetbynm.c: Likewise.
+	* inet/getnetbynm_r.c: Likewise.
+	* inet/getnetent.c: Likewise.
+	* inet/getnetent_r.c: Likewise.
+	* inet/getproto.c: Likewise.
+	* inet/getproto_r.c: Likewise.
+	* inet/getprtent.c: Likewise.
+	* inet/getprtent_r.c: Likewise.
+	* inet/getprtname.c: Likewise.
+	* inet/getprtname_r.c: Likewise.
+	* inet/getrpcbyname.c: Likewise.
+	* inet/getrpcbyname_r.c: Likewise.
+	* inet/getrpcbynumber.c: Likewise.
+	* inet/getrpcbynumber_r.c: Likewise.
+	* inet/getrpcent.c: Likewise.
+	* inet/getrpcent_r.c: Likewise.
+	* inet/getaliasent.c: Likewise.
+	* inet/getaliasent_r.c: Likewise.
+	* inet/getaliasname.c: Likewise.
+	* inet/getaliasname_r.c: Likewise.
+	* nscd/getgrgid_r.c: Likewise.
+	* nscd/getgrnam_r.c: Likewise.
+	* nscd/gethstbyad_r.c: Likewise.
+	* nscd/gethstbynm3_r.c: Likewise.
+	* nscd/getpwnam_r.c: Likewise.
+	* nscd/getpwuid_r.c: Likewise.
+	* nscd/getsrvbynm_r.c: Likewise.
+	* nscd/getsrvbypt_r.c: Likewise.
+	* nscd/gai.c: Likewise.
+
+	* configure.in (build_nscd): New substituted variable, set
+	by --disable-build-nscd and defaults to $use_nscd.
+	* configure: Regenerated.
+	* config.make.in (build-nscd): New substituted variable.
+	* nscd/Makefile (others, others-pie, install-sbin, extra-objs):
+	Change conditional to require [$(build-nscd) = yes] as well.
+	* NEWS: Mention --disable-build-nscd in the --disable-nscd item.
+
+	[BZ# 13696]
+	* configure.in (use_nscd): New substituted variable, set by
+	--disable-nscd.  If enabled, define USE_NSCD.
+	* configure: Regenerated.
+	* config.h.in: Add USE_NSCD.
+	* config.make.in (use-nscd): New substituted variable.
+	* inet/Makefile (CFLAGS-gethstbyad_r.c): Likewise.
+	(CFLAGS-gethstbynm_r.c, CFLAGS-gethstbynm2_r.c): Likewise.
+	(CFLAGS-getsrvbynm_r.c, CFLAGS-getsrvbypt_r.c): Variables removed.
+	* grp/Makefile (CFLAGS-getgrgid_r.c): Remove -DUSE_NSCD.
+	(CFLAGS-getgrnam_r.c): Likewise.
+	(CFLAGS-initgroups.c): Likewise.
+	* posix/Makefile (CFLAGS-getaddrinfo.c): Remove -DUSE_NSCD.
+	* pwd/Makefile (CFLAGS-getpwuid_r.c, CFLAGS-getpwnam_r.c):
+	Variables removed.
+	* inet/getnetgrent_r.c
+	(nscd_setnetgrent): New function, broken out of ...
+	(setnetgrent): ... here.  Call it.
+	(innetgr): Conditionalize nscd bits on [USE_NSCD].
+	(nscd_getnetgrent): Conditionalize on [USE_NSCD].
+	(__internal_getnetgrent_r): Conditionalize its use on [USE_NSCD].
+	* nscd/Makefile (routines, aux): Move definitions after include of
+	Makeconfig.  Conditionalize on [$(use-nscd) != no].
+	* nss/nsswitch.c (nss_load_all_libraries, __nss_disable_nscd):
+	Conditionalize on [USE_NSCD].
+	(is_nscd, nscd_init_cb): Likewise.
+	(nss_load_library): Conditionalize init callback on [USE_NSCD].
+	* nss/nss_files/files-init.c: Conditionalize body on [USE_NSCD].
+	* nss/nss_db/db-init.c: Likewise.
+	* nscd/nscd.c (main): Conditionalize __nss_disable_nscd call on
+	[USE_NSCD].
+	* sysdeps/unix/sysv/linux/check_pf.c (get_nl_timestamp): New function.
+	(make_request): Use it.
+	(cache_valid_p): New function.
+	(__check_pf): Use it.
+	* NEWS: Add item for --disable-nscd.
+
+2012-08-22  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* configure.in (SED): Update AC_CHECK_PROG_VER's version extract regexp
+	to support sed >= 4.2.1-20-ga9bf076.
+	* configure: Regenerated.
+
+2012-08-22  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/libc-start.c (apply_irel): Move extern declarations inside here.
+	Conditionalize whole body on [IREL].
+
+2012-08-22  Jeff Law <law@redhat.com>
+
+	[BZ #14505]
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Only use gethostbyname4_r
+	if the family is PF_UNSPEC.
+
+2012-08-22  Mike Frysinger  <vapier@gentoo.org>
+
+	* Makerules (lib-version): Rename from V.
+	(install-lib-nosubdir): Change V to lib-version.
+
+2012-08-22  Will Schmidt  <will_schmidt@vnet.ibm.com>
+
+	[BZ #14252]
+	* powerpc32/power6/wcschr.c: New file.
+	* powerpc32/power6/wcscpy.c: New file.
+	* powerpc32/power6/wcsrchr.c: New file.
+	* powerpc64/power6/wcschr.c: New file.
+	* powerpc64/power6/wcscpy.c: New file.
+	* powerpc64/power6/wcsrchr.c: New file.
+
+2012-08-21  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* string/str-two-way.h (AVAILABLE1_USES_J): New macro, define default.
+	(two_way_short_needle): Use it.
+	* string/strstr.c (AVAILABLE1_USES_J): Define.
+	* string/strcasestr.c: Likewise.
+
+	* string/str-two-way.h (two_way_short_needle): Use pointers instead of
+	array references.
+	* string/strcasestr.c (TOLOWER): Make side-effect safe.
+
+	[BZ #11607]
+	* NEWS: Add an entry.
+	* string/str-two-way.h (AVAILABLE1, AVAILABLE2, RET0_IF_0): New macros,
+	define their defaults.
+	(two_way_short_needle): Detect end-of-string on-the-fly.
+	* string/strcasestr.c, string/strstr.c (AVAILABLE): Update.
+	(AVAILABLE1, AVAILABLE2, RET0_IF_0, AVAILABLE_USES_J): Define.
+	* string/bug-strcasestr1.c: New test.
+	* string/Makefile: Run it.
+
+2012-08-21  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	[BZ #11607]
+	* string/str-two-way.h (two_way_short_needle): Optimize matching of
+	the first character.
+
+2012-08-21  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/elf-init.c (__libc_csu_irel): Function removed.
+	* csu/libc-start.c (apply_irel): New function.
+	(LIBC_START_MAIN): Call it instead of __libc_csu_irel.
+
+2012-08-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_FADVISE64_64_SYSCALL): Remove.
+	* sysdeps/unix/sysv/linux/i386/posix_fadvise64.S: Do not include
+	<kernel-features.h>.
+	[__NR_fadvise64_64]: Make code unconditional.
+	[!__ASSUME_FADVISE64_64_SYSCALL]: Remove conditional code.
+	[__NR_fadvise64 && (!__ASSUME_FADVISE64_64_SYSCALL ||
+	!__NR_fadvise64_64)]: Likewise.
+	[!(__NR_fadvise64 && (!__ASSUME_FADVISE64_64_SYSCALL ||
+	!__NR_fadvise64_64))]: Likewise.
+	[__NR_fadvise64]: Make code unconditional.
+	[!__NR_fadvise64]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/posix_fadvise64.c: Do not include
+	<kernel-features.h>.
+	(__posix_fadvise64_l64) [__NR_fadvise64_64]: Make code
+	unconditional.
+	(_posix_fadvise64_l64) [!__ASSUME_FADVISE64_64_SYSCALL]: Remove
+	conditional code.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/posix_fadvise64.c: Do
+	not include <kernel-features.h>.
+	(__posix_fadvise64_l64) [__NR_fadvise64_64]: Make code
+	unconditional.
+	(_posix_fadvise64_l64) [!__ASSUME_FADVISE64_64_SYSCALL]: Remove
+	conditional code.
+	* sysdeps/unix/sysv/linux/s390/s390-32/posix_fadvise64.c: Do not
+	include <kernel-features.h>.
+	(__posix_fadvise64_l64) [__NR_fadvise64_64]: Make code
+	unconditional.
+	(_posix_fadvise64_l64) [!__ASSUME_FADVISE64_64_SYSCALL]: Remove
+	conditional code.
+
+2012-08-21  Will Schmidt  <will_schmidt@vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power7/memchr.S: Unrolled short loop and
+	slight instruction rearrangements per scrollpipe analysis.
+	* sysdeps/powerpc/powerpc64/power7/memchr.S: Likewise.
+
+2012-08-20  Roland McGrath  <roland@hack.frob.com>
+
+	* manual/syslog.texi (syslog; vsyslog, closelog):
+	Fix typo repeated twice: @file{dev/log} -> @file{/dev/log}.
+	Reported by Ricardo Catalinas Jiménez <jimenezrick@gmail.com>.
+
+	* elf/dl-sysdep.c (_dl_important_hwcaps): Fix conditional on using
+	DSOCAPS to match condition on defining it.
+
+2012-08-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_SWAPCONTEXT_SYSCALL): Remove.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/getcontext.S
+	[__ASSUME_SWAPCONTEXT_SYSCALL]: Make code unconditional.
+	[!__ASSUME_SWAPCONTEXT_SYSCALL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/setcontext.S
+	[__ASSUME_SWAPCONTEXT_SYSCALL]: Make code unconditional.
+	[!__ASSUME_SWAPCONTEXT_SYSCALL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/swapcontext.S
+	[__ASSUME_SWAPCONTEXT_SYSCALL]: Make code unconditional.
+	[!__ASSUME_SWAPCONTEXT_SYSCALL]: Remove conditional code.
+
+	* sysdeps/unix/sysv/linux/kernel-features.h [__s390__ &&
+	__LINUX_KERNEL_VERSION >= 0x020616] (__ASSUME_UTIMES): Define.
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_MMAP2_SYSCALL): Remove all definitions.
+	* sysdeps/unix/sysv/linux/mmap64.c [__NR_mmap2]: Make code
+	unconditional.
+	[!__ASSUME_MMAP2_SYSCALL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/i386/mmap.S (__mmap)
+	[__ASSUME_MMAP2_SYSCALL]: Make code unconditional.
+	(__mmap) [!__ASSUME_MMAP2_SYSCALL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/i386/mmap64.S (__mmap64) [__NR_mmap2]:
+	Make code unconditional.
+	(__mmap64) [!__ASSUME_MMAP2_SYSCALL]: Remove conditional code.
+	(__mmap64) [!__NR_mmap2]: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-32/mmap.S (__mmap)
+	[__ASSUME_MMAP2_SYSCALL]: Make code unconditional.
+	(__mmap) [!__ASSUME_MMAP2_SYSCALL]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/s390/s390-32/mmap64.S (__mmap64)
+	[__NR_mmap2]: Make code unconditional.
+	(__mmap64) [!__ASSUME_MMAP2_SYSCALL]: Remove conditional code.
+	(__mmap64) [!__NR_mmap2]: Likewise.
+
+2012-08-20  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/s390-32/getrlimit.c: Remove.
+
+2012-08-18  Andreas Jaeger  <aj@suse.de>
+
+	* stdio-common/_itoa.c (_itoa): Add missing DUMMY variable.
+
+2012-08-18  Mike Frysinger  <vapier@gentoo.org>
+
+	* include/sys/socket.h (__have_sock_cloexec): Add attribute_hidden.
+	* include/unistd.h (__have_sock_cloexec): Likewise.
+	(__have_pipe2): Likewise.
+	(__have_dup3): Likewise.
+
+2012-08-18  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #9685]
+	* include/unistd.h (__have_pipe2): Change define into an extern int.
+	(__have_dup3): Likewise.
+	* socket/have_sock_cloexec.c: Include fcntl.h.
+	(__have_pipe2): New variable.
+	(__have_dup3): Likewise.
+
+2012-08-17  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/nice.c: Adjust #include.
+
+2012-08-17  Marek Polacek  <polacek@redhat.com>
+
+	* sysdeps/ieee754/ldbl-96/s_sincosl.c (__sincosl): Use __attribute__
+	((unused)) on I1, which is set by GET_LDOUBLE_WORDS but never used.
+
 2012-08-17  Roland McGrath  <roland@hack.frob.com>
+
+	* configure.in: Add AC_SUBST for sysheaders.
+	* configure: Regenerated.
+	* config.make.in (sysheaders): New substituted variable.
+
+	* sysdeps/unix/mkfifo.c: Moved ...
+	* sysdeps/posix/mkfifo.c: ... here.
+	* sysdeps/unix/mkfifoat.c: Moved ...
+	* sysdeps/posix/mkfifoat.c: ... here.
+
+	* sysdeps/unix/utime.c: Moved ...
+	* sysdeps/posix/utime.c: ... here.
+
+	* sysdeps/unix/time.c: Moved ...
+	* sysdeps/posix/time.c: ... here.
+	* sysdeps/unix/sysv/linux/time.c: Adjust #include.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/time.c: Likewise.
+
+	* sysdeps/unix/nice.c: Moved ...
+	* sysdeps/posix/nice.c: ... here.
+
+	* sysdeps/unix/alarm.c: Moved ...
+	* sysdeps/posix/alarm.c: ... here.
+
+	* intl/Makefile ($(codeset_mo)): Depend on the input file.
+
+2012-08-17  Jeff Law <law@redhat.com>
+
+	* intl/Makefile (codeset_mo): New variable.
+	($(codeset_mo)): New target.
+	(tst-codeset.out): Depend on that.  Remove explicit rule.
+	(tst-gettext3.out, tst-gettext5.out): Likewise.
+	(LOCPATH-ENV, tst-codeset-ENV): New variables.
+	(tst-gettext3-ENV, tst-gettext5-ENV): Likewise.
+	* intl/tst-codeset.sh: Remove.
+	* intl/tst-gettext3.sh: Likewise.
+	* intl/tst-gettext5.sh: Likewise.
+
+2012-08-17  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/unix/inet/syscalls.list: File removed.  Move contents into ...
+	* sysdeps/unix/syscalls.list: ... here.
+
+	* sysdeps/posix/getaddrinfo.c
+	(save_gaiconf_mtime, check_gaiconf_mtime): New functions.
+	(gaiconf_init, gaiconf_reload): Use them.
+	[!_STATBUF_ST_NSEC]
+	(gaiconf_mtime, save_gaiconf_mtime, check_gaiconf_mtime):
+	Define using time_t rather than struct timespec.
+
+	* sysdeps/generic/malloc-machine.h (MUTEX_INITIALIZER): New macro.
+	(atomic_full_barrier, atomic_read_barrier, atomic_write_barrier):
+	Macros removed.
+	* malloc/arena.c (save_malloc_hook, save_free_hook): Conditionalize on
+	[!NO_THREADS].
+	(malloc_atfork, free_atfork, atfork_recursive_cntr): Likewise.
+	(ptmalloc_lock_all, ptmalloc_unlock_all, ptmalloc_unlock_all2):
+	Likewise.
+
+	* elf/dl-iteratephdr.c (__dl_iterate_phdr): Use NULL rather than 0 for
+	__libc_cleanup_push argument.
+
+	* bits/param.h: New file.
+	* misc/sys/param.h: New file.
+	* include/sys/param.h: New file.
+	* misc/Makefile (headers): Add bits/param.h.
+	* sysdeps/generic/sys/param.h: File removed.
+	* sysdeps/unix/sysv/linux/bits/param.h: New file.
+	* sysdeps/unix/sysv/linux/sys/param.h: File removed.
+	* sysdeps/mach/hurd/bits/param.h: New file.
+	* sysdeps/mach/hurd/sys/param.h: New file.
+
+	* elf/dl-close.c (_dl_close_worker): Add a cast and a comment to the
+	last change.
 
 	* libio/genops.c (_IO_unbuffer_write): Conditionalize locking code on
 	[_IO_MTSAFE_IO].
@@ -134,8 +598,8 @@
 2012-08-15  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
 
 	[BZ #14195]
-        * sysdeps/i386/i686/multiarch/strcmp-sssse3.S: Fix
-        segmentation fault for a case of two empty input strings.
+	* sysdeps/i386/i686/multiarch/strcmp-sssse3.S: Fix
+	segmentation fault for a case of two empty input strings.
 	* string/test-strncasecmp.c (check1): Renamed to...
 	(bz12205): ...this.
 	(bz14195): Add new testcase for two empty input strings and N > 0.
@@ -575,7 +1039,7 @@
 
 2012-08-02  Marek Polacek  <polacek@redhat.com>
 
-	[BZ#14150]
+	[BZ# 14150]
 	* configure.in (libc_cv_asm_type_prefix): Remove test.  Replace
 	libc_cv_asm_type_prefix with %.
 	* configure: Regenerated.

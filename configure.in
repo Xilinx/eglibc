@@ -95,6 +95,7 @@ AC_ARG_WITH([headers],
 			    @<:@default=compiler default@:>@]),
 	    [sysheaders=$withval],
 	    [sysheaders=''])
+AC_SUBST(sysheaders)
 
 AC_SUBST(use_default_link)
 AC_ARG_WITH([default-link],
@@ -296,6 +297,20 @@ void foo (int i, void *p)
     AC_MSG_FAILURE([systemtap support needs sys/sdt.h with asm support])
   fi
 fi
+
+AC_ARG_ENABLE([build-nscd],
+	      [AS_HELP_STRING([--disable-build-nscd],
+	       [disable building and installing the nscd daemon])],
+	      [build_nscd=$enableval],
+	      [build_nscd=default])
+AC_SUBST(build_nscd)
+
+# Note the use of $use_nscd is near the bottom of the file.
+AC_ARG_ENABLE([nscd],
+	      [AS_HELP_STRING([--disable-nscd],
+	       [library functions will not contact the nscd daemon])],
+	      [use_nscd=$enableval],
+	      [use_nscd=yes])
 
 # The way shlib-versions is used to generate soversions.mk uses a
 # fairly simplistic model for name recognition that can't distinguish
@@ -936,7 +951,7 @@ AC_CHECK_PROG_VER(MAKEINFO, makeinfo, --version,
   [4.[5-9]*|4.[1-9][0-9]*|[5-9].*],
   MAKEINFO=: aux_missing="$aux_missing makeinfo")
 AC_CHECK_PROG_VER(SED, sed, --version,
-  [GNU sed version \([0-9]*\.[0-9.]*\)],
+  [GNU sed[^0-9]* \([0-9]*\.[0-9.]*\)],
   [3.0[2-9]*|3.[1-9]*|[4-9]*],
   SED=: aux_missing="$aux_missing sed")
 
@@ -2130,6 +2145,16 @@ if test x$libc_cv_gcc_unwind_find_fde = xyes; then
   AC_DEFINE(EXPORT_UNWIND_FIND_FDE)
 fi
 AC_SUBST(libc_cv_gcc_unwind_find_fde)
+
+# This is far from the AC_ARG_ENABLE that sets it so that a sysdeps
+# configure fragment can override the value to prevent this AC_DEFINE.
+AC_SUBST(use_nscd)
+if test "x$use_nscd" != xno; then
+  AC_DEFINE([USE_NSCD])
+fi
+if test "x$build_nscd" = xdefault; then
+  build_nscd=$use_nscd
+fi
 
 # Test for old glibc 2.0.x headers so that they can be removed properly
 # Search only in includedir.

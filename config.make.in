@@ -44,6 +44,7 @@ config-cflags-nofma = @libc_cv_cc_nofma@
 config-asflags-i686 = @libc_cv_as_i686@
 
 defines = @DEFINES@
+sysheaders = @sysheaders@
 sysincludes = @SYSINCLUDES@
 c++-sysincludes = @CXX_SYSINCLUDES@
 all-warnings = @all_warnings@
@@ -99,6 +100,8 @@ sysdeps-add-ons = @sysdeps_add_ons@
 cross-compiling = @cross_compiling@
 force-install = @force_install@
 link-obsolete-rpc = @link_obsolete_rpc@
+build-nscd = @build_nscd@
+use-nscd = @use_nscd@
 
 # Build tools.
 CC = @CC@

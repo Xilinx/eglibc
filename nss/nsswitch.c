@@ -119,10 +119,12 @@ const static name_database *service_table = &fixed_name_database;
 #endif /* __OPTION_EGLIBC_NSSWITCH */
 
 
+#ifdef USE_NSCD
 /* Nonzero if this is the nscd process.  */
 static bool is_nscd;
 /* The callback passed to the init functions when nscd is used.  */
 static void (*nscd_init_cb) (size_t, struct traced_file *);
+#endif
 
 
 /* -1 == database not found
@@ -399,6 +401,7 @@ nss_load_library (service_user *ni)
 	  ni->library->lib_handle = (void *) -1l;
 	  __set_errno (saved_errno);
 	}
+# ifdef USE_NSCD
       else if (is_nscd)
 	{
 	  /* Call the init function when nscd is used.  */
@@ -418,12 +421,13 @@ nss_load_library (service_user *ni)
 	  if (ifct != NULL)
 	    {
 	      void (*cb) (size_t, struct traced_file *) = nscd_init_cb;
-# ifdef PTR_DEMANGLE
+#  ifdef PTR_DEMANGLE
 	      PTR_DEMANGLE (cb);
-# endif
+#  endif
 	      ifct (cb);
 	    }
 	}
+# endif
     }
 
   return 0;
@@ -883,7 +887,7 @@ nss_new_service (name_database *database, const char *name)
 #endif /* __OPTION_EGLIBC_NSSWITCH */
 
 
-#ifdef SHARED
+#if defined SHARED && defined USE_NSCD
 /* Load all libraries for the service.  */
 static void
 nss_load_all_libraries (const char *service, const char *def)
