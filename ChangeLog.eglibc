@@ -1,3 +1,8 @@
+2012-08-30  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* ports/sysdeps/powerpc/powerpc32/e500/fpu/math_private.h: Update path
+	after file was moved.
+
 2012-05-26  Joseph Myers  <joseph@codesourcery.com>
 
 	* nss/nsswitch.c (__nss_database_lookup): Update for last merge.
