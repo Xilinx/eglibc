@@ -26,4 +26,5 @@
 #define __FERAISEEXCEPT_INTERNAL feraiseexcept
 #include "../spe-raise.c"
 
+strong_alias (feraiseexcept, __feraiseexcept)
 libm_hidden_def (feraiseexcept)

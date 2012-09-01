@@ -1,3 +1,8 @@
+2012-08-31  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* ports/sysdeps/powerpc/powerpc32/e500/fpu/fraiseexcept.c
+	(__feraiseexcept): Define internal alias.
+
 2012-08-30  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* ports/sysdeps/powerpc/powerpc32/e500/fpu/math_private.h: Update path
