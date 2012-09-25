@@ -411,22 +411,6 @@ LDFLAGS.so += $(hashstyle-LDFLAGS)
 LDFLAGS-rtld += $(hashstyle-LDFLAGS)
 endif
 
-# Commands for linking programs with the C library.
-ifndef +link
-+link-before-libc = $(CC) -nostdlib -nostartfiles -o $@ \
-	      $(sysdep-LDFLAGS) $(config-LDFLAGS) $(LDFLAGS) $(LDFLAGS-$(@F)) \
-	      $(combreloc-LDFLAGS) $(relro-LDFLAGS) $(hashstyle-LDFLAGS) \
-	      $(addprefix $(csu-objpfx),$(start-installed-name)) \
-	      $(+preinit) $(+prector) \
-	      $(filter-out $(addprefix $(csu-objpfx),start.o \
-						     $(start-installed-name))\
-			   $(+preinit) $(link-extra-libs) \
-			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs)
-+link-after-libc = $(+postctor) $(+postinit)
-+link = $(+link-before-libc) $(link-libc) $(+link-after-libc)
-+link-tests = $(+link-before-libc) $(link-libc-tests) $(+link-after-libc)
-endif
 # Command for linking PIE programs with the C library.
 ifndef +link-pie
 +link-pie = $(CC) -pie -Wl,-O1 -nostdlib -nostartfiles -o $@ \
@@ -445,29 +429,50 @@ ifndef +link-static
 +link-static-before-libc = $(CC) -nostdlib -nostartfiles -static -o $@ \
 	      $(sysdep-LDFLAGS) $(LDFLAGS) $(LDFLAGS-$(@F))  \
 	      $(addprefix $(csu-objpfx),$(static-start-installed-name)) \
-	      $(+preinit) $(+prector) \
+	      $(+preinit) $(+prectorT) \
 	      $(filter-out $(addprefix $(csu-objpfx),start.o \
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-static) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
 	      $(link-extra-libs-static) $(link-libc-static)
-+link-static-after-libc = $(+postctor) $(+postinit)
++link-static-after-libc = $(+postctorT) $(+postinit)
 +link-static = $(+link-static-before-libc) $(link-libc-static) \
 	       $(+link-static-after-libc)
 +link-static-tests = $(+link-static-before-libc) $(link-libc-static-tests) \
 		     $(+link-static-after-libc)
+endif
+# Commands for linking programs with the C library.
+ifndef +link
+ifeq (yes,$(build-shared))
++link-before-libc = $(CC) -nostdlib -nostartfiles -o $@ \
+	      $(sysdep-LDFLAGS) $(config-LDFLAGS) $(LDFLAGS) $(LDFLAGS-$(@F)) \
+	      $(combreloc-LDFLAGS) $(relro-LDFLAGS) $(hashstyle-LDFLAGS) \
+	      $(addprefix $(csu-objpfx),$(start-installed-name)) \
+	      $(+preinit) $(+prector) \
+	      $(filter-out $(addprefix $(csu-objpfx),start.o \
+						     $(start-installed-name))\
+			   $(+preinit) $(link-extra-libs) \
+			   $(common-objpfx)libc% $(+postinit),$^) \
+	      $(link-extra-libs)
++link-after-libc = $(+postctor) $(+postinit)
++link = $(+link-before-libc) $(link-libc) $(+link-after-libc)
++link-tests = $(+link-before-libc) $(link-libc-tests) $(+link-after-libc)
+else
++link = $(+link-static)
++link-tests = $(+link-static-tests)
+endif
 endif
 # Command for statically linking bounded-pointer programs with the C library.
 ifndef +link-bounded
 +link-bounded = $(CC) -nostdlib -nostartfiles -static -fbounded-pointers -o $@ \
 	      $(sysdep-LDFLAGS) $(LDFLAGS)  \
 	      $(addprefix $(csu-objpfx),b$(static-start-installed-name)) \
-	      $(+preinit) $(+prector) \
+	      $(+preinit) $(+prectorT) \
 	      $(filter-out $(addprefix $(csu-objpfx),start.ob \
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-bounded) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit)
+	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctorT) $(+postinit)
 endif
 ifndef config-LDFLAGS
 ifeq (yes,$(build-shared))
@@ -568,7 +573,14 @@ gnulib-arch =
 gnulib = -lgcc $(gnulib-arch)
 gnulib-tests := -lgcc $(libgcc_eh)
 static-gnulib-arch =
+# By default, elf/static-stubs.o, instead of -lgcc_eh, is used to
+# statically link programs.  When --disable-shared is used, we use
+# -lgcc_eh since elf/static-stubs.o isn't sufficient.
+ifeq (yes,$(build-shared))
 static-gnulib = -lgcc $(static-gnulib-arch)
+else
+static-gnulib = -lgcc -lgcc_eh $(static-gnulib-arch)
+endif
 static-gnulib-tests := -lgcc -lgcc_eh $(libunwind)
 libc.so-gnulib := -lgcc
 endif
@@ -579,6 +591,9 @@ endif
 # Variants of the two previous definitions for linking PIE programs.
 +prectorS = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtbeginS.o`
 +postctorS = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtendS.o`
+# Variants of the two previous definitions for statically linking programs.
++prectorT = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtbeginT.o`
++postctorT = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtend.o`
 +interp = $(addprefix $(elf-objpfx),interp.os)
 csu-objpfx = $(common-objpfx)csu/
 elf-objpfx = $(common-objpfx)elf/
@@ -806,11 +821,7 @@ endif
 
 # The assembler can generate debug information too.
 ifndef ASFLAGS
-ifeq ($(have-cpp-asm-debuginfo),yes)
 ASFLAGS := $(filter -g% -fdebug-prefix-map=%,$(CFLAGS))
-else
-ASFLAGS :=
-endif
 endif
 ASFLAGS += $(ASFLAGS-config) $(asflags-cpu)
 

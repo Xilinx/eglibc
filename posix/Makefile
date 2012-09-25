@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2007,2009,2010,2011,2012 Free Software Foundation, Inc.
+# Copyright (C) 1991-2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -143,13 +143,13 @@ include ../Rules
 ifeq (yes,$(build-shared))
 tests: $(objpfx)globtest.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
-	$(SHELL) -e globtest.sh $(common-objpfx) $(elf-objpfx) \
+	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) '$(cross-test-wrapper)'
 LDLIBS-globtest += $(shell cat $(common-objpfx)nss/fixed-nsswitch-libs)
 ifeq (y,$(OPTION_EGLIBC_WORDEXP))
 tests: $(objpfx)wordexp-tst.out
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
-	$(SHELL) -e wordexp-tst.sh $(common-objpfx) $(elf-objpfx) \
+	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) '$(cross-test-wrapper)'
 endif
 endif
@@ -314,7 +314,7 @@ $(objpfx)tst-boost-mem: $(objpfx)tst-boost.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-boost.mtrace > $@
 
 $(objpfx)tst-getconf.out: tst-getconf.sh $(objpfx)getconf
-	$(SHELL) -e $< $(common-objpfx) $(elf-objpfx) \
+	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
 		'$(cross-test-wrapper)' $(rtld-installed-name)
 
 ifeq (yes,$(build-shared))

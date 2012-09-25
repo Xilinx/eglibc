@@ -17,6 +17,7 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#include <fenv.h>
 #include <float.h>
 #include <math.h>
 #include <stdbool.h>
@@ -24,38 +25,90 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct test {
-  const char *s;
+struct test_results {
   float f;
   double d;
-  bool ld_ok;
   long double ld;
 };
 
+struct test {
+  const char *s;
+  bool ld_ok;
+  struct test_results rd, rn, rz, ru;
+};
+
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u, \
-	      ld64d, ld64n, ld64z, ld64u, ld106exact,			\
-	      ld106d, ld106n, ld106z, ld106u,				\
-	      ld113d, ld113n, ld113z, ld113u)				\
-  { s, fn, dn, true, ld53n }
-#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384
-# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u, \
-	      ld64d, ld64n, ld64z, ld64u, ld106exact,			\
-	      ld106d, ld106n, ld106z, ld106u,				\
-	      ld113d, ld113n, ld113z, ld113u)				\
-  { s, fn, dn, true, ld64n }
+# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u,  \
+	      ld64id, ld64in, ld64iz, ld64iu,				      \
+	      ld64md, ld64mn, ld64mz, ld64mu,				      \
+	      ld106exact, ld106d, ld106n, ld106z, ld106u,		      \
+	      ld113d, ld113n, ld113z, ld113u)				      \
+  {									\
+    s,									\
+    true,								\
+    { fd, dd, ld53d },							\
+    { fn, dn, ld53n },							\
+    { fz, dz, ld53z },							\
+    { fu, du, ld53u }							\
+  }
+#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && LDBL_MIN_EXP == -16381
+/* This is for the Intel extended float format.  */
+# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u,  \
+	      ld64id, ld64in, ld64iz, ld64iu,				      \
+	      ld64md, ld64mn, ld64mz, ld64mu,				      \
+	      ld106exact, ld106d, ld106n, ld106z, ld106u,		      \
+	      ld113d, ld113n, ld113z, ld113u)				      \
+  {									\
+    s,									\
+    true,								\
+    { fd, dd, ld64id },							\
+    { fn, dn, ld64in },							\
+    { fz, dz, ld64iz },							\
+    { fu, du, ld64iu }							\
+  }
+#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && LDBL_MIN_EXP == -16382
+/* This is for the Motorola extended float format.  */
+# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u,  \
+	      ld64id, ld64in, ld64iz, ld64iu,				      \
+	      ld64md, ld64mn, ld64mz, ld64mu,				      \
+	      ld106exact, ld106d, ld106n, ld106z, ld106u,		      \
+	      ld113d, ld113n, ld113z, ld113u)				      \
+  {									\
+    s,									\
+    true,								\
+    { fd, dd, ld64md },							\
+    { fn, dn, ld64mn },							\
+    { fz, dz, ld64mz },							\
+    { fu, du, ld64mu }							\
+  }
 #elif LDBL_MANT_DIG == 106 && LDBL_MAX_EXP == 1024
-# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u, \
-	      ld64d, ld64n, ld64z, ld64u, ld106exact,			\
-	      ld106d, ld106n, ld106z, ld106u,				\
-	      ld113d, ld113n, ld113z, ld113u)				\
-  { s, fn, dn, ld106exact, ld106n }
+# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u,  \
+	      ld64id, ld64in, ld64iz, ld64iu,				      \
+	      ld64md, ld64mn, ld64mz, ld64mu,				      \
+	      ld106exact, ld106d, ld106n, ld106z, ld106u,		      \
+	      ld113d, ld113n, ld113z, ld113u)				      \
+  {									\
+    s,									\
+    ld106exact,								\
+    { fd, dd, ld106d },							\
+    { fn, dn, ld106n },							\
+    { fz, dz, ld106z },							\
+    { fu, du, ld106u }							\
+  }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384
-# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u, \
-	      ld64d, ld64n, ld64z, ld64u, ld106exact,			\
-	      ld106d, ld106n, ld106z, ld106u,				\
-	      ld113d, ld113n, ld113z, ld113u)				\
-  { s, fn, dn, true, ld113n }
+# define TEST(s, fd, fn, fz, fu, dd, dn, dz, du, ld53d, ld53n, ld53z, ld53u,  \
+	      ld64id, ld64in, ld64iz, ld64iu,				      \
+	      ld64md, ld64mn, ld64mz, ld64mu,				      \
+	      ld106exact, ld106d, ld106n, ld106z, ld106u,		      \
+	      ld113d, ld113n, ld113z, ld113u)				      \
+  {									\
+    s,									\
+    true,								\
+    { fd, dd, ld113d },							\
+    { fn, dn, ld113n },							\
+    { fz, dz, ld113z },							\
+    { fu, du, ld113u }							\
+  }
 #else
 # error "unknown long double format"
 #endif
@@ -77,6 +130,10 @@ static const struct test tests[] = {
 	0x2.0000000000004p+44L,
 	0x2.0000000000002p+44L,
 	0x2.0000000000004p+44L,
+	0x2.0000000000003p+44L,
+	0x2.0000000000003p+44L,
+	0x2.0000000000003p+44L,
+	0x2.0000000000003p+44L,
 	0x2.0000000000003p+44L,
 	0x2.0000000000003p+44L,
 	0x2.0000000000003p+44L,
@@ -107,6 +164,10 @@ static const struct test tests[] = {
 	0x1.0000010000000002p+0L,
 	0x1.0000010000000002p+0L,
 	0x1.0000010000000004p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000004p+0L,
 	false,
 	0x1.0000010000000002048242f2ffp+0L,
 	0x1.0000010000000002048242f2ff8p+0L,
@@ -129,6 +190,10 @@ static const struct test tests[] = {
 	0x1.000001p+0L,
 	0x1.000001p+0L,
 	0x1.0000010000001p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000002p+0L,
+	0x1.0000010000000004p+0L,
 	0x1.0000010000000002p+0L,
 	0x1.0000010000000002p+0L,
 	0x1.0000010000000002p+0L,
@@ -159,6 +224,10 @@ static const struct test tests[] = {
 	0x1.000001000000000cp+0L,
 	0x1.000001000000000ap+0L,
 	0x1.000001000000000cp+0L,
+	0x1.000001000000000ap+0L,
+	0x1.000001000000000cp+0L,
+	0x1.000001000000000ap+0L,
+	0x1.000001000000000cp+0L,
 	false,
 	0x1.000001000000000b3db12bdc21p+0L,
 	0x1.000001000000000b3db12bdc21p+0L,
@@ -181,6 +250,10 @@ static const struct test tests[] = {
 	0x1.000001p+0L,
 	0x1.000000fffffffp+0L,
 	0x1.000001p+0L,
+	0x1.000000fffffffff8p+0L,
+	0x1.000000fffffffff8p+0L,
+	0x1.000000fffffffff8p+0L,
+	0x1.000000fffffffffap+0L,
 	0x1.000000fffffffff8p+0L,
 	0x1.000000fffffffff8p+0L,
 	0x1.000000fffffffff8p+0L,
@@ -211,6 +284,10 @@ static const struct test tests[] = {
 	0x1.0000010000000056p+0L,
 	0x1.0000010000000054p+0L,
 	0x1.0000010000000056p+0L,
+	0x1.0000010000000054p+0L,
+	0x1.0000010000000056p+0L,
+	0x1.0000010000000054p+0L,
+	0x1.0000010000000056p+0L,
 	false,
 	0x1.0000010000000055072873252f8p+0L,
 	0x1.0000010000000055072873253p+0L,
@@ -233,6 +310,10 @@ static const struct test tests[] = {
 	0x1.000001p+0L,
 	0x1.000001p+0L,
 	0x1.0000010000001p+0L,
+	0x1.00000100000001c4p+0L,
+	0x1.00000100000001c6p+0L,
+	0x1.00000100000001c4p+0L,
+	0x1.00000100000001c6p+0L,
 	0x1.00000100000001c4p+0L,
 	0x1.00000100000001c6p+0L,
 	0x1.00000100000001c4p+0L,
@@ -263,6 +344,10 @@ static const struct test tests[] = {
 	0x1.000001000000103p+0L,
 	0x1.000001000000102ep+0L,
 	0x1.000001000000103p+0L,
+	0x1.000001000000102ep+0L,
+	0x1.000001000000103p+0L,
+	0x1.000001000000102ep+0L,
+	0x1.000001000000103p+0L,
 	false,
 	0x1.000001000000102f4fc8c3d757p+0L,
 	0x1.000001000000102f4fc8c3d7578p+0L,
@@ -285,6 +370,10 @@ static const struct test tests[] = {
 	0x1.000000fffffeap+0L,
 	0x1.000000fffffeap+0L,
 	0x1.000000fffffebp+0L,
+	0x1.000000fffffea7e4p+0L,
+	0x1.000000fffffea7e6p+0L,
+	0x1.000000fffffea7e4p+0L,
+	0x1.000000fffffea7e6p+0L,
 	0x1.000000fffffea7e4p+0L,
 	0x1.000000fffffea7e6p+0L,
 	0x1.000000fffffea7e4p+0L,
@@ -315,6 +404,10 @@ static const struct test tests[] = {
 	0x1.000000fffff36598p+0L,
 	0x1.000000fffff36596p+0L,
 	0x1.000000fffff36598p+0L,
+	0x1.000000fffff36596p+0L,
+	0x1.000000fffff36598p+0L,
+	0x1.000000fffff36596p+0L,
+	0x1.000000fffff36598p+0L,
 	false,
 	0x1.000000fffff36597d40e1b5026p+0L,
 	0x1.000000fffff36597d40e1b50268p+0L,
@@ -337,6 +430,10 @@ static const struct test tests[] = {
 	0x1.000001000064p+0L,
 	0x1.000001000063fp+0L,
 	0x1.000001000064p+0L,
+	0x1.000001000063fcap+0L,
+	0x1.000001000063fca2p+0L,
+	0x1.000001000063fcap+0L,
+	0x1.000001000063fca2p+0L,
 	0x1.000001000063fcap+0L,
 	0x1.000001000063fca2p+0L,
 	0x1.000001000063fcap+0L,
@@ -367,6 +464,10 @@ static const struct test tests[] = {
 	0x1.000000fffae49caap+0L,
 	0x1.000000fffae49ca8p+0L,
 	0x1.000000fffae49caap+0L,
+	0x1.000000fffae49ca8p+0L,
+	0x1.000000fffae49caap+0L,
+	0x1.000000fffae49ca8p+0L,
+	0x1.000000fffae49caap+0L,
 	false,
 	0x1.000000fffae49ca916dacfff38p+0L,
 	0x1.000000fffae49ca916dacfff38p+0L,
@@ -389,6 +490,10 @@ static const struct test tests[] = {
 	0x1.000000fffae4ap+0L,
 	0x1.000000fffae49p+0L,
 	0x1.000000fffae4ap+0L,
+	0x1.000000fffae49ca8p+0L,
+	0x1.000000fffae49caap+0L,
+	0x1.000000fffae49ca8p+0L,
+	0x1.000000fffae49caap+0L,
 	0x1.000000fffae49ca8p+0L,
 	0x1.000000fffae49caap+0L,
 	0x1.000000fffae49ca8p+0L,
@@ -419,6 +524,10 @@ static const struct test tests[] = {
 	0x1.00000101b2b29a46p+0L,
 	0x1.00000101b2b29a46p+0L,
 	0x1.00000101b2b29a48p+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a48p+0L,
 	false,
 	0x1.00000101b2b29a4692b67b7ca3p+0L,
 	0x1.00000101b2b29a4692b67b7ca3p+0L,
@@ -441,6 +550,10 @@ static const struct test tests[] = {
 	0x1.00000101b2b2ap+0L,
 	0x1.00000101b2b29p+0L,
 	0x1.00000101b2b2ap+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a46p+0L,
+	0x1.00000101b2b29a48p+0L,
 	0x1.00000101b2b29a46p+0L,
 	0x1.00000101b2b29a46p+0L,
 	0x1.00000101b2b29a46p+0L,
@@ -471,6 +584,10 @@ static const struct test tests[] = {
 	0x1.000001ad7f29abcap+0L,
 	0x1.000001ad7f29abcap+0L,
 	0x1.000001ad7f29abccp+0L,
+	0x1.000001ad7f29abcap+0L,
+	0x1.000001ad7f29abcap+0L,
+	0x1.000001ad7f29abcap+0L,
+	0x1.000001ad7f29abccp+0L,
 	false,
 	0x1.000001ad7f29abcaf485787a65p+0L,
 	0x1.000001ad7f29abcaf485787a65p+0L,
@@ -489,6 +606,10 @@ static const struct test tests[] = {
 	0x1p+0,
 	0x1p+0,
 	0x1p+0,
+	0x1p+0L,
+	0x1p+0L,
+	0x1p+0L,
+	0x1p+0L,
 	0x1p+0L,
 	0x1p+0L,
 	0x1p+0L,
@@ -523,6 +644,10 @@ static const struct test tests[] = {
 	0x1.0000000000000802p+0L,
 	0x1.00000000000008p+0L,
 	0x1.0000000000000802p+0L,
+	0x1.00000000000008p+0L,
+	0x1.0000000000000802p+0L,
+	0x1.00000000000008p+0L,
+	0x1.0000000000000802p+0L,
 	false,
 	0x1.0000000000000801fc96557232p+0L,
 	0x1.0000000000000801fc96557232p+0L,
@@ -545,6 +670,10 @@ static const struct test tests[] = {
 	0x1.0000000000001p+0L,
 	0x1p+0L,
 	0x1.0000000000001p+0L,
+	0x1.00000000000008p+0L,
+	0x1.00000000000008p+0L,
+	0x1.00000000000008p+0L,
+	0x1.0000000000000802p+0L,
 	0x1.00000000000008p+0L,
 	0x1.00000000000008p+0L,
 	0x1.00000000000008p+0L,
@@ -575,6 +704,10 @@ static const struct test tests[] = {
 	0x1.00000000000008p+0L,
 	0x1.00000000000007fep+0L,
 	0x1.00000000000008p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
 	false,
 	0x1.00000000000007fff5207e5dap+0L,
 	0x1.00000000000007fff5207e5da08p+0L,
@@ -597,6 +730,10 @@ static const struct test tests[] = {
 	0x1p+0L,
 	0x1p+0L,
 	0x1.0000000000001p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
 	0x1.00000000000007fep+0L,
 	0x1.00000000000008p+0L,
 	0x1.00000000000007fep+0L,
@@ -627,6 +764,10 @@ static const struct test tests[] = {
 	0x1.0000000000000802p+0L,
 	0x1.00000000000008p+0L,
 	0x1.0000000000000802p+0L,
+	0x1.00000000000008p+0L,
+	0x1.0000000000000802p+0L,
+	0x1.00000000000008p+0L,
+	0x1.0000000000000802p+0L,
 	false,
 	0x1.00000000000008016eea8f26c48p+0L,
 	0x1.00000000000008016eea8f26c48p+0L,
@@ -649,6 +790,10 @@ static const struct test tests[] = {
 	0x1p+0L,
 	0x1p+0L,
 	0x1.0000000000001p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
+	0x1.00000000000007fep+0L,
+	0x1.00000000000008p+0L,
 	0x1.00000000000007fep+0L,
 	0x1.00000000000008p+0L,
 	0x1.00000000000007fep+0L,
@@ -679,6 +824,10 @@ static const struct test tests[] = {
 	0x1.00000000000007eep+0L,
 	0x1.00000000000007ecp+0L,
 	0x1.00000000000007eep+0L,
+	0x1.00000000000007ecp+0L,
+	0x1.00000000000007eep+0L,
+	0x1.00000000000007ecp+0L,
+	0x1.00000000000007eep+0L,
 	false,
 	0x1.00000000000007ed24502859138p+0L,
 	0x1.00000000000007ed24502859138p+0L,
@@ -701,6 +850,10 @@ static const struct test tests[] = {
 	0x1p+0L,
 	0x1p+0L,
 	0x1.0000000000001p+0L,
+	0x1.0000000000000734p+0L,
+	0x1.0000000000000734p+0L,
+	0x1.0000000000000734p+0L,
+	0x1.0000000000000736p+0L,
 	0x1.0000000000000734p+0L,
 	0x1.0000000000000734p+0L,
 	0x1.0000000000000734p+0L,
@@ -731,6 +884,10 @@ static const struct test tests[] = {
 	0x1.b005314e2421e8p-32L,
 	0x1.b005314e2421e7fep-32L,
 	0x1.b005314e2421e8p-32L,
+	0x1.b005314e2421e7fep-32L,
+	0x1.b005314e2421e8p-32L,
+	0x1.b005314e2421e7fep-32L,
+	0x1.b005314e2421e8p-32L,
 	false,
 	0x1.b005314e2421e7ffb472840c5ap-32L,
 	0x1.b005314e2421e7ffb472840c5a8p-32L,
@@ -751,6 +908,10 @@ static const struct test tests[] = {
 	0xcp-152,
 	0xcp-152,
 	0xcp-152,
+	0xcp-152L,
+	0xcp-152L,
+	0xcp-152L,
+	0xcp-152L,
 	0xcp-152L,
 	0xcp-152L,
 	0xcp-152L,
@@ -785,6 +946,10 @@ static const struct test tests[] = {
 	0x1.000001p+0L,
 	0x1.000000fffffffffep+0L,
 	0x1.000001p+0L,
+	0x1.000000fffffffffep+0L,
+	0x1.000001p+0L,
+	0x1.000000fffffffffep+0L,
+	0x1.000001p+0L,
 	false,
 	0x1.000000fffffffffffffffce7b78p+0L,
 	0x1.000000fffffffffffffffce7b8p+0L,
@@ -803,6 +968,10 @@ static const struct test tests[] = {
 	0x1.000001p+0,
 	0x1.000001p+0,
 	0x1.000001p+0,
+	0x1.000001p+0L,
+	0x1.000001p+0L,
+	0x1.000001p+0L,
+	0x1.000001p+0L,
 	0x1.000001p+0L,
 	0x1.000001p+0L,
 	0x1.000001p+0L,
@@ -837,6 +1006,10 @@ static const struct test tests[] = {
 	0x1.000001p+0L,
 	0x1.000001p+0L,
 	0x1.0000010000000002p+0L,
+	0x1.000001p+0L,
+	0x1.000001p+0L,
+	0x1.000001p+0L,
+	0x1.0000010000000002p+0L,
 	false,
 	0x1.00000100000000000000031848p+0L,
 	0x1.00000100000000000000031848p+0L,
@@ -855,6 +1028,10 @@ static const struct test tests[] = {
 	0x1.000002p+0,
 	0x1.000002p+0,
 	0x1.000002p+0,
+	0x1.000002p+0L,
+	0x1.000002p+0L,
+	0x1.000002p+0L,
+	0x1.000002p+0L,
 	0x1.000002p+0L,
 	0x1.000002p+0L,
 	0x1.000002p+0L,
@@ -889,6 +1066,10 @@ static const struct test tests[] = {
 	0x1.000003p+0L,
 	0x1.000002fffffffffep+0L,
 	0x1.000003p+0L,
+	0x1.000002fffffffffep+0L,
+	0x1.000003p+0L,
+	0x1.000002fffffffffep+0L,
+	0x1.000003p+0L,
 	false,
 	0x1.000002fffffffffffffffce7b78p+0L,
 	0x1.000002fffffffffffffffce7b8p+0L,
@@ -907,6 +1088,10 @@ static const struct test tests[] = {
 	0x1.000003p+0,
 	0x1.000003p+0,
 	0x1.000003p+0,
+	0x1.000003p+0L,
+	0x1.000003p+0L,
+	0x1.000003p+0L,
+	0x1.000003p+0L,
 	0x1.000003p+0L,
 	0x1.000003p+0L,
 	0x1.000003p+0L,
@@ -941,6 +1126,10 @@ static const struct test tests[] = {
 	0x1.000003p+0L,
 	0x1.000003p+0L,
 	0x1.0000030000000002p+0L,
+	0x1.000003p+0L,
+	0x1.000003p+0L,
+	0x1.000003p+0L,
+	0x1.0000030000000002p+0L,
 	false,
 	0x1.00000300000000000000031848p+0L,
 	0x1.00000300000000000000031848p+0L,
@@ -967,6 +1156,10 @@ static const struct test tests[] = {
 	0x1.000004p+0L,
 	0x1.000004p+0L,
 	0x1.000004p+0L,
+	0x1.000004p+0L,
+	0x1.000004p+0L,
+	0x1.000004p+0L,
+	0x1.000004p+0L,
 	true,
 	0x1.000004p+0L,
 	0x1.000004p+0L,
@@ -985,6 +1178,10 @@ static const struct test tests[] = {
 	0x2p-64,
 	0x2p-64,
 	0x2p-64,
+	0x2p-64L,
+	0x2p-64L,
+	0x2p-64L,
+	0x2p-64L,
 	0x2p-64L,
 	0x2p-64L,
 	0x2p-64L,
@@ -1020,6 +1217,10 @@ static const struct test tests[] = {
 	0x2.000002p-64L,
 	0x2.000001fffffffffcp-64L,
 	0x2.000002p-64L,
+	0x2.000001fffffffffcp-64L,
+	0x2.000002p-64L,
+	0x2.000001fffffffffcp-64L,
+	0x2.000002p-64L,
 	false,
 	0x2.000001ffffffffffffffffffffp-64L,
 	0x2.000002p-64L,
@@ -1039,6 +1240,10 @@ static const struct test tests[] = {
 	0x2.000002p-64,
 	0x2.000002p-64,
 	0x2.000002p-64,
+	0x2.000002p-64L,
+	0x2.000002p-64L,
+	0x2.000002p-64L,
+	0x2.000002p-64L,
 	0x2.000002p-64L,
 	0x2.000002p-64L,
 	0x2.000002p-64L,
@@ -1074,6 +1279,10 @@ static const struct test tests[] = {
 	0x2.000002p-64L,
 	0x2.000002p-64L,
 	0x2.0000020000000004p-64L,
+	0x2.000002p-64L,
+	0x2.000002p-64L,
+	0x2.000002p-64L,
+	0x2.0000020000000004p-64L,
 	false,
 	0x2.000002p-64L,
 	0x2.000002p-64L,
@@ -1093,6 +1302,10 @@ static const struct test tests[] = {
 	0x2.000004p-64,
 	0x2.000004p-64,
 	0x2.000004p-64,
+	0x2.000004p-64L,
+	0x2.000004p-64L,
+	0x2.000004p-64L,
+	0x2.000004p-64L,
 	0x2.000004p-64L,
 	0x2.000004p-64L,
 	0x2.000004p-64L,
@@ -1128,6 +1341,10 @@ static const struct test tests[] = {
 	0x2.000006p-64L,
 	0x2.000005fffffffffcp-64L,
 	0x2.000006p-64L,
+	0x2.000005fffffffffcp-64L,
+	0x2.000006p-64L,
+	0x2.000005fffffffffcp-64L,
+	0x2.000006p-64L,
 	false,
 	0x2.000005ffffffffffffffffffffp-64L,
 	0x2.000006p-64L,
@@ -1147,6 +1364,10 @@ static const struct test tests[] = {
 	0x2.000006p-64,
 	0x2.000006p-64,
 	0x2.000006p-64,
+	0x2.000006p-64L,
+	0x2.000006p-64L,
+	0x2.000006p-64L,
+	0x2.000006p-64L,
 	0x2.000006p-64L,
 	0x2.000006p-64L,
 	0x2.000006p-64L,
@@ -1182,6 +1403,10 @@ static const struct test tests[] = {
 	0x2.000006p-64L,
 	0x2.000006p-64L,
 	0x2.0000060000000004p-64L,
+	0x2.000006p-64L,
+	0x2.000006p-64L,
+	0x2.000006p-64L,
+	0x2.0000060000000004p-64L,
 	false,
 	0x2.000006p-64L,
 	0x2.000006p-64L,
@@ -1201,6 +1426,10 @@ static const struct test tests[] = {
 	0x2.000008p-64,
 	0x2.000008p-64,
 	0x2.000008p-64,
+	0x2.000008p-64L,
+	0x2.000008p-64L,
+	0x2.000008p-64L,
+	0x2.000008p-64L,
 	0x2.000008p-64L,
 	0x2.000008p-64L,
 	0x2.000008p-64L,
@@ -1236,6 +1465,10 @@ static const struct test tests[] = {
 	0x1p-120L,
 	0x1p-120L,
 	0x1p-120L,
+	0x1p-120L,
+	0x1p-120L,
+	0x1p-120L,
+	0x1p-120L,
 	true,
 	0x1p-120L,
 	0x1p-120L,
@@ -1263,6 +1496,10 @@ static const struct test tests[] = {
 	0x1.000001p-120L,
 	0x1.000000fffffffffep-120L,
 	0x1.000001p-120L,
+	0x1.000000fffffffffep-120L,
+	0x1.000001p-120L,
+	0x1.000000fffffffffep-120L,
+	0x1.000001p-120L,
 	false,
 	0x1.000000ffffffffffffffffffff8p-120L,
 	0x1.000001p-120L,
@@ -1282,6 +1519,10 @@ static const struct test tests[] = {
 	0x1.000001p-120,
 	0x1.000001p-120,
 	0x1.000001p-120,
+	0x1.000001p-120L,
+	0x1.000001p-120L,
+	0x1.000001p-120L,
+	0x1.000001p-120L,
 	0x1.000001p-120L,
 	0x1.000001p-120L,
 	0x1.000001p-120L,
@@ -1317,6 +1558,10 @@ static const struct test tests[] = {
 	0x1.000001p-120L,
 	0x1.000001p-120L,
 	0x1.0000010000000002p-120L,
+	0x1.000001p-120L,
+	0x1.000001p-120L,
+	0x1.000001p-120L,
+	0x1.0000010000000002p-120L,
 	false,
 	0x1.000001p-120L,
 	0x1.000001p-120L,
@@ -1336,6 +1581,10 @@ static const struct test tests[] = {
 	0x1.000002p-120,
 	0x1.000002p-120,
 	0x1.000002p-120,
+	0x1.000002p-120L,
+	0x1.000002p-120L,
+	0x1.000002p-120L,
+	0x1.000002p-120L,
 	0x1.000002p-120L,
 	0x1.000002p-120L,
 	0x1.000002p-120L,
@@ -1371,6 +1620,10 @@ static const struct test tests[] = {
 	0x1.000003p-120L,
 	0x1.000002fffffffffep-120L,
 	0x1.000003p-120L,
+	0x1.000002fffffffffep-120L,
+	0x1.000003p-120L,
+	0x1.000002fffffffffep-120L,
+	0x1.000003p-120L,
 	false,
 	0x1.000002ffffffffffffffffffff8p-120L,
 	0x1.000003p-120L,
@@ -1390,6 +1643,10 @@ static const struct test tests[] = {
 	0x1.000003p-120,
 	0x1.000003p-120,
 	0x1.000003p-120,
+	0x1.000003p-120L,
+	0x1.000003p-120L,
+	0x1.000003p-120L,
+	0x1.000003p-120L,
 	0x1.000003p-120L,
 	0x1.000003p-120L,
 	0x1.000003p-120L,
@@ -1425,6 +1682,10 @@ static const struct test tests[] = {
 	0x1.000003p-120L,
 	0x1.000003p-120L,
 	0x1.0000030000000002p-120L,
+	0x1.000003p-120L,
+	0x1.000003p-120L,
+	0x1.000003p-120L,
+	0x1.0000030000000002p-120L,
 	false,
 	0x1.000003p-120L,
 	0x1.000003p-120L,
@@ -1444,6 +1705,10 @@ static const struct test tests[] = {
 	0x1.000004p-120,
 	0x1.000004p-120,
 	0x1.000004p-120,
+	0x1.000004p-120L,
+	0x1.000004p-120L,
+	0x1.000004p-120L,
+	0x1.000004p-120L,
 	0x1.000004p-120L,
 	0x1.000004p-120L,
 	0x1.000004p-120L,
@@ -1478,6 +1743,10 @@ static const struct test tests[] = {
 	0xf.fffff8p+124L,
 	0xf.fffff7fffffffffp+124L,
 	0xf.fffff8p+124L,
+	0xf.fffff7fffffffffp+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff7fffffffffp+124L,
+	0xf.fffff8p+124L,
 	false,
 	0xf.fffff7fffffffffffffffffffcp+124L,
 	0xf.fffff8p+124L,
@@ -1496,6 +1765,10 @@ static const struct test tests[] = {
 	0xf.fffff8p+124,
 	0xf.fffff8p+124,
 	0xf.fffff8p+124,
+	0xf.fffff8p+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff8p+124L,
 	0xf.fffff8p+124L,
 	0xf.fffff8p+124L,
 	0xf.fffff8p+124L,
@@ -1530,6 +1803,10 @@ static const struct test tests[] = {
 	0xf.fffff8p+124L,
 	0xf.fffff8p+124L,
 	0xf.fffff8000000001p+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff8p+124L,
+	0xf.fffff8000000001p+124L,
 	false,
 	0xf.fffff8p+124L,
 	0xf.fffff8p+124L,
@@ -1552,6 +1829,10 @@ static const struct test tests[] = {
 	-0xf.fffff8p+124L,
 	-0xf.fffff7ffffff8p+124L,
 	-0xf.fffff7ffffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff7fffffffffp+124L,
+	-0xf.fffff7fffffffffp+124L,
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
 	-0xf.fffff7fffffffffp+124L,
@@ -1582,6 +1863,10 @@ static const struct test tests[] = {
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
 	true,
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
@@ -1601,6 +1886,10 @@ static const struct test tests[] = {
 	-0xf.fffff8p+124,
 	-0xf.fffff8p+124,
 	-0xf.fffff80000008p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8p+124L,
+	-0xf.fffff8000000001p+124L,
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
 	-0xf.fffff8p+124L,
@@ -1639,6 +1928,10 @@ static const struct test tests[] = {
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffbffp+1020L,
 	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffbffp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffbffp+1020L,
+	0xf.ffffffffffffcp+1020L,
 	false,
 	0xf.ffffffffffffbffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
@@ -1670,7 +1963,11 @@ static const struct test tests[] = {
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
-	true,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	false,
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
@@ -1697,6 +1994,10 @@ static const struct test tests[] = {
 	INFINITY,
 	0xf.ffffffffffff8p+1020L,
 	INFINITY,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffcp+1020L,
+	0xf.ffffffffffffc01p+1020L,
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
 	0xf.ffffffffffffcp+1020L,
@@ -1732,6 +2033,10 @@ static const struct test tests[] = {
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffbffp+1020L,
 	-0xf.ffffffffffffbffp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffbffp+1020L,
+	-0xf.ffffffffffffbffp+1020L,
 	false,
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
@@ -1763,7 +2068,11 @@ static const struct test tests[] = {
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
-	true,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	false,
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
@@ -1790,6 +2099,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.ffffffffffff8p+1020L,
 	-0xf.ffffffffffff8p+1020L,
+	-0xf.ffffffffffffc01p+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
+	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffc01p+1020L,
 	-0xf.ffffffffffffcp+1020L,
 	-0xf.ffffffffffffcp+1020L,
@@ -1897,6 +2210,10 @@ static const struct test tests[] = {
 	0xf.ffffffffffff8p+1020L,
 	INFINITY,
 	0xf.ffffffffffff8p+1020L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	0xf.fffffffffffffffp+16380L,
+	0xf.fffffffffffffffp+16380L,
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	0xf.fffffffffffffffp+16380L,
@@ -2010,6 +2327,10 @@ static const struct test tests[] = {
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
 	false,
 	0xf.fffffffffffffffffffffffffcp+1020L,
 	INFINITY,
@@ -2113,6 +2434,10 @@ static const struct test tests[] = {
 	0xf.ffffffffffff8p+1020L,
 	INFINITY,
 	0xf.ffffffffffff8p+1020L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	INFINITY,
@@ -2226,6 +2551,10 @@ static const struct test tests[] = {
 	-0xf.fffffffffffffffp+16380L,
 	-0xf.fffffffffffffffp+16380L,
 	-0xf.fffffffffffffffp+16380L,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	false,
 	-INFINITY,
 	-INFINITY,
@@ -2330,6 +2659,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.ffffffffffff8p+1020L,
 	-0xf.ffffffffffff8p+1020L,
+	-INFINITY,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	-INFINITY,
 	-INFINITY,
 	-0xf.fffffffffffffffp+16380L,
@@ -2442,6 +2775,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.fffffffffffffffp+16380L,
 	-0xf.fffffffffffffffp+16380L,
+	-INFINITY,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	false,
 	-INFINITY,
 	-INFINITY,
@@ -2545,6 +2882,10 @@ static const struct test tests[] = {
 	0xf.ffffffffffff8p+1020L,
 	INFINITY,
 	0xf.ffffffffffff8p+1020L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	INFINITY,
@@ -2658,6 +2999,10 @@ static const struct test tests[] = {
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
 	false,
 	0xf.fffffffffffffffffffffffffcp+1020L,
 	INFINITY,
@@ -2761,6 +3106,10 @@ static const struct test tests[] = {
 	0xf.ffffffffffff8p+1020L,
 	INFINITY,
 	0xf.ffffffffffff8p+1020L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
+	INFINITY,
+	0xf.fffffffffffffffp+16380L,
 	INFINITY,
 	0xf.fffffffffffffffp+16380L,
 	INFINITY,
@@ -2874,6 +3223,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.fffffffffffffffp+16380L,
 	-0xf.fffffffffffffffp+16380L,
+	-INFINITY,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	false,
 	-INFINITY,
 	-INFINITY,
@@ -2978,6 +3331,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.ffffffffffff8p+1020L,
 	-0xf.ffffffffffff8p+1020L,
+	-INFINITY,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	-INFINITY,
 	-INFINITY,
 	-0xf.fffffffffffffffp+16380L,
@@ -3090,6 +3447,10 @@ static const struct test tests[] = {
 	-INFINITY,
 	-0xf.fffffffffffffffp+16380L,
 	-0xf.fffffffffffffffp+16380L,
+	-INFINITY,
+	-INFINITY,
+	-0xf.fffffffffffffffp+16380L,
+	-0xf.fffffffffffffffp+16380L,
 	false,
 	-INFINITY,
 	-INFINITY,
@@ -3117,6 +3478,10 @@ static const struct test tests[] = {
 	0xcp-152L,
 	0xb.fffffffffffffffp-152L,
 	0xcp-152L,
+	0xb.fffffffffffffffp-152L,
+	0xcp-152L,
+	0xb.fffffffffffffffp-152L,
+	0xcp-152L,
 	false,
 	0xb.fffffffffffffffffffffffffcp-152L,
 	0xcp-152L,
@@ -3136,6 +3501,10 @@ static const struct test tests[] = {
 	0xcp-152,
 	0xcp-152,
 	0xcp-152,
+	0xcp-152L,
+	0xcp-152L,
+	0xcp-152L,
+	0xcp-152L,
 	0xcp-152L,
 	0xcp-152L,
 	0xcp-152L,
@@ -3171,6 +3540,10 @@ static const struct test tests[] = {
 	0xcp-152L,
 	0xcp-152L,
 	0xc.000000000000001p-152L,
+	0xcp-152L,
+	0xcp-152L,
+	0xcp-152L,
+	0xc.000000000000001p-152L,
 	false,
 	0xcp-152L,
 	0xcp-152L,
@@ -3198,6 +3571,10 @@ static const struct test tests[] = {
 	-0xcp-152L,
 	-0xb.fffffffffffffffp-152L,
 	-0xb.fffffffffffffffp-152L,
+	-0xcp-152L,
+	-0xcp-152L,
+	-0xb.fffffffffffffffp-152L,
+	-0xb.fffffffffffffffp-152L,
 	false,
 	-0xcp-152L,
 	-0xcp-152L,
@@ -3217,6 +3594,10 @@ static const struct test tests[] = {
 	-0xcp-152,
 	-0xcp-152,
 	-0xcp-152,
+	-0xcp-152L,
+	-0xcp-152L,
+	-0xcp-152L,
+	-0xcp-152L,
 	-0xcp-152L,
 	-0xcp-152L,
 	-0xcp-152L,
@@ -3252,6 +3633,10 @@ static const struct test tests[] = {
 	-0xcp-152L,
 	-0xcp-152L,
 	-0xcp-152L,
+	-0xc.000000000000001p-152L,
+	-0xcp-152L,
+	-0xcp-152L,
+	-0xcp-152L,
 	false,
 	-0xc.00000000000000000000000004p-152L,
 	-0xcp-152L,
@@ -3279,6 +3664,10 @@ static const struct test tests[] = {
 	0x1.4p-148L,
 	0x1.3ffffffffffffffep-148L,
 	0x1.4p-148L,
+	0x1.3ffffffffffffffep-148L,
+	0x1.4p-148L,
+	0x1.3ffffffffffffffep-148L,
+	0x1.4p-148L,
 	false,
 	0x1.3fffffffffffffffffffffffff8p-148L,
 	0x1.4p-148L,
@@ -3298,6 +3687,10 @@ static const struct test tests[] = {
 	0x1.4p-148,
 	0x1.4p-148,
 	0x1.4p-148,
+	0x1.4p-148L,
+	0x1.4p-148L,
+	0x1.4p-148L,
+	0x1.4p-148L,
 	0x1.4p-148L,
 	0x1.4p-148L,
 	0x1.4p-148L,
@@ -3333,6 +3726,10 @@ static const struct test tests[] = {
 	0x1.4p-148L,
 	0x1.4p-148L,
 	0x1.4000000000000002p-148L,
+	0x1.4p-148L,
+	0x1.4p-148L,
+	0x1.4p-148L,
+	0x1.4000000000000002p-148L,
 	false,
 	0x1.4p-148L,
 	0x1.4p-148L,
@@ -3356,6 +3753,10 @@ static const struct test tests[] = {
 	-0x1.4p-148L,
 	-0x1.3ffffffffffffp-148L,
 	-0x1.3ffffffffffffp-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.3ffffffffffffffep-148L,
+	-0x1.3ffffffffffffffep-148L,
 	-0x1.4p-148L,
 	-0x1.4p-148L,
 	-0x1.3ffffffffffffffep-148L,
@@ -3387,6 +3788,10 @@ static const struct test tests[] = {
 	-0x1.4p-148L,
 	-0x1.4p-148L,
 	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
 	true,
 	-0x1.4p-148L,
 	-0x1.4p-148L,
@@ -3407,6 +3812,10 @@ static const struct test tests[] = {
 	-0x1.4p-148,
 	-0x1.4p-148,
 	-0x1.4000000000001p-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.4p-148L,
+	-0x1.4000000000000002p-148L,
 	-0x1.4p-148L,
 	-0x1.4p-148L,
 	-0x1.4p-148L,
@@ -3452,6 +3861,10 @@ static const struct test tests[] = {
 	0x6p-1076L,
 	0x5.fffffffffffffff8p-1076L,
 	0x6p-1076L,
+	0x5.fffffffffffffff8p-1076L,
+	0x6p-1076L,
+	0x5.fffffffffffffff8p-1076L,
+	0x6p-1076L,
 	false,
 	0x4p-1076L,
 	0x4p-1076L,
@@ -3486,6 +3899,10 @@ static const struct test tests[] = {
 	0x8p-1076L,
 	0x4p-1076L,
 	0x8p-1076L,
+	0x6p-1076L,
+	0x6p-1076L,
+	0x6p-1076L,
+	0x6p-1076L,
 	0x6p-1076L,
 	0x6p-1076L,
 	0x6p-1076L,
@@ -3528,6 +3945,10 @@ static const struct test tests[] = {
 	0x6p-1076L,
 	0x6p-1076L,
 	0x6.0000000000000008p-1076L,
+	0x6p-1076L,
+	0x6p-1076L,
+	0x6p-1076L,
+	0x6.0000000000000008p-1076L,
 	false,
 	0x4p-1076L,
 	0x8p-1076L,
@@ -3562,6 +3983,10 @@ static const struct test tests[] = {
 	-0x4p-1076L,
 	-0x4p-1076L,
 	-0x4p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
+	-0x5.fffffffffffffff8p-1076L,
+	-0x5.fffffffffffffff8p-1076L,
 	-0x6p-1076L,
 	-0x6p-1076L,
 	-0x5.fffffffffffffff8p-1076L,
@@ -3604,6 +4029,10 @@ static const struct test tests[] = {
 	-0x6p-1076L,
 	-0x6p-1076L,
 	-0x6p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
 	true,
 	-0x8p-1076L,
 	-0x8p-1076L,
@@ -3638,6 +4067,10 @@ static const struct test tests[] = {
 	-0x8p-1076L,
 	-0x4p-1076L,
 	-0x4p-1076L,
+	-0x6.0000000000000008p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
+	-0x6p-1076L,
 	-0x6.0000000000000008p-1076L,
 	-0x6p-1076L,
 	-0x6p-1076L,
@@ -3859,6 +4292,10 @@ static const struct test tests[] = {
 	0x8p-16448L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0x8p-16448L,
+	0xcp-16448L,
+	0x8p-16448L,
+	0xcp-16448L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -4076,6 +4513,10 @@ static const struct test tests[] = {
 	0x1p-16444L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -4293,6 +4734,10 @@ static const struct test tests[] = {
 	0x1p-16444L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0x1p-16444L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -4508,6 +4953,10 @@ static const struct test tests[] = {
 	-0x0p+0L,
 	-0x1p-16444L,
 	-0x8p-16448L,
+	-0x8p-16448L,
+	-0x8p-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	-0x8p-16448L,
 	-0x8p-16448L,
 	false,
@@ -4727,6 +5176,10 @@ static const struct test tests[] = {
 	-0x1p-16444L,
 	-0x8p-16448L,
 	-0x8p-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -4944,6 +5397,10 @@ static const struct test tests[] = {
 	-0x1p-16444L,
 	-0x8p-16448L,
 	-0x8p-16448L,
+	-0x1p-16444L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -5161,6 +5618,10 @@ static const struct test tests[] = {
 	0x8p-16448L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0x8p-16448L,
+	0xcp-16448L,
+	0x8p-16448L,
+	0xcp-16448L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -5378,6 +5839,10 @@ static const struct test tests[] = {
 	0x1p-16444L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -5595,6 +6060,10 @@ static const struct test tests[] = {
 	0x1p-16444L,
 	0x8p-16448L,
 	0x1p-16444L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0xcp-16448L,
+	0x1p-16444L,
 	false,
 	0x0p+0L,
 	0x0p+0L,
@@ -5810,6 +6279,10 @@ static const struct test tests[] = {
 	-0x0p+0L,
 	-0x1p-16444L,
 	-0x8p-16448L,
+	-0x8p-16448L,
+	-0x8p-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	-0x8p-16448L,
 	-0x8p-16448L,
 	false,
@@ -6029,6 +6502,10 @@ static const struct test tests[] = {
 	-0x1p-16444L,
 	-0x8p-16448L,
 	-0x8p-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -6246,6 +6723,10 @@ static const struct test tests[] = {
 	-0x1p-16444L,
 	-0x8p-16448L,
 	-0x8p-16448L,
+	-0x1p-16444L,
+	-0xcp-16448L,
+	-0xcp-16448L,
+	-0xcp-16448L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -6264,6 +6745,10 @@ static const struct test tests[] = {
 	-0x3.8p-152,
 	-0x3.8p-152,
 	-0x3.8p-152,
+	-0x3.8p-152L,
+	-0x3.8p-152L,
+	-0x3.8p-152L,
+	-0x3.8p-152L,
 	-0x3.8p-152L,
 	-0x3.8p-152L,
 	-0x3.8p-152L,
@@ -6298,6 +6783,10 @@ static const struct test tests[] = {
 	-0x1.cp-1076L,
 	-0x1.cp-1076L,
 	-0x1.cp-1076L,
+	-0x1.cp-1076L,
+	-0x1.cp-1076L,
+	-0x1.cp-1076L,
+	-0x1.cp-1076L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -6322,6 +6811,10 @@ static const struct test tests[] = {
 	-0x0p+0L,
 	-0x8p-16448L,
 	-0x0p+0L,
+	-0x0p+0L,
+	-0x0p+0L,
+	-0x4p-16448L,
+	-0x4p-16448L,
 	-0x0p+0L,
 	-0x0p+0L,
 	false,
@@ -6350,6 +6843,10 @@ static const struct test tests[] = {
 	-0x0p+0L,
 	-0x0p+0L,
 	-0x0p+0L,
+	-0x4p-16448L,
+	-0x0p+0L,
+	-0x0p+0L,
+	-0x0p+0L,
 	false,
 	-0x4p-1076L,
 	-0x0p+0L,
@@ -6362,38 +6859,73 @@ static const struct test tests[] = {
 };
 
 static int
+test_in_one_mode (const char *s, const struct test_results *expected,
+		  bool ld_ok, const char *mode_name)
+{
+  int result = 0;
+  float f = strtof (s, NULL);
+  double d = strtod (s, NULL);
+  long double ld = strtold (s, NULL);
+  if (f != expected->f
+      || copysignf (1.0f, f) != copysignf (1.0f, expected->f))
+    {
+      printf ("strtof (%s) returned %a not %a (%s)\n", s, f,
+	      expected->f, mode_name);
+      result = 1;
+    }
+  if (d != expected->d
+      || copysign (1.0, d) != copysign (1.0, expected->d))
+    {
+      printf ("strtod (%s) returned %a not %a (%s)\n", s, d,
+	      expected->d, mode_name);
+      result = 1;
+    }
+  if (ld != expected->ld
+      || copysignl (1.0L, ld) != copysignl (1.0L, expected->ld))
+    {
+      printf ("strtold (%s) returned %La not %La (%s)\n", s, ld,
+	      expected->ld, mode_name);
+      if (ld_ok)
+	result = 1;
+      else
+	printf ("ignoring this inexact long double result\n");
+    }
+  return result;
+}
+
+static int
 do_test (void)
 {
+  int save_round_mode = fegetround ();
   int result = 0;
   for (size_t i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
     {
-      float f = strtof (tests[i].s, NULL);
-      double d = strtod (tests[i].s, NULL);
-      long double ld = strtold (tests[i].s, NULL);
-      if (f != tests[i].f
-	  || copysignf (1.0f, f) != copysignf (1.0f, tests[i].f))
+      result |= test_in_one_mode (tests[i].s, &tests[i].rn, tests[i].ld_ok,
+				  "default rounding mode");
+#ifdef FE_DOWNWARD
+      if (!fesetround (FE_DOWNWARD))
 	{
-	  printf ("strtof (%s) returned %a not %a\n", tests[i].s, f,
-		  tests[i].f);
-	  result = 1;
+	  result |= test_in_one_mode (tests[i].s, &tests[i].rd, tests[i].ld_ok,
+				      "FE_DOWNWARD");
+	  fesetround (save_round_mode);
 	}
-      if (d != tests[i].d
-	  || copysign (1.0, d) != copysign (1.0, tests[i].d))
+#endif
+#ifdef FE_TOWARDZERO
+      if (!fesetround (FE_TOWARDZERO))
 	{
-	  printf ("strtod (%s) returned %a not %a\n", tests[i].s, d,
-		  tests[i].d);
-	  result = 1;
+	  result |= test_in_one_mode (tests[i].s, &tests[i].rz, tests[i].ld_ok,
+				      "FE_TOWARDZERO");
+	  fesetround (save_round_mode);
 	}
-      if (ld != tests[i].ld
-	  || copysignl (1.0L, ld) != copysignl (1.0L, tests[i].ld))
+#endif
+#ifdef FE_UPWARD
+      if (!fesetround (FE_UPWARD))
 	{
-	  printf ("strtold (%s) returned %La not %La\n", tests[i].s, ld,
-		  tests[i].ld);
-	  if (tests[i].ld_ok)
-	    result = 1;
-	  else
-	    printf ("ignoring this inexact long double result\n");
+	  result |= test_in_one_mode (tests[i].s, &tests[i].ru, tests[i].ld_ok,
+				      "FE_UPWARD");
+	  fesetround (save_round_mode);
 	}
+#endif
     }
   return result;
 }

@@ -1,5 +1,5 @@
 /* Profile heap and stack memory usage of running program.
-   Copyright (C) 1998-2002, 2004-2006, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1998-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -570,7 +570,7 @@ free (void *ptr)
 }
 
 
-/* `mmap' replacement.  We do not have to keep track of the sizesince
+/* `mmap' replacement.  We do not have to keep track of the size since
    `munmap' will get it as a parameter.  */
 void *
 mmap (void *start, size_t len, int prot, int flags, int fd, off_t offset)
@@ -622,7 +622,7 @@ mmap (void *start, size_t len, int prot, int flags, int fd, off_t offset)
 }
 
 
-/* `mmap' replacement.  We do not have to keep track of the sizesince
+/* `mmap64' replacement.  We do not have to keep track of the size since
    `munmap' will get it as a parameter.  */
 void *
 mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)
@@ -674,7 +674,7 @@ mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)
 }
 
 
-/* `mmap' replacement.  We do not have to keep track of the sizesince
+/* `mremap' replacement.  We do not have to keep track of the size since
    `munmap' will get it as a parameter.  */
 void *
 mremap (void *start, size_t old_len, size_t len, int flags,  ...)

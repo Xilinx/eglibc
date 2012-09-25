@@ -1,5 +1,5 @@
 /* Return current rounding direction.
-   Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1999-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Christian Boissat <Christian.Boissat@cern.ch>, 1999.
 
@@ -17,14 +17,10 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
+#include <get-rounding-mode.h>
 
 int
 fegetround (void)
 {
-  fenv_t fpsr;
-
-  __asm__ __volatile__ ("mov.m %0=ar.fpsr" : "=r" (fpsr));
-
-  return (fpsr >> 10) & 3;
+  return get_rounding_mode ();
 }

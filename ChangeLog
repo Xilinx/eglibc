@@ -1,3 +1,602 @@
+2012-09-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/libio.h (_IO_size_t): Define to size_t, not _G_size_t.
+	(_IO_ssize_t): Define to __ssize_t, not _G_ssize_t.
+	(_IO_off_t): Define to __off_t, not _G_off_t.
+	(_IO_pid_t): Define to __pid_t, not _G_pid_t.
+	(_IO_uid_t): Define to __uid_t, not _G_uid_t.
+	(_IO_wint_t): Define to wint_t, not _G_wint_t.
+	* libio/libioP.h (struct _IO_jump_t): Use size_t not _G_size_t as
+	type of __dummy and __dummy2 fields.
+	* sysdeps/generic/_G_config.h (_G_size_t): Remove.
+	(_G_ssize_t): Likewise.
+	(_G_off_t): Likewise.
+	(_G_pid_t): Likewise.
+	(_G_uid_t): Likewise.
+	(_G_wchar_t): Likewise.
+	(_G_wint_t): Likewise.
+	* sysdeps/gnu/_G_config.h (_G_size_t): Remove.
+	(_G_ssize_t): Likewise.
+	(_G_off_t): Likewise.
+	(_G_pid_t): Likewise.
+	(_G_uid_t): Likewise.
+	(_G_wchar_t): Likewise.
+	(_G_wint_t): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_size_t): Remove.
+	(_G_ssize_t): Likewise.
+	(_G_off_t): Likewise.
+	(_G_pid_t): Likewise.
+	(_G_uid_t): Likewise.
+	(_G_wchar_t): Likewise.
+	(_G_wint_t): Likewise.
+
+2012-09-25  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* malloc/arena.c: Include malloc-sysdep.h.
+	(shrink_heap): Use check_may_shrink_heap to decide if madvise
+	is sufficient to shrink the heap or an unmap is needed.
+	* sysdeps/generic/malloc-sysdep.h: New file.  Define
+	new function check_may_shrink_heap.
+	* sysdeps/unix/sysv/linux/malloc-sysdep.h: New file.  Define
+	new function check_may_shrink_heap.
+
+2012-09-25  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/fileops.c (_IO_new_file_seekoff): Fix typos in
+	comments.
+
+2012-09-24  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* catgets/test-gencat.sh: Add "set -e".
+	* elf/tst-pathopt.sh: Likewise.
+	* grp/tst_fgetgrent.sh: Likewise.
+	* iconvdata/run-iconv-test.sh: Likewise.
+	* intl/tst-gettext.sh: Likewise.
+	* intl/tst-gettext2.sh: Likewise.
+	* intl/tst-gettext4.sh: Likewise.
+	* intl/tst-gettext6.sh: Likewise.
+	* intl/tst-translit.sh: Likewise.
+	* io/ftwtest-sh: Likewise.
+	* libio/test-freopen.sh: Likewise.
+	* malloc/tst-mtrace.sh: Likewise.
+	* posix/globtest.sh: Likewise.
+	* posix/tst-getconf.sh: Likewise.
+	* posix/wordexp-tst.sh: Likewise.
+	* stdio-common/tst-printf.sh: Likewise.
+	* stdio-common/tst-unbputc.sh: Likewise.
+	* stdlib/tst-fmtmsg.sh: Likewise.
+	* sysdeps/x86_64/tst-xmmymm.sh: Likewise.
+	* catgets/Makefile: Do not specify -e option when running
+	testsuite shell scripts.
+	* elf/Makefile: Likewise.
+	* grp/Makefile: Likewise.
+	* iconvdata/Makefile: Likewise.
+	* intl/Makefile: Likewise.
+	* io/Makefile: Likewise.
+	* libio/Makefile: Likewise.
+	* malloc/Makefile: Likewise.
+	* posix/Makefile: Likewise.
+	* stdio-common/Makefile: Likewise.
+	* stdlib/Makefile: Likewise.
+	* sysdeps/x86_64/Makefile: Likewise.
+
+	* io/ftwtest-sh: Add copyright header.
+	* posix/globtest.sh: Likewise.
+	* posix/tst-getconf.sh: Likewise.
+	* posix/wordexp-tst.sh: Likewise.
+	* sysdeps/x86_64/tst-xmmymm.sh: Likewise.
+
+2012-09-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #13679]
+	* Makeconfig (+link): Defined as $(+link-static) if
+	$(build-shared) isn't yes.
+	(link-tests): Defined as $(+link-static-tests) if $(build-shared)
+	isn't yes.
+	(static-gnulib): Add -lgcc_eh if $(build-shared) isn't yes.
+
+	* Makeconfig (+postctorT): Replace crtendS.o with crtend.o.
+
+	[BZ #14562]
+	* malloc/arena.c (heap_trim): Properly get fencepost and adjust
+	new chunk size with MALLOC_ALIGN_MASK.
+
+2012-09-24  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #5044]
+	* stdio-common/printf_fphex.c: Include <stdbool.h> and
+	<rounding-mode.h>.
+	(__printf_fphex): Determine rounding using get_rounding_mode and
+	round_away.
+	* stdio-common/tst-printf-round.c (struct hex_test): New
+	structure.
+	(hex_tests): New variable.
+	(test_hex_in_one_mode): New function.
+	(do_test): Also run tests for hex float output.
+
+2012-09-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/iopopen.c [_IO_HAVE_SYS_WAIT]: Make code unconditional.
+	[!_IO_HAVE_SYS_WAIT]: Remove conditional code.
+	* libio/libio.h (_IO_HAVE_SYS_WAIT): Remove.
+	* libio/oldiopopen.c [_IO_HAVE_SYS_WAIT]: Make code unconditional.
+	[!_IO_HAVE_SYS_WAIT]: Remove conditional code.
+	* sysdeps/generic/_G_config.h (_G_HAVE_SYS_WAIT): Remove.
+	* sysdeps/gnu/_G_config.h (_G_HAVE_SYS_WAIT): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_HAVE_SYS_WAIT): Likewise.
+
+2012-09-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/libio.h [_G_NEED_STDARG_H]: Make code unconditional.
+	* sysdeps/generic/_G_config.h (_G_NEED_STDARG_H): Remove.
+	* sysdeps/gnu/_G_config.h (_G_NEED_STDARG_H): Remove.
+	* sysdeps/mach/hurd/_G_config.h (_G_NEED_STDARG_H): Remove.
+
+2012-09-19  Dmitry V. Levin  <ldv@altlinux.org>
+
+	[BZ #14579]
+	* elf/rtld.c (dl_main): Limit the check for self loading to normal
+	mode only.
+	* elf/tst-rtld-load-self.sh: New test.
+	* elf/Makefile: Run it.
+
+2012-09-18  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/wordsize-64/Makefile [$(subdir) = misc]
+	(tst-writev-ENV): Remove.
+	* sysdeps/wordsize-64/tst-writev.c (TIMEOUT): Define.
+
+2012-09-17  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* crypt/md5test-giant.c (TIMEOUT): Increase to 8 minutes for tilegx.
+
+2012-09-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/iogetline.c [_LIBC || !_G_HAVE_IO_GETLINE_INFO]: Make code
+	unconditional.
+	* libio/iogetwline.c [_LIBC || !_G_HAVE_IO_GETLINE_INFO]:
+	Likewise.
+	* sysdeps/generic/_G_config.h (_G_HAVE_IO_GETLINE_INFO): Remove.
+	* sysdeps/gnu/_G_config.h (_G_HAVE_IO_GETLINE_INFO): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_HAVE_IO_GETLINE_INFO):
+	Likewise.
+
+2012-09-14  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14587]
+	* Makeconfig (ASFLAGS): Remove $(have-cpp-asm-debuginfo) check.
+	* config.make.in (have-cpp-asm-debuginfo): Removed.
+	* configure.in: Don't substitute libc_cv_cpp_asm_debuginfo.
+	* configure: Regenerated.
+
+2012-09-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #5044]
+	* stdio-common/printf_fp.c: Include <stdbool.h> and
+	<rounding-mode.h>.
+	(___printf_fp): Determine rounding using get_rounding_mode and
+	round_away.
+	* stdio-common/tst-printf-round.c: New file.
+	* stdio-common/Makefile (tests): Add tst-printf-round.
+	(link-libm): New variable.
+	($(objpfx)tst-printf-round): Depend in $(link-libm).
+
+2012-09-13  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14576]
+	* bits/libc-lock.h (__rtld_lock_init_recursive): Removed.
+	* sysdeps/mach/bits/libc-lock.h (__rtld_lock_init_recursive):
+	Likewise.
+	* sysdeps/mach/hurd/bits/libc-lock.h (__rtld_lock_init_recursive):
+	Likewise.
+
+2012-09-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/libio.h [!_G_HAVE_PRINTF_FP] (_IO_USE_DTOA): Remove.
+	* sysdeps/generic/_G_config.h (_G_HAVE_PRINTF_FP): Likewise.
+	* sysdeps/gnu/_G_config.h (_G_HAVE_PRINTF_FP): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_HAVE_PRINTF_FP): Likewise.
+
+2012-09-12  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14518]
+	* include/rounding-mode.h: New file.
+	* sysdeps/generic/get-rounding-mode.h: Likewise.
+	* sysdeps/s390/fpu/get-rounding-mode.h: Likewise.
+	* stdlib/strtod_l.c: Include <rounding-mode.h>.
+	(MAX_VALUE): New macro.
+	(MIN_VALUE): Likewise.
+	(overflow_value): New function.
+	(underflow_value): Likewise.
+	(round_and_return): Use overflow_value and underflow_value to
+	determine return values in overflow and underflow cases.  Use
+	round_away to determine rounding depending on rounding mode.
+	(____STRTOF_INTERNAL): Use overflow_value and underflow_value to
+	determine return values in overflow and underflow cases.
+	* stdlib/tst-strtod-round.c: Include <fenv.h>.
+	(struct test_results): New structure.
+	(struct test): Use struct test_results to store expected results
+	for all rounding modes.
+	(TEST): Include expected results for all rounding modes.
+	(test_in_one_mode): New function.
+	(do_test): Use test_in_one_mode to compute and check results.
+	Check results for all rounding modes.
+	* stdlib/Makefile ($(objpfx)tst-strtod-round): Depend on
+	$(link-libm).
+
+2012-12-09  Allan McRae  <allan@archlinux.org>
+
+        * sysdeps/i386/fpu/libm-test-ulps: Update
+
+2012-09-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/generic/_G_config.h (_G_int16_t): Remove.
+	(_G_int32_t): Likewise.
+	(_G_uint16_t): Likewise.
+	(_G_uint32_t): Likewise.
+	(_G_HAVE_BOOL): Likewise.
+	(_G_HAVE_ATEXIT): Likewise.
+	(_G_HAVE_LONG_DOUBLE_IO): Likewise.
+	(_G_HAVE_IO_FILE_OPEN): Likewise.
+	* sysdeps/gnu/_G_config.h (_G_int16_t): Remove.
+	(_G_int32_t): Likewise.
+	(_G_uint16_t): Likewise.
+	(_G_uint32_t): Likewise.
+	(_G_HAVE_BOOL): Likewise.
+	(_G_HAVE_ATEXIT): Likewise.
+	(_G_HAVE_LONG_DOUBLE_IO): Likewise.
+	(_G_HAVE_IO_FILE_OPEN): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_int16_t): Remove.
+	(_G_int32_t): Likewise.
+	(_G_uint16_t): Likewise.
+	(_G_uint32_t): Likewise.
+	(_G_HAVE_BOOL): Likewise.
+	(_G_HAVE_ATEXIT): Likewise.
+	(_G_HAVE_LONG_DOUBLE_IO): Likewise.
+	(_G_HAVE_IO_FILE_OPEN): Likewise.
+
+2012-09-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* csu/libc-tls.c: Update copyright years.
+
+2012-09-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* libioP.h [_G_USING_THUNKS]: Make code unconditional.
+	[!_G_USING_THUNKS]: Remove conditional code.
+	* sysdeps/gnu/_G_config.h (_G_USING_THUNKS): Remove.
+	* sysdeps/mach/hurd/_G_config.h (_G_USING_THUNKS): Likewise.
+
+	* libio/libioP.h [__GNUC__] (VTABLE_LABEL): Remove.
+	[!builtinbuf_vtable && __cplusplus] (builtinbuf_vtable): Likewise.
+	* sysdeps/generic/_G_config.h (_G_NAMES_HAVE_UNDERSCORE): Remove.
+	(_G_VTABLE_LABEL_PREFIX): Likewise.
+	(_G_VTABLE_LABEL_HAS_LENGTH): Likewise.
+	* sysdeps/gnu/_G_config.h (_G_NAMES_HAVE_UNDERSCORE): Remove.
+	(_G_VTABLE_LABEL_HAS_LENGTH): Likewise.
+	(_G_VTABLE_LABEL_PREFIX): Likewise.
+	(_G_VTABLE_LABEL_PREFIX_ID): Likewise.
+	* sysdeps/mach/hurd/_G_config.h (_G_NAMES_HAVE_UNDERSCORE): Remove.
+	(_G_VTABLE_LABEL_HAS_LENGTH): Likewise.
+	(_G_VTABLE_LABEL_PREFIX): Likewise.
+	(_G_VTABLE_LABEL_PREFIX_ID): Likewise.
+
+2012-09-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* libio/Makefile: Include ../Makeconfig before tests.
+	(tests): Add tst-fopenloc and depend on $(objpfx)tst-fopenloc.check
+	only if $(build-shared) is yes.
+
+	* iconv/gconv_db.c: Update copyright years.
+
+2012-09-10  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* sysdeps/i386/i686/fpu/multiarch/s_sinf-sse2.S: Fix
+	unwind info if defined PIC. Fix special cases description.
+	* sysdeps/i386/i686/fpu/multiarch/s_cosf-sse2.S: Likewise.
+
+	* sysdeps/x86_64/fpu/s_sinf.S: Fix special cases description, fix
+	DP_HI_MASK entry.
+	* sysdeps/x86_64/fpu/s_cosf.S: Likewise.
+
+2012-09-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* scripts/check-local-headers.sh: Add "shopt -s nullglob".
+
+	* iconv/gconv_db.c (free_derivation): Check if deriv->steps
+	is NULL.
+
+	* debug/Makefile (LDFLAGS-tst-chk4): Renamed to ...
+	(LDLIBS-tst-chk4): This.
+	(LDFLAGS-tst-chk5): Renamed to ...
+	(LDLIBS-tst-chk5): This.
+	(LDFLAGS-tst-chk6): Renamed to ...
+	(LDLIBS-tst-chk6): This.
+	(LDFLAGS-tst-lfschk4): Renamed to ...
+	(LDLIBS-tst-lfschk4): This.
+	(LDFLAGS-tst-lfschk5): Renamed to ...
+	(LDLIBS-tst-lfschk5): This.
+	(LDFLAGS-tst-lfschk6): Renamed to ...
+	(LDLIBS-tst-lfschk6): This.
+
+	* Makefile ($(inst_includedir)/gnu/stubs.h): Remove dependency
+	on $(common-objpfx)soversions.mk.
+
+2012-09-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10014]
+	* manual/examples/inetcli.c (SERVERHOST): Use www.gnu.org as
+	example host name.
+
+2012-09-07  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* malloc/arena.c (arena_get_retry): New function that gets
+	another arena for the caller to try its request on.
+	* malloc/malloc.c (__libc_malloc): Use get_another_arena if the
+	current arena cannot fulfill the request.
+	(__libc_memalign): Likewise.
+	(__libc_memalign): Likewise.
+	(__libc_pvalloc): Likewise.
+	(__libc_calloc): Likewise.
+
+2012-09-05  John Tobey  <john.tobey@gmail.com>
+
+	[BZ #13542]
+	* manual/arith.texi (Operations on Complex): Fix description
+	of carg branch cut.
+
+2012-09-06  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10014]
+	* manual/socket.texi (Host Addresses): Use www.gnu.org as example
+	host name.
+
+	[BZ #10038]
+	* manual/memory.texi (Memory): Make order of menu items match
+	order of sections.
+
+2012-09-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/dl-tls.c (DL_INITIAL_DTV): Removed.
+	(_dl_initial_dtv): New.  Defined if SHARED isn't defined.
+	(_dl_deallocate_tls): Restore GL(dl_initial_dtv).
+
+2012-09-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* csu/libc-tls.c (static_dtv): Renamed to ...
+	(_dl_static_dtv): This.  Make it global.
+	(_dl_initial_dtv): Removed.
+	(__libc_setup_tls): Updated.
+	* elf/dl-tls.c (DL_INITIAL_DTV): New macro.
+	(_dl_deallocate_tls): Replace GL(dl_initial_dtv) with
+	DL_INITIAL_DTV.
+
+2012-09-06  Petr Machata  <pmachata@redhat.com>
+
+	* elf/elf.h (NT_S390_HIGH_GPRS): New macro.
+	(NT_S390_TIMER, NT_S390_TODCMP, NT_S390_TODPREG): Likewise.
+	(NT_S390_CTRS, NT_S390_PREFIX, NT_S390_LAST_BREAK): Likewise.
+	(NT_S390_SYSTEM_CALL, NT_ARM_VFP): Likewise.
+
+2012-09-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14545]
+	* csu/libc-tls.c (_dl_initial_dtv): New variable.
+	* elf/dl-tls.c (_dl_deallocate_tls): Always check dtv before
+	freeing dtv[-1].
+
+2012-09-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14544]
+	* Makeconfig (link-static-before-libc): Replace $(+prector)
+	with $(+prectorT).
+	(link-static-after-libc): Replace $(+postctor) with
+	$(+postctorT).
+	(link-bounded): Replace $(+prector)/$(+postctor) with
+	$(+prectorT)/$(+postctorT).
+	(+prectorT): New macro.
+	(+postctorT): Likewise.
+
+2012-09-06  Joseph Myers  <joseph@codesourcery.com>
+
+	* stdlib/gen-tst-strtod-round.c: Include <assert.h>.
+	(round_str): Handle values above the maximum for IBM long double
+	as inexact.
+	* stdlib/tst-strtod-round.c (tests): Regenerated.
+
+2012-09-06  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/s390-32/multiarch/Makefile: Remove -mzarch
+	assembler flag.
+	* sysdeps/s390/s390-32/multiarch/memcmp.S: Use .machinemode
+	zarch_nohighgprs around the zarch optimized routines.
+	* sysdeps/s390/s390-32/multiarch/memcpy.S: Likewise.
+	* sysdeps/s390/s390-32/multiarch/memset.S: Likewise.
+	* sysdeps/s390/s390-32/multiarch/ifunc-resolve.c: Explicitly check
+	for zarch.
+
+2012-09-05  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+	* sysdeps/sparc/bits/hwcap.h (HWCAP_SPARC_PAUSE,
+	HWCAP_SPARC_CBCOND, HWCAP_SPARC_CRYPTO): Define.
+	* sysdeps/sparc/dl-procinfo.h (_DL_HWCAP_COUNT): Increase to 27.
+	* sysdeps/sparc/dl-procinfo.c (_dl_sparc_cap_flags): Add new
+	entries.
+
+2012-09-05  Alexandre Oliva  <aoliva@redhat.com>
+
+	* malloc/arena.c: Fold copyright years.
+	* malloc/mcheck.c, malloc/memusage.c: Likewise.
+
+2012-09-05  Alexandre Oliva  <aoliva@redhat.com>
+
+	* malloc/malloc.c (__libc_mallopt) <M_MMAP_MAX>: Fix indentation.
+
+2012-09-05  Alexandre Oliva  <aoliva@redhat.com>
+
+	* manual/contrib.texi (Contributors): Fix typo.  Complete entry.
+
+2012-09-05  Alexandre Oliva  <aoliva@redhat.com>
+
+	* malloc/malloc.c (__libc_mallopt) <M_MMAP_THRESHOLD>: Do not
+	change internal state upon failure.
+
+2012-09-05  Alexandre Oliva  <aoliva@redhat.com>
+
+	* malloc/mcheck.c (mcheck_check_all): Fix typo.
+	* malloc/memusage.c (mmap): Likewise.
+	(mmap64, mremap): Likewise.  Adjust name in comment.
+
+2012-09-05  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/fileops.c: Fix typos in comments.
+	* libio/oldfileops.c: Likewise.
+	* libio/wfileops.c: Likewise.
+
+2012-09-05  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #1349]
+	* malloc/Makefile (tests): Add tst-malloc-usable test case.
+	(tst-malloc-usable-ENV): Set environment for test case.
+	* malloc/hooks.c (malloc_check_get_size): New function to get
+	requested size.
+	* malloc/malloc.c (musable): Use malloc_check_get_size.
+	* malloc/tst-malloc-usable.c: New test case.
+
+2012-09-05  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* stdlib/tst-strtod-overflow.c (TIMEOUT): Define.
+
+2012-09-05  Allan McRae  <allan@archlinux.org>
+
+	[BZ #13966]
+	* configure.in (CXX_SYSINCLUDES): Use compiler output to
+	determine header location.
+	* configure: Regenerated.
+
+2012-09-05  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* stdlib/gen-tst-strtod-round.c (formats): Add Motorola extended
+	float format.
+	* stdlib/tst-strtod-round.c (TEST) [LDBL_MANT_DIG == 64 &&
+	LDBL_MAX_EXP == 16384]: Add case for Motorola extended float
+	format.
+	(test): Regenerate.
+
+2012-09-04  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/sparcv9/addmul_1.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/submul_1.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/mul_1.S: New file.
+
+2012-09-04  Florian Weimer  <fweimer@redhat.com>
+
+	* stdlib/tst-secure-getenv.c (alternative_main): Only warn on SGID
+	failures.
+
+	* stdlib/tst-secure-getenv.c: Fix whitespace in comments.
+
+2012-09-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #9914]
+	* libio/iogetdelim.c: Include <limits.h>.
+	(_IO_getdelim): Avoid integer overflow in testing whether cur_len
+	+ len + 1 would overflow.
+
+2012-09-03  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+2012-09-03  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* sysdeps/i386/i686/fpu/multiarch/Makefile (sysdep_routines):
+	Add s_sinf-sse2, s_conf-sse2.
+
+	* sysdeps/i386/i686/fpu/multiarch/s_sinf-sse2.S: New file.
+	* sysdeps/i386/i686/fpu/multiarch/s_cosf-sse2.S: New file.
+	* sysdeps/i386/i686/fpu/multiarch/s_sinf.c: New file.
+	* sysdeps/i386/i686/fpu/multiarch/s_cosf.c: New file.
+
+	* sysdeps/ieee754/flt-32/s_sinf.c (SINF, SINF_FUNC): Add macros
+	for using routine as __sinf_ia32.
+	Use macro for function declaration and weak_alias.
+	* sysdeps/ieee754/flt-32/s_cosf.c (COSF, COSF_FUNC): Add macros
+	for using routine as __cosf_ia32.
+	Use macro for function declaration and weak_alias.
+
+	* sysdeps/i386/i686/fpu/multiarch/e_expf-sse2.S: Fix Copyright.
+	* sysdeps/i386/i686/fpu/multiarch/e_expf.c: Fix Copyright.
+
+	* sysdeps/x86_64/fpu/s_sinf.S: New file.
+	* sysdeps/x86_64/fpu/s_cosf.S: New file.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+	* math/libm-test.inc (cos_test): Add more test cases.
+	(sin_test): Likewise.
+	(sincos_test): Likewise.
+
+2012-09-03  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/s390-32/multiarch/ifunc-resolve.c
+	(IFUNC_RESOLVE): Make pointers to the specialized implementations
+	hidden.
+	* sysdeps/s390/s390-64/multiarch/ifunc-resolve.c: Likewise.
+
+2012-09-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14538]
+	* sysdeps/x86_64/dl-machine.h (elf_machine_dynamic): Use the
+	first element of the GOT.
+	(elf_machine_load_address): Return the difference between
+	the runtime address of _DYNAMIC and elf_machine_dynamic ().
+
+2012-09-01  Allan McRae  <allan@archlinux.org>
+
+	[BZ #13412]
+	* configure.in (AWK): Require gawk version 3.0 or later.
+	* configure: Regenerated.
+
+2012-09-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	(__ASSUME_POSIX_CPU_TIMERS): Remove.
+	* sysdeps/unix/sysv/linux/clock_getcpuclockid.c
+	[__NR_clock_getres]: Make code unconditional.
+	[!__ASSUME_POSIX_CPU_TIMERS]: Remoce conditional code.
+	(clock_getcpuclockid): Remove code left unreachable by removal of
+	conditionals.
+	* sysdeps/unix/sysv/linux/clock_getres.c [__NR_clock_getres]: Make
+	code unconditional.
+	[__ASSUME_POSIX_CPU_TIMERS]: Likewise.
+	[!__ASSUME_POSIX_CPU_TIMERS]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/clock_gettime.c [__NR_clock_gettime]:
+	Make code unconditional.
+	[__ASSUME_POSIX_CPU_TIMERS]: Likewise.
+	[!__ASSUME_POSIX_CPU_TIMERS]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/clock_settime.c
+	[__ASSUME_POSIX_CPU_TIMERS <= 0 && __NR_clock_settime]: Remove
+	conditional code.
+	[__ASSUME_POSIX_CPU_TIMERS]: Make code unconditional.
+	[!__ASSUME_POSIX_CPU_TIMERS]: Remove conditional code.
+
+2012-08-29  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14476]
+	* Makefile (install): Also pass LD_SO=$(ld.so-version) to
+	scripts/test-installation.pl.
+
+	* scripts/test-installation.pl: Use LD_SO to get $ld_so_name
+	and $ld_so_version if it is set.
+
+2012-08-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14516]
+	* sysdeps/unix/sysv/linux/ttyname.c (ttyname): Don't return
+	failure if reading from procfs failed.
+	* sysdeps/unix/sysv/linux/ttyname_r.c (ttyname_r): Likewise.
+
 2012-08-27  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/kernel-features.h

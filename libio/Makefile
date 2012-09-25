@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2004,2006-2009,2011,2012 Free Software Foundation, Inc.
+# Copyright (C) 1995-2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -59,6 +59,8 @@ routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) +=				      \
 	wprintf wscanf fwscanf vwscanf					      \
 	fwide
 
+include ../Makeconfig
+
 tests = test-fmemopen tst-ext tst-ext2				\
 	tst-mmap-setvbuf tst-atime tst-eof			\
 	tst-freopen bug-ungetc bug-fseek			\
@@ -68,7 +70,7 @@ tests = test-fmemopen tst-ext tst-ext2				\
 	tst-memstream1 tst-memstream2				\
 	bug-memstream1 tst-popen1 bug-fclose1
 tests-$(OPTION_EGLIBC_LOCALE_CODE)				\
-     += tst-swscanf tst-fgetws tst-fopenloc tst-setvbuf1	\
+     += tst-swscanf tst-fgetws tst-setvbuf1			\
 	tst-ungetwc1 tst-ungetwc2 bug-ftell bug-ungetwc2	\
 	tst-widetext 
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)		\
@@ -80,11 +82,14 @@ tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR)			\
      += tst_swprintf tst_swscanf			\
 	tst-sscanf					\
 	tst-wmemstream1 tst-wmemstream2
+ifeq (yes,$(build-shared))
+# Add test-fopenloc only if shared library is enabled since it depends on
+# shared localedata objects.
+tests-$(OPTION_EGLIBC_LOCALE_CODE) += tst-fopenloc
+endif
 test-srcs = test-freopen
 
 all: # Make this the default target; it will be defined in Rules.
-
-include ../Makeconfig
 
 ifeq ($(versioning),yes)
 routines += oldiofopen oldiofdopen oldiofclose oldiopopen oldpclose \
@@ -194,12 +199,16 @@ include ../Rules
 ifeq (y,$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO))
 tests: $(objpfx)test-freopen.out
 $(objpfx)test-freopen.out: test-freopen.sh $(objpfx)test-freopen
-	$(SHELL) -e $< $(common-objpfx) '$(run-program-prefix)'	\
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'	\
 	$(common-objpfx)libio/
 endif
 
 ifeq (y,$(OPTION_EGLIBC_LOCALE_CODE))
+ifeq (yes,$(build-shared))
+# Run tst-fopenloc.check only if shared library is enabled since it
+# depends on tst-fopenloc.out.
 tests: $(objpfx)tst-fopenloc.check
+endif
 $(objpfx)tst-fopenloc.check: $(objpfx)tst-fopenloc.out
 	cmp ../iconvdata/testdata/ISO-8859-1..UTF8 $(objpfx)tst-fopenloc.out \
 	  > $@

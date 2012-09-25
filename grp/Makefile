@@ -60,7 +60,7 @@ endif
 ifeq (yes,$(build-shared))
 tests: $(objpfx)tst_fgetgrent.out
 $(objpfx)tst_fgetgrent.out: tst_fgetgrent.sh $(objpfx)tst_fgetgrent
-	$(SHELL) -e tst_fgetgrent.sh $(common-objpfx) $(elf-objpfx) \
+	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
 		 $(rtld-installed-name) "$(cross-test-wrapper)"
 
 endif

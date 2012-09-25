@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2008,2009,2010,2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -221,7 +221,7 @@ tests = tst-typesizes \
 	tst-once1 tst-once2 tst-once3 tst-once4 \
 	tst-key1 tst-key2 tst-key3 tst-key4 \
 	tst-sem1 tst-sem2 tst-sem3 tst-sem4 tst-sem5 tst-sem6 tst-sem7 \
-	tst-sem8 tst-sem9 tst-sem10 tst-sem11 tst-sem12 tst-sem13 \
+	tst-sem8 tst-sem9 tst-sem10 tst-sem11 tst-sem12 tst-sem13 tst-sem14 \
 	tst-barrier1 tst-barrier2 tst-barrier3 tst-barrier4 \
 	tst-align tst-align2 tst-align3 \
 	tst-basic1 tst-basic2 tst-basic3 tst-basic4 tst-basic5 tst-basic6 \
@@ -367,8 +367,9 @@ CFLAGS-funlockfile.c = $(libio-mtsafe)
 link-libc-static := $(common-objpfx)libc.a $(static-gnulib) \
 		    $(common-objpfx)libc.a
 
-tests-static += tst-locale1 tst-locale2 tst-stackguard1-static
-tests += tst-stackguard1-static
+tests-static += tst-locale1 tst-locale2 tst-stackguard1-static \
+		tst-cancel21-static
+tests += tst-stackguard1-static tst-cancel21-static
 xtests-static += tst-setuid1-static
 
 # These tests are linked with libc before libpthread
@@ -490,7 +491,7 @@ $(objpfx)tst-tls6.out: tst-tls6.sh $(objpfx)tst-tls5 \
 		       $(objpfx)tst-tls5moda.so $(objpfx)tst-tls5modb.so \
 		       $(objpfx)tst-tls5modc.so $(objpfx)tst-tls5modd.so \
 		       $(objpfx)tst-tls5mode.so $(objpfx)tst-tls5modf.so
-	$(SHELL) -e tst-tls6.sh $(common-objpfx) $(elf-objpfx) \
+	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
 		    $(rtld-installed-name) '$(cross-test-wrapper)' \
 		    $(..)scripts/run-with-env.sh
 endif
@@ -526,7 +527,7 @@ $(objpfx)tst-clock2: $(common-objpfx)rt/librt.a
 $(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.a
 endif
 
-LDFLAGS-tst-cancel24 = $(no-as-needed) -lstdc++
+LDLIBS-tst-cancel24 = $(no-as-needed) -lstdc++
 
 extra-B-pthread.so = -B$(common-objpfx)nptl/
 $(objpfx)libpthread.so: $(addprefix $(objpfx),$(crti-objs) $(crtn-objs))

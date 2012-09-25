@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2009, 2011, 2012 Free Software Foundation, Inc.
+# Copyright (C) 1991-2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -63,7 +63,8 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-popen tst-unlockedio tst-fmemopen2 tst-put-error tst-fgets \
 	 tst-fwrite bug16 bug17 tst-sprintf2 bug18 \
 	 bug19 tst-popen2 scanf14 scanf15 bug21 bug22 scanf16 scanf17 \
-	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs tst-sprintf3 bug25
+	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs tst-sprintf3 bug25 \
+	 tst-printf-round
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf test-vfprintf bug14 scanf13 tst-grouping
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \
@@ -80,12 +81,12 @@ include ../Rules
 tests: do-tst-unbputc do-tst-printf
 
 do-tst-unbputc: $(objpfx)tst-unbputc.out
-$(objpfx)tst-unbputc.out: $(objpfx)tst-unbputc tst-unbputc.sh
-	$(SHELL) -e tst-unbputc.sh $(common-objpfx) '$(run-program-prefix)'
+$(objpfx)tst-unbputc.out: tst-unbputc.sh $(objpfx)tst-unbputc
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
 
 do-tst-printf: $(objpfx)tst-printf.out
-$(objpfx)tst-printf.out: $(objpfx)tst-printf tst-printf.sh
-	$(SHELL) -e tst-printf.sh $(common-objpfx) '$(run-program-prefix)'
+$(objpfx)tst-printf.out: tst-printf.sh $(objpfx)tst-printf
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
 # eglibc: endif
 
 CFLAGS-vfprintf.c = -Wno-uninitialized
@@ -140,3 +141,10 @@ CPPFLAGS += $(libio-mtsafe)
 $(objpfx)tst-setvbuf1.out: tst-setvbuf1.expect $(objpfx)tst-setvbuf1
 	$(built-program-cmd) > $@ 2>&1
 	cmp tst-setvbuf1.expect $@
+
+ifeq ($(build-shared),yes)
+link-libm = $(common-objpfx)math/libm.so
+else
+link-libm = $(common-objpfx)math/libm.a
+endif
+$(objpfx)tst-printf-round: $(link-libm)

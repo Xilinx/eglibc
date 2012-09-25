@@ -1,6 +1,61 @@
-2012-08-15  Roland McGrath  <roland@hack.frob.com>
+2012-09-24  Dmitry V. Levin  <ldv@altlinux.org>
 
-2012-08-15  Roland McGrath  <roland@hack.frob.com>
+	* tst-tls6.sh: Add "set -e".
+	* Makefile: Do not specify -e option when running testsuite
+	shell scripts.
+
+	* tst-tls6.sh: Add copyright header.
+
+2012-09-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/tls.h (THREAD_SETMEM): Add "()" when casting
+	to uint64_t for 64-bit store.
+	(THREAD_SETMEM_NC): Likewise.
+
+2012-09-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/tls.h (THREAD_SETMEM): Cast to uint64_t for
+	64-bit store.
+	(THREAD_SETMEM_NC): Likewise.
+
+2012-09-14  Jeff Law  <law@redhat.com>
+
+	[BZ #14583]
+	* sysdeps/pthread/pthread.h: Fix prototype of __sigsetjmp.
+
+2012-09-13  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14576]
+	* sysdeps/pthread/bits/libc-lockP.h (__rtld_lock_init_recursive):
+	Removed.
+
+2012-09-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (LDFLAGS-tst-cancel24): Renamed to ...
+	(LDLIBS-tst-cancel24): This.
+
+2012-09-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14545]
+	* Makefile (tests-static): Add tst-cancel21-static.
+	(tests): Likewise.
+	* tst-cancel21-static.c: New file.
+
+2012-09-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/pthread_getcpuclockid.c
+	[!__ASSUME_POSIX_CPU_TIMERS]: Remove conditional code.
+	[__NR_clock_getres]: Make code unconditional.
+	(pthread_getcpuclockid): Remove code left unreachable by removal
+	of conditionals.
+
+2012-08-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14532]
+	* sysdeps/unix/sysv/linux/sem_post.c (__new_sem_post): Use
+	atomic_compare_and_exchange_bool_rel.
+	* tst-sem14.c: New file.
+	* Makefile (tests): Add tst-sem14.
 
 2012-08-15  Roland McGrath  <roland@hack.frob.com>
 

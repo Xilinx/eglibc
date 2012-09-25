@@ -464,6 +464,11 @@ _dl_allocate_tls (void *mem)
 rtld_hidden_def (_dl_allocate_tls)
 
 
+#ifndef SHARED
+extern dtv_t _dl_static_dtv[];
+# define _dl_initial_dtv (&_dl_static_dtv[1])
+#endif
+
 void
 internal_function
 _dl_deallocate_tls (void *tcb, bool dealloc_tcb)
@@ -477,9 +482,7 @@ _dl_deallocate_tls (void *tcb, bool dealloc_tcb)
       free (dtv[1 + cnt].pointer.val);
 
   /* The array starts with dtv[-1].  */
-#ifdef SHARED
   if (dtv != GL(dl_initial_dtv))
-#endif
     free (dtv - 1);
 
   if (dealloc_tcb)

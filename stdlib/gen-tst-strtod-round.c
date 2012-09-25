@@ -18,6 +18,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #define _GNU_SOURCE
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,7 +66,19 @@ round_str (const char *s, const char *suffix,
   mpfr_init (f);
   int r = string_to_fp (f, s, MPFR_RNDD);
   if (need_exact)
-    mpfr_printf ("\t%s,\n", r ? "false" : "true");
+    {
+      assert (prec == 106 && emin == -1073 && emax == 1024);
+      /* The maximum value in IBM long double has discontiguous
+	 mantissa bits.  */
+      mpfr_t max_value;
+      mpfr_init2 (max_value, 107);
+      mpfr_set_str (max_value, "0x1.fffffffffffff7ffffffffffffcp+1023", 0,
+		    MPFR_RNDN);
+      if (mpfr_cmpabs (f, max_value) > 0)
+	r = 1;
+      mpfr_printf ("\t%s,\n", r ? "false" : "true");
+      mpfr_clear (max_value);
+    }
   print_fp (f, suffix, ",\n");
   string_to_fp (f, s, MPFR_RNDN);
   print_fp (f, suffix, ",\n");
@@ -85,11 +98,14 @@ round_for_all (const char *s)
     int emin;
     int emax;
     bool need_exact;
-  } formats[6] = {
+  } formats[7] = {
     { "f", 24, -148, 128, false },
     { "", 53, -1073, 1024, false },
     { "L", 53, -1073, 1024, false },
+    /* This is the Intel extended float format.  */
     { "L", 64, -16444, 16384, false },
+    /* This is the Motorola extended float format.  */
+    { "L", 64, -16445, 16384, false },
     { "L", 106, -1073, 1024, true },
     { "L", 113, -16493, 16384, false },
   };
@@ -103,11 +119,11 @@ round_for_all (const char *s)
     }
   mpfr_printf ("\",\n");
   int i;
-  for (i = 0; i < 6; i++)
+  for (i = 0; i < 7; i++)
     {
       round_str (s, formats[i].suffix, formats[i].prec,
 		 formats[i].emin, formats[i].emax, formats[i].need_exact);
-      if (i < 5)
+      if (i < 6)
 	mpfr_printf (",\n");
     }
   mpfr_printf ("),\n");
