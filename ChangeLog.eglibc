@@ -1,3 +1,8 @@
+2012-09-27  Joseph Myers  <joseph@codesourcery.com>
+
+	* bits/predefs.h, ports/sysdeps/arm/bits/predefs.h: Put
+	multiple-inclusion guards around the whole file.
+
 2012-08-31  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* ports/sysdeps/powerpc/powerpc32/e500/fpu/fraiseexcept.c
