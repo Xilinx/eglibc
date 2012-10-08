@@ -18,7 +18,7 @@ libc {
     glob64;
 
     # New rlimit interface
-    getrlimit; setrlimit; getrlimit64;
+    getrlimit; setrlimit; getrlimit64; setrlimit64;
 
     # r*
     readdir64; readdir64_r;
@@ -28,5 +28,15 @@ libc {
 
     # v*
     versionsort64;
+  }
+  GLIBC_2.3.3 {
+    posix_fadvise64; posix_fallocate64;
+    setcontext; getcontext; swapcontext; makecontext;
+  }
+  GLIBC_2.3.4 {
+    setcontext; getcontext; swapcontext; makecontext;
+  }
+  GLIBC_2.11 {
+    fallocate64;
   }
 }
