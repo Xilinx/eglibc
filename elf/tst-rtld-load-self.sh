@@ -21,25 +21,28 @@
 set -e
 
 rtld=$1
+cross_test_wrapper="$2"
+run_with_env="$3"
 result=0
 
 echo '# normal mode'
-$rtld $rtld 2>&1 && rc=0 || rc=$?
+${cross_test_wrapper} $rtld $rtld 2>&1 && rc=0 || rc=$?
 echo "# exit status $rc"
 test $rc -le 127 || result=1
 
 echo '# list mode'
-$rtld --list $rtld 2>&1 && rc=0 || rc=$?
+${cross_test_wrapper} $rtld --list $rtld 2>&1 && rc=0 || rc=$?
 echo "# exit status $rc"
 test $rc -eq 0 || result=1
 
 echo '# verify mode'
-$rtld --verify $rtld 2>&1 && rc=0 || rc=$?
+${cross_test_wrapper} $rtld --verify $rtld 2>&1 && rc=0 || rc=$?
 echo "# exit status $rc"
 test $rc -eq 2 || result=1
 
 echo '# trace mode'
-LD_TRACE_LOADED_OBJECTS=1 $rtld $rtld 2>&1 && rc=0 || rc=$?
+EGLIBC_LD_TRACE_LOADED_OBJECTS=1 ${cross_test_wrapper} ${run_with_env} \
+    $rtld $rtld 2>&1 && rc=0 || rc=$?
 echo "# exit status $rc"
 test $rc -eq 0 || result=1
 

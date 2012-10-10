@@ -1,3 +1,9 @@
+2012-10-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/Makefile ($(objpfx)tst-rtld-load-self.out): Pass
+	$(cross-test-wrapper) and $(..)scripts/run-with-env.sh to script.
+	* elf/tst-rtld-load-self.sh: Use wrappers to run dynamic linker.
+
 2012-09-27  Joseph Myers  <joseph@codesourcery.com>
 
 	* bits/predefs.h, ports/sysdeps/arm/bits/predefs.h: Put

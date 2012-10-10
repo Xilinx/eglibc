@@ -721,7 +721,7 @@ $(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
 		$(..)scripts/run-with-env.sh
 
 $(objpfx)tst-rtld-load-self.out: tst-rtld-load-self.sh $(objpfx)ld.so
-	$(SHELL) $^ > $@
+	$(SHELL) $^ "$(cross-test-wrapper)" $(..)scripts/run-with-env.sh > $@
 
 $(objpfx)initfirst: $(libdl)
 $(objpfx)initfirst.out: $(objpfx)firstobj.so
