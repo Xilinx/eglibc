@@ -164,6 +164,11 @@ uintptr_t _dl_sysinfo = DL_SYSINFO_DEFAULT;
 #if defined NEED_DL_SYSINFO || defined NEED_DL_SYSINFO_DSO
 /* Address of the ELF headers in the vsyscall page.  */
 const ElfW(Ehdr) *_dl_sysinfo_dso;
+
+struct link_map *_dl_sysinfo_map;
+
+# include "get-dynamic-info.h"
+# include "setup-vdso.h"
 #endif
 
 /* During the program run we must not modify the global data of
@@ -269,6 +274,10 @@ _dl_non_dynamic_init (void)
 
   _dl_verbose = *(getenv ("LD_WARN") ?: "") == '\0' ? 0 : 1;
 
+  /* Set up the data structures for the system-supplied DSO early,
+     so they can influence _dl_init_paths.  */
+  setup_vdso (NULL, NULL);
+
   /* Initialize the data structures for the search paths for shared
      objects.  */
   _dl_init_paths (getenv ("LD_LIBRARY_PATH"));
@@ -328,23 +337,6 @@ _dl_non_dynamic_init (void)
 	  break;
 	}
 }
-
-
-const struct r_strlenpair *
-internal_function
-_dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
-		      size_t *max_capstrlen)
-{
-  static struct r_strlenpair result;
-  static char buf[1];
-
-  result.str = buf;	/* Does not really matter.  */
-  result.len = 0;
-
-  *sz = 1;
-  return &result;
-}
-
 
 #ifdef DL_SYSINFO_IMPLEMENTATION
 DL_SYSINFO_IMPLEMENTATION

@@ -210,7 +210,8 @@ tests = tst-typesizes \
 	tst-cond1 tst-cond2 tst-cond3 tst-cond4 tst-cond5 tst-cond6 tst-cond7 \
 	tst-cond8 tst-cond9 tst-cond10 tst-cond11 tst-cond12 tst-cond13 \
 	tst-cond14 tst-cond15 tst-cond16 tst-cond17 tst-cond18 tst-cond19 \
-	tst-cond20 tst-cond21 tst-cond22 tst-cond23 \
+	tst-cond20 tst-cond21 tst-cond22 tst-cond23 tst-cond24 \
+	tst-cond-except \
 	tst-robust1 tst-robust2 tst-robust3 tst-robust4 tst-robust5 \
 	tst-robust6 tst-robust7 tst-robust8 tst-robust9 \
 	tst-robustpi1 tst-robustpi2 tst-robustpi3 tst-robustpi4 tst-robustpi5 \
@@ -288,6 +289,7 @@ gen-as-const-headers = pthread-errnos.sym
 
 LDFLAGS-pthread.so = -Wl,--enable-new-dtags,-z,nodelete,-z,initfirst
 
+LDFLAGS-tst-cond24 = -lrt
 
 include ../Makeconfig
 
@@ -368,8 +370,12 @@ link-libc-static := $(common-objpfx)libc.a $(static-gnulib) \
 		    $(common-objpfx)libc.a
 
 tests-static += tst-locale1 tst-locale2 tst-stackguard1-static \
-		tst-cancel21-static
-tests += tst-stackguard1-static tst-cancel21-static
+		tst-cancel21-static tst-cancel24-static tst-cond8-static \
+		tst-mutex8-static tst-mutexpi8-static tst-sem11-static \
+		tst-sem12-static
+tests += tst-stackguard1-static tst-cancel21-static tst-cancel24-static \
+	 tst-cond8-static tst-mutex8-static tst-mutexpi8-static \
+	 tst-sem11-static tst-sem12-static
 xtests-static += tst-setuid1-static
 
 # These tests are linked with libc before libpthread
@@ -528,6 +534,7 @@ $(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.a
 endif
 
 LDLIBS-tst-cancel24 = $(no-as-needed) -lstdc++
+LDLIBS-tst-cancel24-static = $(LDLIBS-tst-cancel24)
 
 extra-B-pthread.so = -B$(common-objpfx)nptl/
 $(objpfx)libpthread.so: $(addprefix $(objpfx),$(crti-objs) $(crtn-objs))

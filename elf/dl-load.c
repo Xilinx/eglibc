@@ -1090,7 +1090,7 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
     struct loadcmd
       {
 	ElfW(Addr) mapstart, mapend, dataend, allocend;
-	off_t mapoff;
+	ElfW(Off) mapoff;
 	int prot;
       } loadcmds[l->l_phnum], *c;
     size_t nloadcmds = 0;
@@ -1347,7 +1347,7 @@ cannot allocate TLS data structures for initial thread");
 	  l->l_text_end = l->l_addr + c->mapend;
 
 	if (l->l_phdr == 0
-	    && (ElfW(Off)) c->mapoff <= header->e_phoff
+	    && c->mapoff <= header->e_phoff
 	    && ((size_t) (c->mapend - c->mapstart + c->mapoff)
 		>= header->e_phoff + header->e_phnum * sizeof (ElfW(Phdr))))
 	  /* Found the program header in this segment.  */
@@ -2201,6 +2201,7 @@ _dl_map_object (struct link_map *loader, const char *name,
 			&loader->l_runpath_dirs, &realname, &fb, loader,
 			LA_SER_RUNPATH, &found_other_class);
 
+#ifdef USE_LDCONFIG
       if (fd == -1
 	  && (__builtin_expect (! (mode & __RTLD_SECURE), 1)
 	      || ! INTUSE(__libc_enable_secure))
@@ -2212,22 +2213,22 @@ _dl_map_object (struct link_map *loader, const char *name,
 
 	  if (cached != NULL)
 	    {
-#ifdef SHARED
+# ifdef SHARED
 	      // XXX Correct to unconditionally default to namespace 0?
 	      l = (loader
 		   ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded
 		   ?: &GL(dl_rtld_map));
-#else
+# else
 	      l = loader;
-#endif
+# endif
 
 	      /* If the loader has the DF_1_NODEFLIB flag set we must not
 		 use a cache entry from any of these directories.  */
 	      if (
-#ifndef SHARED
+# ifndef SHARED
 		  /* 'l' is always != NULL for dynamically linked objects.  */
 		  l != NULL &&
-#endif
+# endif
 		  __builtin_expect (l->l_flags_1 & DF_1_NODEFLIB, 0))
 		{
 		  const char *dirp = system_dirs;
@@ -2265,6 +2266,7 @@ _dl_map_object (struct link_map *loader, const char *name,
 		}
 	    }
 	}
+#endif
 
       /* Finally, try the default path.  */
       if (fd == -1

@@ -1,3 +1,84 @@
+2012-10-09  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/pthread/configure: Regenerated.
+	* sysdeps/x86_64/configure: Regenerated.
+
+2012-10-05  David S. Miller  <davem@davemloft.net>
+
+	[BZ #14568]
+	* sysdeps/sparc/tls.h (DB_THREAD_SELF_INCLUDE): Delete.
+	(DB_THREAD_SELF): Use constants for the register offsets.  Correct
+	the case of a 64-bit debugger with a 32-bit inferior.
+
+2012-10-05  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14557]
+	* Makefile (tests-static): Add tst-cancel24-static,
+	tst-cond8-static tst-mutex8-static, tst-mutexpi8-static,
+	tst-sem11-static and tst-sem12-static.
+	(tests): Likewise.
+	(LDLIBS-tst-cancel24-static): New macro.
+	* tst-cancel24-static.cc: New file.
+	* tst-cond8-static.c: Likewise.
+	* tst-mutex8-static.c: Likewise.
+	* tst-mutexpi8-static.c: Likewise.
+	* tst-sem11-static.c: Likewise.
+	* tst-sem12-static.c: Likewise.
+
+2012-10-05  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14417]
+	* Makefile (tests): New test case tst-cond24.
+	(LDFLAGS-tst-cond24): Link tst-cond24 against librt.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Unlock mutex before going back to
+	wait in PI case.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S
+	(__pthread_cond_wait): Likewise.  Revert handling of EAGAIN
+	return from futex_wait.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Unlock mutex before going back to
+	wait in PI case.  Set requeue_pi flag only if wait returned 0.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
+	(__pthread_cond_wait): Likewise.  Revert handling of EAGAIN
+	return from futex_wait.
+	* tst-cond24.c: New test case.
+
+2012-10-04  Roland McGrath  <roland@hack.frob.com>
+
+	* pthread_create.c (start_thread): Use __madvise, not madvise.
+
+2012-10-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/tls.h: Update copyright years.
+
+2012-10-02  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* pthread_create.c (start_thread): Fix clone flag name in
+	comment to CLONE_CHILD_CLEARTID.
+	* sysdeps/unix/sysv/linux/i386/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h: Likewise.
+
+2012-10-01  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14477]
+	* Makefile (tests): Add tst-cond-except.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Mark instructions where %ebx is
+	incremented in PI case.
+	(.gcc_except_table): Add entry to jump to __condvar_tw_cleanup2
+	for the marked PI case instructions.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S
+	(__pthread_cond_wait): Mark instructions where %ebx is
+	incremented in PI case.
+	(.gcc_except_table): Add entry to jump to __condvar_w_cleanup2
+	for the marked PI case instructions.
+	* tst-cond-except.c: New test case.
+
 2012-09-24  Dmitry V. Levin  <ldv@altlinux.org>
 
 	* tst-tls6.sh: Add "set -e".

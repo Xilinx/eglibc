@@ -1,5 +1,5 @@
-/* Stubby version of dl-cache; the Hurd doesn't support this "feature".
-   Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+/* Compute x^2 + y^2 - 1, without large cancellation error.
+   Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,13 +16,24 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-const char *
-_dl_load_cache_lookup (const char *name)
+#include <math.h>
+#include <math_private.h>
+#include <float.h>
+
+#if FLT_EVAL_METHOD == 0
+
+# include <sysdeps/ieee754/dbl-64/x2y2m1.c>
+
+#else
+
+/* Return X^2 + Y^2 - 1, computed without large cancellation error.
+   It is given that 1 > X >= Y >= epsilon / 2, and that either X >=
+   0.75 or Y >= 0.5.  */
+
+double
+__x2y2m1 (double x, double y)
 {
-  return 0;
+  return (double) __x2y2m1l (x, y);
 }
 
-void
-_dl_unload_cache (void)
-{
-}
+#endif

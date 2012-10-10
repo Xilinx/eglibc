@@ -643,7 +643,7 @@ libc_hidden_ver (_IO_new_file_underflow, _IO_file_underflow)
 static int
 mmap_remap_check (_IO_FILE *fp)
 {
-  struct _G_stat64 st;
+  struct stat64 st;
 
   if (_IO_SYSSTAT (fp, &st) == 0
       && S_ISREG (st.st_mode) && st.st_size != 0
@@ -771,7 +771,7 @@ decide_maybe_mmap (_IO_FILE *fp)
      file descriptors are for mmap-able objects and on 32-bit
      machines we don't want to map files which are too large since
      this would require too much virtual memory.  */
-  struct _G_stat64 st;
+  struct stat64 st;
 
   if (_IO_SYSSTAT (fp, &st) == 0
       && S_ISREG (st.st_mode) && st.st_size != 0
@@ -986,6 +986,9 @@ _IO_new_file_seekoff (fp, offset, dir, mode)
   int must_be_exact = (fp->_IO_read_base == fp->_IO_read_end
 		       && fp->_IO_write_base == fp->_IO_write_ptr);
 
+  bool was_writing = (fp->_IO_write_ptr > fp->_IO_write_base
+		      || _IO_in_put_mode (fp));
+
   if (mode == 0)
     dir = _IO_seek_cur, offset = 0; /* Don't move any pointers. */
 
@@ -996,10 +999,8 @@ _IO_new_file_seekoff (fp, offset, dir, mode)
      which assumes file_ptr() is eGptr.  Anyway, since we probably
      end up flushing when we close(), it doesn't make much difference.)
      FIXME: simulate mem-mapped files. */
-
-  if (fp->_IO_write_ptr > fp->_IO_write_base || _IO_in_put_mode (fp))
-    if (_IO_switch_to_get_mode (fp))
-      return EOF;
+  else if (was_writing && _IO_switch_to_get_mode (fp))
+    return EOF;
 
   if (fp->_IO_buf_base == NULL)
     {
@@ -1018,7 +1019,17 @@ _IO_new_file_seekoff (fp, offset, dir, mode)
     {
     case _IO_seek_cur:
       /* Adjust for read-ahead (bytes is buffer). */
-      offset -= fp->_IO_read_end - fp->_IO_read_ptr;
+      if (mode != 0 || !was_writing)
+	offset -= fp->_IO_read_end - fp->_IO_read_ptr;
+      else
+	{
+	  /* _IO_read_end coincides with fp._offset, so the actual file position
+	     is fp._offset - (_IO_read_end - new_write_ptr).  This is fine
+	     even if fp._offset is not set, since fp->_IO_read_end is then at
+	     _IO_buf_base and this adjustment is for unbuffered output.  */
+	  offset -= fp->_IO_read_end - fp->_IO_write_ptr;
+	}
+
       if (fp->_offset == _IO_pos_BAD)
 	{
 	  if (mode != 0)
@@ -1046,7 +1057,7 @@ _IO_new_file_seekoff (fp, offset, dir, mode)
       break;
     case _IO_seek_end:
       {
-	struct _G_stat64 st;
+	struct stat64 st;
 	if (_IO_SYSSTAT (fp, &st) == 0 && S_ISREG (st.st_mode))
 	  {
 	    offset += st.st_size;
@@ -1247,7 +1258,7 @@ _IO_file_stat (fp, st)
      void *st;
 {
 #ifdef _G_FSTAT64
-  return _G_FSTAT64 (fp->_fileno, (struct _G_stat64 *) st);
+  return _G_FSTAT64 (fp->_fileno, (struct stat64 *) st);
 #else
   return fstat (fp->_fileno, (struct stat *) st);
 #endif

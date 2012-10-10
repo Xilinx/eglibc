@@ -545,6 +545,57 @@ _IO_wfile_sync (fp)
 }
 libc_hidden_def (_IO_wfile_sync)
 
+/* Adjust the internal buffer pointers to reflect the state in the external
+   buffer.  The content between fp->_IO_read_base and fp->_IO_read_ptr is
+   assumed to be converted and available in the range
+   fp->_wide_data->_IO_read_base and fp->_wide_data->_IO_read_end.
+
+   Returns 0 on success and -1 on error with the _IO_ERR_SEEN flag set.  */
+static inline int
+adjust_wide_data (_IO_FILE *fp, bool do_convert)
+{
+  struct _IO_codecvt *cv = fp->_codecvt;
+
+  int clen = (*cv->__codecvt_do_encoding) (cv);
+
+  /* Take the easy way out for constant length encodings if we don't need to
+     convert.  */
+  if (!do_convert && clen > 0)
+    {
+      fp->_wide_data->_IO_read_end += ((fp->_IO_read_ptr - fp->_IO_read_base)
+				       / clen);
+      goto done;
+    }
+
+  enum __codecvt_result status;
+  const char *read_stop = (const char *) fp->_IO_read_base;
+  do
+    {
+
+      fp->_wide_data->_IO_last_state = fp->_wide_data->_IO_state;
+      status = (*cv->__codecvt_do_in) (cv, &fp->_wide_data->_IO_state,
+				       fp->_IO_read_base, fp->_IO_read_ptr,
+				       &read_stop,
+				       fp->_wide_data->_IO_read_base,
+				       fp->_wide_data->_IO_buf_end,
+				       &fp->_wide_data->_IO_read_end);
+
+      /* Should we return EILSEQ?  */
+      if (__builtin_expect (status == __codecvt_error, 0))
+	{
+	  fp->_flags |= _IO_ERR_SEEN;
+	  return -1;
+	}
+    }
+  while (__builtin_expect (status == __codecvt_partial, 0));
+
+done:
+  /* Now seek to _IO_read_end to behave as if we have read it all in.  */
+  fp->_wide_data->_IO_read_ptr = fp->_wide_data->_IO_read_end;
+
+  return 0;
+}
+
 _IO_off64_t
 _IO_wfile_seekoff (fp, offset, dir, mode)
      _IO_FILE *fp;
@@ -561,6 +612,10 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
 			== fp->_wide_data->_IO_read_end)
 		       && (fp->_wide_data->_IO_write_base
 			   == fp->_wide_data->_IO_write_ptr));
+
+  bool was_writing = ((fp->_wide_data->_IO_write_ptr
+		       > fp->_wide_data->_IO_write_base)
+		      || _IO_in_put_mode (fp));
 
   if (mode == 0)
     {
@@ -593,11 +648,8 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
      which assumes file_ptr() is eGptr.  Anyway, since we probably
      end up flushing when we close(), it doesn't make much difference.)
      FIXME: simulate mem-mapped files. */
-
-  if (fp->_wide_data->_IO_write_ptr > fp->_wide_data->_IO_write_base
-      || _IO_in_put_mode (fp))
-    if (_IO_switch_to_wget_mode (fp))
-      return WEOF;
+  else if (was_writing && _IO_switch_to_wget_mode (fp))
+    return WEOF;
 
   if (fp->_wide_data->_IO_buf_base == NULL)
     {
@@ -628,29 +680,104 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
       cv = fp->_codecvt;
       clen = (*cv->__codecvt_do_encoding) (cv);
 
-      if (clen > 0)
+      if (mode != 0 || !was_writing)
 	{
-	  offset -= (fp->_wide_data->_IO_read_end
-		     - fp->_wide_data->_IO_read_ptr) * clen;
-	  /* Adjust by readahead in external buffer.  */
-	  offset -= fp->_IO_read_end - fp->_IO_read_ptr;
+	  if (clen > 0)
+	    {
+	      offset -= (fp->_wide_data->_IO_read_end
+			 - fp->_wide_data->_IO_read_ptr) * clen;
+	      /* Adjust by readahead in external buffer.  */
+	      offset -= fp->_IO_read_end - fp->_IO_read_ptr;
+	    }
+	  else
+	    {
+	      int nread;
+
+	    flushed:
+	      delta = (fp->_wide_data->_IO_read_ptr
+		       - fp->_wide_data->_IO_read_base);
+	      fp->_wide_data->_IO_state = fp->_wide_data->_IO_last_state;
+	      nread = (*cv->__codecvt_do_length) (cv,
+						  &fp->_wide_data->_IO_state,
+						  fp->_IO_read_base,
+						  fp->_IO_read_end, delta);
+	      fp->_IO_read_ptr = fp->_IO_read_base + nread;
+	      fp->_wide_data->_IO_read_end = fp->_wide_data->_IO_read_ptr;
+	      offset -= fp->_IO_read_end - fp->_IO_read_base - nread;
+	    }
 	}
       else
 	{
-	  int nread;
+	  char *new_write_ptr = fp->_IO_write_ptr;
 
-	  delta = fp->_wide_data->_IO_read_ptr - fp->_wide_data->_IO_read_base;
-	  fp->_wide_data->_IO_state = fp->_wide_data->_IO_last_state;
-	  nread = (*cv->__codecvt_do_length) (cv, &fp->_wide_data->_IO_state,
-					      fp->_IO_read_base,
-					      fp->_IO_read_end, delta);
-	  fp->_IO_read_ptr = fp->_IO_read_base + nread;
-	  fp->_wide_data->_IO_read_end = fp->_wide_data->_IO_read_ptr;
-	  offset -= fp->_IO_read_end - fp->_IO_read_base - nread;
+	  if (clen > 0)
+	    offset += (fp->_wide_data->_IO_write_ptr
+		       - fp->_wide_data->_IO_write_base) / clen;
+	  else
+	    {
+	      enum __codecvt_result status;
+	      delta = (fp->_wide_data->_IO_write_ptr
+		       - fp->_wide_data->_IO_write_base);
+	      const wchar_t *write_base = fp->_wide_data->_IO_write_base;
+
+	      /* FIXME: This actually ends up in two iterations of conversion,
+		 one here and the next when the buffer actually gets flushed.
+		 It may be possible to optimize this in future so that
+		 wdo_write identifies already converted content and does not
+		 redo it.  In any case, this is much better than having to
+		 flush buffers for every ftell.  */
+	      do
+		{
+		  /* Ugh, no point trying to avoid the flush.  Just do it
+		     and go back to how it was with the read mode.  */
+		  if (delta > 0 && new_write_ptr == fp->_IO_buf_end)
+		    {
+		      if (_IO_switch_to_wget_mode (fp))
+			return WEOF;
+		      goto flushed;
+		    }
+
+		  const wchar_t *new_wbase = fp->_wide_data->_IO_write_base;
+		  fp->_wide_data->_IO_state = fp->_wide_data->_IO_last_state;
+		  status = (*cv->__codecvt_do_out) (cv,
+						    &fp->_wide_data->_IO_state,
+						    write_base,
+						    write_base + delta,
+						    &new_wbase,
+						    new_write_ptr,
+						    fp->_IO_buf_end,
+						    &new_write_ptr);
+
+		  delta -= new_wbase - write_base;
+
+		  /* If there was an error, then return WEOF.
+		     TODO: set buffer state.  */
+		  if (__builtin_expect (status == __codecvt_error, 0))
+		      return WEOF;
+		}
+	      while (delta > 0);
+	    }
+
+	  /* _IO_read_end coincides with fp._offset, so the actual file position
+	     is fp._offset - (_IO_read_end - new_write_ptr).  This is fine
+	     even if fp._offset is not set, since fp->_IO_read_end is then at
+	     _IO_buf_base and this adjustment is for unbuffered output.  */
+	  offset -= fp->_IO_read_end - new_write_ptr;
 	}
 
       if (fp->_offset == _IO_pos_BAD)
-	goto dumb;
+	{
+	  if (mode != 0)
+	    goto dumb;
+	  else
+	    {
+	      result = _IO_SYSSEEK (fp, 0, dir);
+	      if (result == EOF)
+		return result;
+	      fp->_offset = result;
+	    }
+	}
+
       /* Make offset absolute, assuming current pointer is file_ptr(). */
       offset += fp->_offset;
 
@@ -660,7 +787,7 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
       break;
     case _IO_seek_end:
       {
-	struct _G_stat64 st;
+	struct stat64 st;
 	if (_IO_SYSSTAT (fp, &st) == 0 && S_ISREG (st.st_mode))
 	  {
 	    offset += st.st_size;
@@ -693,6 +820,10 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
 		     fp->_wide_data->_IO_buf_base);
 	  _IO_wsetp (fp, fp->_wide_data->_IO_buf_base,
 		     fp->_wide_data->_IO_buf_base);
+
+	  if (adjust_wide_data (fp, false))
+	    goto dumb;
+
 	  _IO_mask_flags (fp, 0, _IO_EOF_SEEN);
 	  goto resync;
 	}
@@ -733,6 +864,10 @@ _IO_wfile_seekoff (fp, offset, dir, mode)
   _IO_wsetg (fp, fp->_wide_data->_IO_buf_base,
 	     fp->_wide_data->_IO_buf_base, fp->_wide_data->_IO_buf_base);
   _IO_wsetp (fp, fp->_wide_data->_IO_buf_base, fp->_wide_data->_IO_buf_base);
+
+  if (adjust_wide_data (fp, true))
+    goto dumb;
+
   fp->_offset = result + count;
   _IO_mask_flags (fp, 0, _IO_EOF_SEEN);
   return offset;

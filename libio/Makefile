@@ -77,7 +77,8 @@ tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)		\
      += bug-rewind bug-rewind2 bug-ungetwc1		\
 	bug-wfflush bug-wmemstream1 tst-fopenloc2	\
 	tst_getwc					\
-	tst_putwc tst_wprintf tst_wprintf2 tst_wscanf tst-fgetwc bug-wsetpos
+	tst_putwc tst_wprintf tst_wprintf2 tst_wscanf	\
+	tst-fgetwc bug-wsetpos tst-fseek
 tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR)			\
      += tst_swprintf tst_swscanf			\
 	tst-sscanf					\
@@ -180,6 +181,7 @@ bug-ungetwc2-ENV = LOCPATH=$(common-objpfx)localedata
 tst-swscanf-ENV = LOCPATH=$(common-objpfx)localedata
 bug-ftell-ENV = LOCPATH=$(common-objpfx)localedata
 tst-fgetwc-ENV = LOCPATH=$(common-objpfx)localedata
+tst-fseek-ENV = LOCPATH=$(common-objpfx)localedata
 
 generated = tst-fopenloc.mtrace tst-fopenloc.check
 

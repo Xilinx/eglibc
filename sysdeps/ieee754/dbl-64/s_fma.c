@@ -49,6 +49,11 @@ __fma (double x, double y, double z)
 	  && u.ieee.exponent != 0x7ff
 	  && v.ieee.exponent != 0x7ff)
 	return (z + x) + y;
+      /* If z is zero and x are y are nonzero, compute the result
+	 as x * y to avoid the wrong sign of a zero result if x * y
+	 underflows to 0.  */
+      if (z == 0 && x != 0 && y != 0)
+	return x * y;
       /* If x or y or z is Inf/NaN, or if fma will certainly overflow,
 	 or if x * y is less than half of DBL_DENORM_MIN,
 	 compute as x * y + z.  */
@@ -128,6 +133,11 @@ __fma (double x, double y, double z)
       y = v.d;
       z = w.d;
     }
+
+  /* Ensure correct sign of exact 0 + 0.  */
+  if (__builtin_expect ((x == 0 || y == 0) && z == 0, 0))
+    return x * y + z;
+
   /* Multiplication m1 + m2 = x * y using Dekker's algorithm.  */
 #define C ((1 << (DBL_MANT_DIG + 1) / 2) + 1)
   double x1 = x * C;

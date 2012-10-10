@@ -20,6 +20,7 @@
 #define _SYS_PLATFORM_PPC_H	1
 
 #include <stdint.h>
+#include <bits/ppc.h>
 
 /* Read the Time Base Register.   */
 static inline uint64_t

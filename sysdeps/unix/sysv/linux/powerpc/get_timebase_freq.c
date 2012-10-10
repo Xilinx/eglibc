@@ -1,4 +1,4 @@
-/* Test for non-submitted strcasestr bug.
+/* Get the frequency of the time base.
    Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -16,24 +16,12 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <stdio.h>
-#include <string.h>
+#include <stdint.h>
+#include <libc-internal.h>
 
-#define TEST_FUNCTION do_test ()
-static int
-do_test (void)
+uint64_t
+__get_timebase_freq (void)
 {
-  const char haystack[] = "AOKB";
-  const char needle[] = "OK";
-  const char *sub = strcasestr (haystack, needle);
-
-  if (sub == NULL)
-    {
-      fprintf (stderr, "BUG: didn't find \"%s\" in \"%s\"\n", needle, haystack);
-      return 1;
-    }
-
-  return 0;
+  return (uint64_t) __get_clockfreq ();
 }
-
-#include "../test-skeleton.c"
+weak_alias (__get_timebase_freq, __ppc_get_timebase_freq)

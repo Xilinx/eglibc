@@ -404,7 +404,7 @@ start_thread (void *arg)
 #endif
   assert (freesize < pd->stackblock_size);
   if (freesize > PTHREAD_STACK_MIN)
-    madvise (pd->stackblock, freesize - PTHREAD_STACK_MIN, MADV_DONTNEED);
+    __madvise (pd->stackblock, freesize - PTHREAD_STACK_MIN, MADV_DONTNEED);
 
   /* If the thread is detached free the TCB.  */
   if (IS_DETACHED (pd))
@@ -425,7 +425,7 @@ start_thread (void *arg)
   /* We cannot call '_exit' here.  '_exit' will terminate the process.
 
      The 'exit' implementation in the kernel will signal when the
-     process is really dead since 'clone' got passed the CLONE_CLEARTID
+     process is really dead since 'clone' got passed the CLONE_CHILD_CLEARTID
      flag.  The 'tid' field in the TCB will be set to zero.
 
      The exit code is zero since in case all threads exit by calling

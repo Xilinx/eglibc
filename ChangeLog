@@ -1,3 +1,556 @@
+2012-10-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Handle comparison macros as
+	type-generic.
+	* math/libm-test.inc: Update comment listing what functions and
+	macros are tested.
+	(isgreater_test): New function.
+	(isgreaterequal_test): Likewise.
+	(isless_test): Likewise.
+	(islessequal_test): Likewise.
+	(islessgreater_test): Likewise.
+	(isunordered_test): Likewise.
+	(main): Call the new functions.
+
+2012-10-09  Roland McGrath  <roland@hack.frob.com>
+
+	* aclocal.m4 (GLIBC_PROVIDES): Provide _AS_BASENAME_PREPARE,
+	_AS_ME_PREPARE, _AS_VAR_ARITH_PREPARE, AS_SHELL_FN_as_fn_set_status,
+	AS_SHELL_FN_as_fn_exit, AS_SHELL_FN_ac_fn_c_try_compile.
+	* sysdeps/i386/configure: Regenerated.
+	* sysdeps/ieee754/ldbl-opt/configure: Regenerated.
+	* sysdeps/mach/configure: Regenerated.
+	* sysdeps/mach/hurd/configure: Regenerated.
+	* sysdeps/powerpc/configure: Regenerated.
+	* sysdeps/powerpc/powerpc32/configure: Regenerated.
+	* sysdeps/powerpc/powerpc64/configure: Regenerated.
+	* sysdeps/s390/s390-32/configure: Regenerated.
+	* sysdeps/s390/s390-64/configure: Regenerated.
+	* sysdeps/sh/configure: Regenerated.
+	* sysdeps/sparc/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/powerpc/configure: Regenerated.
+	* sysdeps/x86_64/configure: Regenerated.
+
+	* dlfcn/dlerror.c (check_free): Call _dl_addr only if SHARED is
+	defined.  Don't check if MAP is NULL.
+
+2012-10-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/generic/_G_config.h (_G_off64_t): Remove.
+	(_G_stat64): Likewise.
+	* sysdeps/unix/sysv/linux/_G_config.h (_G_off64_t): Remove.
+	(_G_stat64): Likewise.
+	* libio/filedoalloc.c (_IO_file_doallocate): Use struct stat64
+	instead of struct _G_stat64.
+	* libio/fileops.c (mmap_remap_check): Likewise.
+	(decide_maybe_mmap): Likewise.
+	(_IO_new_file_seekoff): Likewise.
+	(_IO_file_stat): Likewise.
+	* libio/libio.h (_IO_off64_t): Define to __off64_t, not
+	_G_off64_t.
+	* libio/oldfileops.c (_IO_old_file_seekoff): Use struct stat64
+	instead of struct _G_stat64.
+	* libio/wfileops.c (_IO_wfile_seekoff): Likewise.
+
+2012-10-08  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	[BZ #14602]
+	* string/str-two-way.h (AVAILABLE1, AVAILABLE2, AVAILABLE1_USES_J):
+	Replace with ...
+	(CHECK_EOL): New macro.
+	(two_way_short_needle): Check beginning of haystack for EOL.  Use
+	CHECK_EOL.
+	* string/strcasestr.c (AVAILABLE1, AVAILABLE2, AVAILABLE1_USES_J):
+	Replace with CHECK_EOL.
+	* string/strstr.c (AVAILABLE1, AVAILABLE2, AVAILABLE1_USES_J):
+	Replace with CHECK_EOL.
+
+2012-10-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Handle isinf and isnan as
+	type-generic.
+	* math/libm-test.inc: Update comment listing what functions and
+	macros are tested.
+	(finite_test): New function.
+	(isinf_test): Likewise.
+	(isnan_test): Likewise.
+	(fpclassify_test): Test subnormal input.
+	(isfinite_test): Likewise.
+	(isnormal_test): Likewise.
+	(main): Call the new functions.
+
+2012-10-08  Jonathan Nieder  <jrnieder@gmail.com>
+
+	[BZ #14660]
+	* Makerules (%.dynsym): Force C locale when running
+	$(OBJDUMP) --dynamic-syms.
+
+2012-10-08  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/sysv/linux/powerpc/get_timebase_freq.c: Include
+	<stdint.h>.
+
+2012-10-06  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/multiarch/memcpy-niagara4.S: On 32-bit, clear
+	upper 32-bits of the length value in %o2 since we use branch-on-register
+	tests which consider the entire 64-bit register.
+
+2012-10-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* string/test-strstr.c (check2): Add a test for page boundary.
+
+2012-10-05  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/multiarch/memset-niagara4.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/memset-niagara4.S: New
+	file.
+	* sysdeps/sparc/sparc64/multiarch/Makefile: Add to
+	sysdep_routines.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/Makefile: Likewise.
+	* sysdeps/sparc/sparc64/multiarch/memset.S: Use Niagara-4 memset
+	and bzero when HWCAP_SPARC_CRYPTO is present.
+
+2012-10-05  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14602]
+	* string/test-strstr.c (check2): New function.
+	(test_main): Call check2.
+
+	* string/Makefile (tests): Remove bug-strstr1, bug-strcasestr1
+	and bug-strchr1.
+	* string/bug-strcasestr1.c (do_test): Moved to ...
+	* string/test-strcasestr.c (check1): Here.  New function.
+	(do_one_test): Break out result checking code into ...
+	(check_result): This.  New function.
+	(do_one_test): Call check_result.
+	(test_main): Call check1.
+	* string/bug-strchr1.c (do_test): Moved to ...
+	* string/test-strchr.c (check1): Here.  New function.
+	(do_one_test): Break out result checking code into ...
+	(check_result): This.  New function.
+	(do_one_test): Call check_result.
+	(test_main): Call check1.
+	* string/bug-strstr1.c (main): Moved to ...
+	* string/test-strchr.c (check1): Here.  New function.
+	(do_one_test): Break out result checking code into ...
+	(check_result): This.  New function.
+	(do_one_test): Call check_result.
+	(test_main): Call check1.
+	* string/bug-strcasestr1.c: Removed.
+	* string/bug-strchr1.c: Likewise.
+	* string/bug-strstr1.c: Likewise.
+
+	* elf/Makefile (dl-routines): Add hwcaps.
+	* elf/dl-support.c (_dl_important_hwcaps): Removed.
+	* elf/dl-sysdep.c (_DL_FIRST_EXTRA): Likewise.
+	(_dl_important_hwcaps): Moved to ...
+	* elf/dl-hwcaps.c: Here.  New file.
+	* sysdeps/mach/hurd/dl-sysdep.c (_dl_important_hwcaps): Removed.
+
+	[BZ #14557]
+	* elf/setup-vdso.h (setup_vdso): Set GL(dl_nns) to 1 for vDSO
+	if IS_IN_rtld isn't defined.
+
+	* elf/dl-support.c (_dl_sysinfo_map): New.
+	Include "get-dynamic-info.h" and "setup-vdso.h".
+	(_dl_non_dynamic_init): Call setup_vdso.
+	* elf/dynamic-link.h: Don't include <assert.h>.
+	(elf_get_dynamic_info): Moved to ...
+	* elf/get-dynamic-info.h: Here.  New file.
+	* elf/dynamic-link.h: Include "get-dynamic-info.h".
+	* elf/rtld.c (dl_main): Break out vDSO setup code into ...
+	* elf/setup-vdso.h: Here.  New file.
+	* elf/rtld.c: Include "setup-vdso.h".
+	(dl_main): Call setup_vdso.
+
+2012-10-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc: List nexttoward, cimag, clog10, conf and
+	creal in comment listing functions tested.  List finite, isinf,
+	isnan, isless, islessequal, isgreater, isgreaterequal,
+	islessgreater, isunordered, lgamma_r and pow10 as functions and
+	macros not tested.  Mention which functions not tested are aliases
+	for other functions.  Fix typo.  Note that signs of NaNs are not
+	tested.
+
+	* scripts/config.guess: Update from config.git.
+	* scripts/config.sub: Likewise.
+
+2012-10-04  Roland McGrath  <roland@hack.frob.com>
+
+	* misc/Versions (GLIBC_PRIVATE): New set, add __madvise.
+	* misc/madvise.c (madvise): Renamed to __madvise.
+	Make madvise a weak alias.
+	* include/sys/mman.h: Declare __madvise.
+	Replace libc_hidden_proto (madvise) with libc_hidden_proto (__madvise).
+	* sysdeps/unix/syscalls.list
+	(madvise): Make __madvise the strong name, and madvise a weak alias.
+	* sysdeps/unix/sysv/linux/syscalls.list
+	(madvise, mmap): Remove redundant entries.
+	* malloc/arena.c (shrink_heap): Use __madvise, not madvise.
+	* malloc/malloc.c (mtrim): Likewise.
+	* sysdeps/mach/hurd/malloc-machine.h (madvise): Renamed to __madvise.
+
+2012-10-03  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/mach/hurd/dl-cache.c: File removed.
+	* config.h.in (USE_LDCONFIG): New #undef.
+	* configure.in (use_ldconfig): If set, define USE_LDCONFIG.
+	* configure: Regenerated.
+	* elf/Makefile (dl-routines): Add dl-cache only under
+	[$(use-ldconfig) = yes].
+	* elf/dl-load.c (_dl_map_object): Conditionalize code consulting the
+	cache on [USE_LDCONFIG].
+	* elf/dl-open.c (_dl_open): Call _dl_unload_cache only under
+	[USE_LDCONFIG].
+	* elf/rtld.c (dl_main): Likewise.
+
+2012-10-03  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/posix/sysconf.c (__sysconf): Return 0 also for
+	_SC_LEVEL4_CACHE_LINESIZE.
+
+2012-10-03  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/unix/bsd/confstr.h: File removed.
+
+2012-10-02  Alexandre Oliva <aoliva@redhat.com>
+
+	* scripts/check-local-headers.sh: Exclude sys/sdt.h and
+	sys/sdt-config.h.
+
+2012-10-02  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/dl-load.c (_dl_map_object_from_fd: struct loadcmd):
+	Make 'mapoff' field ElfW(Off) rather than off_t.
+
+2012-10-02  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* nscd/Makefile: Remove nscd-cflags and all its users.
+	(CPPFLAGS-nonlib): Add preprocessor flags for nscd modules.
+	(CFLAGS-nonlib): Add compiler flags for nscd modules.
+
+	[BZ #10631]
+	* malloc.c (malloc_printerr): Clarify error message.
+
+2012-10-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14648]
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Set bit_FMA_Usable if FMA is supported.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_FMA_Usable): New
+	macro.
+	(bit_FMA4_Usable): Updated.
+	(index_FMA_Usable): New macro.
+	(CPUID_FMA): Likewise
+	(HAS_FMA): Defined with bit_FMA_Usable.
+
+2012-10-01  Roland McGrath  <roland@hack.frob.com>
+
+	* bits/types.h (__swblk_t): Type removed.
+	* bits/typesizes.h (__SWBLK_T_TYPE): Macro removed.
+	* sysdeps/mach/hurd/bits/typesizes.h (__SWBLK_T_TYPE): Likewise.
+	* sysdeps/unix/bsd/bsd4.4/freebsd/bits/typesizes.h
+	(__SWBLK_T_TYPE): Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/typesizes.h
+	(__SWBLK_T_TYPE): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/typesizes.h
+	(__SWBLK_T_TYPE): Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/typesizes.h
+	(__SWBLK_T_TYPE): Likewise.
+
+2012-10-01  Patsy Franklin <pfrankli@redhat.com>
+            Honza Horak <hhorak@redhat.com>
+
+	* nis/yp_xdr.c (xdr_domainname): Use YPMAXDOMAIN as maxsize.
+	(xdr_mapname): Use YPMAXMAP as maxsize.
+	(xdr_peername): Use YPMAXPEER as maxsize.
+	(xdr_keydat): Use YPAXRECORD as maxsize.
+	(xdr_valdat): Use YPMAXRECORD as maxsize.
+
+2012-10-01  Roland McGrath  <roland@hack.frob.com>
+
+	* io/openat.c [!__ASSUME_ATFCTS] (__have_atfcts): New global variable.
+
+	* sysdeps/unix/sysv/linux/init-first.c: Moved to ...
+	* csu/init-first.c: ... here.
+	* sysdeps/unix/sysv/linux/powerpc/init-first.c: Update #include.
+	* sysdeps/unix/sysv/linux/s390/init-first.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/init-first.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/x32/init-first.c: Likewise.
+	* sysdeps/i386/init-first.c: File removed.
+	* sysdeps/sh/init-first.c: File removed.
+
+2012-10-01  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14645]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Compute result as x * y
+	if x * y might underflow to zero and z is zero.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (min_subnorm_value): New variable.
+	(fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise
+	(fma_test_upward): Likewise.
+	(initialize): Set min_subnorm_value.
+
+2012-09-29  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14638]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Use x * y + z for exact
+	0 + 0.
+	* sysdeps/ieee754/dbl-64/s_fmaf.c (__fmaf): Use original rounding
+	mode for addition resulting in exact zero.
+	* sysdeps/ieee754/ldbl-128/s_fma.c (__fma): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Use x * y + z for
+	exact 0 + 0.
+	* sysdeps/ieee754/ldbl-96/s_fma.c (__fma): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.
+	(fma_test_towardzero): New function.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+	(main): Call the new functions.
+
+2012-09-28  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Fix garbage in file.
+
+2012-09-28  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/posix/sleep.c (__sleep): Rewritten using __nanosleep
+	instead of SIGALRM.
+
+	* sysdeps/gnu/_G_config.h: Moved to ...
+	* sysdeps/unix/sysv/linux/_G_config.h: ... here.
+	* sysdeps/mach/hurd/_G_config.h: Moved to ...
+	* sysdeps/generic/_G_config.h: ... here.
+
+	* io/open.c (__open): Renamed to __libc_open.  Make __open an alias.
+
+	* posix/Makefile ($(objpfx)config-name.h): Do $(make-target-directory).
+
+	* nss/Makefile ($(objpfx)/libnss_test1.so$(libnss_test1.so-version)):
+	Conditionalize target on [libnss_test1.so-version].
+
+	* elf/dl-sysdep.c: Conditionalize whole contents on [SHARED].
+
+	* Makeconfig (nssobjdir, resolvobjdir): Remove variables.
+	(elfobjdir): Move out of conditionals.
+
+	* nss/nsswitch.c (nss_new_service): Conditionalize definition and
+	declaration on [!DO_STATIC_NSS || SHARED], matching its only caller.
+	(__nss_lookup_function): Conditionalize label remove_from_tree on
+	[!DO_STATIC_NSS || SHARED], matching its only use.
+
+2012-09-28  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc64/multiarch/memcpy-niagara4.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/memcpy-niagara4.S: New
+	file.
+	* sysdeps/sparc/sparc64/multiarch/Makefile: Add to
+	sysdep_routines.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/Makefile: Likewise.
+	* sysdeps/sparc/sparc64/multiarch/memcpy.S: Use Niagara-4 memcpy
+	when HWCAP_SPARC_CRYPTO is present.
+
+2012-09-28  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* io/tst-mknodat.c: Create a FIFO instead of a socket.
+
+2012-09-28  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #6530]
+	* stdio-common/vfprintf.c (process_string_arg): Revert
+	2000-07-22 change.
+
+2011-09-28  Jonathan Nieder  <jrnieder@gmail.com>
+
+	* stdio-common/Makefile (tst-sprintf-ENV): Set environment
+	for testcase.
+	* stdio-common/tst-sprintf.c: Include <locale.h>
+	(main): Test sprintf's handling of incomplete multibyte
+	characters.
+
+2012-09-28  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/dl-runtime.c (VERSYMIDX): Removed.
+	* elf/dl-version.c (VERSYMIDX): Likewise.
+	* elf/do-rel.h (VERSYMIDX): Likewise.
+	(VALIDX): Likewise.
+	* elf/dynamic-link.h (VERSYMIDX): Likewise.
+	* elf/rtld.c (VALIDX): Likewise.
+	(ADDRIDX): Likewise.
+	* sysdeps/sparc/sparc32/dl-machine.h (VALIDX): Likewise.
+	* sysdeps/sparc/sparc64/dl-machine.h (VALIDX): Likewise.
+	* sysdeps/x86_64/dl-tlsdesc.h (ADDRIDX): Likewise.
+	* sysdeps/generic/ldsodefs.h (VERSYMIDX): New macro.
+	(VALIDX): Likewise.
+	(ADDRIDX): Likewise.
+
+2012-09-28  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/pthread/aio_fsync.c: Fix the file mode checking.
+
+2012-09-28  Dmitry V. Levin  <ldv@altlinux.org>
+
+	[BZ #11438]
+	* sysdeps/posix/getaddrinfo.c (default_scopes): Map RFC 1918 addresses
+	to global scope.
+	* posix/tst-rfc3484.c: Verify 10/8, 172.16/12 and 196.128/16
+	addresses are in the same scope as 192.0.2/24.
+	* posix/gai.conf: Document new scope table defaults.
+
+2012-09-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #5298]
+	* libio/fileops.c (_IO_new_file_seekoff): Don't flush buffer
+	for ftell.  Compute offsets from write pointers instead.
+	* libio/wfileops.c (_IO_wfile_seekoff): Likewise.
+
+2012-09-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14543]
+	* libio/Makefile (tests): New test case tst-fseek.
+	* libio/tst-fseek.c: New test case to verify that fseek/ftell
+	combination works in wide mode.
+	* libio/wfileops.c (_IO_wfile_seekoff): Adjust internal buffer
+	state when the external buffer state changes.
+
+2012-09-27  David S. Miller  <davem@davemloft.net>
+
+	[BZ #14376]
+	* sysdeps/sparc/sparc64/dl-machine.h (elf_machine_rela): Do not
+	pass reloc->r_addend in as the 'high' argument to
+	sparc64_fixup_plt when handling R_SPARC_JMP_IREL relocations.
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-09-28  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* rt/tst-aio2.c: Include <pthread.h>.
+	* rt/tst-aio3.c: Likewise.
+
+2012-09-27  Steve Ellcey  <sellcey@mips.com>
+
+	* sysdeps/ieee754/ldbl-128/bits/huge_vall.h: Remove.
+
+2012-09-27  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/strncmp-ssse3.S: Conditionalize
+	contents on [SHARED].
+
+2012-09-26  Marek Polacek  <polacek@redhat.com>
+
+	[BZ #14530]
+	[BZ #13741]
+	* misc/sys/cdefs.h: Define __extern_inline and __extern_always_inline
+	for C++ and GCC <4.3 as well as for non GCC compilers.
+
+2012-09-26  Markus Trippelsdorf  <markus@trippelsdorf.de>
+
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+2012-09-25  Roland McGrath  <roland@hack.frob.com>
+
+	* Makefile.in (all, install): Declare with .PHONY.
+	Reported by Michael Hope <michael.hope@linaro.org>.
+
+2012-09-25  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	* manual/platform.texi (PowerPC): Document __ppc_get_timebase_freq.
+	* sysdeps/powerpc/sys/platform/ppc.h: Include the operating
+	system header.
+	* sysdeps/unix/sysv/linux/powerpc/Makefile (sysdep_headers):
+	Likewise.
+	(sydep_routines): Add the new and the internal functions.
+	* sysdeps/unix/sysv/linux/powerpc/bits/ppc.h: New file.
+	* sysdeps/unix/sysv/linux/powerpc/get_timebase_freq.c: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/Versions
+	(GLIBC_2.17): Add the new function.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist
+	(GLIBC_2.17): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/Versions
+	(GLIBC_2.17): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist
+	(GLIBC_2.17): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/test-gettimebasefreq.c: New file.
+
+2012-09-25  Alan Modra  <amodra@gmail.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/pthread_once.c (__pthread_once):
+	Add release barrier before setting once_control to say
+	initialisation is done.  Add hints on lwarx.  Use macro in
+	place of isync.
+	(clear_once_control): Add release barrier.
+
+2012-09-25  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13629]
+	* math/s_clog.c (__clog): Handle more values close to |z| = 1
+	specially.
+	* math/s_clog10.c (__clog10): Likewise.
+	* math/s_clog10f.c (__clog10f): Likewise.
+	* math/s_clog10l.c (__clog10l): Likewise.
+	* math/s_clogf.c (__clogf): Likewise.
+	* math/s_clogl.c (__clogl): Likewise.
+	* math/Makefile (libm-calls): Add x2y2m1.
+	* sysdeps/generic/math_private.h (__x2y2m1f): Declare.
+	(__x2y2m1): Likewise.
+	(__x2y2m1l): Likewise.
+	* sysdeps/ieee754/dbl-64/x2y2m1.c: New file.
+	* sysdeps/ieee754/dbl-64/x2y2m1f.c: Likewise.
+	* sysdeps/ieee754/ldbl-128/x2y2m1l.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/x2y2m1l.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/x2y2m1.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/x2y2m1l.c: Likewise.
+	* math/libm-test.inc (clog_test, clog10_test): Add more tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	[BZ #14621]
+	* posix/glob.c (next_brace_sub): Use size_t instead of unsigned
+	int as type of variable DEPTH.
+	(glob): Use size_t instead of int as type of variables NEWCOUNT
+	and OLD_PATHC.
+
+2012-09-25  Liubov Dmitrieva  <liubov.dmitrieva@gmail.com>
+
+	* sysdeps/i386/i686/fpu/multiarch/Makefile (sysdep_routines):
+	Add s_sincosf-sse2.
+	* sysdeps/i386/i686/fpu/multiarch/s_sincosf.c: New file.
+	* sysdeps/i386/i686/fpu/multiarch/s_sincosf-sse2.S: New file.
+	* sysdeps/ieee754/flt-32/s_sincosf.c (SINCOSF, SINCOSF_FUNC): Add
+	macros for using routine as __sincosf_ia32.
+	Use macro for function declaration and weak_alias.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+	* sysdeps/x86_64/fpu/s_sincosf.S: New file.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+	* math/s_ccoshf.c (__ccoshf): Fix wrong usage of sincos for
+	subnormal argument.
+	* math/s_cexpf.c (__cexpf): Likewise.
+	* math/s_csinf.c (__csinf): Likewise.
+	* math/s_csinhf.c (__csinhf): Likewise.
+	* math/s_ctanf.c (__ctanf): Likewise.
+	* math/s_ctanhf.c (__ctanhf): Likewise.
+	* math/s_ccosh.c (__ccoshf): Likewise.
+	* math/s_cexp.c (__cexpl): Likewise.
+	* math/s_csin.c (__csin): Likewise.
+	* math/s_csinh.c (__csinh): Likewise.
+	* math/s_ctan.c (__ctan): Likewise.
+	* math/s_ctanh.c (ctanh): Likewise.
+	* math/s_ccoshl.c (__ccoshl): Likewise.
+	* math/s_cexpl.c (__cexpl): Likewise.
+	* math/s_csinl.c (__csinl): Likewise.
+	* math/s_csinhl.c (__csinhl): Likewise.
+	* math/s_ctanl.c (__ctanl): Likewise.
+	* math/s_ctanhl.c (__ctanhl): Likewise.
+
 2012-09-25  Joseph Myers  <joseph@codesourcery.com>
 
 	* libio/libio.h (_IO_size_t): Define to size_t, not _G_size_t.
