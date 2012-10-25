@@ -22,12 +22,6 @@ set -e
 # The common objpfx, used to find libraries and the dynamic loader.
 objpfx=$1
 
-# The cross-testing wrapper.
-cross_test_wrapper="$2"
-
-# The environment-setting wrapper.
-run_with_env="$3"
-
 # We expect one parameter which is the test program.  This must understand
 # a number options:
 #   --phys		use the FTW_PHYS flag
@@ -36,7 +30,7 @@ run_with_env="$3"
 #   --depth		use the FTW_DEPTH flag
 #   --early-exit 	print file@2 item only and return non-zero from the
 #			callback when it is seen
-testprogram=$4
+testprogram=$2
 
 # We cannot test this as root.
 if test `id | sed "s/uid=\([0-9]*\).*/\1/"` = 0; then
@@ -50,11 +44,8 @@ LANG=C
 export LANG
 
 # First create our scenario:
-tmp=`echo ${TMPDIR:-/tmp} | sed 's|\(.\)/*$|\1|'`
+tmp=${objpfx}io
 tmpdir=$tmp/ftwtest.d
-
-[ -f ${objpfx}elf/ld.so ] && ldso=${objpfx}elf/ld.so
-ldso="${cross_test_wrapper:+$cross_test_wrapper }$run_with_env $ldso"
 
 trap 'chmod -fR a+x $tmpdir; rm -fr $tmpdir $testout' 1 2 3 15
 
@@ -78,9 +69,9 @@ ln -s $tmpdir/foo/lvl1/lvl2/lvl3/lvl4 $tmpdir/foo/lvl1/link@1
 echo > $tmpdir/bar/xo
 chmod a-x,a+r $tmpdir/bar
 
-testout=${TMPDIR:-/tmp}/ftwtest.out
+testout=$tmp/ftwtest.out
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram $tmpdir |
+$testprogram $tmpdir |
     sort > $testout
 
 cat <<EOF | cmp $testout - || exit 1
@@ -99,7 +90,7 @@ base = "$tmp/ftwtest.d/foo/lvl1/lvl2/lvl3/", file = "file@3", flag = FTW_F, leve
 EOF
 rm $testout
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --depth $tmpdir |
+$testprogram --depth $tmpdir |
     sort > $testout
 
 cat <<EOF | cmp $testout - || exit 1
@@ -118,7 +109,7 @@ base = "$tmp/ftwtest.d/foo/lvl1/lvl2/lvl3/", file = "file@3", flag = FTW_F, leve
 EOF
 rm $testout
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --phys $tmpdir |
+$testprogram --phys $tmpdir |
     sort > $testout
 
 cat <<EOF | cmp $testout - || exit 1
@@ -142,7 +133,7 @@ rm $testout
 # For the next test everything must be readable.
 chmod -fR a+x $tmpdir
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir $tmpdir |
+$testprogram --chdir $tmpdir |
     sort > $testout
 
 # perhaps $tmp involves some symlinks...
@@ -166,7 +157,7 @@ rm $testout
 
 curwd=`/bin/pwd 2>/dev/null || /usr/bin/pwd`
 cd "$tmp"
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir ftwtest.d |
+$testprogram --chdir ftwtest.d |
     sort > $testout
 cd "$curwd"
 
@@ -188,7 +179,7 @@ rm $testout
 
 curwd=`/bin/pwd 2>/dev/null || /usr/bin/pwd`
 cd "$tmp"
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir ftwtest.d/. |
+$testprogram --chdir ftwtest.d/. |
     sort > $testout
 cd "$curwd"
 
@@ -210,7 +201,7 @@ rm $testout
 
 curwd=`/bin/pwd 2>/dev/null || /usr/bin/pwd`
 cd "$tmp"
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir ftwtest.d/foo/lvl1/link@1 |
+$testprogram --chdir ftwtest.d/foo/lvl1/link@1 |
     sort > $testout
 cd "$curwd"
 
@@ -219,7 +210,7 @@ base = "ftwtest.d/foo/lvl1/", file = "link@1", flag = FTW_SLN, cwd = $tmpreal/ft
 EOF
 rm $testout
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --early-exit $tmpdir |
+$testprogram --early-exit $tmpdir |
     sort > $testout
 
 cat <<EOF | cmp $testout - || exit 1
@@ -233,7 +224,7 @@ echo > $tmpdir/foo/lvl1b/file@1b
 echo > $tmpdir/foo/lvl1b/file2@1b
 echo > $tmpdir/foo/lvl1b/file3@1b
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --skip-subtree=lvl1 $tmpdir |
+$testprogram --skip-subtree=lvl1 $tmpdir |
     sort > $testout
 
 cat <<EOF | diff -u $testout - || exit 1
@@ -250,7 +241,7 @@ base = "$tmp/ftwtest.d/foo/lvl1b/", file = "file@1b", flag = FTW_F, level = 3
 EOF
 rm $testout
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --skip-siblings=lvl1 $tmpdir |
+$testprogram --skip-siblings=lvl1 $tmpdir |
     sort > $testout
 
 # The filesystem is not required to put lvl1 before lvl1b.
@@ -274,7 +265,7 @@ base = "$tmp/ftwtest.d/foo/lvl1b/", file = "file@1b", flag = FTW_F, level = 3
 EOF
 rm $testout
 
-EGLIBC_TEST_LD_LIBRARY_PATH=$objpfx $ldso $testprogram --skip-siblings=file@1b $tmpdir |
+$testprogram --skip-siblings=file@1b $tmpdir |
     sort > $testout
 
 # The filesystem is not required to put file2@1b and file3@1b after file@1b.

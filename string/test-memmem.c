@@ -1,5 +1,5 @@
 /* Test and measure memmem functions.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+   Copyright (C) 2008-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Ulrich Drepper <drepper@redhat.com>, 2008.
 
@@ -18,6 +18,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #define TEST_MAIN
+#define TEST_NAME "memmem"
 #define BUF1PAGES 20
 #define ITERATIONS 500
 #include "test-string.h"
@@ -56,8 +57,8 @@ simple_memmem (const void *haystack, size_t haystack_len, const void *needle,
   return NULL;
 }
 
-static void
-do_one_test (impl_t *impl, const void *haystack, size_t haystack_len,
+static int
+check_result (impl_t *impl, const void *haystack, size_t haystack_len,
 	     const void *needle, size_t needle_len, const void *expected)
 {
   void *res;
@@ -68,8 +69,19 @@ do_one_test (impl_t *impl, const void *haystack, size_t haystack_len,
       error (0, 0, "Wrong result in function %s %p %p", impl->name,
 	     res, expected);
       ret = 1;
-      return;
+      return -1;
     }
+
+  return 0;
+}
+
+static void
+do_one_test (impl_t *impl, const void *haystack, size_t haystack_len,
+	     const void *needle, size_t needle_len, const void *expected)
+{
+  if (check_result (impl, haystack, haystack_len, needle, needle_len,
+		    expected) < 0)
+    return;
 
   if (HP_TIMING_AVAIL)
     {
@@ -145,6 +157,22 @@ do_random_tests (void)
     }
 }
 
+static void
+check1 (void)
+{
+
+  const char search_buf_data[5] = { 0x56, 0x34, 0x12, 0x78, 0x78 };
+  const char pattern[2] = { 0x78, 0x56 };
+  void *search_buf = (void *) buf1 + page_size - sizeof search_buf_data;
+  void *exp_result;
+
+  memcpy (search_buf, search_buf_data, sizeof search_buf_data);
+  exp_result = simple_memmem (search_buf, sizeof search_buf_data,
+			      pattern, sizeof pattern);
+  FOR_EACH_IMPL (impl, 0)
+    check_result (impl, search_buf, sizeof search_buf_data,
+		  pattern, sizeof pattern, exp_result);
+}
 
 static const char *const strs[] =
   {
@@ -160,6 +188,8 @@ test_main (void)
   size_t i;
 
   test_init ();
+
+  check1 ();
 
   printf ("%23s", "");
   FOR_EACH_IMPL (impl, 0)

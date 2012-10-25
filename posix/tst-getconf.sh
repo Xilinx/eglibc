@@ -20,21 +20,7 @@
 set -e
 
 common_objpfx=$1; shift
-elf_objpfx=$1; shift
-cross_test_wrapper=$1; shift
-if [ $# -eq 0 ]; then
-  # Static case.
-  runit() {
-    ${cross_test_wrapper} \
-    "$@"
-  }
-else
-  rtld_installed_name=$1; shift
-  runit() {
-    ${cross_test_wrapper} \
-    ${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx} "$@"
-  }
-fi
+run_getconf=$1; shift
 
 logfile=$common_objpfx/posix/tst-getconf.out
 
@@ -48,10 +34,7 @@ rm -f $logfile
 result=0
 while read name; do
   echo -n "getconf $name: " >> $logfile
-  # Redirect input from /dev/null in case runit consumes input when it
-  # shouldn't (ssh, say)
-  runit ${common_objpfx}posix/getconf "$name" \
-        < /dev/null 2>> $logfile >> $logfile
+  ${run_getconf} "$name" < /dev/null 2>> $logfile >> $logfile
   if test $? -ne 0; then
     echo "*** $name FAILED" >> $logfile
     result=1
@@ -229,10 +212,7 @@ EOF
 
 while read name; do
   echo -n "getconf $name /: " >> $logfile
-  # Redirect input from /dev/null in case runit consumes input when it
-  # shouldn't (ssh, say)
-  runit ${common_objpfx}posix/getconf "$name" / \
-      < /dev/null 2>> $logfile >> $logfile
+  ${run_getconf} "$name" / < /dev/null 2>> $logfile >> $logfile
   if test $? -ne 0; then
     echo "*** $name FAILED" >> $logfile
     result=1

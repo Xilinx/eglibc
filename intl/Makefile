@@ -49,7 +49,7 @@ $(objpfx)plural.o: plural.c
 
 include ../Rules
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 ifeq (yyyes,$(OPTION_EGLIBC_LOCALES)$(OPTION_EGLIBC_LOCALE_CODE)$(build-shared))
 ifneq ($(strip $(MSGFMT)),:)
 tests: $(objpfx)tst-translit.out $(objpfx)tst-gettext2.out \
@@ -75,14 +75,14 @@ $(codeset_mo): tstcodeset.po
 $(objpfx)mtrace-tst-gettext: $(objpfx)tst-gettext.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-gettext.mtrace > $@
 $(objpfx)tst-gettext.out: tst-gettext.sh $(objpfx)tst-gettext
-	$(SHELL) $< $(common-objpfx) $(common-objpfx)intl/ \
-	  $(objpfx)tst-gettext.mtrace '$(cross-test-wrapper)'
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)' \
+	  $(common-objpfx)intl/ $(objpfx)tst-gettext.mtrace
 $(objpfx)tst-translit.out: tst-translit.sh $(objpfx)tst-translit
-	$(SHELL) $< $(common-objpfx) $(common-objpfx)intl/ \
-	'$(cross-test-wrapper)'
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)' \
+	  $(common-objpfx)intl/
 $(objpfx)tst-gettext2.out: tst-gettext2.sh $(objpfx)tst-gettext2
-	$(SHELL) $< $(common-objpfx) $(common-objpfx)intl/ \
-	'$(cross-test-wrapper)'
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)' \
+	  $(common-objpfx)intl/
 $(objpfx)tst-gettext4.out: tst-gettext4.sh $(objpfx)tst-gettext4
 	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)' $(common-objpfx)intl/
 $(objpfx)tst-gettext6.out: tst-gettext6.sh $(objpfx)tst-gettext6
@@ -92,7 +92,7 @@ $(objpfx)tst-codeset.out: $(codeset_mo)
 $(objpfx)tst-gettext3.out: $(codeset_mo)
 $(objpfx)tst-gettext5.out: $(codeset_mo)
 endif
-# eglibc: endif
+endif
 
 $(objpfx)msgs.h: po2test.awk ../po/de.po
 	$(make-target-directory)

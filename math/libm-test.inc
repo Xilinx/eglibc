@@ -5028,7 +5028,6 @@ gamma_test (void)
   if (errno == ENOSYS)
     /* Function not implemented.  */
     return;
-  feclearexcept (FE_ALL_EXCEPT);
 
   START (gamma);
 
@@ -5544,7 +5543,6 @@ lgamma_test (void)
   if (errno == ENOSYS)
     /* Function not implemented.  */
     return;
-  feclearexcept (FE_ALL_EXCEPT);
 
   START (lgamma);
 
@@ -9359,7 +9357,6 @@ tgamma_test (void)
   if (errno == ENOSYS)
     /* Function not implemented.  */
     return;
-  feclearexcept (FE_ALL_EXCEPT);
 
   START (tgamma);
 

@@ -26,9 +26,6 @@ tst_rpmatch=$2
 rc=0
 while IFS=\& read locale string result dummy; do
     if [ "$locale" != "#" ]; then
-        # If tst_rpmatch includes a cross-testing wrapper based on a
-        # program like ssh, it may steal input from the while loop, so
-        # redirect its stdin from /dev/null.
 	LOCPATH=${common_objpfx}localedata \
 	GCONV_PATH=${common_objpfx}/iconvdata \
 	${tst_rpmatch} $locale $string $result < /dev/null \

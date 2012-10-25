@@ -271,14 +271,14 @@ endif # build-shared = yes
 
 include ../Rules
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
 tests: $(objpfx)iconv-test.out $(objpfx)tst-tables.out
 ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-loading
 endif
 endif
-# eglibc: endif
+endif
 
 tst-loading-ENV = MALLOC_TRACE=$(objpfx)tst-loading.mtrace
 $(objpfx)mtrace-tst-loading: $(objpfx)tst-loading.out
@@ -303,13 +303,13 @@ $(objpfx)tst-iconv7.out: $(objpfx)gconv-modules \
 $(objpfx)iconv-test.out: run-iconv-test.sh $(objpfx)gconv-modules \
 			 $(addprefix $(objpfx),$(modules.so)) \
 			 $(common-objdir)/iconv/iconv_prog TESTS
-	$(SHELL) $< $(common-objdir) '$(cross-test-wrapper)' > $@
+	$(SHELL) $< $(common-objdir) '$(test-wrapper)' > $@
 
 $(objpfx)tst-tables.out: tst-tables.sh $(objpfx)gconv-modules \
 			 $(addprefix $(objpfx),$(modules.so)) \
 			 $(objpfx)tst-table-from $(objpfx)tst-table-to
 	$(SHELL) $< $(common-objpfx) $(common-objpfx)iconvdata/ \
-		    '$(cross-test-wrapper)' > $@
+		'$(run-program-prefix)' > $@
 
 do-tests-clean common-mostlyclean: tst-tables-clean
 

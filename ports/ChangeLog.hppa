@@ -1,3 +1,16 @@
+2012-10-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/hppa/nptl/Makefile (tst-oddstacklimit-ENV): Remove.
+	* sysdeps/hppa/nptl/tst-oddstacklimit.c: New file.
+
+2012-10-10  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* sysdeps/unix/sysv/linux/hppa/nptl/pthread.h: Update.
+
+	* sysdeps/unix/sysv/linux/hppa/nptl/pt-initfini.c: Removed.
+
+	* sysdeps/hppa/nptl/shlib-versions: New file.
+
 2012-10-02  Siddhesh Poyarekar  <siddhesh@redhat.com>
 
 	* sysdeps/unix/sysv/linux/hppa/nptl/lowlevellock.h: Fix clone

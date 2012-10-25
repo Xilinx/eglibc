@@ -1,3 +1,92 @@
+2012-10-24  Joseph Myers  <joseph@codesourcery.com>
+	    Jim Blandy  <jimb@codesourcery.com>
+
+	* Makefile ($(objpfx)tst-tls6.out): Pass $(test-wrapper-env) to
+	tst-tls6.sh.
+	* tst-tls6.sh (test_wrapper_env): New variable.  Use it to run
+	programs with LD_PRELOAD set.
+
+2012-10-24  Roland McGrath  <roland@hack.frob.com>
+
+	* Makefile ($(objpfx)tst-cond11, $(objpfx)tst-cond19): Targets removed.
+	($(objpfx)tst-sem5, $(objpfx)tst-cancel18): Likewise.
+	((objpfx)tst-cancelx18, $(objpfx)tst-clock2): Likewise.
+	($(objpfx)tst-rwlock14): Likewise.
+
+2012-10-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile (tests): Remove tst-oddstacklimit.
+	(test-srcs): New variable.
+	(tst-oddstacklimit-ENV): Remove.
+	[$(run-built-tests) = yes] (tests): Depend on
+	$(objpfx)tst-oddstacklimit.out.
+	[$(run-built-tests) = yes] ($(objpfx)tst-oddstacklimit.out): New
+	target.
+	* tst-oddstacklimit.c: Do not include "tst-basic1.c".  Use
+	setrlimit before executing tst-basic1 test passed to --command.
+
+2012-10-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile [$(cross-compiling) = no]: Change condition to
+	[$(run-built-tests) = yes].
+
+2012-10-23  Jim Blandy  <jimb@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile (tst-cancel7-ARGS): Use $(host-built-program-cmd).
+	(tst-exec4-ARGS): Likewise.
+	(tst-stackguard1-ARGS): Likewise.
+
+2012-10-21  Jim Blandy  <jimb@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile ($(objpfx)tst-cancel-wrappers.out): Pass $(NM) to
+	tst-cancel-wrappers.sh.
+	* tst-cancel-wrappers.sh: Use nm program given as first argument,
+	not hardcoded "nm".
+
+2012-10-17  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* tst-cond25.c (do_test_wait): Don't check for return value from
+	pthread_cancel.
+
+2012-10-16  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14652]
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__condvar_tw_cleanup):  Adjust the mutex data structure if it
+	was locked by FUTEX_WAIT_REQUEUE_PI.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait
+	(__condvar_w_cleanup): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__condvar_cleanup2): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
+	(__condvar_cleanup1): Likewise.
+
+2012-10-10  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* sysdeps/pthread/pthread.h [!(defined __GNUC__ &&
+	defined __EXCEPTIONS) && defined __USE_GNU]
+	(pthread_cleanup_push_defer_np): Fix formatting.
+
+2012-10-10  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14652]
+	* Makefile (tests): New test case tst-cond25.
+	(LDFLAGS-tst-cond25): Link tst-cond25 against librt.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__condvar_tw_cleanup): Lock mutex only if we don't already
+	own it.
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_wait.S
+	(__condvar_w_cleanup): Likewise.
+	* sysdeps/unix/sysv/linux/pthread-pi-defines.sym: Add TID_MASK.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__condvar_cleanup2): Lock mutex only if we don't already
+	own it.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
+	(__condvar_cleanup1): Likewise.
+	* tst-cond25.c: New test case.
+
 2012-10-09  Roland McGrath  <roland@hack.frob.com>
 
 	* sysdeps/pthread/configure: Regenerated.

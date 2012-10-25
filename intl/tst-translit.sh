@@ -20,8 +20,8 @@
 set -e
 
 common_objpfx=$1
-objpfx=$2
-cross_test_wrapper=$3
+run_program_prefix=$2
+objpfx=$3
 
 LC_ALL=C
 export LC_ALL
@@ -37,8 +37,7 @@ export GCONV_PATH
 LOCPATH=${common_objpfx}localedata
 export LOCPATH
 
-${cross_test_wrapper} \
-${common_objpfx}elf/ld.so --library-path $common_objpfx \
+${run_program_prefix} \
 ${objpfx}tst-translit > ${objpfx}tst-translit.out ${objpfx}domaindir
 
 exit $?

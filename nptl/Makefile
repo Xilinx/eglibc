@@ -210,7 +210,7 @@ tests = tst-typesizes \
 	tst-cond1 tst-cond2 tst-cond3 tst-cond4 tst-cond5 tst-cond6 tst-cond7 \
 	tst-cond8 tst-cond9 tst-cond10 tst-cond11 tst-cond12 tst-cond13 \
 	tst-cond14 tst-cond15 tst-cond16 tst-cond17 tst-cond18 tst-cond19 \
-	tst-cond20 tst-cond21 tst-cond22 tst-cond23 tst-cond24 \
+	tst-cond20 tst-cond21 tst-cond22 tst-cond23 tst-cond24 tst-cond25 \
 	tst-cond-except \
 	tst-robust1 tst-robust2 tst-robust3 tst-robust4 tst-robust5 \
 	tst-robust6 tst-robust7 tst-robust8 tst-robust9 \
@@ -260,12 +260,12 @@ tests = tst-typesizes \
 	tst-clock1 \
 	tst-context1 \
 	tst-sched1 \
-	tst-oddstacklimit \
 	tst-abstime \
 	tst-vfork1 tst-vfork2 tst-vfork1x tst-vfork2x \
 	tst-getpid1 tst-getpid2 tst-getpid3 \
 	tst-initializers1 $(patsubst %,tst-initializers1-%,c89 gnu89 c99 gnu99)
 xtests = tst-setuid1 tst-setuid1-static tst-mutexpp1 tst-mutexpp6 tst-mutexpp10
+test-srcs = tst-oddstacklimit
 
 # This test uses the posix_spawn functions.
 tests-$(OPTION_EGLIBC_SPAWN) += tst-exec1
@@ -281,15 +281,12 @@ tests-$(OPTION_EGLIBC_LOCALE_CODE) += tst-locale1
 # Files which must not be linked with libpthread.
 tests-nolibpthread = tst-unload
 
-# This sets the stack resource limit to 1023kb, which is not a multiple
-# of the page size since every architecture's page size is > 1k.
-tst-oddstacklimit-ENV = ; ulimit -s 1023;
-
 gen-as-const-headers = pthread-errnos.sym
 
 LDFLAGS-pthread.so = -Wl,--enable-new-dtags,-z,nodelete,-z,initfirst
 
 LDFLAGS-tst-cond24 = -lrt
+LDFLAGS-tst-cond25 = -lrt
 
 include ../Makeconfig
 
@@ -457,7 +454,7 @@ CFLAGS-tst-initializers1-c99.c = $(CFLAGS-tst-initializers1-<)
 CFLAGS-tst-initializers1-gnu89.c = $(CFLAGS-tst-initializers1-<)
 CFLAGS-tst-initializers1-gnu99.c = $(CFLAGS-tst-initializers1-<)
 
-tst-cancel7-ARGS = --command "exec $(local-built-program-cmd)"
+tst-cancel7-ARGS = --command "exec $(host-built-program-cmd)"
 tst-cancelx7-ARGS = $(tst-cancel7-ARGS)
 tst-umask1-ARGS = $(objpfx)tst-umask1.temp
 
@@ -466,9 +463,9 @@ LDFLAGS-tst-atfork2 = -rdynamic
 tst-atfork2-ENV = MALLOC_TRACE=$(objpfx)tst-atfork2.mtrace
 $(objpfx)tst-atfork2mod.so: $(shared-thread-library)
 
-# ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-stack3-mem
-# endif
+endif
 tst-stack3-ENV = MALLOC_TRACE=$(objpfx)tst-stack3.mtrace
 $(objpfx)tst-stack3-mem: $(objpfx)tst-stack3.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-stack3.mtrace > $@
@@ -490,16 +487,15 @@ LDFLAGS-tst-tls5 = $(no-as-needed)
 LDFLAGS-tst-tls5mod.so = -Wl,-soname,tst-tls5mod.so
 
 ifeq ($(build-shared),yes)
-# ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-tls6.out
-# endif
+endif
 $(objpfx)tst-tls6.out: tst-tls6.sh $(objpfx)tst-tls5 \
 		       $(objpfx)tst-tls5moda.so $(objpfx)tst-tls5modb.so \
 		       $(objpfx)tst-tls5modc.so $(objpfx)tst-tls5modd.so \
 		       $(objpfx)tst-tls5mode.so $(objpfx)tst-tls5modf.so
 	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
-		    $(rtld-installed-name) '$(cross-test-wrapper)' \
-		    $(..)scripts/run-with-env.sh
+		    $(rtld-installed-name) '$(test-wrapper-env)'
 endif
 
 $(objpfx)tst-dlsym1: $(libdl) $(shared-thread-library)
@@ -507,31 +503,18 @@ $(objpfx)tst-dlsym1: $(libdl) $(shared-thread-library)
 $(objpfx)tst-fini1: $(shared-thread-library) $(objpfx)tst-fini1mod.so
 
 ifeq (yes,$(build-shared))
-$(objpfx)tst-cond11: $(common-objpfx)rt/librt.so
-$(objpfx)tst-cond19: $(common-objpfx)rt/librt.so
-$(objpfx)tst-sem5: $(common-objpfx)rt/librt.so
-$(objpfx)tst-cancel17: $(common-objpfx)rt/librt.so
-$(objpfx)tst-cancelx17: $(common-objpfx)rt/librt.so
-$(objpfx)tst-cancel18: $(common-objpfx)rt/librt.so
-$(objpfx)tst-cancelx18: $(common-objpfx)rt/librt.so
-$(objpfx)tst-clock2: $(common-objpfx)rt/librt.so
-$(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.so
+librt = $(common-objpfx)rt/librt.so
+else
+librt = $(common-objpfx)rt/librt.a
+endif
+
+$(objpfx)tst-cancel17: $(librt)
+$(objpfx)tst-cancelx17: $(librt)
 $(objpfx)tst-_res1mod2.so: $(objpfx)tst-_res1mod1.so
 LDFLAGS-tst-_res1mod1.so = -Wl,-soname,tst-_res1mod1.so
 LDFLAGS-tst-_res1mod2.so = -Wl,-soname,tst-_res1mod2.so
 $(objpfx)tst-_res1: $(objpfx)tst-_res1mod1.so $(objpfx)tst-_res1mod2.so \
 		    $(shared-thread-library)
-else
-$(objpfx)tst-cond11: $(common-objpfx)rt/librt.a
-$(objpfx)tst-cond19: $(common-objpfx)rt/librt.a
-$(objpfx)tst-sem5: $(common-objpfx)rt/librt.a
-$(objpfx)tst-cancel17: $(common-objpfx)rt/librt.a
-$(objpfx)tst-cancelx17: $(common-objpfx)rt/librt.a
-$(objpfx)tst-cancel18: $(common-objpfx)rt/librt.a
-$(objpfx)tst-cancelx18: $(common-objpfx)rt/librt.a
-$(objpfx)tst-clock2: $(common-objpfx)rt/librt.a
-$(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.a
-endif
 
 LDLIBS-tst-cancel24 = $(no-as-needed) -lstdc++
 LDLIBS-tst-cancel24-static = $(LDLIBS-tst-cancel24)
@@ -602,7 +585,7 @@ generated += banner.h
 LDFLAGS-pthread.so += -e __nptl_main
 endif
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
 tests: $(objpfx)tst-cancel-wrappers.out
 $(objpfx)tst-cancel-wrappers.out: tst-cancel-wrappers.sh
@@ -612,9 +595,9 @@ $(objpfx)tst-cancel-wrappers.out: tst-cancel-wrappers.sh
 		    $(objpfx)libpthread_pic.a \
 		    $(objpfx)libpthread.a > $@
 endif
-# eglibc: endif
+endif
 
-tst-exec4-ARGS = $(local-built-program-cmd)
+tst-exec4-ARGS = $(host-built-program-cmd)
 
 $(objpfx)tst-execstack: $(libdl)
 $(objpfx)tst-execstack.out: $(objpfx)tst-execstack-mod.so
@@ -622,8 +605,15 @@ LDFLAGS-tst-execstack = -Wl,-z,noexecstack
 
 $(objpfx)tst-fini1mod.so: $(shared-thread-library)
 
-tst-stackguard1-ARGS = --command "$(local-built-program-cmd) --child"
+tst-stackguard1-ARGS = --command "$(host-built-program-cmd) --child"
 tst-stackguard1-static-ARGS = --command "$(objpfx)tst-stackguard1-static --child"
+
+ifeq ($(run-built-tests),yes)
+tests: $(objpfx)tst-oddstacklimit.out
+
+$(objpfx)tst-oddstacklimit.out: $(objpfx)tst-oddstacklimit $(objpfx)tst-basic1
+	$(run-program-prefix) $< --command '$(host-built-program-cmd)' > $@
+endif
 
 # The tests here better do not run in parallel
 ifneq ($(filter %tests,$(MAKECMDGOALS)),)

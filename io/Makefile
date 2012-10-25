@@ -104,23 +104,11 @@ test-stat2-ARGS = Makefile . $(objpfx)test-stat2
 
 tst-statvfs-ARGS = $(objpfx)tst-statvfs tst-statvfs.c /tmp
 
-# eglibc: ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 ifeq (y,$(OPTION_EGLIBC_FTRAVERSE))
 tests: $(objpfx)ftwtest.out
 endif
 
-ifeq ($(cross-compiling),yes)
-# EGLIBC's cross-testing support does not require the build and host
-# machines to share a /tmp directory, so when cross-testing, construct
-# the sample directory tree for these tests in the build tree.
-ftwtest-tmpdir = TMPDIR=$(common-objpfx)
+$(objpfx)ftwtest.out: ftwtest-sh $(objpfx)ftwtest
+	$(SHELL) $< $(common-objpfx) '$(built-program-cmd)' > $@
 endif
-
-$(objpfx)ftwtest.out: $(objpfx)ftwtest
-	$(ftwtest-tmpdir) \
-	$(SHELL) ftwtest-sh $(shell cd $(common-objpfx). && pwd)/ \
-		 '$(cross-test-wrapper)' \
-		 $(shell cd $(..)scripts && pwd)/run-with-env.sh \
-		 $(shell cd $(<D) && pwd)/$(<F) > $@
-
-# eglibc: endif

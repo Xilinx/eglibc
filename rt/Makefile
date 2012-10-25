@@ -36,9 +36,12 @@ mq-routines    := mq_open mq_close mq_unlink mq_getattr mq_setattr	\
 		  mq_notify mq_send mq_receive mq_timedsend		\
 		  mq_timedreceive
 
+routines = $(clock-routines)
+
 librt-routines = $(aio-routines) \
-		 $(clock-routines) $(timer-routines) \
-		 $(shm-routines) $(mq-routines)
+		 $(timer-routines) \
+		 $(shm-routines) $(mq-routines) \
+		 clock-compat
 
 tests := tst-shm tst-clock tst-clock_nanosleep tst-timer tst-timer2 \
 	 tst-aio tst-aio64 tst-aio2 tst-aio3 tst-aio4 tst-aio5 tst-aio6 \
@@ -77,4 +80,4 @@ ifeq (yes,$(build-bounded))
 $(tests:%=$(objpfx)%-bp): $(objpfx)librt_b.a $(bounded-thread-library)
 endif
 
-tst-mqueue7-ARGS = -- $(local-built-program-cmd)
+tst-mqueue7-ARGS = -- $(host-built-program-cmd)

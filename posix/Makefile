@@ -138,22 +138,21 @@ generated := $(addprefix wordexp-test-result, 1 2 3 4 5 6 7 8 9 10) \
 
 include ../Rules
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 # globtest and wordexp-test currently only works with shared libraries
 ifeq (yes,$(build-shared))
 tests: $(objpfx)globtest.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
-	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
-		 $(rtld-installed-name) '$(cross-test-wrapper)'
+	$(SHELL) $< $(common-objpfx) '$(run-via-rtld-prefix)' \
+		'$(test-wrapper)' '$(test-wrapper-env)'
 LDLIBS-globtest += $(shell cat $(common-objpfx)nss/fixed-nsswitch-libs)
 ifeq (y,$(OPTION_EGLIBC_WORDEXP))
 tests: $(objpfx)wordexp-tst.out
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
-	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
-		 $(rtld-installed-name) '$(cross-test-wrapper)'
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
 endif
 endif
-# eglibc: endif
+endif
 
 # If we will use the generic uname implementation, we must figure out what
 # it will say by examining the system, and write the results in config-name.h.
@@ -201,8 +200,8 @@ CFLAGS-execlp.os = -fomit-frame-pointer
 tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 		--none random --col --color --colour
 
-tst-exec-ARGS = -- $(local-built-program-cmd)
-tst-spawn-ARGS = -- $(local-built-program-cmd)
+tst-exec-ARGS = -- $(host-built-program-cmd)
+tst-spawn-ARGS = -- $(host-built-program-cmd)
 tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); pwd` $(objpfx)tst-dir
 tst-chmod-ARGS = $(objdir)
 tst-vfork3-ARGS = --test-dir=$(objpfx)
@@ -246,7 +245,7 @@ ptestcases.h: PTESTS PTESTS2C.sed
 # Run a test on the header files we use.
 # XXX Please note that for now we ignore the result of this test.
 tests: $(objpfx)annexc.out
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)bug-regex2-mem \
   $(objpfx)bug-regex21-mem \
   $(objpfx)bug-regex31-mem \
@@ -257,7 +256,7 @@ tests: $(objpfx)bug-regex14-mem $(objpfx)tst-rxspencer-mem \
   $(objpfx)tst-pcre-mem $(objpfx)tst-boost-mem 
 endif
 xtests: $(objpfx)bug-ga2-mem
-# eglibc: endif
+endif
 
 $(objpfx)annexc.out: $(objpfx)annexc
 	-$(dir $<)$(notdir $<) '$(CC)' \
@@ -315,16 +314,7 @@ $(objpfx)tst-boost-mem: $(objpfx)tst-boost.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-boost.mtrace > $@
 
 $(objpfx)tst-getconf.out: tst-getconf.sh $(objpfx)getconf
-	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
-		'$(cross-test-wrapper)' $(rtld-installed-name)
-
-ifeq (yes,$(build-shared))
-$(objpfx)tst-regex: $(common-objpfx)rt/librt.so
-$(objpfx)tst-regex2: $(common-objpfx)rt/librt.so
-else
-$(objpfx)tst-regex: $(common-objpfx)rt/librt.a
-$(objpfx)tst-regex2: $(common-objpfx)rt/librt.a
-endif
+	$(SHELL) $< $(common-objpfx) '$(built-program-cmd)'
 
 $(objpfx)bug-ga2-mem: $(objpfx)bug-ga2.out
 	$(common-objpfx)malloc/mtrace $(objpfx)bug-ga2.mtrace > $@

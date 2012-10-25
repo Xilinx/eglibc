@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2000-2004,2007,2011 Free Software Foundation, Inc.
+# Copyright (C) 2000-2012 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 # Contributed by Bruno Haible <haible@clisp.cons.org>, 2000.
 #
@@ -23,7 +23,7 @@
 
 common_objpfx=$1
 objpfx=$2
-cross_test_wrapper="$3"
+run_program_prefix=$3
 
 status=0
 
@@ -262,10 +262,8 @@ while read charset charmap; do
   if test "$charset" = GB18030; then echo "This might take a while" 1>&2; fi
   case ${charset} in \#*) continue;; esac
   echo -n "Testing ${charset}" 1>&2
-  # Redirect input from /dev/null, so that using ssh (which reads its
-  # input before the remote program needs it) won't consume the rest of the 
-  # charset/charmap table, making the while loop terminate early.
-  if ${SHELL} tst-table.sh ${common_objpfx} ${objpfx} "${cross_test_wrapper}" ${charset} ${charmap} < /dev/null; then
+  if ${SHELL} tst-table.sh ${common_objpfx} ${objpfx} "${run_program_prefix}" \
+      ${charset} ${charmap} < /dev/null; then
     echo 1>&2
   else
     echo "failed: ./tst-table.sh ${common_objpfx} ${objpfx} ${charset} ${charmap}"

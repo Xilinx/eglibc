@@ -54,10 +54,8 @@ ifeq (yes,$(build-shared))
 tests += tststatic tststatic2
 tests-static += tststatic tststatic2
 modules-names += modstatic modstatic2
-tststatic-ENV = EGLIBC_TEST_LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)elf
-tststatic-WRAPPER = $(..)scripts/run-with-env.sh
-tststatic2-ENV = EGLIBC_TEST_LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)elf
-tststatic2-WRAPPER = $(..)scripts/run-with-env.sh
+tststatic-ENV = LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)elf
+tststatic2-ENV = LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)elf
 endif
 
 extra-test-objs += $(modules-names:=.os)

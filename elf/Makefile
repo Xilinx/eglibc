@@ -122,12 +122,12 @@ tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1
 ifeq (yes,$(have-initfini-array))
 tests += tst-array1 tst-array2 tst-array3 tst-array4 tst-array5
 endif
-tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static
+tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static \
+	       tst-leaks1-static
 ifeq (yes,$(build-shared))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
-  EGLIBC_TEST_LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
-tst-tls9-static-WRAPPER = $(..)scripts/run-with-env.sh
+       LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
 endif
 ifeq (yes,$(have-initfini-array))
 tests-static += tst-array1-static tst-array5-static
@@ -164,9 +164,10 @@ tests += tst-audit6 tst-audit7
 endif
 endif
 endif
-# ifeq ($(cross-compiling),no)
-tests: $(objpfx)tst-leaks1-mem $(objpfx)noload-mem
-# endif
+ifeq ($(run-built-tests),yes)
+tests: $(objpfx)tst-leaks1-mem $(objpfx)tst-leaks1-static-mem \
+       $(objpfx)noload-mem
+endif
 tlsmod17a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 tlsmod18a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 tlsmod17a-modules = $(addprefix tst-tlsmod17a, $(tlsmod17a-suffixes))
@@ -442,9 +443,9 @@ test-modules = $(addprefix $(objpfx),$(addsuffix .so,$(strip $(modules-names))))
 generated += $(addsuffix .so,$(strip $(modules-names)))
 
 ifeq (yes,$(build-shared))
-# eglibc: ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-pathopt.out $(objpfx)tst-rtld-load-self.out
-# eglibc: endif
+endif
 endif
 
 $(objpfx)testobj1.so: $(libdl)
@@ -610,8 +611,7 @@ $(objpfx)preloadtest: $(objpfx)testobj6.so
 LDFLAGS-preloadtest = -rdynamic
 $(objpfx)preloadtest.out: $(preloadtest-preloads:%=$(objpfx)%.so)
 preloadtest-ENV = \
-  EGLIBC_TEST_LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
-preloadtest-WRAPPER = $(..)scripts/run-with-env.sh
+  LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
 
 $(objpfx)loadfail: $(libdl)
 LDFLAGS-loadfail = -rdynamic
@@ -649,7 +649,7 @@ $(objpfx)circlemod2a.so: $(objpfx)circlemod3a.so
 $(objpfx)order: $(addprefix $(objpfx),dep4.so dep3.so dep2.so dep1.so)
 
 $(objpfx)order.out: $(objpfx)order
-	$(cross-test-wrapper) \
+	$(test-wrapper) \
 	$(elf-objpfx)$(rtld-installed-name) \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $(objpfx)order > $@
@@ -657,8 +657,7 @@ $(objpfx)order.out: $(objpfx)order
 
 $(objpfx)vismain: $(addprefix $(objpfx),vismod1.so vismod2.so)
 $(objpfx)vismain.out: $(addprefix $(objpfx),vismod3.so)
-vismain-ENV = EGLIBC_TEST_LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
-vismain-WRAPPER = $(..)scripts/run-with-env.sh
+vismain-ENV = LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
 
 $(objpfx)noload: $(objpfx)testobj1.so $(common-objpfx)dlfcn/libdl.so
 LDFLAGS-noload = -rdynamic $(no-as-needed)
@@ -717,11 +716,10 @@ $(objpfx)lateglobal.out: $(objpfx)ltglobmod1.so $(objpfx)ltglobmod2.so
 $(objpfx)tst-pathopt: $(libdl)
 $(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
 			  $(objpfx)pathoptobj.so
-	$(SHELL) $< $(common-objpfx) "$(cross-test-wrapper)" \
-		$(..)scripts/run-with-env.sh
+	$(SHELL) $< $(common-objpfx) '$(test-wrapper-env)'
 
 $(objpfx)tst-rtld-load-self.out: tst-rtld-load-self.sh $(objpfx)ld.so
-	$(SHELL) $^ "$(cross-test-wrapper)" $(..)scripts/run-with-env.sh > $@
+	$(SHELL) $^ '$(test-wrapper)' '$(test-wrapper-env)' > $@
 
 $(objpfx)initfirst: $(libdl)
 $(objpfx)initfirst.out: $(objpfx)firstobj.so
@@ -1011,38 +1009,31 @@ $(objpfx)tst-dlmopen3: $(libdl)
 $(objpfx)tst-dlmopen3.out: $(objpfx)tst-dlmopen1mod.so
 
 $(objpfx)tst-audit1.out: $(objpfx)tst-auditmod1.so
-tst-audit1-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod1.so
-tst-audit1-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit1-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 
 $(objpfx)tst-audit2.out: $(objpfx)tst-auditmod1.so
-tst-audit2-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod1.so
-tst-audit2-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit2-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 
 $(objpfx)tst-audit3: $(objpfx)tst-auditmod3a.so
 $(objpfx)tst-audit3.out: $(objpfx)tst-auditmod3b.so
-tst-audit3-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod3b.so
-tst-audit3-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit3-ENV = LD_AUDIT=$(objpfx)tst-auditmod3b.so
 
 $(objpfx)tst-audit4: $(objpfx)tst-auditmod4a.so
 $(objpfx)tst-audit4.out: $(objpfx)tst-auditmod4b.so
-tst-audit4-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod4b.so
-tst-audit4-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit4-ENV = LD_AUDIT=$(objpfx)tst-auditmod4b.so
 
 $(objpfx)tst-audit5: $(objpfx)tst-auditmod5a.so
 $(objpfx)tst-audit5.out: $(objpfx)tst-auditmod5b.so
-tst-audit5-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod5b.so
-tst-audit5-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit5-ENV = LD_AUDIT=$(objpfx)tst-auditmod5b.so
 
 $(objpfx)tst-audit6: $(objpfx)tst-auditmod6a.so
 $(objpfx)tst-audit6.out: $(objpfx)tst-auditmod6b.so \
 			 $(objpfx)tst-auditmod6c.so
-tst-audit6-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod6b.so:$(objpfx)tst-auditmod6c.so
-tst-audit6-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit6-ENV = LD_AUDIT=$(objpfx)tst-auditmod6b.so:$(objpfx)tst-auditmod6c.so
 
 $(objpfx)tst-audit7: $(objpfx)tst-auditmod7a.so
 $(objpfx)tst-audit7.out: $(objpfx)tst-auditmod7b.so
-tst-audit7-ENV = EGLIBC_TEST_LD_AUDIT=$(objpfx)tst-auditmod7b.so
-tst-audit7-WRAPPER = $(..)scripts/run-with-env.sh
+tst-audit7-ENV = LD_AUDIT=$(objpfx)tst-auditmod7b.so
 
 $(objpfx)tst-global1: $(libdl)
 $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
@@ -1050,7 +1041,7 @@ $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
 $(objpfx)order2: $(libdl)
 $(objpfx)order2.out: $(objpfx)order2 $(objpfx)order2mod1.so \
 		     $(objpfx)order2mod2.so
-	$(cross-test-wrapper) \
+	$(test-wrapper) \
 	$(elf-objpfx)$(rtld-installed-name) \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $(objpfx)order2 > $@
@@ -1062,14 +1053,19 @@ order2mod2.so-no-z-defs = yes
 LDFLAGS-order2mod1.so = $(no-as-needed)
 LDFLAGS-order2mod2.so = $(no-as-needed)
 
-tst-stackguard1-ARGS = --command "$(local-built-program-cmd) --child"
+tst-stackguard1-ARGS = --command "$(host-built-program-cmd) --child"
 tst-stackguard1-static-ARGS = --command "$(objpfx)tst-stackguard1-static --child"
 
 $(objpfx)tst-leaks1: $(libdl)
 $(objpfx)tst-leaks1-mem: $(objpfx)tst-leaks1.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-leaks1.mtrace > $@
 
+$(objpfx)tst-leaks1-static: $(common-objpfx)dlfcn/libdl.a
+$(objpfx)tst-leaks1-static-mem: $(objpfx)tst-leaks1-static.out
+	$(common-objpfx)malloc/mtrace $(objpfx)tst-leaks1-static.mtrace > $@
+
 tst-leaks1-ENV = MALLOC_TRACE=$(objpfx)tst-leaks1.mtrace
+tst-leaks1-static-ENV = MALLOC_TRACE=$(objpfx)tst-leaks1-static.mtrace
 
 $(objpfx)tst-addr1: $(libdl)
 
@@ -1140,7 +1136,7 @@ $(objpfx)tst-unique3.out: $(objpfx)tst-unique3lib2.so
 $(objpfx)tst-unique4: $(objpfx)tst-unique4lib.so
 
 $(objpfx)tst-initorder.out: $(objpfx)tst-initorder
-	$(cross-test-wrapper) \
+	$(test-wrapper) \
 	$(elf-objpfx)${rtld-installed-name} \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@
@@ -1162,7 +1158,7 @@ object-suffixes-left := a b c d
 include $(o-iterator)
 
 $(objpfx)tst-initorder2.out: $(objpfx)tst-initorder2
-	$(cross-test-wrapper) \
+	$(test-wrapper) \
 	$(elf-objpfx)${rtld-installed-name} \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@
@@ -1187,16 +1183,15 @@ $(objpfx)tst-relsort1mod2.so: $(libm)
 $(objpfx)tst-relsort1.out: $(objpfx)tst-relsort1mod1.so \
 			   $(objpfx)tst-relsort1mod2.so
 
-# ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-unused-dep.out
-# endif
+endif
 
 $(objpfx)tst-unused-dep.out: $(objpfx)testobj1.so
-	EGLIBC_TEST_LD_TRACE_LOADED_OBJECTS=1 \
-	EGLIBC_TEST_LD_DEBUG=unused \
-	EGLIBC_TEST_LD_PRELOAD= \
-	$(cross-test-wrapper) \
-	$(..)scripts/run-with-env.sh \
+	$(test-wrapper-env) \
+	LD_TRACE_LOADED_OBJECTS=1 \
+	LD_DEBUG=unused \
+	LD_PRELOAD= \
 	$(elf-objpfx)${rtld-installed-name} \
 	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
 	  $< > $@

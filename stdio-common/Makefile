@@ -76,7 +76,7 @@ test-srcs = tst-unbputc tst-printf
 
 include ../Rules
 
-# eglibc: ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 .PHONY: do-tst-unbputc do-tst-printf
 tests: do-tst-unbputc do-tst-printf
 
@@ -87,7 +87,7 @@ $(objpfx)tst-unbputc.out: tst-unbputc.sh $(objpfx)tst-unbputc
 do-tst-printf: $(objpfx)tst-printf.out
 $(objpfx)tst-printf.out: tst-printf.sh $(objpfx)tst-printf
 	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
-# eglibc: endif
+endif
 
 CFLAGS-vfprintf.c = -Wno-uninitialized
 CFLAGS-vfwprintf.c = -Wno-uninitialized

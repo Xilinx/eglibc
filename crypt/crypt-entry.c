@@ -29,6 +29,7 @@
 #include <string.h>
 #include <gnu/option-groups.h>
 #include <errno.h>
+#include <fips-private.h>
 
 #ifndef STATIC
 #define STATIC static
@@ -95,8 +96,16 @@ __crypt_r (key, salt, data)
 #ifdef _LIBC
   /* Try to find out whether we have to use MD5 encryption replacement.  */
   if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0)
-    return __md5_crypt_r (key, salt, (char *) data,
-			  sizeof (struct crypt_data));
+    {
+      /* FIPS rules out MD5 password encryption.  */
+      if (fips_enabled_p ())
+	{
+	  __set_errno (EPERM);
+	  return NULL;
+	}
+      return __md5_crypt_r (key, salt, (char *) data,
+			    sizeof (struct crypt_data));
+    }
 
   /* Try to find out whether we have to use SHA256 encryption replacement.  */
   if (strncmp (sha256_salt_prefix, salt, sizeof (sha256_salt_prefix) - 1) == 0)
@@ -113,7 +122,18 @@ __crypt_r (key, salt, data)
   /*
    * Hack DES tables according to salt
    */
-  _ufc_setup_salt_r (salt, data);
+  if (!_ufc_setup_salt_r (salt, data))
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+
+  /* FIPS rules out DES password encryption.  */
+  if (fips_enabled_p ())
+    {
+      __set_errno (EPERM);
+      return NULL;
+    }
 
   /*
    * Setup key schedule
@@ -152,7 +172,9 @@ crypt (key, salt)
 {
 #ifdef _LIBC
   /* Try to find out whether we have to use MD5 encryption replacement.  */
-  if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0)
+  if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0
+      /* Let __crypt_r deal with the error code if FIPS is enabled.  */
+      && !fips_enabled_p ())
     return __md5_crypt (key, salt);
 
   /* Try to find out whether we have to use SHA256 encryption replacement.  */

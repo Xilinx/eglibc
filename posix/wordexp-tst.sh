@@ -24,13 +24,7 @@ set -e
 # The others are just there to be parameters.
 
 common_objpfx=$1; shift
-elf_objpfx=$1; shift
-rtld_installed_name=$1; shift
-cross_test_wrapper=$1; shift
-
-run_program_prefix="${cross_test_wrapper} \
-${elf_objpfx}${rtld_installed_name} --library-path ${common_objpfx}"
-
+run_program_prefix=$1; shift
 logfile=${common_objpfx}posix/wordexp-tst.out
 testout=${common_objpfx}posix/wordexp-test-result
 

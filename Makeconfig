@@ -33,31 +33,6 @@ ifdef subdir
 .. := ../
 endif
 
-# If config.make exists, the source directory was configured,
-# so don't try to be clever and find another directory to build in.
-ifneq (,$(wildcard $(..)config.make))
-ARCH =
-machine =
-else	# Not configured.
-ifndef ARCH
-ifdef machine
-ARCH = $(machine)
-endif # machine
-endif # ARCH
-endif # config.make
-
-# Directory for object files and libc.a.  If this is not defined, the
-# object files live in the subdirectories where their sources live, and
-# libc.a lives in the parent directory (this probably doesn't work any
-# more).
-ifdef ARCH
-ifeq ($(filter /%,$(ARCH)),)
-objdir := $(..)$(ARCH)
-else
-objdir = $(ARCH)
-endif
-endif
-
 # $(common-objdir) is the place to put objects and
 # such that are not specific to a single subdir.
 ifdef objdir
@@ -65,15 +40,7 @@ objpfx := $(patsubst %//,%/,$(objdir)/$(subdir)/)
 common-objpfx = $(objdir)/
 common-objdir = $(objdir)
 else
-objpfx :=
-ifdef ..
-common-objpfx = $(..)
-common-objdir = ..
-else
-# This is a kludge.  make wizards might grok.
-common-objpfx = sysdeps/../
-common-objdir = .
-endif
+objdir must be defined by the build-directory Makefile.
 endif
 
 # Root of the sysdeps tree.
@@ -434,7 +401,7 @@ ifndef +link-static
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-static) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-static) $(link-libc-static)
+	      $(link-extra-libs-static)
 +link-static-after-libc = $(+postctorT) $(+postinit)
 +link-static = $(+link-static-before-libc) $(link-libc-static) \
 	       $(+link-static-after-libc)
@@ -597,6 +564,27 @@ endif
 csu-objpfx = $(common-objpfx)csu/
 elf-objpfx = $(common-objpfx)elf/
 
+# A command that, prepended to the name and arguments of a program,
+# and run on the build system, causes that program with those
+# arguments to be run on the host for which the library is built.
+ifndef test-wrapper
+test-wrapper = $(cross-test-wrapper)
+endif
+# Likewise, but the name of the program is preceded by
+# <variable>=<value> assignments for environment variables.
+ifndef test-wrapper-env
+test-wrapper-env = $(test-wrapper) env
+endif
+
+# Whether to run test programs built for the library's host system.
+ifndef run-built-tests
+ifeq (yes|,$(cross-compiling)|$(test-wrapper))
+run-built-tests = no
+else
+run-built-tests = yes
+endif
+endif
+
 # How to run a program we just linked with our library.
 # The program binary is assumed to be $(word 2,$^).
 built-program-file = $(dir $(word 2,$^))$(notdir $(word 2,$^))
@@ -606,8 +594,11 @@ sysdep-library-path = \
 $(subst $(empty) ,:,$(strip $(patsubst -Wl$(comma)-rpath-link=%, %,\
 				       $(filter -Wl$(comma)-rpath-link=%,\
 						$(sysdep-LDFLAGS)))))
-# Never use $(run-via-rtld-prefix) for the statically-linked %-bp test
-# programs, or for tests listed in tests-static or xtests-static.
+# $(run-via-rtld-prefix) is a command that, when prepended to the name
+# of a program built with the newly built library, produces a command
+# that, executed on the host for which the library is built, runs that
+# program.  For the statically-linked %-bp test programs, and for
+# tests listed in tests-static or xtests-static, it is empty.
 run-via-rtld-prefix =							      \
   $(if $(strip $(filter $(notdir $(built-program-file)),		      \
 			$(tests-static) $(xtests-static))		      \
@@ -617,14 +608,22 @@ run-via-rtld-prefix =							      \
 else
 run-via-rtld-prefix =
 endif
-run-program-prefix = $(cross-test-wrapper) $($*-WRAPPER) \
-	             $(run-via-rtld-prefix)
-built-program-cmd = $(cross-test-wrapper) $($*-WRAPPER) \
+# $(run-via-rtld-prefix) is a command that, when prepended to the name
+# of a program built with the newly built library, produces a command
+# that, executed on the build system on which "make" is run, runs that
+# program.
+run-program-prefix = $(test-wrapper) $(run-via-rtld-prefix)
+# $(built-program-cmd) is a command that, executed on the build system
+# on which "make" is run, runs the newly built program that is the
+# second dependency of the makefile target in which
+# $(built-program-cmd) is used.
+built-program-cmd = $(test-wrapper) \
 		    $(run-via-rtld-prefix) $(built-program-file)
-
-# Same as built-program-cmd, but without the cross-test-wrapper.  Used 
-# to run programs from the test machine, as in nptl/tst-cancel7.
-local-built-program-cmd = $(run-via-rtld-prefix) $(built-program-file)
+# $(host-built-program-cmd) is a command that, executed on the host
+# for which the library is built, runs the newly built program that is
+# the second dependency of the makefile target in which
+# $(host-built-program-cmd) is used.
+host-built-program-cmd = $(run-via-rtld-prefix) $(built-program-file)
 
 ifndef LD
 LD := ld -X

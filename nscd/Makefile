@@ -108,9 +108,9 @@ include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 $(objpfx)nscd: $(nscd-modules:%=$(objpfx)%.o)
 
 ifeq ($(build-shared),yes)
-$(objpfx)nscd: $(common-objpfx)rt/librt.so $(shared-thread-library)
+$(objpfx)nscd: $(shared-thread-library)
 else
-$(objpfx)nscd: $(common-objpfx)rt/librt.a $(static-thread-library)
+$(objpfx)nscd: $(static-thread-library)
 endif
 
 ifeq (y,$(OPTION_EGLIBC_NIS))

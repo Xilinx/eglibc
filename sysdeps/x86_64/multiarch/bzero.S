@@ -1,5 +1,5 @@
-/* Multiple versions of bzero
-   Copyright (C) 2010 Free Software Foundation, Inc.
+/* bzero.  x86-64 version.
+   Copyright (C) 2010-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -21,35 +21,8 @@
 
 	.text
 ENTRY(__bzero)
-	.type	__bzero, @gnu_indirect_function
-	cmpl	$0, __cpu_features+KIND_OFFSET(%rip)
-	jne	1f
-	call	__init_cpu_features
-1:	leaq	__bzero_x86_64(%rip), %rax
-	testl	$bit_Prefer_SSE_for_memop, __cpu_features+FEATURE_OFFSET+index_Prefer_SSE_for_memop(%rip)
-	jz	2f
-	leaq	__bzero_sse2(%rip), %rax
-2:	ret
+	mov	%rsi,%rdx	/* Adjust parameter.  */
+	xorl	%esi,%esi	/* Fill with 0s.  */
+	jmp	__libc_memset	/* Branch to IFUNC memset.  */
 END(__bzero)
-
-	.type	__bzero_sse2, @function
-__bzero_sse2:
-	cfi_startproc
-	CALL_MCOUNT
-	mov	%rsi,%rdx	/* Adjust parameter.  */
-	xorl	%esi,%esi	/* Fill with 0s.  */
-	jmp	__memset_sse2
-	cfi_endproc
-	.size __bzero_sse2, .-__bzero_sse2
-
-	.type	__bzero_x86_64, @function
-__bzero_x86_64:
-	cfi_startproc
-	CALL_MCOUNT
-	mov	%rsi,%rdx	/* Adjust parameter.  */
-	xorl	%esi,%esi	/* Fill with 0s.  */
-	jmp	__memset_x86_64
-	cfi_endproc
-	.size __bzero_x86_64, .-__bzero_x86_64
-
 weak_alias (__bzero, bzero)

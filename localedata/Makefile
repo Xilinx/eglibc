@@ -69,7 +69,7 @@ generated-dirs := $(ld-test-names) tt_TT de_DE.437			\
 # Get $(inst_i18ndir) defined.
 include ../Makeconfig
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 locale_test_suite := tst_iswalnum tst_iswalpha tst_iswcntrl            \
 		     tst_iswctype tst_iswdigit tst_iswgraph            \
 		     tst_iswlower tst_iswprint tst_iswpunct            \
@@ -97,7 +97,7 @@ ifneq (no,$(PERL))
 tests: $(objpfx)mtrace-tst-leaks
 endif
 endif
-# eglibc: endif
+endif
 
 # Files to install.
 install-others := $(addprefix $(inst_i18ndir)/, \
@@ -127,7 +127,7 @@ CFLAGS-tst-mbswcs5.c = -Wno-format
 CFLAGS-tst-trans.c = -Wno-format
 
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 # We have to generate locales
 LOCALES := de_DE.ISO-8859-1 de_DE.UTF-8 en_US.ANSI_X3.4-1968 \
 	   en_US.ISO-8859-1 en_US.UTF-8 ja_JP.EUC-JP da_DK.ISO-8859-1 \
@@ -209,7 +209,7 @@ $(objpfx)tst-langinfo.out: tst-langinfo.sh $(objpfx)tst-langinfo \
 	$(SHELL) $< $(common-objpfx) '$(built-program-cmd)'
 $(objpfx)tst-digits.out: $(objpfx)tst-locale.out
 $(objpfx)tst-mbswcs6.out: $(addprefix $(objpfx),$(CTYPE_FILES))
-# eglibc: endif
+endif
 
 include SUPPORTED
 

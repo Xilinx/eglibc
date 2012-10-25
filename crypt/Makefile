@@ -31,7 +31,7 @@ libcrypt-routines := crypt-entry md5-crypt sha256-crypt sha512-crypt
 libcrypt-routines-$(OPTION_EGLIBC_CRYPT_UFC) := crypt_util crypt
 libcrypt-routines += $(libcrypt-routines-y)
 
-tests-$(OPTION_EGLIBC_CRYPT) := md5c-test sha256c-test sha512c-test
+tests-$(OPTION_EGLIBC_CRYPT) := md5c-test sha256c-test sha512c-test badsalttest
 tests-$(OPTION_EGLIBC_CRYPT_UFC) += cert
 
 include ../Makeconfig

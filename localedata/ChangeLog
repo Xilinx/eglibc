@@ -1,3 +1,34 @@
+2012-10-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile [$(cross-compiling) = no]: Change condition to
+	[$(run-built-tests) = yes].
+
+2012-10-22  Jim Blandy  <jimb@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+
+	* tst-fmon.sh: Redirect test program stdin in loop from /dev/null.
+	* tst-numeric.sh: Likewise.
+	* tst-rpmatch.sh: Likewise.
+
+2012-10-19  Jim Blandy  <jimb@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+
+	* tst-wctype.sh (run_program_prefix): Remove variable.
+	(tst_wctype): New variable.  Use it directly to run test program
+	instead of passing test program name as argument.
+
+2012-10-19  Florian Pritz  <bluewind@xinu.at>
+
+	[BZ #13758]
+	* locales/de_AT (LC_TIME): Change month name from "FebruAr" to
+	"Februar".
+
+2012-10-19  Pravin Satpute  <psatpute@redhat.com>
+
+	[BZ #14694]
+	* locales/mr_IN: Fix Wednesday in DAY and August, September and
+	October in ABMON and MON.
+
 2012-09-24  Dmitry V. Levin  <ldv@altlinux.org>
 
 	* gen-locale.sh: Add "set -e".

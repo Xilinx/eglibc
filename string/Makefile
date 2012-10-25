@@ -53,7 +53,7 @@ strop-tests	:= memchr memcmp memcpy memmove mempcpy memset memccpy	\
 		   stpcpy stpncpy strcat strchr strcmp strcpy strcspn	\
 		   strlen strncmp strncpy strpbrk strrchr strspn memmem	\
 		   strstr strcasestr strnlen strcasecmp strncasecmp	\
-		   strncat rawmemchr strchrnul
+		   strncat rawmemchr strchrnul bcopy bzero
 tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 		   tst-strlen stratcliff tst-svc tst-inlcall		\
 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
@@ -64,6 +64,8 @@ tests-$(OPTION_EGLIBC_ENVZ) += bug-envz1
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strxfrm bug-strcoll1
 
+tests-ifunc := $(strop-tests:%=test-%-ifunc)
+tests += $(tests-ifunc)
 
 include ../Rules
 
@@ -83,10 +85,10 @@ CFLAGS-tst-inlcall.c = -fno-builtin
 CFLAGS-bug-strstr1.c = -fno-builtin
 CFLAGS-bug-strcasestr1.c = -fno-builtin
 
-# eglibc: ifeq ($(cross-compiling),no)
+ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-svc.out
 $(objpfx)tst-svc.out: tst-svc.input $(objpfx)tst-svc
 	GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
 	  $(built-program-cmd) < $(word 1,$^) > $@
 	@cmp tst-svc.expect $(objpfx)tst-svc.out
-# eglibc: endif
+endif

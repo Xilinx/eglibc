@@ -56,6 +56,8 @@ tests-$(OPTION_POSIX_C_LANG_WIDE_CHAR) \
       += tst-wcstof wcsmbs-tst1 tst-wcsnlen \
 	 tst-wcpncpy tst-mbsrtowcs \
 	 wcsatcliff $(addprefix test-,$(strop-tests))
+tests-ifunc := $(strop-tests:%=test-%-ifunc)
+tests += $(tests-ifunc)
 
 include ../Rules
 

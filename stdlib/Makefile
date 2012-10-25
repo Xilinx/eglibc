@@ -134,11 +134,11 @@ bug-fmtmsg1-ENV = SEV_LEVEL=foo,11,newsev
 # Run a test on the header files we use.
 tests: $(objpfx)isomac.out
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 ifeq (y,$(OPTION_EGLIBC_FMTMSG))
 tests: $(objpfx)tst-fmtmsg.out
 endif
-# eglibc: endif
+endif
 
 $(objpfx)isomac.out: $(objpfx)isomac
 	$(dir $<)$(notdir $<) '$(CC)'  \

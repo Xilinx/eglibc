@@ -84,22 +84,27 @@ common-generated += dummy.o dummy.c
 # This makes all the auxiliary and test programs.
 
 .PHONY: others tests
+ifeq ($(multi-arch),no)
+tests := $(filter-out $(tests-ifunc), $(tests))
+xtests := $(filter-out $(xtests-ifunc), $(xtests))
+endif
+
 ifeq ($(build-programs),yes)
 others: $(addprefix $(objpfx),$(others) $(sysdep-others) $(extra-objs))
 else
 others: $(addprefix $(objpfx),$(extra-objs))
 endif
-# eglibc: ifeq ($(cross-compiling),yes)
-# eglibc: tests: $(addprefix $(objpfx),$(tests) $(test-srcs))
-# eglibc: xtests: tests
-# eglibc: else
+ifeq ($(run-built-tests),no)
+tests: $(addprefix $(objpfx),$(tests) $(test-srcs))
+xtests: tests
+else
 ifeq ($(build-bounded),yes)
 tests-bp.out = $(tests:%=$(objpfx)%-bp.out)
 xtests-bp.out = $(xtests:%=$(objpfx)%-bp.out)
 endif
 tests: $(tests:%=$(objpfx)%.out) $(tests-bp.out)
 xtests: tests $(xtests:%=$(objpfx)%.out) $(xtests-bp.out)
-# eglibc: endif
+endif
 
 ifeq ($(build-programs),yes)
 binaries-all-notests = $(others) $(sysdep-others)
@@ -175,8 +180,9 @@ ifneq "$(strip $(tests) $(xtests) $(test-srcs))" ""
 # These are the implicit rules for making test outputs
 # from the test programs and whatever input files are present.
 
-make-test-out = GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
-		$($*-ENV) $(built-program-cmd) $($*-ARGS)
+make-test-out = $(test-wrapper-env) \
+		GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
+		$($*-ENV) $(host-built-program-cmd) $($*-ARGS)
 $(objpfx)%-bp.out: %.input $(objpfx)%-bp
 	$(make-test-out) > $@ < $(word 1,$^)
 $(objpfx)%.out: %.input $(objpfx)%

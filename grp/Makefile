@@ -55,13 +55,12 @@ CFLAGS-getgrgid.c = -fexceptions
 
 endif
 
-# eglibc: ifeq (no,$(cross-compiling))
+ifeq ($(run-built-tests),yes)
 # tst_fgetgrent currently only works with shared libraries
 ifeq (yes,$(build-shared))
 tests: $(objpfx)tst_fgetgrent.out
 $(objpfx)tst_fgetgrent.out: tst_fgetgrent.sh $(objpfx)tst_fgetgrent
-	$(SHELL) $< $(common-objpfx) $(elf-objpfx) \
-		 $(rtld-installed-name) "$(cross-test-wrapper)"
+	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
 
 endif
-# eglibc: endif
+endif

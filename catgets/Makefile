@@ -52,7 +52,7 @@ generated-dirs = de
 
 tst-catgets-ENV = NLSPATH="$(objpfx)%l/%N.cat" LANG=de
 
-# eglibc: ifneq ($(cross-compiling),yes)
+ifeq ($(run-built-tests),yes)
 ifeq (y,$(OPTION_EGLIBC_CATGETS))
 tests: $(objpfx)de/libc.cat $(objpfx)test1.cat $(objpfx)test2.cat \
        $(objpfx)test-gencat.out
@@ -84,4 +84,4 @@ $(objpfx)test-gencat.out: test-gencat.sh $(objpfx)test-gencat \
 $(objpfx)sample.SJIS.cat: sample.SJIS $(objpfx)gencat
 	GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
 	$(built-program-cmd) -H $(objpfx)test-gencat.h < $(word 1,$^) > $@
-# eglibc: endif
+endif

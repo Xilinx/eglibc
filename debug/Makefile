@@ -148,6 +148,9 @@ ifeq (yy,$(OPTION_EGLIBC_LOCALE_CODE)$(OPTION_EGLIBC_CXX_TESTS))
 tests += tst-chk4 tst-chk5 tst-chk6 tst-lfschk4 tst-lfschk5 tst-lfschk6
 endif
 
+tests-ifunc := $(stpcpy_chk strcpy_chk:%=test-%-ifunc)
+tests += $(tests-ifunc)
+
 extra-libs = libSegFault libpcprofile
 extra-libs-others = $(extra-libs)
 

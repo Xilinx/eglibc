@@ -20,9 +20,10 @@
 set -e
 
 common_objpfx=$1; shift
-elf_objpfx=$1; shift
-rtld_installed_name=$1; shift
-cross_test_wrapper=$1; shift
+run_via_rtld_prefix=$1; shift
+test_wrapper=$1; shift
+test_wrapper_env=$1; shift
+run_program_prefix="${test_wrapper} ${run_via_rtld_prefix}"
 logfile=$common_objpfx/posix/globtest.out
 
 #CMP=cmp
@@ -37,12 +38,6 @@ case "$common_objpfx" in
     ;;
 esac
 
-# We have to find the libc and the NSS modules.
-library_path=${common_objpfx}:${common_objpfx}nss:${common_objpfx}nis:${common_objpfx}db2:${common_objpfx}hesiod
-
-run_program_prefix="${cross_test_wrapper} \
-${elf_objpfx}${rtld_installed_name} --library-path ${library_path}"
-
 # Since we use `sort' we must make sure to use the same locale everywhere.
 LC_ALL=C
 export LC_ALL
@@ -50,9 +45,10 @@ LANG=C
 export LANG
 
 # Create the arena
-: ${TMPDIR=/tmp}
-testdir=$(mktemp -d $TMPDIR/globtest-dir.XXXXXX)
-testout=$(mktemp $TMPDIR/globtest-out.XXXXXX)
+testdir=${common_objpfx}posix/globtest-dir
+testout=${common_objpfx}posix/globtest-out
+rm -rf $testdir $testout
+mkdir $testdir
 
 trap 'chmod 777 $testdir/noread; rm -fr $testdir $testout' 1 2 3 15
 
@@ -765,9 +761,9 @@ cat <<"EOF" | $CMP - $testout >> $logfile || failed=1
 `dir6/file1[ab]'
 `nondir\/'
 EOF
-${cross_test_wrapper} \
-env HOME="$testdir" \
-${elf_objpfx}${rtld_installed_name} --library-path ${library_path} \
+${test_wrapper_env} \
+HOME="$testdir" \
+${run_via_rtld_prefix} \
 ${common_objpfx}posix/globtest -ct "$testdir" \
 '~/dir1/file1_1' '~/dir1/file1_9' '~/dir3\*/file1' '~/dir3\*/file2' \
 '~\/dir1/file1_2' |
