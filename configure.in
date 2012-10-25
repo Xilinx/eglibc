@@ -1082,11 +1082,6 @@ else
 fi
 AC_SUBST(libc_cv_have_ksh)
 
-dnl We need gawk for at least gen-sorted.awk and option-groups.awk.
-if test "x$AWK" != "xgawk"; then
-  AC_MSG_ERROR([GLIBC requires GNU awk.])
-fi
-
 AC_PATH_PROG(PERL, perl, no)
 if test "$PERL" != no &&
    (eval `$PERL -V:apiversion`; test `expr "$apiversion" \< 5` -ne 0); then

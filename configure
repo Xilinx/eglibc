@@ -630,6 +630,7 @@ libc_cv_gcc_static_libgcc
 CXX_SYSINCLUDES
 SYSINCLUDES
 AUTOCONF
+NM
 AWK
 SED
 MAKEINFO
@@ -640,7 +641,6 @@ AS
 MIG
 OBJCOPY
 OBJDUMP
-NM
 AR
 LN_S
 INSTALL_DATA
@@ -4703,8 +4703,6 @@ AS=`$CC -print-prog-name=as`
 LD=`$CC -print-prog-name=ld`
 AR=`$CC -print-prog-name=ar`
 
-NM=`$CC -print-prog-name=nm`
-
 OBJDUMP=`$CC -print-prog-name=objdump`
 
 OBJCOPY=`$CC -print-prog-name=objcopy`
@@ -5599,10 +5597,6 @@ else
   libc_cv_have_ksh=yes
 fi
 
-
-if test "x$AWK" != "xgawk"; then
-  as_fn_error $? "GLIBC requires GNU awk." "$LINENO" 5
-fi
 
 # Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2

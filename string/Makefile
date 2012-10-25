@@ -69,7 +69,6 @@ tests += $(tests-ifunc)
 
 include ../Rules
 
-
 tester-ENV = LANGUAGE=C
 inl-tester-ENV = LANGUAGE=C
 noinl-tester-ENV = LANGUAGE=C

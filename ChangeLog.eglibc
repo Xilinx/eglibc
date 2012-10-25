@@ -1,3 +1,10 @@
+2012-10-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* aclocal.m4, configure.in, crypt/sha512c-test.c, string/Makefile,
+	sysdeps/unix/sysv/linux/i386/sysdep.h, timezone/Makefile: Revert
+	unnecessary differences from glibc.
+	* configure: Regenerated.
+
 2012-10-10  Joseph Myers  <joseph@codesourcery.com>
 
 	* elf/Makefile ($(objpfx)tst-rtld-load-self.out): Pass
