@@ -44,4 +44,5 @@ strong_alias (__feclearexcept, __old_feclearexcept)
 compat_symbol (libm, __old_feclearexcept, feclearexcept, GLIBC_2_1);
 #endif
 
+libm_hidden_ver (__feclearexcept, feclearexcept)
 versioned_symbol (libm, __feclearexcept, feclearexcept, GLIBC_2_2);

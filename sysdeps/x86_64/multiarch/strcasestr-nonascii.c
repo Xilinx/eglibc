@@ -16,7 +16,8 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-# include <ctype.h>
+#include <ctype.h>
+#include <xmmintrin.h>
 
 
 /* Similar to __m128i_strloadu.  Convert to lower case for none-POSIX/C

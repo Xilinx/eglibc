@@ -118,19 +118,14 @@ $(inst_auditdir)/sotruss-lib.so: $(objpfx)sotruss-lib.so $(+force)
 	$(do-install-program)
 endif
 
-tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1
-ifeq (yes,$(have-initfini-array))
-tests += tst-array1 tst-array2 tst-array3 tst-array4 tst-array5
-endif
+tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1 \
+	tst-array1 tst-array2 tst-array3 tst-array4 tst-array5
 tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static \
-	       tst-leaks1-static
+	       tst-leaks1-static tst-array1-static tst-array5-static
 ifeq (yes,$(build-shared))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
        LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
-endif
-ifeq (yes,$(have-initfini-array))
-tests-static += tst-array1-static tst-array5-static
 endif
 tests += $(tests-static)
 ifeq (yes,$(build-shared))
@@ -218,10 +213,8 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-initordera3 tst-initordera4 \
 		tst-initorder2a tst-initorder2b tst-initorder2c \
 		tst-initorder2d \
-		tst-relsort1mod1 tst-relsort1mod2
-ifeq (yes,$(have-initfini-array))
-modules-names += tst-array2dep tst-array5dep
-endif
+		tst-relsort1mod1 tst-relsort1mod2 tst-array2dep \
+		tst-array5dep
 ifeq (yesyes,$(have-fpie)$(build-shared))
 modules-names += tst-piemod1
 tests += tst-pie1
@@ -858,45 +851,37 @@ LDFLAGS-tst-execstack-needed = -Wl,-z,noexecstack
 LDFLAGS-tst-execstack-prog = -Wl,-z,execstack
 endif
 
-$(objpfx)tst-array1.out: $(objpfx)tst-array1
-	$(elf-objpfx)$(rtld-installed-name) \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
-	  $(objpfx)tst-array1 > $@
+$(objpfx)tst-array1.out: tst-array1.exp $(objpfx)tst-array1
+	$(built-program-cmd) > $@
 	cmp $@ tst-array1.exp > /dev/null
 
-$(objpfx)tst-array1-static.out: $(objpfx)tst-array1-static
-	$(objpfx)tst-array1-static > $@
+$(objpfx)tst-array1-static.out: tst-array1.exp $(objpfx)tst-array1-static
+	$(built-program-cmd) > $@
 	cmp $@ tst-array1.exp > /dev/null
 
 $(objpfx)tst-array2: $(objpfx)tst-array2dep.so
-$(objpfx)tst-array2.out: $(objpfx)tst-array2
-	$(elf-objpfx)$(rtld-installed-name) \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
-	  $(objpfx)tst-array2 > $@
+$(objpfx)tst-array2.out: tst-array2.exp $(objpfx)tst-array2
+	$(built-program-cmd) > $@
 	cmp $@ tst-array2.exp > /dev/null
 
-$(objpfx)tst-array3.out: $(objpfx)tst-array3
-	$(elf-objpfx)$(rtld-installed-name) \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
-	  $(objpfx)tst-array3 > $@
+$(objpfx)tst-array3.out: tst-array1.exp $(objpfx)tst-array3
+	$(built-program-cmd) > $@
 	cmp $@ tst-array1.exp > /dev/null
 
 $(objpfx)tst-array4: $(libdl)
-$(objpfx)tst-array4.out: $(objpfx)tst-array4 $(objpfx)tst-array2dep.so
-	$(elf-objpfx)$(rtld-installed-name) \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
-	  $< > $@
+$(objpfx)tst-array4.out: tst-array4.exp $(objpfx)tst-array4 \
+			 $(objpfx)tst-array2dep.so
+	$(built-program-cmd) > $@
 	cmp $@ tst-array4.exp > /dev/null
 
 $(objpfx)tst-array5: $(objpfx)tst-array5dep.so
-$(objpfx)tst-array5.out: $(objpfx)tst-array5
-	$(elf-objpfx)$(rtld-installed-name) \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
-	  $(objpfx)tst-array5 > $@
+$(objpfx)tst-array5.out: tst-array5.exp $(objpfx)tst-array5
+	$(built-program-cmd) > $@
 	cmp $@ tst-array5.exp > /dev/null
 
-$(objpfx)tst-array5-static.out: $(objpfx)tst-array5-static
-	$(objpfx)tst-array5-static > $@
+$(objpfx)tst-array5-static.out: tst-array5-static.exp \
+				$(objpfx)tst-array5-static
+	$(built-program-cmd) > $@
 	cmp $@ tst-array5-static.exp > /dev/null
 
 CFLAGS-tst-pie1.c += $(pie-ccflag)

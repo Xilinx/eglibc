@@ -36,7 +36,7 @@
 #define	_PATH_DEFPATH	"/usr/bin:/bin"
 /* All standard utilities path. */
 #define	_PATH_STDPATH \
-	"/usr/bin:/bin:/usr/sbin:/sbin:/usr/contrib/bin:/usr/old/bin"
+	"/usr/bin:/bin:/usr/sbin:/sbin"
 
 #define	_PATH_BSHELL	"/bin/sh"
 #define	_PATH_CONSOLE	"/dev/console"
@@ -50,8 +50,8 @@
 #define	_PATH_MAILDIR	"/var/mail"
 #define	_PATH_MAN	"/usr/share/man"
 #define	_PATH_MEM	"/dev/mem"
-#define	_PATH_MNTTAB    "/etc/fstab"
-#define	_PATH_MOUNTED   "/var/run/mtab"
+#define	_PATH_MNTTAB	"/etc/fstab"
+#define	_PATH_MOUNTED	"/var/run/mtab"
 #define	_PATH_NOLOGIN	"/etc/nologin"
 #define	_PATH_PRESERVE	"/var/lib"
 #define	_PATH_RWHODIR	"/var/spool/rwho"

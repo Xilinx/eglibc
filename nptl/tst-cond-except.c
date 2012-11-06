@@ -18,6 +18,7 @@
 
 #include <pthread.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -72,11 +73,11 @@ thr (void *arg)
   pthread_cleanup_pop (1);
 
 out:
-  return (void *)ret;
+  return (void *) (uintptr_t) ret;
 }
 
 int
-do_test ()
+do_test (void)
 {
   pthread_t thread;
   int ret = 0;
@@ -104,5 +105,6 @@ out:
   return ret;
 }
 
+#define TEST_FUNCTION do_test ()
 #define TIMEOUT 5
 #include "../test-skeleton.c"

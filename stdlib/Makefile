@@ -22,7 +22,7 @@ include ../option-groups.mak
 
 subdir	:= stdlib
 
-headers	:= stdlib.h bits/stdlib.h bits/stdlib-ldbl.h			      \
+headers	:= stdlib.h bits/stdlib.h bits/stdlib-ldbl.h bits/stdlib-float.h      \
 	   monetary.h bits/monetary-ldbl.h				      \
 	   inttypes.h stdint.h bits/wordsize.h				      \
 	   errno.h sys/errno.h bits/errno.h				      \
@@ -78,7 +78,8 @@ tests		:= tst-strtol tst-strtod testrand testsort testdiv          \
 		   tst-atof1 tst-atof2 tst-strtod2 tst-rand48-2             \
 		   tst-makecontext tst-qsort2 tst-makecontext2 tst-strtod6  \
 		   tst-unsetenv1 tst-makecontext3 bug-getcontext bug-fmtmsg1 \
-		   tst-secure-getenv tst-strtod-overflow tst-strtod-round
+		   tst-secure-getenv tst-strtod-overflow tst-strtod-round   \
+		   tst-tininess tst-strtod-underflow
 tests-static	:= tst-secure-getenv
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
 		+= tst-strtod3 tst-strtod4 tst-strtod5 testmb2
@@ -165,3 +166,5 @@ link-libm = $(common-objpfx)math/libm.a
 endif
 $(objpfx)bug-getcontext: $(link-libm)
 $(objpfx)tst-strtod-round: $(link-libm)
+$(objpfx)tst-tininess: $(link-libm)
+$(objpfx)tst-strtod-underflow: $(link-libm)

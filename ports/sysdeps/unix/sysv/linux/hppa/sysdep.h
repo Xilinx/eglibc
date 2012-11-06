@@ -1,6 +1,5 @@
 /* Assembler macros for PA-RISC.
-   Copyright (C) 1999, 2001, 2002, 2003, 2007 
-   Free Software Foundation, Inc.
+   Copyright (C) 1999-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper, <drepper@cygnus.com>, August 1999.
    Linux/PA-RISC changes by Philipp Rumpf, <prumpf@tux.org>, March 2000.
@@ -21,7 +20,6 @@
 
 #include <asm/unistd.h>
 #include <sysdeps/generic/sysdep.h>
-#include <sys/syscall.h>
 
 /* In order to get __set_errno() definition in INLINE_SYSCALL.  */
 #ifndef __ASSEMBLER__
@@ -29,37 +27,33 @@
 #endif
 
 #undef ASM_LINE_SEP
-#define ASM_LINE_SEP ! 
+#define ASM_LINE_SEP !
 
 #undef SYS_ify
 #define SYS_ify(syscall_name)	(__NR_##syscall_name)
 
-/* WARNING: TREG must be a callee saves register so 
-   that it doesn't have to be restored after a call 
+/* The vfork, fork, and clone syscalls clobber r19
+ * and r21. We list r21 as either clobbered or as an
+ * input to a 6-argument syscall. We must save and
+ * restore r19 in both PIC and non-PIC cases.
+ */
+/* WARNING: TREG must be a callee saves register so
+   that it doesn't have to be restored after a call
    to another function */
-#ifdef PIC
-# define TREG %r3
-# define SAVE_PIC(SREG) copy %r19, SREG ASM_LINE_SEP
-# define LOAD_PIC(LREG) copy LREG, %r19 ASM_LINE_SEP
+#define TREG 4
+#define SAVE_PIC(SREG) \
+	copy %r19, SREG ASM_LINE_SEP	\
+	.cfi_register 19, SREG
+#define LOAD_PIC(LREG) \
+	copy LREG , %r19 ASM_LINE_SEP	\
+	.cfi_restore 19
 /* Inline assembly defines */
-# define TREG_ASM "%r4" /* Cant clobber r3, it holds framemarker */
-# define SAVE_ASM_PIC	"       copy %%r19, %" TREG_ASM "\n"
-# define LOAD_ASM_PIC	"       copy %" TREG_ASM ", %%r19\n"
-# define CLOB_TREG	TREG_ASM ,
-# define PIC_REG_DEF	register unsigned long __r19 asm("r19");
-# define PIC_REG_USE	, "r" (__r19)
-#else
-# define TREG %r3
-# define SAVE_PIC(SREG) nop ASM_LINE_SEP
-# define LOAD_PIC(LREG) nop ASM_LINE_SEP
-/* Inline assembly defines */
-# define TREG_ASM 
-# define SAVE_ASM_PIC	"nop \n"
-# define LOAD_ASM_PIC	"nop \n"
-# define CLOB_TREG
-# define PIC_REG_DEF
-# define PIC_REG_USE
-#endif
+#define TREG_ASM "%r4" /* Cant clobber r3, it holds framemarker */
+#define SAVE_ASM_PIC	"       copy %%r19, %" TREG_ASM "\n"
+#define LOAD_ASM_PIC	"       copy %" TREG_ASM ", %%r19\n"
+#define CLOB_TREG	TREG_ASM ,
+#define PIC_REG_DEF	register unsigned long __r19 asm("r19");
+#define PIC_REG_USE	, "r" (__r19)
 
 #ifdef __ASSEMBLER__
 
@@ -126,12 +120,14 @@
 	.align ALIGNARG(4)				ASM_LINE_SEP	\
 	.export C_SYMBOL_NAME(name)			ASM_LINE_SEP	\
 	.type	C_SYMBOL_NAME(name),@function		ASM_LINE_SEP	\
+	cfi_startproc					ASM_LINE_SEP	\
 	C_LABEL(name)					ASM_LINE_SEP	\
 	.PROC						ASM_LINE_SEP	\
 	.CALLINFO FRAME=64,CALLS,SAVE_RP,ENTRY_GR=3	ASM_LINE_SEP	\
 	.ENTRY						ASM_LINE_SEP	\
 	/* SAVE_RP says we do */			ASM_LINE_SEP	\
 	stw %rp, -20(%sr0,%sp)				ASM_LINE_SEP	\
+	.cfi_offset 2, -20				ASM_LINE_SEP	\
 	/*FIXME: Call mcount? (carefull with stack!) */
 
 /* Some syscall wrappers do not call other functions, and
@@ -141,22 +137,25 @@
 	.align ALIGNARG(4)				ASM_LINE_SEP	\
 	.export C_SYMBOL_NAME(name)			ASM_LINE_SEP	\
 	.type	C_SYMBOL_NAME(name),@function		ASM_LINE_SEP	\
+	cfi_startproc					ASM_LINE_SEP	\
 	C_LABEL(name)					ASM_LINE_SEP	\
 	.PROC						ASM_LINE_SEP	\
 	.CALLINFO FRAME=64,NO_CALLS,SAVE_RP,ENTRY_GR=3	ASM_LINE_SEP	\
 	.ENTRY						ASM_LINE_SEP	\
 	/* SAVE_RP says we do */			ASM_LINE_SEP	\
 	stw %rp, -20(%sr0,%sp)				ASM_LINE_SEP	\
+	.cfi_offset 2, -20				ASM_LINE_SEP	\
 	/*FIXME: Call mcount? (carefull with stack!) */
 
 #undef	END
 #define END(name)							\
   	.EXIT						ASM_LINE_SEP	\
 	.PROCEND					ASM_LINE_SEP	\
+	cfi_endproc					ASM_LINE_SEP	\
 .size	C_SYMBOL_NAME(name), .-C_SYMBOL_NAME(name)	ASM_LINE_SEP
 
-/* If compiled for profiling, call `mcount' at the start 
-   of each function. No, don't bother.  gcc will put the 
+/* If compiled for profiling, call `mcount' at the start
+   of each function. No, don't bother.  gcc will put the
    call in for us.  */
 #define CALL_MCOUNT		/* Do nothing.  */
 
@@ -169,9 +168,7 @@
    which means
 	ENTRY(name)
 	DO_CALL(...)
-	nop
-	bv 0(2)
-	nop
+	bv,n 0(2)
 */
 
 #define	PSEUDO(name, syscall_name, args)			\
@@ -179,8 +176,7 @@
   /* If necc. load args from stack */		ASM_LINE_SEP	\
   DOARGS_##args					ASM_LINE_SEP	\
   DO_CALL (syscall_name, args)			ASM_LINE_SEP	\
-  UNDOARGS_##args				ASM_LINE_SEP	\
-  nop						ASM_LINE_SEP
+  UNDOARGS_##args				ASM_LINE_SEP
 
 #define ret \
   /* Return value set by ERRNO code */		ASM_LINE_SEP	\
@@ -195,8 +191,7 @@
   ENTRY_LEAF (name)				ASM_LINE_SEP	\
   DOARGS_##args					ASM_LINE_SEP	\
   DO_CALL_NOERRNO (syscall_name, args)		ASM_LINE_SEP	\
-  UNDOARGS_##args				ASM_LINE_SEP	\
-  nop						ASM_LINE_SEP
+  UNDOARGS_##args				ASM_LINE_SEP
 
 #define ret_NOERRNO ret
 
@@ -210,8 +205,7 @@
   ENTRY_LEAF (name)				ASM_LINE_SEP	\
   DOARGS_##args					ASM_LINE_SEP	\
   DO_CALL_ERRVAL (syscall_name, args)		ASM_LINE_SEP	\
-  UNDOARGS_##args				ASM_LINE_SEP	\
-  nop						ASM_LINE_SEP
+  UNDOARGS_##args				ASM_LINE_SEP
 
 #define ret_ERRVAL ret
 
@@ -289,8 +283,12 @@
 #define DO_CALL(syscall_name, args)				\
 	/* Create a frame */			ASM_LINE_SEP	\
 	stwm TREG, 64(%sp)			ASM_LINE_SEP	\
+	.cfi_offset TREG, 0			ASM_LINE_SEP	\
+	.cfi_adjust_cfa_offset 64		ASM_LINE_SEP	\
 	stw %sp, -4(%sp)			ASM_LINE_SEP	\
+	.cfi_offset 30, -4			ASM_LINE_SEP	\
 	stw %r19, -32(%sp)			ASM_LINE_SEP	\
+	.cfi_offset 19, -32			ASM_LINE_SEP	\
 	/* Save r19 */				ASM_LINE_SEP	\
 	SAVE_PIC(TREG)				ASM_LINE_SEP	\
 	/* Do syscall, delay loads # */		ASM_LINE_SEP	\
@@ -313,8 +311,10 @@
 L(pre_end):					ASM_LINE_SEP	\
 	/* Restore our frame, restoring TREG */	ASM_LINE_SEP	\
 	ldwm -64(%sp), TREG			ASM_LINE_SEP	\
+	.cfi_adjust_cfa_offset -64		ASM_LINE_SEP	\
 	/* Restore return pointer */		ASM_LINE_SEP	\
-	ldw -20(%sp),%rp			ASM_LINE_SEP
+	ldw -20(%sp),%rp			ASM_LINE_SEP	\
+	.cfi_restore 2				ASM_LINE_SEP
 
 /* We do nothing with the return, except hand it back to someone else */
 #undef  DO_CALL_NOERRNO
@@ -386,13 +386,13 @@ L(pre_end):					ASM_LINE_SEP	\
 /* INTERNAL_SYSCALL_DECL - Allows us to setup some function static
    value to use within the context of the syscall
    INTERNAL_SYSCALL_ERROR_P - Returns 0 if it wasn't an error, 1 otherwise
-   You are allowed to use the syscall result (val) and the DECL error 
+   You are allowed to use the syscall result (val) and the DECL error
    variable to determine what went wrong.
    INTERLAL_SYSCALL_ERRNO - Munges the val/err pair into the error number.
    In our case we just flip the sign. */
 
 #undef INTERNAL_SYSCALL_DECL
-#define INTERNAL_SYSCALL_DECL(err) 
+#define INTERNAL_SYSCALL_DECL(err)
 
 #undef INTERNAL_SYSCALL_ERROR_P
 #define INTERNAL_SYSCALL_ERROR_P(val, err) \

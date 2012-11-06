@@ -1,4 +1,5 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* pthread_spin_unlock -- unlock a spin lock.  Tile version.
+   Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -12,18 +13,21 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
+   License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <sysdep.h>
+#include "pthreadP.h"
+#include <atomic.h>
 
-ENTRY (syscall)
-	mr   r0,r3
-	mr   r3,r4
-	mr   r4,r5
-	mr   r5,r6
-	mr   r6,r7
-	mr   r7,r8
-	sc
-	blr
-END (syscall)
+int
+pthread_spin_unlock (pthread_spinlock_t *lock)
+{
+#ifdef __tilegx__
+  /* Use exchange() to bypass the write buffer. */
+  atomic_exchange_rel (lock, 0);
+#else
+  atomic_full_barrier ();
+  *lock = 0;
+#endif
+  return 0;
+}

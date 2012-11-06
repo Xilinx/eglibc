@@ -1,3 +1,907 @@
+2012-11-06  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14793]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): In case of large z
+	exponent and small x and y exponents, scale x or y up.  Increase
+	by 2 the exponent used in scaling up.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+
+2012-11-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14805]
+	* sysdeps/sh/sh4/fpu/bits/fenv.h (FE_DFL_ENV): Use cast to const
+	fenv_t *.
+
+	[BZ #14801]
+	* sysdeps/s390/fpu/bits/fenv.h (fenv_t): Use implementation
+	namespace for names of struct fields.
+	* sysdeps/s390/fpu/fegetenv.c (fegetenv): Update references to
+	fenv_t fields.
+	* sysdeps/s390/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/s390/fpu/fesetenv.c (fesetenv): Likewise.
+
+2012-11-04  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	[BZ #3665]
+	* sysdeps/mach/hurd/bits/errno.h: Regenerated.
+
+2012-11-04  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* csu/libc-start.c (LIBC_START_MAIN): Conditionalize use of
+	PTR_DEMANGLE.
+
+	[BZ #5246]
+	* sysdeps/mach/hurd/i386/____longjmp_chk.S: Conditionalize use of
+	PTR_DEMANGLE.
+
+2012-11-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14797]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Compute cases that
+	definitely overflow as x * y not x * y + z.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+
+2012-11-04  Thomas Schwinge  <thomas@codesourcery.com>
+
+	[BZ #157]
+
+	* include/stub-tag.h: Remove file.
+	* sysdeps/unix/Makefile ($(objpfx)stub-syscalls.c): Don't emit
+	'#include' of it.
+	* manual/maint.texi (Porting): Don't reference it.
+	* Makerules ($(objpfx)stubs): Likewise.
+	* dirent/closedir.c: Don't include <stub-tag.h>.
+	* dirent/dirfd.c: Likewise.
+	* dirent/fdopendir.c: Likewise.
+	* dirent/getdents.c: Likewise.
+	* dirent/getdents64.c: Likewise.
+	* dirent/opendir.c: Likewise.
+	* dirent/readdir.c: Likewise.
+	* dirent/readdir64.c: Likewise.
+	* dirent/readdir64_r.c: Likewise.
+	* dirent/readdir_r.c: Likewise.
+	* dirent/rewinddir.c: Likewise.
+	* dirent/seekdir.c: Likewise.
+	* dirent/telldir.c: Likewise.
+	* gmon/profil.c: Likewise.
+	* grp/setgroups.c: Likewise.
+	* inet/if_index.c: Likewise.
+	* io/access.c: Likewise.
+	* io/chdir.c: Likewise.
+	* io/chmod.c: Likewise.
+	* io/chown.c: Likewise.
+	* io/close.c: Likewise.
+	* io/dup.c: Likewise.
+	* io/dup2.c: Likewise.
+	* io/dup3.c: Likewise.
+	* io/euidaccess.c: Likewise.
+	* io/faccessat.c: Likewise.
+	* io/fchdir.c: Likewise.
+	* io/fchmod.c: Likewise.
+	* io/fchmodat.c: Likewise.
+	* io/fchown.c: Likewise.
+	* io/fchownat.c: Likewise.
+	* io/fcntl.c: Likewise.
+	* io/flock.c: Likewise.
+	* io/fstatfs.c: Likewise.
+	* io/fstatfs64.c: Likewise.
+	* io/fstatvfs.c: Likewise.
+	* io/fstatvfs64.c: Likewise.
+	* io/futimens.c: Likewise.
+	* io/fxstat.c: Likewise.
+	* io/fxstat64.c: Likewise.
+	* io/fxstatat.c: Likewise.
+	* io/fxstatat64.c: Likewise.
+	* io/getcwd.c: Likewise.
+	* io/isatty.c: Likewise.
+	* io/lchmod.c: Likewise.
+	* io/lchown.c: Likewise.
+	* io/link.c: Likewise.
+	* io/linkat.c: Likewise.
+	* io/lseek.c: Likewise.
+	* io/lseek64.c: Likewise.
+	* io/lxstat64.c: Likewise.
+	* io/mkdir.c: Likewise.
+	* io/mkdirat.c: Likewise.
+	* io/mkfifo.c: Likewise.
+	* io/mkfifoat.c: Likewise.
+	* io/open.c: Likewise.
+	* io/open64.c: Likewise.
+	* io/openat.c: Likewise.
+	* io/openat64.c: Likewise.
+	* io/pipe.c: Likewise.
+	* io/pipe2.c: Likewise.
+	* io/poll.c: Likewise.
+	* io/posix_fadvise.c: Likewise.
+	* io/posix_fadvise64.c: Likewise.
+	* io/posix_fallocate.c: Likewise.
+	* io/posix_fallocate64.c: Likewise.
+	* io/read.c: Likewise.
+	* io/readlink.c: Likewise.
+	* io/readlinkat.c: Likewise.
+	* io/rmdir.c: Likewise.
+	* io/sendfile.c: Likewise.
+	* io/sendfile64.c: Likewise.
+	* io/statfs.c: Likewise.
+	* io/statfs64.c: Likewise.
+	* io/statvfs.c: Likewise.
+	* io/statvfs64.c: Likewise.
+	* io/symlink.c: Likewise.
+	* io/symlinkat.c: Likewise.
+	* io/ttyname.c: Likewise.
+	* io/ttyname_r.c: Likewise.
+	* io/umask.c: Likewise.
+	* io/unlink.c: Likewise.
+	* io/unlinkat.c: Likewise.
+	* io/utime.c: Likewise.
+	* io/utimensat.c: Likewise.
+	* io/write.c: Likewise.
+	* io/xmknod.c: Likewise.
+	* io/xmknodat.c: Likewise.
+	* io/xstat.c: Likewise.
+	* io/xstat64.c: Likewise.
+	* login/getpt.c: Likewise.
+	* login/grantpt.c: Likewise.
+	* login/unlockpt.c: Likewise.
+	* math/e_acoshl.c: Likewise.
+	* math/e_acosl.c: Likewise.
+	* math/e_asinl.c: Likewise.
+	* math/e_atan2l.c: Likewise.
+	* math/e_atanhl.c: Likewise.
+	* math/e_coshl.c: Likewise.
+	* math/e_expl.c: Likewise.
+	* math/e_fmodl.c: Likewise.
+	* math/e_gammal_r.c: Likewise.
+	* math/e_hypotl.c: Likewise.
+	* math/e_j0l.c: Likewise.
+	* math/e_j1l.c: Likewise.
+	* math/e_jnl.c: Likewise.
+	* math/e_lgammal_r.c: Likewise.
+	* math/e_log10l.c: Likewise.
+	* math/e_log2l.c: Likewise.
+	* math/e_logl.c: Likewise.
+	* math/e_powl.c: Likewise.
+	* math/e_rem_pio2l.c: Likewise.
+	* math/e_sinhl.c: Likewise.
+	* math/e_sqrtl.c: Likewise.
+	* math/fclrexcpt.c: Likewise.
+	* math/fedisblxcpt.c: Likewise.
+	* math/feenablxcpt.c: Likewise.
+	* math/fegetenv.c: Likewise.
+	* math/fegetexcept.c: Likewise.
+	* math/fegetround.c: Likewise.
+	* math/feholdexcpt.c: Likewise.
+	* math/fesetenv.c: Likewise.
+	* math/fesetround.c: Likewise.
+	* math/feupdateenv.c: Likewise.
+	* math/fgetexcptflg.c: Likewise.
+	* math/fraiseexcpt.c: Likewise.
+	* math/fsetexcptflg.c: Likewise.
+	* math/ftestexcept.c: Likewise.
+	* math/k_cosl.c: Likewise.
+	* math/k_rem_pio2l.c: Likewise.
+	* math/k_sinl.c: Likewise.
+	* math/k_tanl.c: Likewise.
+	* math/s_asinhl.c: Likewise.
+	* math/s_atanl.c: Likewise.
+	* math/s_cbrtl.c: Likewise.
+	* math/s_erfl.c: Likewise.
+	* math/s_expm1l.c: Likewise.
+	* math/s_log1pl.c: Likewise.
+	* math/s_tanhl.c: Likewise.
+	* misc/acct.c: Likewise.
+	* misc/brk.c: Likewise.
+	* misc/chflags.c: Likewise.
+	* misc/chroot.c: Likewise.
+	* misc/fchflags.c: Likewise.
+	* misc/fgetxattr.c: Likewise.
+	* misc/flistxattr.c: Likewise.
+	* misc/fremovexattr.c: Likewise.
+	* misc/fsetxattr.c: Likewise.
+	* misc/fsync.c: Likewise.
+	* misc/ftruncate.c: Likewise.
+	* misc/futimes.c: Likewise.
+	* misc/futimesat.c: Likewise.
+	* misc/getdomain.c: Likewise.
+	* misc/getdtsz.c: Likewise.
+	* misc/gethostid.c: Likewise.
+	* misc/gethostname.c: Likewise.
+	* misc/getloadavg.c: Likewise.
+	* misc/getpagesize.c: Likewise.
+	* misc/getsysstats.c: Likewise.
+	* misc/getxattr.c: Likewise.
+	* misc/gtty.c: Likewise.
+	* misc/ioctl.c: Likewise.
+	* misc/lgetxattr.c: Likewise.
+	* misc/listxattr.c: Likewise.
+	* misc/llistxattr.c: Likewise.
+	* misc/lremovexattr.c: Likewise.
+	* misc/lsetxattr.c: Likewise.
+	* misc/lutimes.c: Likewise.
+	* misc/madvise.c: Likewise.
+	* misc/mincore.c: Likewise.
+	* misc/mlock.c: Likewise.
+	* misc/mlockall.c: Likewise.
+	* misc/mmap.c: Likewise.
+	* misc/mprotect.c: Likewise.
+	* misc/msync.c: Likewise.
+	* misc/munlock.c: Likewise.
+	* misc/munlockall.c: Likewise.
+	* misc/munmap.c: Likewise.
+	* misc/preadv.c: Likewise.
+	* misc/preadv64.c: Likewise.
+	* misc/ptrace.c: Likewise.
+	* misc/pwritev.c: Likewise.
+	* misc/pwritev64.c: Likewise.
+	* misc/readv.c: Likewise.
+	* misc/reboot.c: Likewise.
+	* misc/remap_file_pages.c: Likewise.
+	* misc/removexattr.c: Likewise.
+	* misc/revoke.c: Likewise.
+	* misc/select.c: Likewise.
+	* misc/setdomain.c: Likewise.
+	* misc/setegid.c: Likewise.
+	* misc/seteuid.c: Likewise.
+	* misc/sethostid.c: Likewise.
+	* misc/sethostname.c: Likewise.
+	* misc/setregid.c: Likewise.
+	* misc/setreuid.c: Likewise.
+	* misc/setxattr.c: Likewise.
+	* misc/sstk.c: Likewise.
+	* misc/stty.c: Likewise.
+	* misc/swapoff.c: Likewise.
+	* misc/swapon.c: Likewise.
+	* misc/sync.c: Likewise.
+	* misc/syncfs.c: Likewise.
+	* misc/syscall.c: Likewise.
+	* misc/truncate.c: Likewise.
+	* misc/ualarm.c: Likewise.
+	* misc/usleep.c: Likewise.
+	* misc/ustat.c: Likewise.
+	* misc/utimes.c: Likewise.
+	* misc/vhangup.c: Likewise.
+	* misc/writev.c: Likewise.
+	* posix/_exit.c: Likewise.
+	* posix/alarm.c: Likewise.
+	* posix/execve.c: Likewise.
+	* posix/fexecve.c: Likewise.
+	* posix/fork.c: Likewise.
+	* posix/fpathconf.c: Likewise.
+	* posix/getaddrinfo.c: Likewise.
+	* posix/getegid.c: Likewise.
+	* posix/geteuid.c: Likewise.
+	* posix/getgid.c: Likewise.
+	* posix/getgroups.c: Likewise.
+	* posix/getlogin.c: Likewise.
+	* posix/getlogin_r.c: Likewise.
+	* posix/getpgid.c: Likewise.
+	* posix/getpid.c: Likewise.
+	* posix/getppid.c: Likewise.
+	* posix/getresgid.c: Likewise.
+	* posix/getresuid.c: Likewise.
+	* posix/getsid.c: Likewise.
+	* posix/getuid.c: Likewise.
+	* posix/glob64.c: Likewise.
+	* posix/nanosleep.c: Likewise.
+	* posix/pathconf.c: Likewise.
+	* posix/pause.c: Likewise.
+	* posix/posix_madvise.c: Likewise.
+	* posix/pread.c: Likewise.
+	* posix/pread64.c: Likewise.
+	* posix/pwrite.c: Likewise.
+	* posix/pwrite64.c: Likewise.
+	* posix/sched_getaffinity.c: Likewise.
+	* posix/sched_getp.c: Likewise.
+	* posix/sched_gets.c: Likewise.
+	* posix/sched_primax.c: Likewise.
+	* posix/sched_primin.c: Likewise.
+	* posix/sched_rr_gi.c: Likewise.
+	* posix/sched_setaffinity.c: Likewise.
+	* posix/sched_setp.c: Likewise.
+	* posix/sched_sets.c: Likewise.
+	* posix/sched_yield.c: Likewise.
+	* posix/setgid.c: Likewise.
+	* posix/setlogin.c: Likewise.
+	* posix/setpgid.c: Likewise.
+	* posix/setresgid.c: Likewise.
+	* posix/setresuid.c: Likewise.
+	* posix/setsid.c: Likewise.
+	* posix/setuid.c: Likewise.
+	* posix/sleep.c: Likewise.
+	* posix/spawni.c: Likewise.
+	* posix/sysconf.c: Likewise.
+	* posix/times.c: Likewise.
+	* posix/wait.c: Likewise.
+	* posix/wait3.c: Likewise.
+	* posix/wait4.c: Likewise.
+	* posix/waitpid.c: Likewise.
+	* resolv/gai_sigqueue.c: Likewise.
+	* resource/getpriority.c: Likewise.
+	* resource/getrlimit.c: Likewise.
+	* resource/getrusage.c: Likewise.
+	* resource/nice.c: Likewise.
+	* resource/setpriority.c: Likewise.
+	* resource/setrlimit.c: Likewise.
+	* resource/ulimit.c: Likewise.
+	* rt/aio_cancel.c: Likewise.
+	* rt/aio_fsync.c: Likewise.
+	* rt/aio_read.c: Likewise.
+	* rt/aio_sigqueue.c: Likewise.
+	* rt/aio_suspend.c: Likewise.
+	* rt/aio_write.c: Likewise.
+	* rt/clock_getres.c: Likewise.
+	* rt/clock_gettime.c: Likewise.
+	* rt/clock_nanosleep.c: Likewise.
+	* rt/clock_settime.c: Likewise.
+	* rt/lio_listio.c: Likewise.
+	* rt/mq_close.c: Likewise.
+	* rt/mq_getattr.c: Likewise.
+	* rt/mq_notify.c: Likewise.
+	* rt/mq_open.c: Likewise.
+	* rt/mq_receive.c: Likewise.
+	* rt/mq_send.c: Likewise.
+	* rt/mq_setattr.c: Likewise.
+	* rt/mq_timedreceive.c: Likewise.
+	* rt/mq_timedsend.c: Likewise.
+	* rt/mq_unlink.c: Likewise.
+	* rt/shm_open.c: Likewise.
+	* rt/shm_unlink.c: Likewise.
+	* rt/timer_create.c: Likewise.
+	* rt/timer_delete.c: Likewise.
+	* rt/timer_getoverr.c: Likewise.
+	* rt/timer_gettime.c: Likewise.
+	* rt/timer_settime.c: Likewise.
+	* setjmp/__longjmp.c: Likewise.
+	* setjmp/setjmp.c: Likewise.
+	* signal/kill.c: Likewise.
+	* signal/killpg.c: Likewise.
+	* signal/raise.c: Likewise.
+	* signal/sigaction.c: Likewise.
+	* signal/sigaltstack.c: Likewise.
+	* signal/sigblock.c: Likewise.
+	* signal/sigignore.c: Likewise.
+	* signal/sigintr.c: Likewise.
+	* signal/signal.c: Likewise.
+	* signal/sigpause.c: Likewise.
+	* signal/sigpending.c: Likewise.
+	* signal/sigqueue.c: Likewise.
+	* signal/sigreturn.c: Likewise.
+	* signal/sigset.c: Likewise.
+	* signal/sigsetmask.c: Likewise.
+	* signal/sigstack.c: Likewise.
+	* signal/sigsuspend.c: Likewise.
+	* signal/sigtimedwait.c: Likewise.
+	* signal/sigvec.c: Likewise.
+	* signal/sigwait.c: Likewise.
+	* signal/sigwaitinfo.c: Likewise.
+	* signal/sysv_signal.c: Likewise.
+	* socket/accept.c: Likewise.
+	* socket/accept4.c: Likewise.
+	* socket/bind.c: Likewise.
+	* socket/connect.c: Likewise.
+	* socket/getpeername.c: Likewise.
+	* socket/getsockname.c: Likewise.
+	* socket/getsockopt.c: Likewise.
+	* socket/isfdtype.c: Likewise.
+	* socket/listen.c: Likewise.
+	* socket/recv.c: Likewise.
+	* socket/recvfrom.c: Likewise.
+	* socket/recvmsg.c: Likewise.
+	* socket/send.c: Likewise.
+	* socket/sendmsg.c: Likewise.
+	* socket/sendto.c: Likewise.
+	* socket/setsockopt.c: Likewise.
+	* socket/shutdown.c: Likewise.
+	* socket/sockatmark.c: Likewise.
+	* socket/socket.c: Likewise.
+	* socket/socketpair.c: Likewise.
+	* stdio-common/ctermid.c: Likewise.
+	* stdio-common/cuserid.c: Likewise.
+	* stdio-common/remove.c: Likewise.
+	* stdio-common/rename.c: Likewise.
+	* stdio-common/renameat.c: Likewise.
+	* stdio-common/tempname.c: Likewise.
+	* stdlib/getcontext.c: Likewise.
+	* stdlib/makecontext.c: Likewise.
+	* stdlib/setcontext.c: Likewise.
+	* stdlib/swapcontext.c: Likewise.
+	* stdlib/system.c: Likewise.
+	* streams/fattach.c: Likewise.
+	* streams/fdetach.c: Likewise.
+	* streams/getmsg.c: Likewise.
+	* streams/getpmsg.c: Likewise.
+	* streams/putmsg.c: Likewise.
+	* streams/putpmsg.c: Likewise.
+	* sysdeps/unix/bsd/getpt.c: Likewise.
+	* sysdeps/unix/sysv/linux/epoll_pwait.c: Likewise.
+	* sysdeps/unix/sysv/linux/futimens.c: Likewise.
+	* sysdeps/unix/sysv/linux/lutimes.c: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/sync_file_range.c:
+	Likewise.
+	* sysdeps/unix/sysv/linux/readahead.c: Likewise.
+	* sysdeps/unix/sysv/linux/sync_file_range.c: Likewise.
+	* sysdeps/unix/sysv/linux/utimensat.c: Likewise.
+	* sysvipc/msgctl.c: Likewise.
+	* sysvipc/msgget.c: Likewise.
+	* sysvipc/msgrcv.c: Likewise.
+	* sysvipc/msgsnd.c: Likewise.
+	* sysvipc/semctl.c: Likewise.
+	* sysvipc/semget.c: Likewise.
+	* sysvipc/semop.c: Likewise.
+	* sysvipc/semtimedop.c: Likewise.
+	* sysvipc/shmat.c: Likewise.
+	* sysvipc/shmctl.c: Likewise.
+	* sysvipc/shmdt.c: Likewise.
+	* sysvipc/shmget.c: Likewise.
+	* termios/tcdrain.c: Likewise.
+	* termios/tcflow.c: Likewise.
+	* termios/tcflush.c: Likewise.
+	* termios/tcgetattr.c: Likewise.
+	* termios/tcgetpgrp.c: Likewise.
+	* termios/tcsendbrk.c: Likewise.
+	* termios/tcsetattr.c: Likewise.
+	* termios/tcsetpgrp.c: Likewise.
+	* time/adjtime.c: Likewise.
+	* time/clock.c: Likewise.
+	* time/getitimer.c: Likewise.
+	* time/gettimeofday.c: Likewise.
+	* time/setitimer.c: Likewise.
+	* time/settimeofday.c: Likewise.
+	* time/stime.c: Likewise.
+	* time/time.c: Likewise.
+
+2012-11-04  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/generic/paths.h (_PATH_STDPATH): Remove /usr/contrib/bin and
+	/usr/old/bin.
+
+	* sysdeps/generic/paths.h (_PATH_MNTTAB, _PATH_MOUNTED): Use tabs
+	instead of spaces.
+	* sysdeps/unix/sysv/linux/paths.h (_PATH_UTMP, _PATH_WTMP): Likewise.
+
+2012-11-03  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14796]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Set rounding mode to
+	FE_TONEAREST before applying Dekker multiplication and Knuth
+	addition.  Clear inexact exceptions and check for exact zero
+	results afterwards.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fma.c (__fma): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+	* sysdeps/generic/math_private.h (default_libc_fesetround): New
+	function.
+	(libc_fesetround): New macro.
+	(libc_fesetroundf): Likewise.
+	(libc_fesetroundl): Likewise.
+	* sysdeps/i386/fpu/fenv_private.h (libc_fesetround_sse): New
+	function.
+	(libc_fesetround_387): Likewise.
+	(libc_fesetroundf): New macro.
+	(libc_fesetround): Likewise.
+	(libc_fesetroundl): Likewise.
+	* sysdeps/sparc/fpu/fenv_private.h (libc_fesetround): New
+	function.
+	(libc_fesetroundf): New macro.
+	(libc_fesetround): Likewise.
+	(libc_fesetroundl): Likewise.
+	* include/fenv.h (feclearexcept): Add libm_hidden_proto.
+	* math/fclrexcpt.c (feclearexcept): Add libm_hidden_ver.
+	* sysdeps/i386/fpu/fclrexcpt.c (feclearexcept): Add
+	libm_hidden_ver.
+	* sysdeps/powerpc/fpu/fclrexcpt.c (feclearexcept): Likewise.
+	* sysdeps/s390/fpu/fclrexcpt.c (feclearexcept): Add
+	libm_hidden_def.
+	* sysdeps/sh/sh4/fpu/fclrexcpt.c (feclearexcept): Likewise.
+	* sysdeps/sparc/fpu/fclrexcpt.c (feclearexcept): Add
+	libm_hidden_ver.
+	* sysdeps/x86_64/fpu/fclrexcpt.c (feclearexcept): Add
+	libm_hidden_def.
+
+	[BZ #3439]
+	* sysdeps/powerpc/bits/fenv.h (FE_INEXACT): Define macro to
+	integer constant usable in #if and use that to give value to enum
+	constant.
+	(FE_DIVBYZERO): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_INVALID): Likewise.
+	(FE_INVALID_SNAN): Likewise.
+	(FE_INVALID_ISI): Likewise.
+	(FE_INVALID_IDI): Likewise.
+	(FE_INVALID_ZDZ): Likewise.
+	(FE_INVALID_IMZ): Likewise.
+	(FE_INVALID_COMPARE): Likewise.
+	(FE_INVALID_SOFTWARE): Likewise.
+	(FE_INVALID_SQRT): Likewise.
+	(FE_INVALID_INTEGER_CONVERSION): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_TOWARDZERO): Likewise.
+	(FE_UPWARD): Likewise.
+	(FE_DOWNWARD): Likewise.
+	* sysdeps/s390/fpu/bits/fenv.h (FE_INVALID): Likewise.
+	(FE_DIVBYZERO): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_INEXACT): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_DOWNWARD): Likewise.
+	(FE_UPWARD): Likewise.
+	(FE_TOWARDZERO): Likewise.
+	* sysdeps/sh/sh4/fpu/bits/fenv.h (FE_INEXACT): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_DIVBYZERO): Likewise.
+	(FE_INVALID): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_TOWARDZERO): Likewise.
+	* sysdeps/sparc/fpu/bits/fenv.h (FE_INVALID): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_DIVBYZERO): Likewise.
+	(FE_INEXACT): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_TOWARDZERO): Likewise.
+	(FE_UPWARD): Likewise.
+	(FE_DOWNWARD): Likewise.
+	* sysdeps/x86/fpu/bits/fenv.h (FE_INVALID): Likewise.
+	(FE_DIVBYZERO): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_INEXACT): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_DOWNWARD): Likewise.
+	(FE_UPWARD): Likewise.
+	(FE_TOWARDZERO): Likewise.
+
+2012-11-02  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* elf/elf.h (R_TILEGX_IMM16_X[01]_HW[012]_(|LAST_)PLT_PCREL): Add.
+
+2012-11-03  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* scripts/cross-test-ssh.sh (command): Use newlines to separate
+	commands.  Quote $PWD.
+	(blacklist_exports): Don't use remove_newlines.  Replace "declare
+	-x" by "export".
+	(remove_newlines): Remove.
+
+2012-11-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* stdlib/Makefile (headers): Add bits/stdlib-float.h.
+	* stdlib/stdlib.h (atof): Moved to ...
+	* include/bits/stdlib-float.h: Here.  New file.
+	* stdlib/stdlib.h: Include <bits/stdlib-float.h>.
+	* stdlib/bits/stdlib-float.h: New file.
+	* sysdeps/x86/Makefile (CFLAGS-.os): Compile rtld routines with
+	-mno-sse -mno-mmx.
+	* sysdeps/x86_64/multiarch/strcasestr-nonascii.c: Include
+	<xmmintrin.h>.
+
+2012-11-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/conformtest.pl (@headers): Add fenv.h.
+	* conform/data/fenv.h-data: New file.
+	* include/fenv.h [_ISOMAC]: Disable all contents of file except
+	include of <math/fenv.h>.
+
+	* conform/data/complex.h-data [ISO99 || ISO11 || XOPEN2K ||
+	POSIX2008]: Change condition to [!ISO && !POSIX && !XPG3 && !XPG4
+	&& !UNIX98].  Enables tests for XOPEN2K8.
+	* conform/data/inttypes.h-data [ISO99 || ISO11 || XOPEN2K ||
+	POSIX2008]: Likewise.
+
+	* conform/data/sys/wait.h-data [XPG3 || XOPEN2K8 || POSIX2008]
+	(struct rusage): Do not expect type or its members.
+
+	[BZ #3439]
+	* math/math.h (FP_NAN): Define macro to integer constant usable in
+	#if and use that to give value to enum constant.
+	(FP_INFINITE): Likewise.
+	(FP_ZERO): Likewise.
+	(FP_SUBNORMAL): Likewise.
+	(FP_NORMAL): Likewise.
+
+2012-11-02  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* iconvdata/bug-iconv8.c (do_test): Use %z for size_t arguments.
+	* iconvdata/bug-iconv9.c (do_test): Use %t for ptrdiff_t
+	arguments.
+
+2012-11-02  Roland McGrath  <roland@hack.frob.com>
+
+	* aclocal.m4 (GLIBC_AUTOCONF_VERSION): New macro.
+	Check that AC_AUTOCONF_VERSION matches it and m4_fatal at
+	autoconf-time if not.
+	* configure.in: Remove AC_PREREQ.
+
+2012-11-02  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/sys/platform/ppc.h (__ppc_get_timebase): Use
+	__builtin_ppc_get_timebase when building with GCC >= 4.8 instead
+	of the internal implementation.
+
+2012-11-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* include/sys/syslog.h [_ISOMAC]: Disable all contents of file
+	except include of <misc/sys/syslog.h>.
+
+2012-11-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/makecontext.S: If the
+	function returns with a NULL context exit with zero.
+
+2012-11-01  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/Makefile (cflags): Remove -mnew-mnemonics.
+
+2012-11-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* catgets/test-gencat.sh (run_program_prefix): Renamed to ...
+	(run_program_cmd): This.
+	* localedata/tst-langinfo.sh (run_program_prefix): Removed.
+	(tst_langinfo): New variable.  Use it.
+
+2012-11-01  Sebastan Andrzej Siewior  <bigeasy@linutronix.de>
+
+	* sysdeps/powerpc/powerpc32/dl-trampoline.S: Put __NO_FPRS__ around
+	floating point opcodes.
+
+2012-11-01  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/mach/hurd/Makefile (link-libc-static-tests): New
+	variable.
+
+	* elf/dl-support.c: Unconditionally include "setup-vdso.h".
+
+	* sysdeps/mach/hurd/powerpc: Remove directory.
+	* sysdeps/mach/powerpc: Likewise.
+
+2012-11-01  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* scripts/check-local-headers.sh: Ignore c++ headers.
+
+2012-11-01  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* libio/genops.c (_IO_flush_all_lockp): Use NULL rather than 0 for
+	__libc_cleanup_region_start argument.
+
+2012-11-01  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14784]
+	[BZ #14785]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Handle cases with small
+	x * y using scaling, not as x * y + z.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+
+2012-11-01  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/mach/hurd/bits/param.h: Remove stray #endif.
+
+2012-10-31  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/sh/Makefile [$(subdir) = debug] (CFLAGS-backtrace.c):
+	New variable.
+
+2012-10-31  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* rt/tst-shm.c (worker): Correct checking for mmap failure.
+
+2012-10-31  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist:
+	Fix sort order.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist:
+	Likewise.
+
+2012-10-31  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist:
+	Fix the order of the list for glibc 2.17.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist:
+	Likewise.
+
+2012-10-31  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2012-10-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14610]
+	* sysdeps/ieee754/ldbl-128ibm/e_atan2l.c (__ieee754_atan2l): Check
+	for low part of x being zero before using __atanl (y).
+	* math/libm-test.inc (atan2_test): Add another test.
+
+	* manual/install.texi (Configuring and compiling): Document
+	general use of test-wrapper and test-wrapper-env.
+	* INSTALL: Regenerated.
+
+	* sysdeps/ieee754/dbl-64/s_fma.c: Include <tininess.h>.
+	(__fma): Do not extract and scale down low bits on after-rounding
+	systems when result rounded to normal precision would have normal
+	exponent.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c: Include <tininess.h>.
+	(__fmal): Do not extract and scale down low bits on after-rounding
+	systems when result rounded to normal precision would have normal
+	exponent.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c: Include <tininess.h>.
+	(__fmal): Do not extract and scale down low bits on after-rounding
+	systems when result rounded to normal precision would have normal
+	exponent.
+	* math/libm-test.inc (UNDERFLOW_EXCEPTION_BEFORE_ROUNDING): New
+	macro.
+	(fma_test): Add more tests.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+
+2012-10-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/tininess.h: Renamed to ...
+	* sysdeps/x86/tininess.h: This.
+	* sysdeps/x86_64/tininess.h: Removed.
+
+2012-10-30  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/Makefile ($(objpfx)tst-array1.out): Depend on comparison
+	input.  Use $(build-program-cmd).
+	($(objpfx)tst-array1-static.out): Likewise.
+	($(objpfx)tst-array2.out): Likewise.
+	($(objpfx)tst-array3.out): Likewise.
+	($(objpfx)tst-array4.out): Likewise.
+	($(objpfx)tst-array5.out): Likewise.
+	($(objpfx)tst-array5-static.out): Likewise.
+
+2012-10-30  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* elf/dl-load.c (_dl_map_object_from_fd): Call DL_AFTER_LOAD
+	if defined.
+
+	* nss/nsswitch.h (nss_interface_function): Provide new
+	macro for use with NSS functions.
+	* grp/initgroups.c: Use new macro.
+	* nss/getXXbyYY.c: Likewise.
+	* nss/getXXbyYY_r.c: Likewise.
+	* nss/getXXent.c: Likewise.
+	* nss/getXXent_r.c: Likewise.
+	* sysdeps/posix/getaddrinfo.c: Likewise.
+
+2012-10-30  Andreas Jaeger  <aj@suse.de>
+
+	* po/ru.po: Update Russion translation from translation project.
+
+2012-10-30  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14152]
+	[BZ #14783]
+	* sysdeps/ieee754/dbl-64/s_fma.c (__fma): Extract low bits of
+	result and shift together with sticky bit instead of replicating
+	round-to-nearest rounding.
+	* sysdeps/ieee754/ldbl-128/s_fmal.c (__fmal): Likewise.
+	* sysdeps/ieee754/ldbl-96/s_fmal.c (__fmal): Likewise.
+	* math/libm-test.inc (fma_test): Add more tests.  Do not permit
+	missing underflow exceptions.
+	(fma_test_towardzero): Add more tests.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+
+	[BZ #14047]
+	* sysdeps/generic/tininess.h: New file.
+	* sysdeps/i386/tininess.h: Likewise.
+	* sysdeps/sh/tininess.h: Likewise.
+	* sysdeps/x86_64/tininess.h: Likewise.
+	* stdlib/tst-strtod-underflow.c: Likewise.
+	* stdlib/tst-tininess.c: Likewise.
+	* stdlib/strtod_l.c: Include <tininess.h>.
+	(round_and_return): Do not set errno for exact underflow cases.
+	Force an underflow exception when setting errno for underflow.
+	Determine underflow based on rounding to normal precision if
+	TININESS_AFTER_ROUNDING.
+	* stdlib/tst-strtod.c (tests): Do not expect errno to be set to
+	ERANGE for exact underflow cases.
+	* stdlib/Makefile (tests): Add tst-tininess and
+	tst-strtod-underflow.
+	($(objpfx)tst-tininess): Use $(link-libm).
+	($(objpfx)tst-strtod-underflow): Likewise.
+
+2012-10-30  Andreas Jaeger  <aj@suse.de>
+
+	[BZ#14767]
+	* elf/Makefile (tests): Remove conditional for have-initfini-array
+	since this is now always required and the variable does not exist
+	anymore.
+	(tests-static): Likewise.
+	(modules-names): Likewise.
+
+	* po/eo.po: Add Esperanto translation from translation project.
+
+	* elf/tst-array1.c (fini_array): Make writeable so that it can be
+	merged with constructor/destructor.
+	(init_array): Likewise.
+	* elf/tst-array2dep.c (fini_array): Likewise.
+	(init_array): Likewise.
+
+2012-10-29  Mike Frysinger  <vapier@gentoo.org>
+
+	* manual/message.texi: Delete @cartouche tags.
+
+2012-10-29  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/mach/hurd/fdatasync.c: Turn ERR into EINVAL if it is
+	EOPNOTSUPP.
+	* sysdeps/mach/hurd/fsync.c: Likewise.
+
+	* sysdeps/pthread/aio_notify.c (__aio_notify_only)
+	[_POSIX_REALTIME_SIGNALS]: Change condition to
+	[_POSIX_REALTIME_SIGNALS > 0].
+
+2012-10-27  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/x86/bits/fcntl.h (__O_LARGEFILE)
+	[!__x86_64]: Do not define, take value from <bits/fcntl-linux.h>.
+	* sysdeps/unix/sysv/linux/s390/bits/fcntl.h (__O_LARGEFILE):
+	[__WORDSIZE != 64]: Likewise.
+
+2012-10-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	*  iconvdata/tst-table.sh: Remove ${SHELL}.
+	*  iconvdata/tst-tables.sh: Likewise.
+
+2012-10-25  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/get_clockfreq.c
+	(__get_clockfreq_via_proc_openprom): Use strtoumax instead
+	of strtoull.
+
+	* sysdeps/sparc/sparc64/multiarch/memcpy.S: Add comments for
+	ifunc-impl-list.c
+	* sysdeps/sparc/sparc64/multiarch/memset.S: Likewise.
+	* sysdeps/sparc/sparc64/multiarch/ifunc-impl-list.c: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/ifunc-impl-list.c: New
+	file.
+
+2012-10-25  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/get_clockfreq.c
+	(__get_clockfreq_via_proc_openprom): Use __getdents instead of
+	__getdirentries.
+
+2012-10-25  Joseph Myers  <joseph@codesourcery.com>
+	    Jim Blandy  <jimb@codesourcery.com>
+
+	* scripts/cross-test-ssh.sh: New file.
+	* manual/install.texi (Configuring and compiling): Document use of
+	cross-test-ssh.sh.
+	* INSTALL: Regenerated.
+
+2012-10-25  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/mach/hurd/ptrace.c (ptrace): Use __hurd_fail to return
+	EOPNOTSUPP.
+
+2012-10-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makeconfig (run-program-prefix): Fix comment.
+
 2012-10-24  Joseph Myers  <joseph@codesourcery.com>
 	    Jim Blandy  <jimb@codesourcery.com>
 
@@ -964,7 +1868,7 @@
 	(__SWBLK_T_TYPE): Likewise.
 
 2012-10-01  Patsy Franklin <pfrankli@redhat.com>
-            Honza Horak <hhorak@redhat.com>
+	    Honza Horak <hhorak@redhat.com>
 
 	* nis/yp_xdr.c (xdr_domainname): Use YPMAXDOMAIN as maxsize.
 	(xdr_mapname): Use YPMAXMAP as maxsize.
@@ -1481,7 +2385,7 @@
 
 2012-12-09  Allan McRae  <allan@archlinux.org>
 
-        * sysdeps/i386/fpu/libm-test-ulps: Update
+	* sysdeps/i386/fpu/libm-test-ulps: Update
 
 2012-09-11  Joseph Myers  <joseph@codesourcery.com>
 
@@ -2313,7 +3217,7 @@
 	* sysdeps/unix/sysv/linux/bits/param.h: New file.
 	* sysdeps/unix/sysv/linux/sys/param.h: File removed.
 	* sysdeps/mach/hurd/bits/param.h: New file.
-	* sysdeps/mach/hurd/sys/param.h: New file.
+	* sysdeps/mach/hurd/sys/param.h: File removed.
 
 	* elf/dl-close.c (_dl_close_worker): Add a cast and a comment to the
 	last change.

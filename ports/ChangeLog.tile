@@ -1,3 +1,58 @@
+2012-11-06  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/nptl/pthread_spin_unlock.c: New file.
+
+2012-11-05  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/math_private.h: Provide additional no-op defines
+	for exception and rounding macros.
+
+	* sysdeps/tile/tilegx/Makefile: Generate Makefile fragment to determine
+	whether to build elf-init.c and gmon-start.c with -mcmodel=large.
+	* sysdeps/tile/crti.S: Support large memory model.
+	* sysdeps/tile/start.S: Likewise.
+
+2012-11-02  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/dl-runtime.c (_dl_after_load): Handle simulator
+	notification better for dlopen() of relative paths.
+
+	* sysdeps/tile/tilegx/memcpy.c (__memcpy): Optimize.
+	* sysdeps/tile/memcopy.h: New file.
+	* sysdeps/tile/wordcopy.c: New file.
+
+2012-11-03  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #3439]
+	* sysdeps/tile/bits/fenv.h (FE_TONEAREST): Define macro to integer
+	constant usable in #if and use that to give value to enum
+	constant.
+
+2012-11-03  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/libm-test-ulps: Account for new tests.
+
+2012-10-30  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/dl-machine.h: Use new DL_AFTER_LOAD macro
+	and rename _dl_arch_map_object to _dl_after_load.
+	* sysdeps/tile/dl-runtime.c: Rename _dl_arch_map_object
+	to _dl_after_load and remove spurious DL_UNMAP definition.
+
+	* sysdeps/unix/sysv/linux/tile/init-first.c: Use better #include.
+	* sysdeps/unix/sysv/linux/tile/gettimeofday.c: Use gettimeofday
+	aliases that match existing tile ABI.
+
+	* sysdeps/tile/libm-test-ulps: Account for new tests.
+
+2012-10-26  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/unix/sysv/linux/tile/Makefile (sysdep_routines):
+	Include dl-vdso.
+	* sysdeps/unix/sysv/linux/tile/bits/libc-vdso.h: New file.
+	* sysdeps/unix/sysv/linux/tile/gettimeofday.c: New file.
+	* sysdeps/unix/sysv/linux/tile/init-first.c: New file.
+
 2012-10-19  Roland McGrath  <roland@hack.frob.com>
 
 	* sysdeps/unix/sysv/linux/tile/tilepro/nptl/libc.abilist:

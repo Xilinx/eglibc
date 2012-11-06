@@ -1,3 +1,65 @@
+2012-11-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14805]
+	* sysdeps/hppa/fpu/bits/fenv.h (FE_DFL_ENV): Use cast to const
+	fenv_t *.
+	(FE_NOMASK_ENV): Likewise.
+
+2012-11-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/hppa/fpu/fclrexcpt.c (feclearexcept): Add
+	libm_hidden_def.
+
+	[BZ #3439]
+	* sysdeps/hppa/fpu/bits/fenv.h (FE_INVALID): Define macro to
+	integer constant usable in #if and use that to give value to enum
+	constant.
+	(FE_DIVBYZERO): Likewise.
+	(FE_OVERFLOW): Likewise.
+	(FE_UNDERFLOW): Likewise.
+	(FE_INEXACT): Likewise.
+	(FE_TONEAREST): Likewise.
+	(FE_TOWARDZERO): Likewise.
+	(FE_UPWARD): Likewise.
+	(FE_DOWNWARD): Likewise.
+
+2012-10-30  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14047]
+	* sysdeps/hppa/tininess.h: New file.
+
+2012-10-29  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* sysdeps/unix/sysv/linux/hppa/sysdep.h (ENTRY): Add cfi_startproc.
+	Use .cfi_offset for rp store.
+	(ENTRY_LEAF): Likewise.
+	(END) Add cfi_Endproc.
+	(DO_CALL): Add cfi directives.
+
+	* sysdeps/unix/sysv/linux/hppa/sysdep.h: Document register clobbering.
+	[PIC](TREG, SAVE_PIC, LOAD_PIC, TREG_ASM, SAVE_ASM_PIC, LOAD_ASM_PIC
+	CLOB_TREG, PIC_REG_DEF, PIC_REG_USE): Move...
+	(TREG, SAVE_PIC, LOAD_PIC, TREG_ASM, SAVE_ASM_PIC, LOAD_ASM_PIC
+	CLOB_TREG, PIC_REG_DEF, PIC_REG_USE): ... to here.
+	[!PIC](TREG, SAVE_PIC, LOAD_PIC, TREG_ASM, SAVE_ASM_PIC, LOAD_ASM_PIC
+	CLOB_TREG, PIC_REG_DEF, PIC_REG_USE): Remove.
+	(TREG): Use r4.
+
+	* sysdeps/unix/sysv/linux/hppa/sysdep.h: Don't include sys/syscall.h.
+	Document nop removal.
+	(PSEUDO): Remove nop.
+	(PSEUDO_NOERRNO): Likeise.
+	(PSEUDO_ERRVAL): Likewise.
+
+	* sysdeps/unix/sysv/linux/hppa/sysdep.h: Remove trailing whitespace.
+
+2012-10-26  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/hppa/bits/fcntl.h: Remove all
+	definitions and declarations that are provided by
+	<bits/fcntl-linux.h> and include <bits/fcntl-linux.h>.
+	(__O_PATH): Define.
+
 2012-10-24  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/hppa/nptl/Makefile (tst-oddstacklimit-ENV): Remove.

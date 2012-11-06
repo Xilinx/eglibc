@@ -1,21 +1,40 @@
-#!/usr/bin/env bash
+#! /bin/bash
+# Run a testcase on a remote system, via ssh.
+# Copyright (C) 2012 Free Software Foundation, Inc.
+# This file is part of the GNU C Library.
+
+# The GNU C Library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+
+# The GNU C Library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public
+# License along with the GNU C Library; if not, see
+# <http://www.gnu.org/licenses/>.
+
 # usage: cross-test-ssh.sh [--ssh SSH] HOST COMMAND ...
 # Run with --help flag to get more detailed help.
 
 progname="$(basename $0)"
-env_blacklist='HOME LOGNAME MAIL PATH SHELL SHLVL SSH_CLIENT SSH_CONNECTION USER TERM TERMCAP PWD'
+env_blacklist='HOME LOGNAME MAIL PATH SHELL SHLVL SSH_CLIENT SSH_CONNECTION
+USER TERM TERMCAP PWD'
 
 usage="usage: ${progname} [--ssh SSH] HOST COMMAND ..."
-help="Run an EGLIBC test COMMAND on the remote machine HOST, via ssh,
+help="Run a glibc test COMMAND on the remote machine HOST, via ssh,
 passing environment variables, preserving the current working directory,
 and respecting quoting.
 
 If the '--ssh SSH' flag is present, use SSH as the SSH command,
 instead of ordinary 'ssh'.
 
-To use this to run EGLIBC tests, invoke the tests as follows:
+To use this to run glibc tests, invoke the tests as follows:
 
-  $ make cross-test-wrapper='ABSPATH/cross-test-ssh.sh HOST' tests
+  $ make test-wrapper='ABSPATH/cross-test-ssh.sh HOST' tests
 
 where ABSPATH is the absolute path to this script, and HOST is the
 name of the machine to connect to via ssh.
@@ -23,7 +42,7 @@ name of the machine to connect to via ssh.
 If you need to connect to the test machine as a different user, you
 may specify that just as you would to SSH:
 
-  $ make cross-test-wrapper='ABSPATH/cross-test-ssh.sh USER@HOST' tests
+  $ make test-wrapper='ABSPATH/cross-test-ssh.sh USER@HOST' tests
 
 Naturally, the remote user must have an appropriate public key, and
 you will want to ensure that SSH does not prompt interactively for a
@@ -46,88 +65,72 @@ the remote target, except the following:
 ${env_blacklist}"
 
 ssh='ssh'
-while true; do
-    case "$1" in
+while [ $# -gt 0 ]; do
+  case "$1" in
 
-        "--ssh")
-            shift; ssh="$1"
-            ;;
+    "--ssh")
+      shift
+      if [ $# -lt 1 ]; then
+        break
+      fi
+      ssh="$1"
+      ;;
 
-        "--help")
-            echo "$usage"
-            echo "$help"
-            exit 0
-            ;;
+    "--help")
+      echo "$usage"
+      echo "$help"
+      exit 0
+      ;;
 
-        *)
-            break
-            ;;
-    esac
-    shift
+    *)
+      break
+      ;;
+  esac
+  shift
 done
 
 if [ $# -lt 1 ]; then
-    echo "$usage" >&2
-    echo "Type '${progname} --help' for more detailed help." >&2
-    exit 1
+  echo "$usage" >&2
+  echo "Type '${progname} --help' for more detailed help." >&2
+  exit 1
 fi
 
 host="$1"; shift
 
-# Return all input as a properly quoted Bourne shell string.
-bourne_quote () {
-    printf '%s' '"'
-    sed -n \
-        -e '1h' \
-        -e '2,$H' \
-        -e '${g
-              s/["$\`]/\\&/g
-              p
-             }'
-    printf '%s' '"'
-}
-
-# Remove unnecessary newlines from a Bourne shell command sequence.
-remove_newlines () {
-    sed -n \
-        -e '1h' \
-        -e '2,$H' \
-        -e '${g
-              s/\([^\]\)\n/\1; /g
-              p
-             }'
+# Print the sequence of arguments as strings properly quoted for the
+# Bourne shell, separated by spaces.
+bourne_quote ()
+{
+  local arg qarg
+  for arg in "$@"; do
+    qarg=${arg//\'/\'\\\'\'}
+    echo -n "'$qarg' "
+  done
 }
 
 # Unset all variables from the blacklist.  Then echo all exported
-# variables.  This should be run in a subshell.  The 'export -p'
-# command adds backslashes for environment variables which contain
-# newlines.
-blacklist_exports () {
-    local var
-    for var in ${env_blacklist}; do
-	unset $var
-    done
-    export -p
+# variables.
+blacklist_exports ()
+{
+  (unset ${env_blacklist}; export -p) | sed 's/^declare -x/export/'
 }
 
-# Produce properly quoted Bourne shell arguments for 'env' to carry
-# over the current environment, less blacklisted variables.
-exports="$( (blacklist_exports) | sed -e 's|^declare -x |export |')"
+# Produce commands to carry over the current environment, less blacklisted
+# variables.
+exports="$(blacklist_exports)"
 
 # Transform the current argument list into a properly quoted Bourne shell
 # command string.
-command="$(for word in "$@"; do
-               printf '%s' "$word" | bourne_quote
-               printf '%s' ' '
-           done)"
+command="$(bourne_quote "$@")"
 
 # Add commands to set environment variables and the current directory.
 command="${exports}
-cd $PWD
+cd $(bourne_quote "$PWD")
 ${command}"
 
 # HOST's sshd simply concatenates its arguments with spaces and
 # passes them to some shell.  We want to force the use of /bin/sh,
 # so we need to re-quote the whole command to ensure it appears as
 # the sole argument of the '-c' option.
-$ssh "$host" /bin/sh -c "$(printf '%s\n' "${command}" | bourne_quote | remove_newlines)"
+full_command="$(bourne_quote "${command}")"
+$ssh "$host" /bin/sh -c "$full_command"
