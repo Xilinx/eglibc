@@ -2,6 +2,7 @@
 @c Makeinfo ignores it when processing the file from the include.
 @setfilename INSTALL
 @include macros.texi
+@include pkgvers.texi
 
 @node Installation, Maintenance, Library Summary, Top
 @c %MENU% How to install the GNU C Library
@@ -173,6 +174,19 @@ the appropriate compiler flags (@samp{-mcpu=i386} will do the trick) to
 @var{CFLAGS}.
 
 If you specify just @samp{--build}, @code{configure} will get confused.
+
+@item --with-pkgversion=@var{version}
+Specify a description, possibly including a build number or build
+date, of the binaries being built, to be included in
+@option{--version} output from programs installed with @theglibc{}.
+For example, @option{--with-pkgversion='FooBar GNU/Linux glibc build
+123'}.  The default value is @samp{GNU libc}.
+
+@item --with-bugurl=@var{url}
+Specify the URL that users should visit if they wish to report a bug,
+to be included in @option{--help} output from programs installed with
+@theglibc{}.  The default value refers to the main bug-reporting
+information for @theglibc{}.
 @end table
 
 To build the library and related programs, type @code{make}.  This will
@@ -458,7 +472,7 @@ remain unfixed for all eternity, if not longer.
 
 It is a good idea to verify that the problem has not already been
 reported.  Bugs are documented in two places: The file @file{BUGS}
-describes a number of well known bugs and the upstream GNU C library
+describes a number of well known bugs and the central @glibcadj{}
 bug tracking system has a
 WWW interface at
 @url{http://sourceware.org/bugzilla/}.  The WWW

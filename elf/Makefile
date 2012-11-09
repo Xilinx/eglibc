@@ -109,8 +109,8 @@ $(objpfx)sotruss: sotruss.ksh $(common-objpfx)config.make
 	    -e 's%@VERSION@%$(version)%g' \
 	    -e 's%@TEXTDOMAINDIR@%$(msgcatdir)%g' \
 	    -e 's%@PREFIX@%$(prefix)%g' \
-	    -e 's%@PKGVERSION@%$(PKGVERSION)%g' \
-	    -e 's%@REPORT_BUGS_TO@%$(REPORT_BUGS_TO)%g' \
+	    -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
+	    -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g' \
 	    < $< > $@.new
 	chmod 555 $@.new
 	mv -f $@.new $@
@@ -385,8 +385,8 @@ endif
 
 common-ldd-rewrite = -e 's%@RTLD@%$(slibdir)/$(rtld-installed-name)%g' \
 		     -e 's%@VERSION@%$(version)%g' \
-		     -e 's%@PKGVERSION@%$(PKGVERSION)%g' \
-		     -e 's%@REPORT_BUGS_TO@%$(REPORT_BUGS_TO)%g'
+		     -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
+		     -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g'
 sh-ldd-rewrite = $(common-ldd-rewrite) -e 's%@BASH@%/bin/sh%g;s/\$$"/"/g'
 bash-ldd-rewrite = $(common-ldd-rewrite) -e 's%@BASH@%$(BASH)%g' \
 		   -e 's%@TEXTDOMAINDIR@%$(msgcatdir)%g'

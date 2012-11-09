@@ -46,9 +46,8 @@ function do_help {
   printf $"Mandatory arguments to long options are also mandatory for any corresponding\nshort options.\n"
   echo
 
-  printf $"For bug reporting instructions, please see:
-@REPORT_BUGS_TO@.
-"
+  printf $"For bug reporting instructions, please see:\\n%s.\\n" \
+    "@REPORT_BUGS_TO@"
   exit 0
 }
 

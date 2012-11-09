@@ -108,7 +108,7 @@ $(testdata)/Asia/Tokyo: asia $(zic-deps)
 $(objpfx)tzselect: tzselect.ksh $(common-objpfx)config.make
 	sed -e 's%@KSH@%$(KSH)%g' \
 	    -e 's%@TZDIR@%$(zonedir)%g' \
-	    -e 's%@PKGVERSION@%$(PKGVERSION)%g' \
-	    -e 's%@REPORT_BUGS_TO@%$(REPORT_BUGS_TO)%g' < $< > $@.new
+	    -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
+	    -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g' < $< > $@.new
 	chmod 555 $@.new
 	mv -f $@.new $@

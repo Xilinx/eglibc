@@ -1439,9 +1439,9 @@ options_usage (FILE *stream, int status)
   f_print (stream, _("-T\t\tgenerate code to support RPC dispatch tables\n"));
   f_print (stream, _("-Y path\t\tdirectory name to find C preprocessor (cpp)\n"));
 
-  f_print (stream, "\n\
+  f_print (stream, _("\n\
 For bug reporting instructions, please see:\n\
-%s.\n", REPORT_BUGS_TO);
+%s.\n"), REPORT_BUGS_TO);
   exit (status);
 }
 

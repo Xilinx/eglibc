@@ -62,9 +62,6 @@ void add_type(int len, const char *type);
 #define _(X) (X)
 #define textdomain(X) ((void) 0)
 
-/* This is used in the definition of PACKAGE for --version output.  */
-#define _libc_intl_domainname "libc"
-
 #define REPORT_BUGS_TO ""
 #define PKGVERSION ""
 

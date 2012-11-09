@@ -114,10 +114,16 @@ $(objpfx)stamp-libm-err: libm-err-tab.pl $(wildcard $(foreach dir,$(sysdirs),\
 	touch $@
 
 # Package version and bug reporting URL.
-$(objpfx)pkgvers.texi: $(objpfx)stamp-pkgvers
-$(objpfx)stamp-pkgvers:
-	echo "@set PKGVERSION $(PKGVERSION_TEXI)" > $(objpfx)pkgvers-tmp
+$(objpfx)pkgvers.texi: $(objpfx)stamp-pkgvers ;
+$(objpfx)stamp-pkgvers: $(common-objpfx)config.make
+	echo "@ifclear PKGVERS" > $(objpfx)pkgvers-tmp
+	echo "@set PKGVERS" >> $(objpfx)pkgvers-tmp
+	echo "@set PKGVERSION $(PKGVERSION_TEXI)" >> $(objpfx)pkgvers-tmp
+	if [ "$(PKGVERSION_TEXI)" = "(GNU libc) " ]; then \
+	  echo "@set PKGVERSION_DEFAULT" >> $(objpfx)pkgvers-tmp; \
+	fi
 	echo "@set REPORT_BUGS_TO $(REPORT_BUGS_TEXI)" >> $(objpfx)pkgvers-tmp
+	echo "@end ifclear" >> $(objpfx)pkgvers-tmp
 	$(move-if-change) $(objpfx)pkgvers-tmp $(objpfx)pkgvers.texi
 	touch $@
 

@@ -1,3 +1,593 @@
+2012-11-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* aclocal.m4 (ACX_PKGVERSION): New macro.
+	(ACX_BUGURL): Likewise.
+	* configure.in: Use ACX_PKGVERSION and ACX_BUGURL.
+	(PKGVERSION): New AC_DEFINE_UNQUOTED.
+	(REPORT_BUGS_TO): Likewise.
+	* configure: Regenerated.
+	* config.h.in (PKGVERSION): New macro.
+	(REPORT_BUGS_TO): Likewise.
+	* config.make.in (PKGVERSION): New variable.
+	(PKGVERSION_TEXI): Likewise.
+	(REPORT_BUGS_TO): Likewise.
+	(REPORT_BUGS_TEXI): Likewise.
+	* Makefile (format-me): Use -I$(common-objpfx)manual.
+	(INSTALL): Depend on $(common-objpfx)manual/pkgvers.texi.
+	($(common-objpfx)manual/%): New target.
+	(manual/%): Remove target.
+	* catgets/gencat.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* csu/version.c (banner): Use PKGVERSION and REPORT_BUGS_TO.
+	* debug/Makefile ($(objpfx)catchsegv): Also substitute PKGVERSION
+	and REPORT_BUGS_TO.
+	($(objpfx)xtrace): Likewise.
+	* debug/catchsegv.sh: Use PKGVERSION and REPORT_BUGS_TO.
+	* debug/pcprofiledump.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* debug/xtrace.sh (do_help): Use REPORT_BUGS_TO.
+	(do_version): Use PKGVERSION.
+	* elf/Makefile ($(objpfx)sotruss): Also substitute PKGVERSION and
+	REPORT_BUGS_TO.
+	(common-ldd-rewrite): Likewise.
+	* elf/dl-close.c (_dl_close_worker): Use REPORT_BUGS_TO.
+	* elf/ldconfig.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* elf/ldd.bash.in: Use PKGVERSION and REPORT_BUGS_TO.
+	* elf/pldd.c (argp_program_bug_address): Remove variable.
+	(more_help): New function.
+	(argp): Use more_help.
+	(print_version): Use PKGVERSION.
+	* elf/sln.c (main): Use PKGVERSION.
+	(usage): Use REPORT_BUGS_TO.
+	* elf/sotruss.ksh (do_help): Use REPORT_BUGS_TO.
+	(top level): Use PKGVERSION.
+	* elf/sprof.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* iconv/iconv_prog.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* iconv/iconvconfig.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* locale/programs/locale.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* locale/programs/localedef.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* login/programs/pt_chown.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* malloc/Makefile ($(objpfx)mtrace): Also substitute PKGVERSION
+	and BUGURL.
+	($(objpfx)memusage): Likewise.
+	* malloc/memusage.sh (do_help): Use REPORT_BUGS_TO.
+	(do_version): Use PKGVERSION.
+	* malloc/memusagestat.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* malloc/mtrace.pl ($PACKAGE): Remove variable.
+	($PKGVERSION): New variable.
+	($REPORT_BUGS_TO): Likewise.
+	(usage): Use $REPORT_BUGS_TO.
+	(top level): Use $PKGVERSION.
+	* manual/Makefile (libc-texi-generated): Add pkgvers.texi.
+	($(objpfx)pkgvers.texi): New rule.
+	($(objpfx)stamp-pkgvers): Likewise.
+	* manual/install.texi: Include pkgvers.texi.
+	(--with-pkgversion): Document new configure option.
+	(--with-bugurl): Likewise.
+	(Reporting Bugs): Describe Bugzilla as upstream tracker rather
+	than necessarily for this particular distribution.  Use
+	REPORT_BUGS_TO for where to report bugs.
+	* INSTALL: Regenerated.
+	* manual/libc.texinfo: Include pkgvers.texi.
+	[!PKGVERSION_DEFAULT]: Include PKGVERSION in version information.
+	* nscd/nscd.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* nss/getent.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* nss/makedb.c (more_help): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* posix/getconf.c (main): Use PKGVERSION and REPORT_BUGS_TO.
+	* sunrpc/proto.h [IS_IN_build] (_libc_intl_domainname): Remove
+	macro.
+	* sunrpc/rpc_main.c (options_usage): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* sunrpc/rpcinfo.c (usage): Use REPORT_BUGS_TO.
+	(print_version): Use PKGVERSION.
+	* sysdeps/unix/sysv/linux/lddlibc4.c (main): Use REPORT_BUGS_TO
+	and PKGVERSION.
+
+	* timezone/checktab.awk: Update from tzcode 2012i.
+	* timezone/ialloc.c: Likewise.
+	* timezone/private.h: Likewise.
+	* timezone/scheck.c: Likewise.
+	* timezone/tzfile.h: Likewise.
+	* timezone/tzselect.ksh: Merge in changes from tzcode 2012i.
+	(TZVERSION): Hardcode tzcode version number.
+	* timezone/zdump.c: Update from tzcode 2012i.
+	* timezone/zic.c: Likewise.
+	* timezone/version.h: New file.
+	* timezone/README: Describe version.h.  Update upstream location.
+
+	[BZ #14824]
+	* stdlib/stdlib.h [__USE_XOPEN_EXTENDED && __USE_XOPEN2K]
+	(mktemp): Enable declaration.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K] (ecvt): Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K] (fcvt): Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K] (gcvt): Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (qecvt):
+	Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (qfcvt):
+	Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (qgcvt):
+	Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (ecvt_r):
+	Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (fcvt_r):
+	Likewise.
+	[__USE_XOPEN_EXTENDED && __USE_XOPEN2K && __USE_MISC] (gcvt_r):
+	Likewise.
+
+	[BZ #14821]
+	* sunrpc/clnt_tcp.c (clnttcp_control): Access values at fixed
+	offset in buffer as u_int32_t not u_long.  Consistently use memcpy
+	for copies of such integer values.
+	* sunrpc/clnt_udp.c (clntudp_control): Likewise.
+	* sunrpc/clnt_unix.c (clntunix_control): Likewise.
+
+2012-11-09  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/fcntl.h: Remove all
+	definitions and declarations that are provided by
+	<bits/fcntl-linux.h> and include <bits/fcntl-linux.h>.
+
+2012-11-08  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+        * sysdeps/s390/dl-procinfo.c (_dl_s390_cap_flags): Add "te".
+	* sysdeps/s390/dl-procinfo.h (HWCAP_S390_TE): Add enum value.
+	* sysdeps/unix/sysv/linux/s390/hwcap.h (HWCAP_S390_TE): Add macro
+	definition.
+
+2012-11-08  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* elf/elf.h: Update comment before AArch64 relocations.
+
+2012-11-07  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/__start_context.S: New file.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/makecontext.c
+	(__start_context): Declare.
+	(__makecontext_ret): Delete.
+	(__makecontext): Hook up __start_context instead of
+	__makecontext_ret.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/Makefile
+	(sysdep_routines): Add __start_context when in stdlib.
+
+2012-11-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/x86/Makefile ($(objpfx)tst-xmmymm.out): Pass $(NM),
+	$(OBJDUMP) and $(READELF) to tst-xmmymm.sh.
+	* sysdeps/x86/tst-xmmymm.sh (NM): New variable.  Use it instead of
+	hardcoded "nm".
+	(OBJDUMP): New variable.  Use it instead of hardcoded "objdump".
+	(READELF): New variable.  Use it instead of hardcoded "readelf".
+
+2012-11-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/Makefile ($(objpfx)tst-xmmymm.out): Moved to ...
+	* sysdeps/x86/Makefile: Here.
+	* sysdeps/x86_64/tst-xmmymm.sh: Renamed to ...
+	* sysdeps/x86/tst-xmmymm.sh: This.
+
+2012-11-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/data/pthread.h-data [XPG3 || XPG4]: Disable all
+	expectations.
+	[UNIX98] (pthread_barrier_t): Do not expect.
+	[UNIX98] (pthread_barrierattr_t): Likewise.
+	[UNIX98] (pthread_spinlock_t): Likewise.
+	[UNIX98] (pthread_barrier_destroy): Likewise.
+	[UNIX98] (pthread_barrier_init): Likewise.
+	[UNIX98] (pthread_barrier_wait): Likewise.
+	[UNIX98] (pthread_barrierattr_destroy): Likewise.
+	[UNIX98] (pthread_barrierattr_getpshared): Likewise.
+	[UNIX98] (pthread_barrierattr_init): Likewise.
+	[UNIX98] (pthread_barrierattr_setpshared): Likewise.
+	[UNIX98] (pthread_getcpuclockid): Likewise.
+	[UNIX98] (pthread_mutex_timedlock): Likewise.
+	[UNIX98] (pthread_rwlock_timedrdlock): Likewise.
+	[UNIX98] (pthread_rwlock_timedwrlock): Likewise.
+	[UNIX98] (pthread_sigmask): Likewise.
+	[UNIX98] (pthread_spin_destroy): Likewise.
+	[UNIX98] (pthread_spin_init): Likewise.
+	[UNIX98] (pthread_spin_lock): Likewise.
+	[UNIX98] (pthread_spin_trylock): Likewise.
+	[UNIX98] (pthread_spin_unlock): Likewise.
+	* conform/data/sys/types.h-data [XPG3 || XPG4] (pthread_attr_t):
+	Do not expect.
+	[XPG3 || XPG4 || UNIX98] (pthread_barrier_t): Likewise.
+	[XPG3 || XPG4 || UNIX98] (pthread_barrierattr_t): Likewise.
+	[XPG3 || XPG4] (pthread_cond_t): Likewise.
+	[XPG3 || XPG4] (pthread_condattr_t): Likewise.
+	[XPG3 || XPG4] (pthread_key_t): Likewise.
+	[XPG3 || XPG4] (pthread_mutex_t): Likewise.
+	[XPG3 || XPG4] (pthread_mutexattr_t): Likewise.
+	[XPG3 || XPG4] (pthread_once_t): Likewise.
+	[XPG3 || XPG4] (pthread_rwlock_t): Likewise.
+	[XPG3 || XPG4] (pthread_rwlockattr_t): Likewise.
+	[XPG3 || XPG4 || UNIX98] (pthread_spinlock_t): Likewise.
+	[XPG3 || XPG4] (pthread_t): Likewise.
+
+	* conform/data/stdlib.h-data [XPG3 || XPG4 || UNIX98] (setenv): Do
+	not expect.
+	[XPG3 || XPG4 || UNIX98] (unsetenv): Likewise.
+
+	* conform/data/math.h-data [XPG3 || XPG4 || UNIX98] (isnan):
+	Change function return type to int.
+
+	* conform/data/sys/mman.h-data [!POSIX] (POSIX_MADV_NORMAL):
+	Change condition to [!POSIX && !XPG3 && !XPG4 && !UNIX98].
+	[!POSIX] (POSIX_MADV_SEQUENTIAL): Likewise.
+	[!POSIX] (POSIX_MADV_RANDOM): Likewise.
+	[!POSIX] (POSIX_MADV_WILLNEED): Likewise.
+	[!POSIX] (POSIX_MADV_DONTNEED): Likewise.
+	[!POSIX] (posix_madvise): Likewise.
+	(POSIX_TYPED_MEM_ALLOCATE): Condition on [!POSIX && !XPG3 && !XPG4
+	&& !UNIX98].
+	(POSIX_TYPED_MEM_ALLOCATE_CONTIG): Likewise.
+	(POSIX_TYPED_MEM_MAP_ALLOCATABLE): Likewise.
+	(mode_t): Likewise.
+	(posix_mem_offset): Likewise.
+	(posix_typed_mem_get_info): Likewise.
+	(posix_typed_mem_open): Likewise.
+
+	* conform/data/sys/stat.h-data [!POSIX && !POSIX2008] (mknodat):
+	Change condition to [XOPEN2K8].
+
+	* conform/conformtest.pl: Preprocess allow-header data with -x c
+	instead of from stdin.
+	(@headers): Add stdalign.h, stdbool.h and stdnoreturn.h.
+	* conform/data/complex.h-data [C99-based standards] (cerf): Allow.
+	[C99-based standards] (cerfc): Likewise.
+	[C99-based standards] (cexp2): Likewise.
+	[C99-based standards] (cexpm1): Likewise.
+	[C99-based standards] (clog10): Likewise.
+	[C99-based standards] (clog1p): Likewise.
+	[C99-based standards] (clog2): Likewise.
+	[C99-based standards] (clgamma): Likewise.
+	[C99-based standards] (ctgamma): Likewise.
+	[C99-based standards] (cerff): Likewise.
+	[C99-based standards] (cerfcf): Likewise.
+	[C99-based standards] (cexp2f): Likewise.
+	[C99-based standards] (cexpm1f): Likewise.
+	[C99-based standards] (clog10f): Likewise.
+	[C99-based standards] (clog1pf): Likewise.
+	[C99-based standards] (clog2f): Likewise.
+	[C99-based standards] (clgammaf): Likewise.
+	[C99-based standards] (ctgammaf): Likewise.
+	[C99-based standards] (cerfl): Likewise.
+	[C99-based standards] (cerfcl): Likewise.
+	[C99-based standards] (cexp2l): Likewise.
+	[C99-based standards] (cexpm1l): Likewise.
+	[C99-based standards] (clog10l): Likewise.
+	[C99-based standards] (clog1pl): Likewise.
+	[C99-based standards] (clog2l): Likewise.
+	[C99-based standards] (clgammal): Likewise.
+	[C99-based standards] (ctgammal): Likewise.
+	* conform/data/inttypes.h-data [C99-based standards]: Include
+	stdint.h-data.  Remove all expectations for stdint.h contents.
+	[C99-based standards] (PRI*): Do not allow.
+	[C99-based standards] (SCN*): Likewise.
+	[C99-based standards] (*_t): Likewise.
+	[C99-based-standards] (PRId8): Expect macro.
+	[C99-based-standards] (PRIi8): Likewise.
+	[C99-based-standards] (PRIo8): Likewise.
+	[C99-based-standards] (PRIu8): Likewise.
+	[C99-based-standards] (PRIx8): Likewise.
+	[C99-based-standards] (PRIX8): Likewise.
+	[C99-based-standards] (SCNd8): Likewise.
+	[C99-based-standards] (SCNi8): Likewise.
+	[C99-based-standards] (SCNo8): Likewise.
+	[C99-based-standards] (SCNu8): Likewise.
+	[C99-based-standards] (SCNx8): Likewise.
+	[C99-based-standards] (PRIdLEAST8): Likewise.
+	[C99-based-standards] (PRIiLEAST8): Likewise.
+	[C99-based-standards] (PRIoLEAST8): Likewise.
+	[C99-based-standards] (PRIuLEAST8): Likewise.
+	[C99-based-standards] (PRIxLEAST8): Likewise.
+	[C99-based-standards] (PRIXLEAST8): Likewise.
+	[C99-based-standards] (SCNdLEAST8): Likewise.
+	[C99-based-standards] (SCNiLEAST8): Likewise.
+	[C99-based-standards] (SCNoLEAST8): Likewise.
+	[C99-based-standards] (SCNuLEAST8): Likewise.
+	[C99-based-standards] (SCNxLEAST8): Likewise.
+	[C99-based-standards] (PRIdFAST8): Likewise.
+	[C99-based-standards] (PRIiFAST8): Likewise.
+	[C99-based-standards] (PRIoFAST8): Likewise.
+	[C99-based-standards] (PRIuFAST8): Likewise.
+	[C99-based-standards] (PRIxFAST8): Likewise.
+	[C99-based-standards] (PRIXFAST8): Likewise.
+	[C99-based-standards] (SCNdFAST8): Likewise.
+	[C99-based-standards] (SCNiFAST8): Likewise.
+	[C99-based-standards] (SCNoFAST8): Likewise.
+	[C99-based-standards] (SCNuFAST8): Likewise.
+	[C99-based-standards] (SCNxFAST8): Likewise.
+	[C99-based-standards] (PRId16): Likewise.
+	[C99-based-standards] (PRIi16): Likewise.
+	[C99-based-standards] (PRIo16): Likewise.
+	[C99-based-standards] (PRIu16): Likewise.
+	[C99-based-standards] (PRIx16): Likewise.
+	[C99-based-standards] (PRIX16): Likewise.
+	[C99-based-standards] (SCNd16): Likewise.
+	[C99-based-standards] (SCNi16): Likewise.
+	[C99-based-standards] (SCNo16): Likewise.
+	[C99-based-standards] (SCNu16): Likewise.
+	[C99-based-standards] (SCNx16): Likewise.
+	[C99-based-standards] (PRIdLEAST16): Likewise.
+	[C99-based-standards] (PRIiLEAST16): Likewise.
+	[C99-based-standards] (PRIoLEAST16): Likewise.
+	[C99-based-standards] (PRIuLEAST16): Likewise.
+	[C99-based-standards] (PRIxLEAST16): Likewise.
+	[C99-based-standards] (PRIXLEAST16): Likewise.
+	[C99-based-standards] (SCNdLEAST16): Likewise.
+	[C99-based-standards] (SCNiLEAST16): Likewise.
+	[C99-based-standards] (SCNoLEAST16): Likewise.
+	[C99-based-standards] (SCNuLEAST16): Likewise.
+	[C99-based-standards] (SCNxLEAST16): Likewise.
+	[C99-based-standards] (PRIdFAST16): Likewise.
+	[C99-based-standards] (PRIiFAST16): Likewise.
+	[C99-based-standards] (PRIoFAST16): Likewise.
+	[C99-based-standards] (PRIuFAST16): Likewise.
+	[C99-based-standards] (PRIxFAST16): Likewise.
+	[C99-based-standards] (PRIXFAST16): Likewise.
+	[C99-based-standards] (SCNdFAST16): Likewise.
+	[C99-based-standards] (SCNiFAST16): Likewise.
+	[C99-based-standards] (SCNoFAST16): Likewise.
+	[C99-based-standards] (SCNuFAST16): Likewise.
+	[C99-based-standards] (SCNxFAST16): Likewise.
+	[C99-based-standards] (PRId32): Likewise.
+	[C99-based-standards] (PRIi32): Likewise.
+	[C99-based-standards] (PRIo32): Likewise.
+	[C99-based-standards] (PRIu32): Likewise.
+	[C99-based-standards] (PRIx32): Likewise.
+	[C99-based-standards] (PRIX32): Likewise.
+	[C99-based-standards] (SCNd32): Likewise.
+	[C99-based-standards] (SCNi32): Likewise.
+	[C99-based-standards] (SCNo32): Likewise.
+	[C99-based-standards] (SCNu32): Likewise.
+	[C99-based-standards] (SCNx32): Likewise.
+	[C99-based-standards] (PRIdLEAST32): Likewise.
+	[C99-based-standards] (PRIiLEAST32): Likewise.
+	[C99-based-standards] (PRIoLEAST32): Likewise.
+	[C99-based-standards] (PRIuLEAST32): Likewise.
+	[C99-based-standards] (PRIxLEAST32): Likewise.
+	[C99-based-standards] (PRIXLEAST32): Likewise.
+	[C99-based-standards] (SCNdLEAST32): Likewise.
+	[C99-based-standards] (SCNiLEAST32): Likewise.
+	[C99-based-standards] (SCNoLEAST32): Likewise.
+	[C99-based-standards] (SCNuLEAST32): Likewise.
+	[C99-based-standards] (SCNxLEAST32): Likewise.
+	[C99-based-standards] (PRIdFAST32): Likewise.
+	[C99-based-standards] (PRIiFAST32): Likewise.
+	[C99-based-standards] (PRIoFAST32): Likewise.
+	[C99-based-standards] (PRIuFAST32): Likewise.
+	[C99-based-standards] (PRIxFAST32): Likewise.
+	[C99-based-standards] (PRIXFAST32): Likewise.
+	[C99-based-standards] (SCNdFAST32): Likewise.
+	[C99-based-standards] (SCNiFAST32): Likewise.
+	[C99-based-standards] (SCNoFAST32): Likewise.
+	[C99-based-standards] (SCNuFAST32): Likewise.
+	[C99-based-standards] (SCNxFAST32): Likewise.
+	[C99-based-standards] (PRId64): Likewise.
+	[C99-based-standards] (PRIi64): Likewise.
+	[C99-based-standards] (PRIo64): Likewise.
+	[C99-based-standards] (PRIu64): Likewise.
+	[C99-based-standards] (PRIx64): Likewise.
+	[C99-based-standards] (PRIX64): Likewise.
+	[C99-based-standards] (SCNd64): Likewise.
+	[C99-based-standards] (SCNi64): Likewise.
+	[C99-based-standards] (SCNo64): Likewise.
+	[C99-based-standards] (SCNu64): Likewise.
+	[C99-based-standards] (SCNx64): Likewise.
+	[C99-based-standards] (PRIdLEAST64): Likewise.
+	[C99-based-standards] (PRIiLEAST64): Likewise.
+	[C99-based-standards] (PRIoLEAST64): Likewise.
+	[C99-based-standards] (PRIuLEAST64): Likewise.
+	[C99-based-standards] (PRIxLEAST64): Likewise.
+	[C99-based-standards] (PRIXLEAST64): Likewise.
+	[C99-based-standards] (SCNdLEAST64): Likewise.
+	[C99-based-standards] (SCNiLEAST64): Likewise.
+	[C99-based-standards] (SCNoLEAST64): Likewise.
+	[C99-based-standards] (SCNuLEAST64): Likewise.
+	[C99-based-standards] (SCNxLEAST64): Likewise.
+	[C99-based-standards] (PRIdFAST64): Likewise.
+	[C99-based-standards] (PRIiFAST64): Likewise.
+	[C99-based-standards] (PRIoFAST64): Likewise.
+	[C99-based-standards] (PRIuFAST64): Likewise.
+	[C99-based-standards] (PRIxFAST64): Likewise.
+	[C99-based-standards] (PRIXFAST64): Likewise.
+	[C99-based-standards] (SCNdFAST64): Likewise.
+	[C99-based-standards] (SCNiFAST64): Likewise.
+	[C99-based-standards] (SCNoFAST64): Likewise.
+	[C99-based-standards] (SCNuFAST64): Likewise.
+	[C99-based-standards] (SCNxFAST64): Likewise.
+	[C99-based-standards] (PRIdMAX): Likewise.
+	[C99-based-standards] (PRIiMAX): Likewise.
+	[C99-based-standards] (PRIoMAX): Likewise.
+	[C99-based-standards] (PRIuMAX): Likewise.
+	[C99-based-standards] (PRIxMAX): Likewise.
+	[C99-based-standards] (PRIXMAX): Likewise.
+	[C99-based-standards] (SCNdMAX): Likewise.
+	[C99-based-standards] (SCNiMAX): Likewise.
+	[C99-based-standards] (SCNoMAX): Likewise.
+	[C99-based-standards] (SCNuMAX): Likewise.
+	[C99-based-standards] (SCNxMAX): Likewise.
+	[C99-based-standards] (PRIdPTR): Likewise.
+	[C99-based-standards] (PRIiPTR): Likewise.
+	[C99-based-standards] (PRIoPTR): Likewise.
+	[C99-based-standards] (PRIuPTR): Likewise.
+	[C99-based-standards] (PRIxPTR): Likewise.
+	[C99-based-standards] (PRIXPTR): Likewise.
+	[C99-based-standards] (SCNdPTR): Likewise.
+	[C99-based-standards] (SCNiPTR): Likewise.
+	[C99-based-standards] (SCNoPTR): Likewise.
+	[C99-based-standards] (SCNuPTR): Likewise.
+	[C99-based-standards] (SCNxPTR): Likewise.
+	* conform/data/iso646.h-data [ISO C standards] (*_t): Do not
+	allow.
+	* conform/data/stdint.h-data: Update comments to clarify
+	requirements.
+	[C99-based standards] (INT8_MIN): Use macro-int-constant.  Specify
+	type.
+	[C99-based standards] (INT8_MAX): Likewise.
+	[C99-based standards] (INT16_MIN): Likewise.
+	[C99-based standards] (INT16_MAX): Likewise.
+	[C99-based standards] (INT32_MIN): Likewise.
+	[C99-based standards] (INT32_MAX): Likewise.
+	[C99-based standards] (INT64_MIN): Likewise.
+	[C99-based standards] (INT64_MAX): Likewise.
+	[C99-based standards] (UINT8_MAX): Likewise.
+	[C99-based standards] (UINT16_MAX): Likewise.
+	[C99-based standards] (UINT32_MAX): Likewise.
+	[C99-based standards] (UINT64_MAX): Likewise.
+	[C99-based standards] (INT_LEAST8_MIN): Likewise.
+	[C99-based standards] (INT_LEAST8_MAX): Likewise.
+	[C99-based standards] (INT_LEAST16_MIN): Likewise.
+	[C99-based standards] (INT_LEAST16_MAX): Likewise.
+	[C99-based standards] (INT_LEAST32_MIN): Likewise.
+	[C99-based standards] (INT_LEAST32_MAX): Likewise.
+	[C99-based standards] (INT_LEAST64_MIN): Likewise.
+	[C99-based standards] (INT_LEAST64_MAX): Likewise.
+	[C99-based standards] (UINT_LEAST8_MAX): Likewise.
+	[C99-based standards] (UINT_LEAST16_MAX): Likewise.
+	[C99-based standards] (UINT_LEAST32_MAX): Likewise.
+	[C99-based standards] (UINT_LEAST64_MAX): Likewise.
+	[C99-based standards] (INT_FAST8_MIN): Likewise.
+	[C99-based standards] (INT_FAST8_MAX): Likewise.
+	[C99-based standards] (INT_FAST16_MIN): Likewise.
+	[C99-based standards] (INT_FAST16_MAX): Likewise.
+	[C99-based standards] (INT_FAST32_MIN): Likewise.
+	[C99-based standards] (INT_FAST32_MAX): Likewise.
+	[C99-based standards] (INT_FAST64_MIN): Likewise.
+	[C99-based standards] (INT_FAST64_MAX): Likewise.
+	[C99-based standards] (UINT_FAST8_MAX): Likewise.
+	[C99-based standards] (UINT_FAST16_MAX): Likewise.
+	[C99-based standards] (UINT_FAST32_MAX): Likewise.
+	[C99-based standards] (UINT_FAST64_MAX): Likewise.
+	[C99-based standards] (INTPTR_MIN): Likewise.
+	[C99-based standards] (INTPTR_MAX): Likewise.
+	[C99-based standards] (UINTPTR_MAX): Likewise.
+	[C99-based standards] (INTMAX_MIN): Likewise.
+	[C99-based standards] (INTMAX_MAX): Likewise.
+	[C99-based standards] (UINTMAX_MAX): Likewise.
+	[C99-based standards] (PTRDIFF_MIN): Likewise.
+	[C99-based standards] (PTRDIFF_MAX): Likewise.
+	[C99-based standards] (SIG_ATOMIC_MAX): Likewise.
+	[C99-based standards] (SIZE_MAX): Likewise.
+	[C99-based standards] (WCHAR_MAX): Likewise.
+	[C99-based standards] (WINT_MAX): Likewise.
+	[C99-based standards] (SIG_ATOMIC_MIN): Likewise.  Do not specify
+	constraint on value.
+	[C99-based standards] (WCHAR_MIN): Likewise.
+	[C99-based standards] (WINT_MIN): Likewise.
+	[C99-based standards] (*_t): Allow.
+	* conform/data/tgmath.h-data [XOPEN2K || POSIX2008]: Change
+	condition to [!ISO && !POSIX && !XPG3 && !XPG4 && !UNIX98].
+	Include math.h-data and complex.h-data.  Remove all expectations
+	of math.h and complex.h contents.
+	* conform/data/uchar.h-data [ISO11] (c16rtomb): Remove stray "16"
+	at end of line.
+	* conform/data/wchar.h-data [!ISO && !POSIX && !XPG3 && !XPG4]
+	(struct tm): Expect tag.
+	[C99-based-standards] (wcstof): Expect function.
+	[C99-based-standards] (wcstold): Likewise.
+	[C99-based-standards] (wcstoll): Likewise.
+	[C99-based-standards] (wcstoull): Likewise.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (WCHAR_MIN): Use
+	macro-int-constant.  Specify type.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (WCHAR_MAX): Likewise.  Specify
+	constraint on value.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (WEOF): Use macro-constant.
+	Specify type.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (NULL): Use macro-constant.
+	Specify value.
+	[ISO C standards]: Do not allow headers.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (wcs*): Change to
+	wcs[abcdefghijklmnopqrstuvwxyz]*.
+	[ISO C standards] (*_t): Do not allow.
+	* conform/data/wctype.h-data [C99-based standards] (iswblank):
+	Expect function.
+	[XOPEN2K8 || POSIX2008] (iswblank_l): Likewise.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (WEOF): Use macro-constant.
+	Specify type.
+	[ISO C standards]: Do not allow headers.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (is*): Change to
+	is[abcdefghijklmnopqrstuvwxyz]*.
+	[!ISO && !POSIX && !XPG3 && !XPG4] (to*): Change to
+	to[abcdefghijklmnopqrstuvwxyz]*.
+	[ISO C standards] (*_t): Do not allow.
+	* conform/data/stdalign.h-data: New file.
+	* conform/data/stdbool.h-data: Likewise.
+	* conform/data/stdnoreturn.h-data: Likewise.
+
+2012-11-07  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #14809]
+	* sysdeps/unix/sysv/linux/sys/sysctl.h (_UAPI_LINUX_KERNEL_H)
+	(_UAPI_LINUX_TYPES_H): Starting with Linux 3.7, the include header
+	guards are changed.  Only define if not yet defined, #undef back
+	after including linux/sysctl.h if defined here.
+
+2012-11-07  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14815]
+	* manual/filesys.texi (Directory Entries): Typo fix.
+	Reported by <h-iwamoto@kit.hi-ho.ne.jp>.
+
+2012-11-07  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* elf/elf.h (EM_AARCH64): New macro.
+	(R_AARCH64_NONE, R_AARCH64_ABS64, R_AARCH64_ABS32): Likewise.
+	(R_AARCH64_COPY, R_AARCH64_GLOB_DAT, R_AARCH64_JUMP_SLOT): Likewise.
+	(R_AARCH64_RELATIVE, R_AARCH64_TLS_DTPMOD64): Likewise.
+	(R_AARCH64_TLS_DTPREL64, R_AARCH64_TLS_TPREL64): Likewise.
+	(R_AARCH64_TLSDESC): Likewise.
+	(NT_ARM_TLS): Likewise.
+	(NT_ARM_HW_BREAK): Likewise.
+	(NT_ARM_HW_WATCH): Likewise.
+
+2012-11-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14811]
+	* sysdeps/i386/fpu/e_powl.S (pm79): New object.
+	(__ieee754_powl): Saturate nonzero exponents with absolute value
+	below 0x1p-79 to +/- 0x1p-79.
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Saturate nonzero
+	exponents with absolute value below 0x1p-64 to +/- 0x1p-64.
+	* sysdeps/ieee754/flt-32/e_powf.c (__ieee754_powf): Saturate
+	nonzero exponents with absolute value below 0x1p-32 to +/-
+	0x1p-32.
+	* sysdeps/x86_64/fpu/e_powl.S (pm79): New object.
+	(__ieee754_powl): Saturate nonzero exponents with absolute value
+	below 0x1p-79 to +/- 0x1p-79.
+	* math/libm-test.inc (pow_test): Add more tests.
+
+2012-11-07  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/dl-procinfo.c (_dl_s390_cap_flags): Sync
+	_dl_s390_cap_flags with kernel. Increase string length.
+	(_dl_s390_platforms): Add z196 and zEC12.
+
+2012-11-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/data/time.h-data [!XOPEN21K && !XOPEN2K8 && !POSIX2008]:
+	Change XOPEN21K to XOPEN2K.
+
+2012-11-06  Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* string/memmove.c: Use memcpy when possible.
+
+2012-11-06  Andreas Jaeger  <aj@suse.de>
+
+	* po/eo.po: Update from translation team.
+
 2012-11-06  Joseph Myers  <joseph@codesourcery.com>
 
 	[BZ #14793]

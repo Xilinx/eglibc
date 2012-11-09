@@ -33,8 +33,10 @@ if test $# -eq 0; then
       echo 'Usage: catchsegv PROGRAM ARGS...'
       echo '  --help      print this help, then exit'
       echo '  --version   print version number, then exit'
-      echo "For bug reporting instructions, please see:"
-      echo "@REPORT_BUGS_TO@."
+      echo 'For bug reporting instructions, please see:'
+      cat <<\EOF
+@REPORT_BUGS_TO@.
+EOF
       exit 0
       ;;
     --v | --ve | --ver | --vers | --versi | --versio | --version)

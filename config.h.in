@@ -161,7 +161,7 @@
 /* Define if __stack_chk_guard canary should be randomized at program startup.  */
 #undef ENABLE_STACKGUARD_RANDOMIZE
 
-/* Additional package description.  */
+/* Package description.  */
 #undef PKGVERSION
 
 /* Bug reporting address.  */

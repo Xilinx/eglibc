@@ -373,20 +373,26 @@ static char *
 more_help (int key, const char *text, void *input)
 {
   char *cp;
+  char *tp;
 
   switch (key)
     {
     case ARGP_KEY_HELP_EXTRA:
       /* We print some extra information.  */
+      if (asprintf (&tp, gettext ("\
+For bug reporting instructions, please see:\n\
+%s.\n"), REPORT_BUGS_TO) < 0)
+	return NULL;
       if (asprintf (&cp, gettext ("\
 System's directory for character maps : %s\n\
 		       repertoire maps: %s\n\
 		       locale path    : %s\n\
 %s"),
-		    CHARMAP_PATH, REPERTOIREMAP_PATH, LOCALE_PATH, gettext ("\
-For bug reporting instructions, please see:\n\
-"REPORT_BUGS_TO".\n")) < 0)
-	return NULL;
+		    CHARMAP_PATH, REPERTOIREMAP_PATH, LOCALE_PATH, tp) < 0)
+	{
+	  free (tp);
+	  return NULL;
+	}
       return cp;
     default:
       break;

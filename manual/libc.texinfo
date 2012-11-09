@@ -38,8 +38,13 @@ This file documents @theglibc{}.
 This is
 @c Disabled (printed editions, see above).
 @c Edition @value{EDITION} of
-@cite{The GNU C Library Reference Manual}, for version @value{VERSION}
-@value{PKGVERSION}.
+@cite{The GNU C Library Reference Manual}, for version
+@ifset PKGVERSION_DEFAULT
+@value{VERSION}.
+@end ifset
+@ifclear PKGVERSION_DEFAULT
+@value{VERSION} @value{PKGVERSION}.
+@end ifclear
 
 Copyright @copyright{} 1993--2012 Free Software Foundation, Inc.
 
@@ -73,8 +78,10 @@ supports it in developing GNU and promoting software freedom.''
 @c @center Edition @value{EDITION}
 @c @sp 1
 @center for version @value{VERSION}
+@ifclear PKGVERSION_DEFAULT
 @sp 1
 @center @value{PKGVERSION}
+@end ifclear
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -101,7 +108,9 @@ This is
 @c Disabled (printed editions, see above).
 @c Edition @value{EDITION} of
 @cite{The GNU C Library Reference Manual}, for Version @value{VERSION}
+@ifclear PKGVERSION_DEFAULT
 @value{PKGVERSION}
+@end ifclear
 of @theglibc{}.
 @end ifnottex
 
