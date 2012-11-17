@@ -1,3 +1,7 @@
+2012-02-20  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* debug/tst-backtrace5.c (handle_signal): Adjust for VDSO.
+
 2012-10-25  Joseph Myers  <joseph@codesourcery.com>
 
 	* aclocal.m4, configure.in, crypt/sha512c-test.c, string/Makefile,

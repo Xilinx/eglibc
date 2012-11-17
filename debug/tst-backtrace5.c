@@ -82,12 +82,17 @@ handle_signal (int signum)
       return;
     }
   /* Do not check name for signal trampoline.  */
-  if (strstr (symbols[2], "read") == NULL)
+  i = 2;
+  if (strstr (symbols[i++], "read") == NULL)
     {
-      FAIL ();
-      return;
+      /* Perhaps symbols[2] is __kernel_vsyscall?  */
+      if (strstr (symbols[i++], "read") == NULL)
+	{
+	  FAIL ();
+	  return;
+	}
     }
-  for (i = 3; i < n - 1; i++)
+  for (; i < n - 1; i++)
     if (strstr (symbols[i], "fn") == NULL)
       {
 	FAIL ();
