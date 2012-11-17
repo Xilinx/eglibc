@@ -1,9 +1,8 @@
-#! @KSH@
+#!/bin/bash
 
-TZVERSION=tz2012i
-PKGVERSION='@PKGVERSION@'
-REPORT_BUGS_TO='@REPORT_BUGS_TO@'
-
+PKGVERSION='(tzcode) '
+TZVERSION=see_Makefile
+REPORT_BUGS_TO=tz@iana.org
 
 # Ask the user about the time zone, and output the resulting TZ value to stdout.
 # Interact with the user via stderr and stdin.
@@ -32,7 +31,7 @@ REPORT_BUGS_TO='@REPORT_BUGS_TO@'
 
 # Specify default values for environment variables if they are unset.
 : ${AWK=awk}
-: ${TZDIR=@TZDIR@}
+: ${TZDIR=$(pwd)}
 
 # Check for awk Posix compliance.
 ($AWK -v x=y 'BEGIN { exit 123 }') </dev/null >/dev/null 2>&1
@@ -46,15 +45,14 @@ if [ "$1" = "--help" ]; then
 Usage: tzselect
 Select a time zone interactively.
 
-For bug reporting instructions, please see:
-$REPORT_BUGS_TO.
+Report bugs to $REPORT_BUGS_TO.
 EOF
-    exit 0
+    exit
 elif [ "$1" = "--version" ]; then
     cat <<EOF
 tzselect $PKGVERSION$TZVERSION
 EOF
-    exit 0
+    exit
 fi
 
 # Make sure the tables are readable.

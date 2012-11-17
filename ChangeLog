@@ -1,4 +1,204 @@
+2012-11-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/fxstatat.c: Include <string.h>.
+
+	* elf/dl-runtime.c [!ELF_MACHINE_NO_PLT]: Make code unconditional.
+
+	* posix/getconf-speclist.c: New file.
+	* posix/posix-envs.def: Likewise.
+	* posix/confstr.c (START_ENV_GROUP): New macro.
+	(END_ENV_GROUP): Likewise.
+	(KNOWN_ABSENT_ENVIRONMENT): Likewise.
+	(KNOWN_PRESENT_ENV_STRING): Likewise.
+	(KNOWN_PRESENT_ENVIRONMENT): Likewise.
+	(UNKNOWN_ENVIRONMENT): Likewise.
+	(confstr): Include posix-envs.def instead of handling
+	_CS_V7_WIDTH_RESTRICTED_ENVS, _CS_V6_WIDTH_RESTRICTED_ENVS and
+	_CS_V5_WIDTH_RESTRICTED_ENVS directly here.
+	* sysdeps/posix/sysconf.c (START_ENV_GROUP): New macro.
+	(END_ENV_GROUP): Likewise.
+	(KNOWN_ABSENT_ENVIRONMENT): Likewise.
+	(KNOWN_PRESENT_ENVIRONMENT): Likewise.
+	(UNKNOWN_ENVIRONMENT): Likewise.
+	(__sysconf): Include posix-envs.def instead of handling associated
+	cases directly here.
+	* posix/Makefile ($(objpfx)getconf.speclist): Generate by
+	preprocessing getconf-speclist.c rather than running getconf or
+	generating empty file.
+
+2012-11-16  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* scripts/check-local-headers.sh: Ignore 'mach' headers.
+
+2012-11-16  Andrej Lajovic  <natrij@gmail.com>
+
+	[BZ #14672]
+	* iconv/iconv_prog.c (main): Fix -c handling of '/'.
+
+2012-11-16  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/ieee754/ldbl-128/s_log1pl.c (__log1pl): If xm1 is
+	smaller than LDBL_EPSILON/2.0L, just return xm1.
+
+2012-11-16  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/tst-array1.c (init): Set constructor priority to 1000.
+	(fini): Set destructor priority to 1000.
+	* elf/tst-array2dep.c: Likewise.
+
+2012-11-16  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #11741]
+	* libio/fileops.c (_IO_new_file_write): Correctly return error.
+	(_IO_new_file_xsputn): Also return EOF if none of the input
+	data was written when overflow failed.
+	* libio/iopadn.c (_IO_padn): Likewise.
+	* libio/iowpadn.c (_IO_wpadn): Likewise.
+	* stdio-common/tst-put-error.c: Add copyright notice.
+	(do_test): Add case for printing padded string.
+	* stdio-common/vfprintf [!COMPILE_WPRINTF] (PAD): Flag error if
+	_IO_padn returned error.
+	[COMPILE_WPRINTF] (PAD): Flag error if _IO_wpadn returned error.
+	* libio/libioP.h (_IO_xsputn_t): Note in comment that xsputn can
+	return EOF.
+
+2012-11-16  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/libioP.h: Add comment note that the references to C++
+	bits are now obsolete.
+
+2012-11-15  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* math/libm-test.inc (check_complex): Use asprintf.
+
+2012-11-14  Joseph Myers  <joseph@codesourcery.com>
+
+	* debug/pcprofiledump.c (print_version): Update copyright year.
+	* malloc/memusagestat.c (print_version): Likewise.
+
+2012-11-14  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14831]
+	* elf/Makefile (tests): Add tst-audit8.
+	($(objpfx)tst-audit8): Also depend on $(common-objpfx)math/libm.so.
+	($(objpfx)tst-audit8.out): New target.
+	(tst-audit8-ENV): New variable.
+	* elf/dl-runtime.c (_dl_profile_fixup): Call _dl_fixup to skip
+	audit if l_reloc_result is NULL.
+	(ELF_MACHINE_RUNTIME_FIXUP_PARAMS): Issue an error if it isn't
+	defined and ELF_MACHINE_RUNTIME_FIXUP_ARGS is defined.
+	* elf/tst-audit8.c: New file.
+
+2012-11-14  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* io/Makefile (CFLAGS-open.c, CFLAGS-open64.c): Define.
+	* misc/Makefile (CFLAGS-select.c): Define.
+	* posix/Makefile (CFLAGS-pause.c): Define.
+
+2012-11-13  David S. Miller  <davem@davemloft.net>
+
+	* crypt/Makefile: Move test targets after toplevel Rules
+	inclusion.  Grab any necessary sysdep routines when linking.
+	* crypt/md5.c (md5_process_block): Remove define, we will always
+	name it __md5_process_block.
+	(md5_finish_ctx): Update md5_process_block call.
+	(md5_stream): Likewise.
+	(md5_process_bytes): Likewise.
+	(md5_process_block): Rename to __md5_process_block and move to ...
+	* crypt/md5-block.c: ... here.
+	* crypt/sha256.c (sha256_process_block): Move to ...
+	* crypt/sha256-block.c: ... here.
+	* crypt/sha512.c (sha512_process_block): Move to ...
+	* crypt/sha512-block.c: ... here.
+	* locale/Makefile (CFLAGS-md5.c): Define to add crypt/ to include
+	path.
+	* sysdeps/sparc/sparc-ifunc.c (sparc_libc_ifunc): Define.
+	* sysdeps/sparc/sparc64/multiarch/Makefile
+	(libcrypt-sysdep_routines): Add crypto assembler sysdeps when in
+	crypt subdir.
+	(localedef-aux): Add md5 crypto assembler when in locale subdir.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/Makefile: Mirror sparc64
+	multiarch changes.
+	* sysdeps/sparc/sparc64/multiarch/md5-block.c: New file.
+	* sysdeps/sparc/sparc64/multiarch/md5-crop.S: New file.
+	* sysdeps/sparc/sparc64/multiarch/sha256-block.c: New file.
+	* sysdeps/sparc/sparc64/multiarch/sha256-crop.S: New file.
+	* sysdeps/sparc/sparc64/multiarch/sha512-block.c: New file.
+	* sysdeps/sparc/sparc64/multiarch/sha512-crop.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/md5-block.c: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/md5-crop.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/sha256-block.c: New
+	file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/sha256-crop.S: New file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/sha512-block.c: New
+	file.
+	* sysdeps/sparc/sparc32/sparcv9/multiarch/sha512-crop.S: New file.
+
+2012-11-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* timezone/tzselect.ksh: Update from tzcode git revision
+	a435f9f0ecafa56d9e0263835836bd0c64cd7307.
+	* timezone/zdump.c: Likewise.
+	* timezone/zic.c: Likewise.
+	* timezone/Makefile ($(objpfx)version.h): Only include $(version)
+	in TZVERSION setting, not $(PKGVERSION).
+	($(objpfx)tzselect): Likewise.  Also substitute PKGVERSION and
+	REPORT_BUGS_TO settings.
+
+	[BZ #14838]
+	* resolv/netdb.h [__USE_XOPEN_EXTENDED] (IPPORT_RESERVED): Define
+	macro.
+
+2012-11-13  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* soft-fp/op-common.h (_FP_PACK_SEMIRAW): Move underflow
+	detection to immediately after _FP_ROUND().
+	* soft-fp/soft-fp.h (_FP_ROUND): Don't round if working
+	bits are 0.
+
+2012-11-11  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/unix/sysv/linux/sparc/sparc64/get_clockfreq.c: Include
+	inttypes.h
+	(__get_clockfreq_via_proc_openprom): Use __open, __read, and
+	__close rather than their public counterparts.
+
+2012-11-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/data/semaphore.h-data [XPG3 || XPG4]: Disable whole
+	file.
+	[UNIX98] (sem_timedwait): Do not expect.
+	* conform/data/sys/socket.h-data [XPG3]: Disable whole file.
+	[XPG4 || UNIX98] (sockatmark): Do not expect.
+	* conform/data/time.h-data [XPG3 || XPG4 || UNIX98]
+	(clock_getcpuclockid): Do not expect.
+	[XPG3 || XPG4 || UNIX98] (clock_nanosleep): Do not expect.
+	* conform/data/unistd.h-data [XPG3 || XPG4 || UNIX98] (setegid):
+	Do not expect.
+	[XPG3 || XPG4 || UNIX98] (seteuid): Likewise.
+	* conform/data/wchar.h-data [UNIX98] (vfwscanf): Do not expect.
+	[UNIX98] (vwscanf): Likewise.
+	[UNIX98] (vswscanf): Likewise.
+
 2012-11-09  Joseph Myers  <joseph@codesourcery.com>
+
+	* timezone/version.h: Remove file.
+	* timezone/README: Do not refer to version.h.
+	* timezone/Makefile ($(objpfx)zic.o): New dependency on
+	$(objpfx)version.h.
+	($(objpfx)zdump.o): Likewise.
+	($(objpfx)version.h): New target.
+
+	* timezone/tzselect.ksh: Change to verbatim copy from tzcode
+	2012i.
+	* timezone/README: Don't mention modification to tzselect.ksh.
+	* timezone/Makefile ($(objpfx)tzselect): Update substitutions to
+	work on unmodified tzselect.ksh.  Substitute version numbers in
+	tzselect.ksh.
+
+	* Makefile (format-me): Remove.
+	(INSTALL): Adjust indentation.  Use commands directly instead of
+	using $(format-me).
 
 	* aclocal.m4 (ACX_PKGVERSION): New macro.
 	(ACX_BUGURL): Likewise.

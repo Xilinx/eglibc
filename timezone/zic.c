@@ -3,7 +3,6 @@
 ** 2006-07-17 by Arthur David Olson.
 */
 
-#include "config.h"
 #include "version.h"
 #include "private.h"
 #include "locale.h"
@@ -427,8 +426,7 @@ usage(FILE *stream, int status)
 [ --version ] [ --help ] [ -v ] [ -l localtime ] [ -p posixrules ] \\\n\
 \t[ -d directory ] [ -L leapseconds ] [ -y yearistype ] [ filename ... ]\n\
 \n\
-For bug reporting instructions, please see:\n\
-%s.\n"),
+Report bugs to %s.\n"),
 		       progname, progname, REPORT_BUGS_TO);
 	exit(status);
 }
@@ -2536,8 +2534,8 @@ newabbr(const char *const string)
 				++cp;
 		if (cp - string == 0)
 mp = _("time zone abbreviation lacks alphabetic at start");
-		if (noise && cp - string > 3)
-mp = _("time zone abbreviation has more than 3 alphabetics");
+		if (noise && cp - string < 3)
+mp = _("time zone abbreviation has fewer than 3 alphabetics");
 		if (cp - string > ZIC_MAX_ABBR_LEN_WO_WARN)
 mp = _("time zone abbreviation has too many alphabetics");
 		if (mp == NULL && (*cp == '+' || *cp == '-')) {

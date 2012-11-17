@@ -46,6 +46,7 @@ ar_TN.UTF-8/UTF-8 \
 ar_TN/ISO-8859-6 \
 ar_YE.UTF-8/UTF-8 \
 ar_YE/ISO-8859-6 \
+ayc_PE/UFT-8 \
 az_AZ/UTF-8 \
 as_IN/UTF-8 \
 ast_ES.UTF-8/UTF-8 \
@@ -102,6 +103,7 @@ de_DE@euro/ISO-8859-15 \
 de_LU.UTF-8/UTF-8 \
 de_LU/ISO-8859-1 \
 de_LU@euro/ISO-8859-15 \
+doi_IN/UTF-8 \
 dv_MV/UTF-8 \
 dz_BT/UTF-8 \
 el_GR.UTF-8/UTF-8 \
@@ -296,6 +298,7 @@ mk_MK.UTF-8/UTF-8 \
 mk_MK/ISO-8859-5 \
 ml_IN/UTF-8 \
 mn_MN/UTF-8 \
+mni_IN/UTF-8 \
 mr_IN/UTF-8 \
 ms_MY.UTF-8/UTF-8 \
 ms_MY/ISO-8859-1 \
@@ -308,6 +311,7 @@ nb_NO/ISO-8859-1 \
 nds_DE/UTF-8 \
 nds_NL/UTF-8 \
 ne_NP/UTF-8 \
+nhn_MX/UTF-8 \
 nl_AW/UTF-8 \
 nl_BE.UTF-8/UTF-8 \
 nl_BE/ISO-8859-1 \
@@ -346,6 +350,7 @@ ru_UA.UTF-8/UTF-8 \
 ru_UA/KOI8-U \
 rw_RW/UTF-8 \
 sa_IN/UTF-8 \
+sat_IN/UTF-8 \
 sc_IT/UTF-8 \
 sd_IN/UTF-8 \
 sd_IN@devanagari/UTF-8 \
@@ -380,6 +385,7 @@ sv_SE.UTF-8/UTF-8 \
 sv_SE/ISO-8859-1 \
 sw_KE/UTF-8 \
 sw_TZ/UTF-8 \
+szl_PL/UTF-8 \
 ta_IN/UTF-8 \
 ta_LK/UTF-8 \
 te_IN/UTF-8 \

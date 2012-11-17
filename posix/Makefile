@@ -165,6 +165,7 @@ $(objpfx)config-name.h: $(..)scripts/config-uname.sh $(common-objpfx)config.make
 
 CFLAGS-regex.c = -Wno-strict-prototypes
 CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions
+CFLAGS-pause.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pread.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pread64.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pwrite.c = -fexceptions -fasynchronous-unwind-tables
@@ -335,36 +336,7 @@ $(inst_libexecdir)/getconf: $(inst_bindir)/getconf \
 	  mv -f $@/$$spec.new $@/$$spec; \
 	done < $(objpfx)getconf.speclist
 
-# eglibc: If we are cross-compiling, build cross-getconf utility and use it
-# instead of getconf.
-
-# We moved a piece of confstr.c to confstr.inc to share the later with
-# cross-getconf.c.
-confstr.c: confstr.inc
-
-ifeq (no,$(cross-compiling))
-getconf-dep = $(objpfx)getconf
-getconf-cmd = $(run-program-prefix) $(objpfx)getconf
-else
-getconf-dep = $(objpfx)cross-getconf
-getconf-cmd = $(objpfx)cross-getconf
-
-# Get configuration defines for cross-getconf by preprocessing confstr.c.
-$(objpfx)cross-getconf.h: confstr.c
-	$(compile.c) -E -dM -o - | grep "define _POSIX_V7_ILP32_OFF32\|define _POSIX_V7_ILP32_OFFBIG\|define _POSIX_V7_LP64_OFF64\|define _POSIX_V7_LPBIG_OFFBIG\|_POSIX_V6_ILP32_OFF32\|define _POSIX_V6_ILP32_OFFBIG\|define _POSIX_V6_LP64_OFF64\|define _POSIX_V6_LPBIG_OFFBIG\|_XBS5_ILP32_OFF32\|define _XBS5_ILP32_OFFBIG\|define _XBS5_LP64_OFF64\|define _XBS5_LPBIG_OFFBIG" > $(objpfx)cross-getconf.h
-
-cross-getconf-CFLAGS = -O -I$(objpfx)
-
-$(objpfx)cross-getconf: cross-getconf.c $(objpfx)cross-getconf.h
-	$(native-compile)
-endif
-
-$(objpfx)getconf.speclist: $(getconf-dep)
-	LC_ALL=C GETCONF_DIR=/dev/null \
-		$(getconf-cmd) _POSIX_V7_WIDTH_RESTRICTED_ENVS > $@.new
-	LC_ALL=C GETCONF_DIR=/dev/null \
-		$(getconf-cmd) _POSIX_V6_WIDTH_RESTRICTED_ENVS >> $@.new
-	LC_ALL=C GETCONF_DIR=/dev/null \
-		$(getconf-cmd) _XBS5_WIDTH_RESTRICTED_ENVS >> $@.new
+$(objpfx)getconf.speclist: getconf-speclist.c posix-envs.def
+	$(compile.c) -E -o - \
+	    | sed -n -e '/@@@PRESENT_/s/@@@PRESENT_//p' > $@.new
 	mv -f $@.new $@
-# eglibc: end.

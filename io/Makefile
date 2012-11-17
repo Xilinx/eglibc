@@ -79,6 +79,8 @@ tests-$(OPTION_EGLIBC_FTRAVERSE) += bug-ftw1 bug-ftw2 bug-ftw3 bug-ftw4 \
 
 include ../Rules
 
+CFLAGS-open.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-open64.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-fcntl.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-poll.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-ppoll.c = -fexceptions -fasynchronous-unwind-tables

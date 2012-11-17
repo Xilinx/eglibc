@@ -1,3 +1,46 @@
+2012-11-16  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #14368]
+	* locales/szl_PL: New Silesian Language Locale for Poland.
+	Contributed by Przemyslaw Buczkowski <przemub@yahoo.pl>.
+	* localedata/SUPPORTED (SUPPORTED-LOCALES): Add szl_PL.
+
+	[BZ # 14828]
+	* locales/ayc_PE: Add Aymara locale for Peru
+	contributed by Chris Leonard <cjl@sugarlabs.org> and
+	Amos Batto <amosbatto@yahoo.com>.
+	* SUPPORTED (SUPPORTED-LOCALES): Add ayc_PE.
+
+	[BZ # 14501]
+	* locales/nhn_MX: Add Central Nahuatl locale for Mexico,
+	contributed by Jorge Becerril <jrbecster@gmail.com>.
+	* SUPPORTED (SUPPORTED-LOCALES): Add nhn_MX.
+
+2012-11-15  Chris Leonard  <cjlhomeaddress@gmail.com>
+
+	[BZ #13952]
+	* locales/km_KH: Correct country-name and lang-name.
+
+2012-11-15  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #13603]
+	[BZ #13604]
+	[BZ #13698]
+	* locales/doi_IN: New file, contributed by Pravin Satpute
+	<psatpute@redhat.com> and Sushil Badyal <badyalsk@gmail.com>.
+	* locales/mni_IN: New file, contributed by Pravin Satpute
+	<psatpute@redhat.com> and Rebika Devi <rebika_srd@rediffmail.com>.
+	* locales/sat_IN: New file, contributed by Pravin Satpute
+	<psatpute@redhat.com> and Thakur Prasad Murmu <tp_murmu@yahoo.com>.
+	* SUPPORTED (SUPPORTED-LOCALES): Add doi_IN, mni_IN, sat_IN.
+
+2012-11-15  Chris Leonard  <cjlhomeaddress@gmail.com>
+
+	[BZ #13950]
+	* locales/bo_CN (LC_NAME, LC_ADDRESS): Remove some FIXMEs with
+	proper content, disable others.
+	* locales/bo_IN (LC_NAME, LC_ADDRESS): Likewise.
+
 2012-11-07  Dmitry V. Levin  <ldv@altlinux.org>
 
 	[BZ#14807]

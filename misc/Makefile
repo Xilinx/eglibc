@@ -92,6 +92,7 @@ tests: $(objpfx)tst-error1-mem
 endif
 endif
 
+CFLAGS-select.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-tsearch.c = $(uses-callbacks)
 CFLAGS-lsearch.c = $(uses-callbacks)
 CFLAGS-pselect.c = -fexceptions

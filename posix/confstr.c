@@ -48,9 +48,53 @@ confstr (name, buf, len)
       }
       break;
 
-      /* eglibc: We share code in confstr.inc with cross-getconf.c.  */
-#include "confstr.inc"
-      /* eglibc: end.  */
+      /* For _CS_V7_WIDTH_RESTRICTED_ENVS, _CS_V6_WIDTH_RESTRICTED_ENVS
+	 and _CS_V5_WIDTH_RESTRICTED_ENVS:
+
+	 We have to return a newline-separated list of names of
+	 programming environments in which the widths of blksize_t,
+	 cc_t, mode_t, nfds_t, pid_t, ptrdiff_t, size_t, speed_t,
+	 ssize_t, suseconds_t, tcflag_t, useconds_t, wchar_t, and
+	 wint_t types are no greater than the width of type long.
+
+	 Currently this means all environments that the system allows.  */
+
+#define START_ENV_GROUP(VERSION)		\
+    case _CS_##VERSION##_WIDTH_RESTRICTED_ENVS:	\
+      string_len = 0;
+
+#define END_ENV_GROUP(VERSION)			\
+      restenvs[string_len++] = '\0';		\
+      string = restenvs;			\
+      break;
+
+#define KNOWN_ABSENT_ENVIRONMENT(SC_PREFIX, ENV_PREFIX, SUFFIX)	\
+      /* Empty.  */
+
+#define KNOWN_PRESENT_ENV_STRING(STR)		\
+      if (string_len > 0)			\
+	restenvs[string_len++] = '\n';		\
+      memcpy (restenvs + string_len, STR,	\
+	      sizeof STR - 1);			\
+      string_len += sizeof STR - 1;
+
+#define KNOWN_PRESENT_ENVIRONMENT(SC_PREFIX, ENV_PREFIX, SUFFIX)	\
+      KNOWN_PRESENT_ENV_STRING (#ENV_PREFIX "_" #SUFFIX)
+
+#define UNKNOWN_ENVIRONMENT(SC_PREFIX, ENV_PREFIX, SUFFIX)		\
+      if (__sysconf (_SC_##SC_PREFIX##_##SUFFIX) > 0)			\
+	{								\
+	  KNOWN_PRESENT_ENVIRONMENT (SC_PREFIX, ENV_PREFIX, SUFFIX)	\
+	}
+
+#include "posix-envs.def"
+
+#undef START_ENV_GROUP
+#undef END_ENV_GROUP
+#undef KNOWN_ABSENT_ENVIRONMENT
+#undef KNOWN_PRESENT_ENV_STRING
+#undef KNOWN_PRESENT_ENVIRONMENT
+#undef UNKNOWN_ENVIRONMENT
 
     case _CS_XBS5_ILP32_OFF32_CFLAGS:
     case _CS_POSIX_V6_ILP32_OFF32_CFLAGS:
