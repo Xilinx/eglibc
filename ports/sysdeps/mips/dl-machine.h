@@ -572,8 +572,7 @@ elf_machine_rel (struct link_map *map, const ElfW(Rel) *reloc,
 		 const ElfW(Sym) *sym, const struct r_found_version *version,
 		 void *const reloc_addr, int skip_ifunc)
 {
-  elf_machine_reloc (map, (ElfW(Addr)) reloc->r_info,
-		     sym, version, reloc_addr, 0, 1);
+  elf_machine_reloc (map, reloc->r_info, sym, version, reloc_addr, 0, 1);
 }
 
 auto inline void
@@ -613,8 +612,8 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 		  const ElfW(Sym) *sym, const struct r_found_version *version,
 		  void *const reloc_addr, int skip_ifunc)
 {
-  elf_machine_reloc (map, (ElfW(Addr)) reloc->r_info, sym, version,
-		     reloc_addr, reloc->r_addend, 0);
+  elf_machine_reloc (map, reloc->r_info, sym, version, reloc_addr,
+		     reloc->r_addend, 0);
 }
 
 auto inline void

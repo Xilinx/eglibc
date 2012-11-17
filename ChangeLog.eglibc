@@ -1,3 +1,9 @@
+2012-11-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/dl-reloc.c, include/features.h, io/sys/stat.h,
+	ports/sysdeps/mips/dl-machine.h: Revert unnecessary differences
+	from glibc.
+
 2012-02-20  Paul Pluzhnikov  <ppluzhnikov@google.com>
 
 	* debug/tst-backtrace5.c (handle_signal): Adjust for VDSO.
