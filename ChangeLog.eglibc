@@ -1,5 +1,10 @@
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>
 
+	* configure.in: Resync pkgversion/bugurl code closer with glibc.
+	* configure: Regenerated.
+
+2012-11-17  Joseph Myers  <joseph@codesourcery.com>
+
 	* elf/dl-reloc.c, include/features.h, io/sys/stat.h,
 	ports/sysdeps/mips/dl-machine.h: Revert unnecessary differences
 	from glibc.
