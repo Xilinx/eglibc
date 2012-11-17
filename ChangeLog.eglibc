@@ -1,5 +1,10 @@
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>
 
+	* sunrpc/proto.h [IS_in_build] (REPORT_BUGS_TO): Remove.
+	[IS_in_build] (PKGVERSION): Likewise.
+
+2012-11-17  Joseph Myers  <joseph@codesourcery.com>
+
 	* configure.in: Resync pkgversion/bugurl code closer with glibc.
 	* configure: Regenerated.
 
