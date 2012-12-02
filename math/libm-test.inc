@@ -1195,11 +1195,21 @@ atan_test (void)
   TEST_f_f (atan, plus_infty, M_PI_2l);
   TEST_f_f (atan, minus_infty, -M_PI_2l);
   TEST_f_f (atan, nan_value, nan_value);
+  TEST_f_f (atan, max_value, M_PI_2l);
+  TEST_f_f (atan, -max_value, -M_PI_2l);
 
   TEST_f_f (atan, 1, M_PI_4l);
   TEST_f_f (atan, -1, -M_PI_4l);
 
   TEST_f_f (atan, 0.75L, 0.643501108793284386802809228717322638L);
+
+  TEST_f_f (atan, 0x1p-100L, 0x1p-100L);
+#ifndef TEST_FLOAT
+  TEST_f_f (atan, 0x1p-600L, 0x1p-600L);
+#endif
+#if defined TEST_LDOUBLE && LDBL_MIN_EXP <= -16381
+  TEST_f_f (atan, 0x1p-10000L, 0x1p-10000L);
+#endif
 
   END (atan);
 }
@@ -1302,6 +1312,9 @@ atan2_test (void)
   TEST_ff_f (atan2, nan_value, nan_value, nan_value);
 
   TEST_ff_f (atan2, max_value, max_value, M_PI_4l);
+
+  TEST_ff_f (atan2, max_value, min_value, M_PI_2l);
+  TEST_ff_f (atan2, -max_value, -min_value, -M_PI_2l);
 
   TEST_ff_f (atan2, 0.75L, 1, 0.643501108793284386802809228717322638L);
   TEST_ff_f (atan2, -0.75L, 1.0L, -0.643501108793284386802809228717322638L);
@@ -2521,12 +2534,12 @@ clog_test (void)
 #endif
 #if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 106
   TEST_c_c (clog, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-60L, 9.868649107778739757272772275265050767867e-19L, 9.868649106423871142816660980898339912137e-19L);
-  TEST_c_c (clog, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-1000L, 9.868649107778739752403260515979017248596e-19L, 1.061846605795612822522063052130030717368e-301L);
+  TEST_c_c (clog, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-1000L, 9.868649107778739752403260515979017248596e-19L, 1.061846605795612822522063052130030717368e-301L, UNDERFLOW_EXCEPTION_LDOUBLE_IBM);
 #endif
 
   TEST_c_c (clog, 0x0.ffffffp0L, 0x0.ffffffp-100L, -5.960464655174753498633255797994360530379e-8L, 7.888609052210118054117285652827862296732e-31L);
 #ifndef TEST_FLOAT
-  TEST_c_c (clog, 0x0.fffffffffffff8p0L, 0x0.fffffffffffff8p-1000L, -1.110223024625156602053389888482372171810e-16L, 9.332636185032188789900895447238171696171e-302L);
+  TEST_c_c (clog, 0x0.fffffffffffff8p0L, 0x0.fffffffffffff8p-1000L, -1.110223024625156602053389888482372171810e-16L, 9.332636185032188789900895447238171696171e-302L, UNDERFLOW_EXCEPTION_LDOUBLE_IBM);
 #endif
 #if defined TEST_LDOUBLE && LDBL_MIN_EXP <= -16381
   TEST_c_c (clog, 0x0.ffffffffffffffffp0L, 0x0.ffffffffffffffffp-15000L, -5.421010862427522170184200798202494495630e-20L, 3.548665303440282824232502561095699343814e-4516L);
@@ -2741,12 +2754,12 @@ clog10_test (void)
 #endif
 #if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 106
   TEST_c_c (clog10, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-60L, 4.285899851347756188767674032946882584784e-19L, 4.285899850759344225805480528847018395861e-19L);
-  TEST_c_c (clog10, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-1000L, 4.285899851347756186652871946325962330640e-19L, 4.611541215247321502041995872887317363241e-302L);
+  TEST_c_c (clog10, 0x1.00000000000000123456789abcp0L, 0x1.23456789p-1000L, 4.285899851347756186652871946325962330640e-19L, 4.611541215247321502041995872887317363241e-302L, UNDERFLOW_EXCEPTION_LDOUBLE_IBM);
 #endif
 
   TEST_c_c (clog10, 0x0.ffffffp0L, 0x0.ffffffp-100L, -2.588596909321764128428416045209904492216e-8L, 3.425979381266895667295625489912064603415e-31L);
 #ifndef TEST_FLOAT
-  TEST_c_c (clog10, 0x0.fffffffffffff8p0L, 0x0.fffffffffffff8p-1000L, -4.821637332766435821255375046554377090472e-17L, 4.053112396770095089737411317782466262176e-302L);
+  TEST_c_c (clog10, 0x0.fffffffffffff8p0L, 0x0.fffffffffffff8p-1000L, -4.821637332766435821255375046554377090472e-17L, 4.053112396770095089737411317782466262176e-302L, UNDERFLOW_EXCEPTION_LDOUBLE_IBM);
 #endif
 #if defined TEST_LDOUBLE && LDBL_MIN_EXP <= -16381
   TEST_c_c (clog10, 0x0.ffffffffffffffffp0L, 0x0.ffffffffffffffffp-15000L, -2.354315103889861110220423157644627849164e-20L, 1.541165759405643564697852372112893034397e-4516L);
@@ -4897,6 +4910,7 @@ fma_test_towardzero (void)
       TEST_fff_f (fma, -min_value, -min_value, plus_zero, plus_zero, UNDERFLOW_EXCEPTION);
       TEST_fff_f (fma, -min_value, -min_value, minus_zero, plus_zero, UNDERFLOW_EXCEPTION);
 
+#if !(defined TEST_LDOUBLE && LDBL_MANT_DIG == 106) /* Bug 13304.  */
       TEST_fff_f (fma, max_value, max_value, min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, max_value, -min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, -max_value, min_value, -max_value, OVERFLOW_EXCEPTION);
@@ -4905,6 +4919,7 @@ fma_test_towardzero (void)
       TEST_fff_f (fma, -max_value, max_value, -min_value, -max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, -min_value, max_value, OVERFLOW_EXCEPTION);
+#endif
 
 #if defined (TEST_FLOAT) && FLT_MANT_DIG == 24
       TEST_fff_f (fma, 0x1.4p-126, 0x1.000004p-1, 0x1p-128, 0x1.c00004p-127, UNDERFLOW_EXCEPTION);
@@ -5115,6 +5130,7 @@ fma_test_downward (void)
       TEST_fff_f (fma, -min_value, -min_value, plus_zero, plus_zero, UNDERFLOW_EXCEPTION);
       TEST_fff_f (fma, -min_value, -min_value, minus_zero, plus_zero, UNDERFLOW_EXCEPTION);
 
+#if !(defined TEST_LDOUBLE && LDBL_MANT_DIG == 106) /* Bug 13304.  */
       TEST_fff_f (fma, max_value, max_value, min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, max_value, -min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, -max_value, min_value, minus_infty, OVERFLOW_EXCEPTION);
@@ -5123,6 +5139,7 @@ fma_test_downward (void)
       TEST_fff_f (fma, -max_value, max_value, -min_value, minus_infty, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, min_value, max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, -min_value, max_value, OVERFLOW_EXCEPTION);
+#endif
 
 #if defined (TEST_FLOAT) && FLT_MANT_DIG == 24
       TEST_fff_f (fma, 0x1.4p-126, 0x1.000004p-1, 0x1p-128, 0x1.c00004p-127, UNDERFLOW_EXCEPTION);
@@ -5333,6 +5350,7 @@ fma_test_upward (void)
       TEST_fff_f (fma, -min_value, -min_value, plus_zero, min_subnorm_value, UNDERFLOW_EXCEPTION);
       TEST_fff_f (fma, -min_value, -min_value, minus_zero, min_subnorm_value, UNDERFLOW_EXCEPTION);
 
+#if !(defined TEST_LDOUBLE && LDBL_MANT_DIG == 106) /* Bug 13304.  */
       TEST_fff_f (fma, max_value, max_value, min_value, plus_infty, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, max_value, -min_value, plus_infty, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, max_value, -max_value, min_value, -max_value, OVERFLOW_EXCEPTION);
@@ -5341,6 +5359,7 @@ fma_test_upward (void)
       TEST_fff_f (fma, -max_value, max_value, -min_value, -max_value, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, min_value, plus_infty, OVERFLOW_EXCEPTION);
       TEST_fff_f (fma, -max_value, -max_value, -min_value, plus_infty, OVERFLOW_EXCEPTION);
+#endif
 
 #if defined (TEST_FLOAT) && FLT_MANT_DIG == 24
       TEST_fff_f (fma, 0x1.4p-126, 0x1.000004p-1, 0x1p-128, 0x1.c00008p-127, UNDERFLOW_EXCEPTION);
@@ -5737,6 +5756,11 @@ hypot_test (void)
   TEST_ff_f (hypot, -5.7e7, 0, 5.7e7L);
 
   TEST_ff_f (hypot, 0.75L, 1.25L, 1.45773797371132511771853821938639577L);
+
+  TEST_ff_f (hypot, 1.0L, 0x1p-61L, 1.0L);
+#if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 106
+  TEST_ff_f (hypot, 0x1.23456789abcdef0123456789ab8p-500L, 0x1.23456789abcdef0123456789ab8p-500L, 4.9155782399407039128612180934736799735113e-151L);
+#endif
 
 #if !(defined TEST_FLOAT && defined TEST_INLINE)
   TEST_ff_f (hypot, 0x3p125L, 0x4p125L, 0x5p125L);
@@ -8420,7 +8444,6 @@ pow_test (void)
 #endif
   TEST_ff_f (pow, -min_value, max_value, plus_zero, UNDERFLOW_EXCEPTION);
 
-#ifndef TEST_LDOUBLE /* Bug 13881.  */
   TEST_ff_f (pow, 0x0.ffffffp0, 10, 0.999999403953712118183885036774764444747L);
   TEST_ff_f (pow, 0x0.ffffffp0, 100, 0.999994039553108359406305079606228341585L);
   TEST_ff_f (pow, 0x0.ffffffp0, 1000, 0.9999403971297699052276650144650733772182L);
@@ -8436,14 +8459,42 @@ pow_test (void)
   TEST_ff_f (pow, 0x1.000002p0, 0x1p24, 7.3890552180866447284268641248075832310141L);
   TEST_ff_f (pow, 0x1.000002p0, 0x1.234566p29, 4.2107033006507495188536371520637025716256e+31L);
   TEST_ff_f (pow, 0x1.000002p0, -0x1.234566p29, 2.3749001736727769098946062325205705312166e-32L);
-#endif
 
-  /* Bug 13881: powl inaccurate so these tests disabled for long double.  */
-#if !defined TEST_FLOAT && !defined TEST_LDOUBLE
+#if !defined TEST_FLOAT
   TEST_ff_f (pow, 0x0.fffffffffffff8p0L, 0x1.23456789abcdfp62L, 1.0118762747827252817436395051178295138220e-253L);
   TEST_ff_f (pow, 0x0.fffffffffffff8p0L, -0x1.23456789abcdfp62L, 9.8826311568054561811190162420900667121992e+252L);
   TEST_ff_f (pow, 0x1.0000000000001p0L, 0x1.23456789abcdfp61L, 9.8826311568044974397135026217687399395481e+252L);
   TEST_ff_f (pow, 0x1.0000000000001p0L, -0x1.23456789abcdfp61L, 1.0118762747828234466621210689458255908670e-253L);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 64 && LDBL_MAX_EXP >= 16384
+  TEST_ff_f (pow, 0x0.ffffffffffffffffp0L, 0x1.23456789abcdef0ep77L, 1.2079212226420368189981778807634890018840e-4048L);
+  TEST_ff_f (pow, 0x0.ffffffffffffffffp0L, -0x1.23456789abcdef0ep77L, 8.2786855736563746280496724205839522148001e+4047L);
+  TEST_ff_f (pow, 0x1.0000000000000002p0L, 0x1.23456789abcdef0ep76L, 8.2786855736563683535324500168799315131570e+4047L);
+  TEST_ff_f (pow, 0x1.0000000000000002p0L, -0x1.23456789abcdef0ep76L, 1.2079212226420377344964713407722652880280e-4048L);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 113
+  TEST_ff_f (pow, 0x0.ffffffffffffffffffffffffffff8p0L, 0x1.23456789abcdef0123456789abcdp126L, 1.2079212226420440237790185999151440179953e-4048L);
+  TEST_ff_f (pow, 0x0.ffffffffffffffffffffffffffff8p0L, -0x1.23456789abcdef0123456789abcdp126L, 8.2786855736563252489063231915535105363602e+4047L);
+  TEST_ff_f (pow, 0x1.0000000000000000000000000001p0L, 0x1.23456789abcdef0123456789abcdp125L, 8.2786855736563252489063231915423647547782e+4047L);
+  TEST_ff_f (pow, 0x1.0000000000000000000000000001p0L, -0x1.23456789abcdef0123456789abcdp125L, 1.2079212226420440237790185999167702696503e-4048L);
+#endif
+
+#if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
+  TEST_ff_f (pow, 1e4932L, 0.75L, 1e3699L);
+  TEST_ff_f (pow, 1e4928L, 0.75L, 1e3696L);
+  TEST_ff_f (pow, 1e4924L, 0.75L, 1e3693L);
+  TEST_ff_f (pow, 1e4920L, 0.75L, 1e3690L);
+  TEST_ff_f (pow, 10.0L, 4932.0L, 1e4932L);
+  TEST_ff_f (pow, 10.0L, 4931.0L, 1e4931L);
+  TEST_ff_f (pow, 10.0L, 4930.0L, 1e4930L);
+  TEST_ff_f (pow, 10.0L, 4929.0L, 1e4929L);
+  TEST_ff_f (pow, 10.0L, -4931.0L, 1e-4931L);
+  TEST_ff_f (pow, 10.0L, -4930.0L, 1e-4930L);
+  TEST_ff_f (pow, 10.0L, -4929.0L, 1e-4929L);
+  TEST_ff_f (pow, 1e27L, 182.0L, 1e4914L);
+  TEST_ff_f (pow, 1e27L, -182.0L, 1e-4914L);
 #endif
 
   TEST_ff_f (pow, min_subnorm_value, min_subnorm_value, 1.0L);
@@ -10211,6 +10262,18 @@ y0_test (void)
   TEST_f_f (y0, 0x1.ff00000000002p+840L, 1.846591691699331493194965158699937660696e-127L, UNDERFLOW_EXCEPTION_OK);
 #endif
 
+  TEST_f_f (y0, 0x1p-10L, -4.4865150767109739412411806297168793661098L);
+  TEST_f_f (y0, 0x1p-20L, -8.8992283012125827603076426611387876938160L);
+  TEST_f_f (y0, 0x1p-30L, -1.3311940304267782826037118027401817264906e+1L);
+  TEST_f_f (y0, 0x1p-40L, -1.7724652307320814696990854700366226762563e+1L);
+  TEST_f_f (y0, 0x1p-50L, -2.2137364310373846564919987139743760738155e+1L);
+  TEST_f_f (y0, 0x1p-60L, -2.6550076313426878432849115782108205929120e+1L);
+  TEST_f_f (y0, 0x1p-70L, -3.0962788316479910300778244424468159753887e+1L);
+  TEST_f_f (y0, 0x1p-80L, -3.5375500319532942168707373066828113573541e+1L);
+  TEST_f_f (y0, 0x1p-90L, -3.9788212322585974036636501709188067393195e+1L);
+  TEST_f_f (y0, 0x1p-100L, -4.420092432563900590456563035154802121284e+1L);
+  TEST_f_f (y0, 0x1p-110L, -4.861363632869203777249475899390797503250e+1L);
+
   END (y0);
 }
 
@@ -10253,6 +10316,18 @@ y1_test (void)
   /* Bug 14155: spurious exception may occur.  */
   TEST_f_f (y1, 0x1.001000001p+593L, 3.927269966354206207832593635798954916263e-90L, UNDERFLOW_EXCEPTION_OK);
 #endif
+
+  TEST_f_f (y1, 0x1p-10L, -6.5190099301063115047395187618929589514382e+02L);
+  TEST_f_f (y1, 0x1p-20L, -6.6754421443450423911167962313100637952285e+05L);
+  TEST_f_f (y1, 0x1p-30L, -6.8356527557643159612937462812258975438856e+08L);
+  TEST_f_f (y1, 0x1p-40L, -6.9997084219026594793707805777425993547887e+11L);
+  TEST_f_f (y1, 0x1p-50L, -7.1677014240283233068755952926181262431559e+14L);
+  TEST_f_f (y1, 0x1p-60L, -7.3397262582050030662406095795388448059822e+17L);
+  TEST_f_f (y1, 0x1p-70L, -7.5158796884019231398303842094477769620063e+20L);
+  TEST_f_f (y1, 0x1p-80L, -7.6962608009235692951863134304745236090943e+23L);
+  TEST_f_f (y1, 0x1p-90L, -7.8809710601457349582707849528059121757126e+26L);
+  TEST_f_f (y1, 0x1p-100L, -8.0701143655892325972692837916732540679297e+29L);
+  TEST_f_f (y1, 0x1p-110L, -8.2637971103633741796037466026734121655600e+32L);
 
   END (y1);
 }

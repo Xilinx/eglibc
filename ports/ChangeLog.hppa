@@ -1,3 +1,31 @@
+2012-11-29  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* sysdeps/unix/sysv/linux/hppa/bits/socket.h: Delete file.
+	* sysdeps/unix/sysv/linux/hppa/bits/socket_type.h: New file.
+
+	* sysdeps/hppa/fpu/feholdexcpt.c: Cast return to unsigned long long *.
+	* sysdeps/unix/sysv/linux/hppa/mmap.c: Cast return to __ptr_t.
+
+2012-11-19  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/hppa/nptl/pthread_once.c: Replace _internal
+	alias by hidden_def.
+
+2012-11-18  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* sysdeps/hppa/fpu/fesetenv.c: Reset FPU to default for FE_DFL_ENV.
+
+	* sysdeps/hppa/get-rounding-mode.h: New file.
+	* sysdeps/hppa/fpu/fegetround.c: Use get_rounding_mode.
+
+	* ports/sysdeps/hppa/fpu/fpu_control.h: New file.
+
+	* ports/sysdeps/hppa/__longjmp.S: Removed.
+	* ports/sysdeps/hppa/__longjmp.c: New file.
+	* ports/sysdeps/unix/sysv/linux/hppa/____longjmp_chk.c: New file.
+	* ports/sysdeps/hppa/bits/setjmp.h: Use union for __jmp_buf.
+	* ports/sysdeps/hppa/setjmp.S: Comment byte offsets and padding.
+
 2012-11-05  Joseph Myers  <joseph@codesourcery.com>
 
 	[BZ #14805]
@@ -30,6 +58,7 @@
 
 2012-10-29  Carlos O'Donell  <carlos@systemhalted.org>
 
+	[BZ #14447]
 	* sysdeps/unix/sysv/linux/hppa/sysdep.h (ENTRY): Add cfi_startproc.
 	Use .cfi_offset for rp store.
 	(ENTRY_LEAF): Likewise.
@@ -197,7 +226,7 @@
 
 2012-03-03  Carlos O'Donell  <carlos@systemhalted.org>
 
-	* sysdeps/unix/sysv/linux/hppa/nptl/bits/pthreadtypes.h: Name 
+	* sysdeps/unix/sysv/linux/hppa/nptl/bits/pthreadtypes.h: Name
 	pthread_attr_t union.
 	* sysdeps/unix/sysv/linux/hppa/nptl/pthread.h: Sync from libc copy.
 	* sysdeps/unix/sysv/linux/hppa/bits/socket.h: Likewise.
@@ -219,12 +248,12 @@
 2011-10-21  Carlos O'Donell  <carlos@systemhalted.org>
 
 	* sysdeps/unix/sysv/linux/hppa/sys/procfs.h: Update copyright year.
-	Do not include signal.h and sys/ucontext.h. 
+	Do not include signal.h and sys/ucontext.h.
 
 2011-10-20  Carlos O'Donell  <carlos@systemhalted.org>
 
-	* sysdeps/unix/sysv/linux/hppa/nptl/sysdep-cancel.h: Update copyright 
-	year. 
+	* sysdeps/unix/sysv/linux/hppa/nptl/sysdep-cancel.h: Update copyright
+	year.
 	(PSEUDO): Define __*_nocancel version. Add CFI directives to __*_nocancel
 	and normal version.
 	(PUSHARGS_1): Add CFI directive.

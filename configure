@@ -4217,7 +4217,7 @@ $as_echo_n "checking for assembler and linker STT_GNU_IFUNC support... " >&6; }
 if ${libc_cv_ld_gnu_indirect_function+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  cat > conftest.s <<EOF
+  cat > conftest.S <<EOF
 .type foo,%gnu_indirect_function
 foo:
 .globl _start
@@ -4225,12 +4225,16 @@ _start:
 .globl __start
 __start:
 .data
+#ifdef _LP64
+.quad foo
+#else
 .long foo
+#endif
 EOF
 libc_cv_ld_gnu_indirect_function=no
 if ${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS \
 	    -nostartfiles -nostdlib \
-	    -o conftest conftest.s 1>&5 2>&5; then
+	    -o conftest conftest.S 1>&5 2>&5; then
   # Do a link to see if the backend supports IFUNC relocs.
   $READELF -r conftest 1>&5
   LC_ALL=C $READELF -r conftest | grep 'no relocations' >/dev/null || {
@@ -5442,12 +5446,11 @@ if test -n "$sysheaders"; then
 -isystem `echo $sysheaders | sed 's/:/ -isystem /g'`"
   if test -n "$CXX"; then
     CXX_SYSINCLUDES=
-    cxxmachine=`$CXX -dumpmachine 2>&5` &&
-    cxxheaders=`$CXX -v -S -x c++ /dev/null -o /dev/null 2>&1 \
-	| sed -n -e '1,/#include/d' -e '/^ \//{p;q;}' | sed 's/ //'`
-    test "x$cxxheaders" != x && test "x$i" != "x$cxxheaders" &&
-    CXX_SYSINCLUDES="$CXX_SYSINCLUDES -isystem $cxxheaders \
--isystem $cxxheaders/$cxxmachine -isystem $cxxheaders/backward"
+    for cxxheaders in `$CXX -v -S -x c++ /dev/null -o /dev/null 2>&1 \
+    | sed -n -e '1,/#include/d' -e 's/^ \(\/.*\/[cg]++\)/\1/p'`; do
+      test "x$cxxheaders" != x &&
+      CXX_SYSINCLUDES="$CXX_SYSINCLUDES -isystem $cxxheaders"
+    done
   fi
 fi
 
@@ -6254,86 +6257,101 @@ if test $libc_cv_cc_with_libunwind = yes; then
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodelete option" >&5
-$as_echo_n "checking for -z nodelete option... " >&6; }
-if ${libc_cv_z_nodelete+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker that supports -z nodelete" >&5
+$as_echo_n "checking for linker that supports -z nodelete... " >&6; }
+libc_linker_feature=no
+if test x"$gnu_ld" = x"yes"; then
+  libc_linker_check=`$LD -v --help 2>/dev/null | grep "\-z nodelete"`
+  if test -n "$libc_linker_check"; then
+    cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-		   -fPIC -shared -o conftest.so conftest.c
-		   -nostartfiles -nostdlib
-		   -Wl,--enable-new-dtags,-z,nodelete 1>&5'
+    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+				-Wl,--enable-new-dtags,-z,nodelete -nostdlib -nostartfiles
+				-fPIC -shared -o conftest.so conftest.c
+				1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; }
-then
+    then
+      libc_linker_feature=yes
+    fi
+    rm -f conftest*
+  fi
+fi
+if test $libc_linker_feature = yes; then
   libc_cv_z_nodelete=yes
 else
   as_fn_error $? "linker with -z nodelete support required" "$LINENO" 5
 fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_z_nodelete" >&5
-$as_echo "$libc_cv_z_nodelete" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_linker_feature" >&5
+$as_echo "$libc_linker_feature" >&6; }
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodlopen option" >&5
-$as_echo_n "checking for -z nodlopen option... " >&6; }
-if ${libc_cv_z_nodlopen+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker that supports -z nodlopen" >&5
+$as_echo_n "checking for linker that supports -z nodlopen... " >&6; }
+libc_linker_feature=no
+if test x"$gnu_ld" = x"yes"; then
+  libc_linker_check=`$LD -v --help 2>/dev/null | grep "\-z nodlopen"`
+  if test -n "$libc_linker_check"; then
+    cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			-fPIC -shared -o conftest.so conftest.c
-			-nostartfiles -nostdlib
-			-Wl,--enable-new-dtags,-z,nodlopen 1>&5'
+    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+				-Wl,--enable-new-dtags,-z,nodlopen -nostdlib -nostartfiles
+				-fPIC -shared -o conftest.so conftest.c
+				1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; }
-then
+    then
+      libc_linker_feature=yes
+    fi
+    rm -f conftest*
+  fi
+fi
+if test $libc_linker_feature = yes; then
   libc_cv_z_nodlopen=yes
 else
   as_fn_error $? "linker with -z nodlopen support required" "$LINENO" 5
 fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_z_nodlopen" >&5
-$as_echo "$libc_cv_z_nodlopen" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_linker_feature" >&5
+$as_echo "$libc_linker_feature" >&6; }
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z initfirst option" >&5
-$as_echo_n "checking for -z initfirst option... " >&6; }
-if ${libc_cv_z_initfirst+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker that supports -z initfirst" >&5
+$as_echo_n "checking for linker that supports -z initfirst... " >&6; }
+libc_linker_feature=no
+if test x"$gnu_ld" = x"yes"; then
+  libc_linker_check=`$LD -v --help 2>/dev/null | grep "\-z initfirst"`
+  if test -n "$libc_linker_check"; then
+    cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			-fPIC -shared -o conftest.so conftest.c
-			-nostartfiles -nostdlib
-			-Wl,--enable-new-dtags,-z,initfirst 1>&5'
+    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+				-Wl,--enable-new-dtags,-z,initfirst -nostdlib -nostartfiles
+				-fPIC -shared -o conftest.so conftest.c
+				1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; }
-then
+    then
+      libc_linker_feature=yes
+    fi
+    rm -f conftest*
+  fi
+fi
+if test $libc_linker_feature = yes; then
   libc_cv_z_initfirst=yes
 else
   as_fn_error $? "linker with -z initfirst support required" "$LINENO" 5
 fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_z_initfirst" >&5
-$as_echo "$libc_cv_z_initfirst" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_linker_feature" >&5
+$as_echo "$libc_linker_feature" >&6; }
 
 # Add-on fragments can set these for other machines.
 libc_commonpagesize=${libc_commonpagesize:-no}
@@ -6530,32 +6548,37 @@ if test "$libc_cv_z_combreloc" = yes; then
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z execstack" >&5
-$as_echo_n "checking for -z execstack... " >&6; }
-if ${libc_cv_z_execstack+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.c <<EOF
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker that supports -z execstack" >&5
+$as_echo_n "checking for linker that supports -z execstack... " >&6; }
+libc_linker_feature=no
+if test x"$gnu_ld" = x"yes"; then
+  libc_linker_check=`$LD -v --help 2>/dev/null | grep "\-z execstack"`
+  if test -n "$libc_linker_check"; then
+    cat > conftest.c <<EOF
 int _start (void) { return 42; }
 EOF
-if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
-			    -fPIC -shared -o conftest.so conftest.c
-			    -Wl,-z,execstack -nostdlib
-			    1>&5'
+    if { ac_try='${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS
+				-Wl,-z,execstack -nostdlib -nostartfiles
+				-fPIC -shared -o conftest.so conftest.c
+				1>&5'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; }
-then
+    then
+      libc_linker_feature=yes
+    fi
+    rm -f conftest*
+  fi
+fi
+if test $libc_linker_feature = yes; then
   libc_cv_z_execstack=yes
 else
   libc_cv_z_execstack=no
 fi
-rm -f conftest*
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_z_execstack" >&5
-$as_echo "$libc_cv_z_execstack" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_linker_feature" >&5
+$as_echo "$libc_linker_feature" >&6; }
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -fpie" >&5

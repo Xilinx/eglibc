@@ -1,5 +1,5 @@
-/* clock_getcpuclockid -- Get a clockid_t for process CPU time.  Linux/IA64
-   Copyright (C) 2000,2001,2003,2004 Free Software Foundation, Inc.
+/* Determine floating-point rounding mode within libc.  HP-PARISC version.
+   Copyright (C) 2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,16 +16,20 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <errno.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
+#ifndef _HPPA_GET_ROUNDING_MODE_H
+#define _HPPA_GET_ROUNDING_MODE_H	1
 
+#include <fenv.h>
+#include <fpu_control.h>
 
-#include "has_cpuclock.c"
+/* Return the floating-point rounding mode.  */
 
-#define HAS_CPUCLOCK (has_cpuclock () > 0)
+static inline int
+get_rounding_mode (void)
+{
+  fpu_control_t fc;
+  _FPU_GETCW (fc);
+  return fc & _FPU_HPPA_MASK_RM;
+}
 
-#include <sysdeps/unix/sysv/linux/clock_getcpuclockid.c>
+#endif /* get-rounding-mode.h */

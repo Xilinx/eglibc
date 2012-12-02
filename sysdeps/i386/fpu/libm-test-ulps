@@ -1339,6 +1339,9 @@ idouble: 1
 ifloat: 1
 
 # cos
+Test "cos (0x1p+50) == 8.68095904660550604334592502063501320395739e-01":
+float: 1
+ifloat: 1
 Test "cos (M_PI_6l * 2.0) == 0.5":
 double: 1
 float: 1
@@ -1817,10 +1820,10 @@ ldouble: 1
 
 # ctan
 Test "Real part of: ctan (-2 - 3 i) == 0.376402564150424829275122113032269084e-2 - 1.00323862735360980144635859782192726 i":
-float: 1
-ifloat: 1
 double: 1
+float: 1
 idouble: 1
+ifloat: 1
 ildouble: 1
 ldouble: 1
 Test "Imaginary part of: ctan (-2 - 3 i) == 0.376402564150424829275122113032269084e-2 - 1.00323862735360980144635859782192726 i":
@@ -2477,6 +2480,11 @@ ifloat: 1
 ildouble: 1
 ldouble: 1
 
+# pow
+Test "pow (0x0.ffffffp0, -0x1p24) == 2.7182819094701610539628664526874952929416":
+ildouble: 1
+ldouble: 1
+
 # pow_downward
 Test "pow_downward (1.0625, 1.125) == 1.070582293028761362162622578677070098674":
 double: 1
@@ -2683,6 +2691,9 @@ Test "sincos (0x1.fffff8p+127, &sin_res, &cos_res) puts 4.8578606313048733970111
 float: 1
 Test "sincos (0x1p+127, &sin_res, &cos_res) puts 6.23385512955870240370428801097126489001833e-01 in sin_res":
 float: 1
+Test "sincos (0x1p+50, &sin_res, &cos_res) puts 8.68095904660550604334592502063501320395739e-01 in cos_res":
+float: 1
+ifloat: 1
 Test "sincos (0x1p65, &sin_res, &cos_res) puts -0.047183876212354673805106149805700013943218 in sin_res":
 float: 1
 ifloat: 1
@@ -3015,6 +3026,28 @@ ldouble: 1
 Test "y0 (0x1.ff00000000002p+840) == 1.846591691699331493194965158699937660696e-127":
 double: 1
 idouble: 1
+Test "y0 (0x1p-10) == -4.4865150767109739412411806297168793661098":
+ildouble: 1
+ldouble: 1
+Test "y0 (0x1p-30) == -1.3311940304267782826037118027401817264906e+1":
+double: 1
+idouble: 1
+ildouble: 1
+ldouble: 1
+Test "y0 (0x1p-40) == -1.7724652307320814696990854700366226762563e+1":
+double: 1
+float: 1
+idouble: 1
+ifloat: 1
+Test "y0 (0x1p-60) == -2.6550076313426878432849115782108205929120e+1":
+double: 1
+idouble: 1
+Test "y0 (0x1p-70) == -3.0962788316479910300778244424468159753887e+1":
+double: 1
+idouble: 1
+Test "y0 (0x1p-80) == -3.5375500319532942168707373066828113573541e+1":
+double: 1
+idouble: 1
 Test "y0 (1.0) == 0.0882569642156769579829267660235151628":
 double: 2
 float: 1
@@ -3056,6 +3089,9 @@ idouble: 1
 ifloat: 2
 ildouble: 1
 ldouble: 1
+Test "y1 (0x1p-10) == -6.5190099301063115047395187618929589514382e+02":
+float: 1
+ifloat: 1
 Test "y1 (1.0) == -0.781212821300288716547150000047964821":
 double: 1
 idouble: 1
@@ -3562,10 +3598,10 @@ ildouble: 1
 ldouble: 1
 
 Function: Real part of "ctan_towardzero":
-float: 1
-ifloat: 1
 double: 1
+float: 1
 idouble: 1
+ifloat: 1
 ildouble: 1
 ldouble: 1
 
@@ -3636,10 +3672,10 @@ ildouble: 4
 ldouble: 4
 
 Function: Imaginary part of "ctanh_towardzero":
-float: 1
-ifloat: 1
 double: 1
+float: 1
 idouble: 1
+ifloat: 1
 ildouble: 1
 ldouble: 1
 
@@ -3748,6 +3784,10 @@ ifloat: 1
 Function: "log10":
 float: 1
 ifloat: 1
+ildouble: 1
+ldouble: 1
+
+Function: "pow":
 ildouble: 1
 ldouble: 1
 

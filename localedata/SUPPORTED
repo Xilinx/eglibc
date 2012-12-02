@@ -46,7 +46,7 @@ ar_TN.UTF-8/UTF-8 \
 ar_TN/ISO-8859-6 \
 ar_YE.UTF-8/UTF-8 \
 ar_YE/ISO-8859-6 \
-ayc_PE/UFT-8 \
+ayc_PE/UTF-8 \
 az_AZ/UTF-8 \
 as_IN/UTF-8 \
 ast_ES.UTF-8/UTF-8 \
@@ -242,6 +242,7 @@ hu_HU.UTF-8/UTF-8 \
 hu_HU/ISO-8859-2 \
 hy_AM/UTF-8 \
 hy_AM.ARMSCII-8/ARMSCII-8 \
+ia_FR/UTF-8 \
 id_ID.UTF-8/UTF-8 \
 id_ID/ISO-8859-1 \
 ig_NG/UTF-8 \
@@ -312,6 +313,8 @@ nds_DE/UTF-8 \
 nds_NL/UTF-8 \
 ne_NP/UTF-8 \
 nhn_MX/UTF-8 \
+niu_NU/UTF-8 \
+niu_NZ/UTF-8 \
 nl_AW/UTF-8 \
 nl_BE.UTF-8/UTF-8 \
 nl_BE/ISO-8859-1 \

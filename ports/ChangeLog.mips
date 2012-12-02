@@ -1,3 +1,98 @@
+2012-11-30  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/mips32/libm-test-ulps: Update.
+	* sysdeps/mips/mips64/libm-test-ulps: Likewise.
+
+2012-11-29  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14893]
+	* sysdeps/mips/mips64/n32/_itoa.h: New file.
+	* sysdeps/unix/sysv/linux/mips/register-dump.h: Include
+	<sgidefs.h>.
+	(CTX_TYPE): New macro.
+	(CTX_REG): Likewise.
+	(CTX_PC): Likewise.
+	(CTX_MDHI): Likewise.
+	(CTX_MDLO): Likewise.
+	(REG_HEX_SIZE): Likewise.
+	(hexvalue): Take _ITOA_WORD_TYPE argument.
+	(register_dump): Use these macros instead of hardcoding struct
+	sigcontext * type and accesses and 8-byte textual output for
+	registers.
+
+2012-11-22  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14822]
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/syscalls.list
+	(sendfile): New syscall entry.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sendfile64.c: New file.
+	Copy of ../sysdeps/unix/sysv/linux/wordsize-64/sendfile64.c.
+
+2012-11-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/jmpbuf-unwind.h (_jmpbuf_sp): Cast regs[0].__sp to
+	uintptr_t.
+
+	* sysdeps/mips/sotruss-lib.c: New file.
+
+2012-11-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/mips32/sysdep.h
+	(internal_syscall1): Use parentheses around macro arguments.
+	(internal_syscall2): Likewise.
+	(internal_syscall3): Likewise.
+	(internal_syscall4): Likewise.
+	(internal_syscall5): Likewise.
+	(internal_syscall6): Likewise.
+	(internal_syscall7): Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h
+	(internal_syscall1): Likewise.
+	(internal_syscall2): Likewise.
+	(internal_syscall3): Likewise.
+	(internal_syscall4): Likewise.
+	(internal_syscall5): Likewise.
+	(internal_syscall6): Likewise.
+
+	* sysdeps/mips/jmpbuf-unwind.h (_JMPBUF_CFA_UNWINDS_ADJ): Cast
+	_Unwind_GetCFA return to _Unwind_Ptr before casting to a pointer
+	type.
+	* sysdeps/unix/sysv/linux/mips/____longjmp_chk.c (CHECK_SP): Cast
+	ss_sp to long before casting to sp_type.
+	* sysdeps/unix/sysv/linux/mips/sigcontextinfo.h [_MIPS_SIM ==
+	_ABIO32] (GET_PC): Cast to unsigned long before casting to a
+	pointer type.
+	[_MIPS_SIM == _ABIO32] (GET_FRAME): Likewise.
+	[_MIPS_SIM == _ABIO32] (GET_STACK): Likewise.
+	[_MIPS_SIM != _ABIO32] (GET_PC): Likewise.
+	[_MIPS_SIM != _ABIO32] (GET_FRAME): Likewise.
+	[_MIPS_SIM != _ABIO32] (GET_STACK): Likewise.
+
+	* sysdeps/mips/bits/atomic.h [!__GNUC_PREREQ (4, 8)]
+	(__arch_compare_and_exchange_xxx_8_int): Separate assignments to
+	__prev and __cmp.  Cast __cmp to void.
+	[!__GNUC_PREREQ (4, 8)] (__arch_compare_and_exchange_xxx_16_int):
+	Likewise.
+	[!__GNUC_PREREQ (4, 8) && _MIPS_SIM == _ABIO32]
+	(__arch_compare_and_exchange_xxx_64_int): Likewise.
+
+2012-11-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/dl-machine.h (RESOLVE_GOTSYM): Declare VERSION
+	variable with __attribute__ ((unused)).
+
+	* sysdeps/unix/sysv/linux/mips/mips32/sysdep.h
+	(INTERNAL_SYSCALL_DECL): Use __attribute__ ((unused)).
+	(INTERNAL_SYSCALL_ERROR_P): Cast val to void.
+	(INTERNAL_SYSCALL_ERRNO): Cast err to void.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/sysdep.h
+	(INTERNAL_SYSCALL_DECL): Use __attribute__ ((unused)).
+	(INTERNAL_SYSCALL_ERROR_P): Cast val to void.
+	(INTERNAL_SYSCALL_ERRNO): Cast err to void.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h
+	(INTERNAL_SYSCALL_DECL): Use __attribute__ ((unused)).
+	(INTERNAL_SYSCALL_ERROR_P): Cast val to void.
+	(INTERNAL_SYSCALL_ERRNO): Cast err to void.
+
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/mips/bits/atomic.h

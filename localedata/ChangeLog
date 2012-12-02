@@ -1,3 +1,37 @@
+2012-11-26  Nik Kalach  <nikka@fedoraproject.org>
+
+	* locales/ia_FR (abmon): Fix December.
+
+	[BZ#14879]
+	* locales/ia_FR : New file.
+	* SUPPORTED (SUPPORTED-LOCALES): Add appropriate entry.
+
+2012-11-22  Andreas Jaeger  <aj@suse.de>
+
+	* locales/niu_NU: Fix comment.
+
+2012-11-21  Andreas Jaeger  <aj@suse.de>
+
+	* locales/szl_PL (LC_COLLATE): Fix syntax error.
+
+	* SUPPORTED (SUPPORTED-LOCALES): Fix typo for ayc_PE entry.
+
+2012-11-21  Chris Leonard  <cjl@sugarlabs.org>
+
+	[BZ #14863]
+	* SUPPORTED: Add niu_NU and niu_NZ.
+	* locales/niu_NU: Add Niuean (Vagahau Niue) locale for Niue,
+	contributed by Chris Leonard <cjl@sugarlabs.org> and Emani
+	Fakaotimanava-Lui <emani@niue.nu>.
+	* locales/niu_NZ: Add Niuean (Vagahau Niue) locale for New
+	Zealand, contributed by Chris Leonard <cjl@sugarlabs.org> and Emani
+	Fakaotimanava-Lui <emani@niue.nu>.
+
+2012-11-19  Eagle Burkut  <eagle.burkut@gmail.com>
+
+	[BZ #13759]
+	* locales/ug_CN (LC_COLLATE, LC_TIME, LC_MESSAGES): Fix entries.
+
 2012-11-16  Andreas Jaeger  <aj@suse.de>
 
 	[BZ #14368]

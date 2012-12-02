@@ -61,7 +61,7 @@ __ieee754_hypotl(long double x, long double y)
 	if(hb > ha) {a=y;b=x;j=ha; ha=hb;hb=j;} else {a=x;b=y;}
 	a = fabsl(a);	/* a <- |a| */
 	b = fabsl(b);	/* b <- |b| */
-	if((ha-hb)>0x3c0000000000000LL) {return a+b;} /* x/y > 2**60 */
+	if((ha-hb)>0x780000000000000LL) {return a+b;} /* x/y > 2**120 */
 	k=0;
 	kld = 1.0L;
 	if(ha > 0x5f30000000000000LL) {	/* a>2**500 */
@@ -83,7 +83,7 @@ __ieee754_hypotl(long double x, long double y)
 	   k += 600;
 	   kld = two600;
 	}
-	if(hb < 0x20b0000000000000LL) {	/* b < 2**-500 */
+	if(hb < 0x23d0000000000000LL) {	/* b < 2**-450 */
 	    if(hb <= 0x000fffffffffffffLL) {	/* subnormal b or 0 */
 		u_int64_t low;
 		GET_LDOUBLE_LSW64(low,b);

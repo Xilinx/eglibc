@@ -1,3 +1,133 @@
+2012-11-29  Steve McIntyre <steve.mcintyre@linaro.org>
+
+	* sysdeps/unix/sysv/linux/aarch64/dl-cache.h: New file.
+
+2012-11-22  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/libm-test-ulps: Regenerate.
+
+2012-11-21  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/unix/sysv/linux/aarch64/nptl/lowlevellock.h
+	(lll_futex_timed_wait_bitset): Remove INTERNAL_SYSCALL_ERROR_P.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_fma.c (weak_alias_x):
+	Remove and switch to weak_alias.
+	* sysdeps/aarch64/fpu/s_fmin.c (weak_alias_x): Likewise.
+	* sysdeps/aarch64/fpu/s_frint.c (weak_alias_x): Likewise.
+	* sysdeps/aarch64/fpu/s_lrint.c (weak_alias_x): Likewise.
+	* sysdeps/aarch64/fpu/s_lround.c (weak_alias_x): Likewise.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_fma.c (strong_aliasx, NO_LONG_DOUBLE): Remove.
+	* sysdeps/aarch64/fpu/s_fmin.c (strong_aliasx, NO_LONG_DOUBLE): Likewise.
+	* sysdeps/aarch64/fpu/s_frint.c (strong_aliasx, NO_LONG_DOUBLE): Likewise.
+	* sysdeps/aarch64/fpu/s_lrint.c (strong_aliasx, NO_LONG_DOUBLE): Likewise.
+	* sysdeps/aarch64/fpu/s_lround.c (strong_aliasx, NO_LONG_DOUBLE): Likewise.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_fma.c: Indent preprocessor directives.
+	* sysdeps/aarch64/fpu/s_fmin.c: Likewise.
+	* sysdeps/aarch64/fpu/s_frint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_frintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lrint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lround.c: Likewise.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/dl-tlsdesc.S: Use range for copyright years.
+	* sysdeps/aarch64/dl-tlsdesc.h: Likewise.
+	* sysdeps/aarch64/tlsdesc.c: Likewise.
+	* sysdeps/aarch64/fpu/s_ceil.c: Likewise.
+	* sysdeps/aarch64/fpu/s_ceilf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_floor.c: Likewise.
+	* sysdeps/aarch64/fpu/s_floorf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_fmaf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_fmax.c: Likewise.
+	* sysdeps/aarch64/fpu/s_fmaxf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_fmin.c: Likewise.
+	* sysdeps/aarch64/fpu/s_fminf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_frint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_frintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_llrint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_llrintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_llround.c: Likewise.
+	* sysdeps/aarch64/fpu/s_llroundf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lrint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lrintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lround.c: Likewise.
+	* sysdeps/aarch64/fpu/s_lroundf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_nearbyint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_nearbyintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_rint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_rintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_round.c: Likewise.
+	* sysdeps/aarch64/fpu/s_roundf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_trunc.c: Likewise.
+	* sysdeps/aarch64/fpu/s_truncf.c: Likewise.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_frint.x: Renamed to...
+	* sysdeps/aarch64/fpu/s_frint.c: ... this new file.
+	* sysdeps/aarch64/fpu/s_frintf.x: Renamed to...
+	* sysdeps/aarch64/fpu/s_frintf.c: ... this new file.
+	* sysdeps/aarch64/fpu/s_ceil.c: Include s_frint.c.
+	* sysdeps/aarch64/fpu/s_floor.c: Likewise.
+	* sysdeps/aarch64/fpu/s_nearbyint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_rint.c: Likewise.
+	* sysdeps/aarch64/fpu/s_round.c: Likewise.
+	* sysdeps/aarch64/fpu/s_trunc.c: Likewise.
+	* sysdeps/aarch64/fpu/s_ceilf.c: Include s_frintf.c.
+	* sysdeps/aarch64/fpu/s_floorf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_nearbyintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_rintf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_roundf.c: Likewise.
+	* sysdeps/aarch64/fpu/s_truncf.c: Likewise.
+
+2012-11-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_fma.c (__CONCATX): Don't use K&R.
+	* sysdeps/aarch64/fpu/s_fmin.c (__CONCATX): Likewise.
+	* sysdeps/aarch64/fpu/s_lrint.c (__CONCATX): Likewise.
+	* sysdeps/aarch64/fpu/s_lround.c (__CONCATX): Likewise.
+	* sysdeps/aarch64/fpu/s_frint.x (__CONCATX): Likewise.
+
+2012-11-19  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* sysdeps/aarch64/fpu/s_ceil.c: New file.
+	* sysdeps/aarch64/fpu/s_ceilf.c: New file.
+	* sysdeps/aarch64/fpu/s_floor.c: New file.
+	* sysdeps/aarch64/fpu/s_floorf.c: New file.
+	* sysdeps/aarch64/fpu/s_fma.c: Replace file.
+	* sysdeps/aarch64/fpu/s_fmaf.c: New file.
+	* sysdeps/aarch64/fpu/s_fmax.c: New file.
+	* sysdeps/aarch64/fpu/s_fmaxf.c: New file.
+	* sysdeps/aarch64/fpu/s_fmin.c: New file.
+	* sysdeps/aarch64/fpu/s_fminf.c: New file.
+	* sysdeps/aarch64/fpu/s_frint.x: New file.
+	* sysdeps/aarch64/fpu/s_frintf.x: New file.
+	* sysdeps/aarch64/fpu/s_llrint.c: New file.
+	* sysdeps/aarch64/fpu/s_llrintf.c: New file.
+	* sysdeps/aarch64/fpu/s_llround.c: New file.
+	* sysdeps/aarch64/fpu/s_llroundf.c: New file.
+	* sysdeps/aarch64/fpu/s_lrint.c: New file.
+	* sysdeps/aarch64/fpu/s_lrintf.c: New file.
+	* sysdeps/aarch64/fpu/s_lround.c: New file.
+	* sysdeps/aarch64/fpu/s_lroundf.c: New file.
+	* sysdeps/aarch64/fpu/s_nearbyint.c: New file.
+	* sysdeps/aarch64/fpu/s_nearbyintf.c: New file.
+	* sysdeps/aarch64/fpu/s_rint.c: New file.
+	* sysdeps/aarch64/fpu/s_rintf.c: New file.
+	* sysdeps/aarch64/fpu/s_round.c: New file.
+	* sysdeps/aarch64/fpu/s_roundf.c: New file.
+	* sysdeps/aarch64/fpu/s_trunc.c: New file.
+	* sysdeps/aarch64/fpu/s_truncf.c: New file.
+
 2012-11-09  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
 
 	* sysdeps/aarch64/Implies: New file.

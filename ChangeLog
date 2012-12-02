@@ -1,3 +1,565 @@
+2012-12-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* manual/arith.texi (feenableexcept): Fix typo.
+	(fedisableexcept): Likewise.
+
+2012-11-30  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/powerpc/powerpc64/entry.h (TEXT_START): Define using a
+	second, differently-typed declaration, rather than a cast.
+
+2012-11-30  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sunrpc/rpc/svc.h (__svc_accept_failed): Move declaration...
+	* include/rpc/svc.h: ... here.
+
+2012-11-30  Aurelien Jarno  <aurel32@debian.org>
+
+	[BZ #13013]
+	* resolv/res_query.c(__libc_res_nquery): Assign hp and hp2
+	depending n and resplen2 to catch cases where answer
+	equals answerp2.
+
+2012-11-29  Carlos O'Donell  <carlos@systemhalted.org>
+
+	* elf/get-dynamic-info.h (elf_get_dynamic_info): Warn
+	for unsupported DF_1_* bits when DL_DEBUG_FILES is set.
+
+2012-11-29  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/clock_getcpuclockid.c (HAS_CPUCLOCK): Delete.
+
+2012-11-29  Roland McGrath  <roland@hack.frob.com>
+
+	* inet/tst-inet6_rth.c (do_test): Use a union rather than type punning.
+
+2012-11-28  Jeff Law  <law@redhat.com>
+
+	[BZ #13761]
+	* nscd/grpcache.c (cache_addgr): Rename alloca_used to
+	dataset_temporary.  Track alloca usage into alloca_used.
+	If dataset is large allocate and release it via malloc/free.
+
+2012-06-04  Florian Weimer  <fweimer@redhat.com>
+
+	[BZ #14197]
+	* debug/test-strcpy_chk.c: Mention __chk_fail ABI test.
+
+2012-11-28  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-11-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14803]
+	* sysdeps/ieee754/ldbl-96/e_asinl.c (pio2_hi): Use hex float value
+	of pi/2 rounded to nearest to 64 bits.
+	(pio2_lo): Use hex float value of pi/2 - pio2_hi rounded to
+	nearest to 64 bits.
+	(pio4_hi): Use hex float value of pi/4 rounded to nearest to 64
+	bits.
+
+2012-11-28  Jeff Law <law@redhat.com>
+	    Martin Osvald <mosvald@redhat.com>
+
+	[BZ #14889]
+	* sunrpc/rpc/svc.h (__svc_accept_failed): New prototype.
+	* sunrpc/svc.c: Include time.h.
+	(__svc_accept_failed): New function.
+	* sunrpc/svc_tcp.c (rendezvous_request): If the accept fails for
+	any reason other than EINTR, call __svc_accept_failed.
+	* sunrpc/svc_udp.c (svcudp_recv): Similarly.
+	* sunrpc/svc_unix.c (rendezvous_request): Similarly.
+
+2012-11-28  Andreas Schwab  <schwab@suse.de>
+
+	* scripts/abilist.awk: Also handle indirect functions in .opd
+	section.
+
+2012-11-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13881]
+	* sysdeps/x86/fpu/powl_helper.c: New file.
+	* sysdeps/x86/fpu/Makefile: Likewise.
+	* sysdeps/i386/fpu/e_powl.S (limit): Remove object.
+	(p3): New object.
+	(__ieee754_powl): Use __powl_helper for finite arguments except
+	integer exponents below 8.
+	* sysdeps/x86_64/fpu/e_powl.S (limit): Remove object.
+	(p3): New object.
+	(__ieee754_powl): Use __powl_helper for finite arguments except
+	integer exponents below 8.
+	* math/libm-test.inc (pow_test): Add more tests and enable some
+	previously disabled tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2012-11-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* nss/makedb.c (is_prime): Assert that input is odd and greater
+	than 4.  Note that fact in a comment too.
+	(next_prime): Add 4 to input.
+
+2012-11-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #11741]
+	* libio/Makefile (tests): Add test case tst-fwrite-error.
+	* libio/iofwrite.c (_IO_fwrite): Return 0 on EOF.
+	* libio/iofwrite_u.c (fwrite_unlocked): Likewise.
+	* libio/tst-fwrite-error.c: New test case.
+
+2012-11-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/dl-load.c (_dl_map_object_from_fd): Cast to uintptr_t
+	before casting to void *.
+	* include/libc-internal.h (__pointer_type): New macro.
+	(__integer_if_pointer_type_sub): Likewise.
+	(__integer_if_pointer_type): Likewise.
+	(cast_to_integer): Likewise.
+	* sysdeps/x86_64/bits/atomic.h: Include <libc-internal.h>.
+	(__arch_c_compare_and_exchange_val_64_acq): Use cast_to_integer
+	before casting to atomic64_t.
+	(atomic_exchange_acq): Likewise.
+	(__arch_exchange_and_add_body): Likewise.
+	(__arch_add_body): Likewise.
+	(atomic_add_negative): Likewise.
+	(atomic_add_zero): Likewise.
+
+2012-11-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/generic/unwind-dw2-fde.c (get_pc_begin): New function.
+	(fde_unencoded_compare): Use get_pc_begin instead of type-punning.
+	(add_fdes): Likewise.
+	(linear_search_fdes): Likewise.
+	(binary_search_unencoded_fdes): Likewise.
+
+2012-11-26  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* elf/sotruss.ksh: Correctly locate argument of -F and -T options.
+
+2012-11-24  Adam Conrad  <adconrad@0c3.net>
+
+	* configure.in: Autodetect C++ header directories.
+	* configure: Regenerated.
+
+2012-11-23  Mike Frysinger  <vapier@gentoo.org>
+
+	* elf/Makefile ($(objpfx)ld.so): Change readelf to $(READELF).
+
+2012-11-23  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2012-11-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (fma_test_towardzero) [TEST_LDOUBLE &&
+	LDBL_MANT_DIG == 106]: Disable some tests.
+	(fma_test_downward) [TEST_LDOUBLE && LDBL_MANT_DIG == 106]:
+	Likewise.
+	(fma_test_upward) [TEST_LDOUBLE && LDBL_MANT_DIG == 106]:
+	Likewise.
+
+	[BZ #14871]
+	* sysdeps/ieee754/ldbl-128ibm/s_atanl.c (__atanl): Return the
+	input for small inputs.  Return +/- pi/2 for large inputs.
+	* math/libm-test.inc (atan_test): Add more tests.
+
+	* sysdeps/generic/unwind-dw2-fde-glibc.c
+	(_Unwind_IteratePhdrCallback): Declare P_DYNAMIC with
+	__attribute__ ((unused)).
+
+	[BZ #14645]
+	* sysdeps/ieee754/ldbl-128ibm/s_fmal.c (__fmal): Compute result as
+	x * y if x and y are nonzero and z is zero.
+
+	[BZ #14811]
+	* sysdeps/ieee754/ldbl-128ibm/e_powl.c (__ieee754_powl): Saturate
+	nonzero exponents with absolute value below 0x1p-117 to +/-
+	0x1p-117.
+
+	[BZ #14869]
+	* sysdeps/ieee754/ldbl-128ibm/e_hypotl.c (__ieee754_hypotl): Scale
+	up arguments below 2**-450, not just those below 2**-500.
+	* math/libm-test.inc (hypot_test): Add another test.
+
+	[BZ #14868]
+	* sysdeps/ieee754/ldbl-128ibm/e_hypotl.c (__ieee754_hypotl):
+	Return a+b for ratio over 2**120, not 2**60.
+	* math/libm-test.inc (hypot_test): Add another test.
+
+	* math/libm-test.inc (clog_test): Use
+	UNDERFLOW_EXCEPTION_LDOUBLE_IBM on two tests.
+	(clog10_test): Likewise.
+
+	[BZ #6778]
+	* sysdeps/ieee754/ldbl-128ibm/s_expm1l.c (big): Change to 1e290L.
+
+2012-11-22  Andreas Schwab  <schwab@suse.de>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+2012-11-22  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/x86_64/multiarch/test-multiarch.c (get_cpuinfo): Terminate
+	printf output with newline.
+
+2012-11-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #14865]
+	* aclocal.m4 (LIBC_LINKER_FEATURE): New macro.
+	* configure.in: Use LIBC_LINKER_FEATURE to check -z nodelete,
+	-z nodlopen, -z initfirst and -z execstack support.
+	* configure: Regenerated.
+
+	* elf/elf.h (DF_1_NODIRECT): New macro.
+	(DF_1_IGNMULDEF): Likewise.
+	(DF_1_NOKSYMS): Likewise.
+	(DF_1_NOHDR): Likewise.
+	(DF_1_EDITED): Likewise.
+	(DF_1_NORELOC): Likewise.
+	(DF_1_SYMINTPOSE): Likewise.
+	(DF_1_GLOBAUDIT): Likewise.
+	(DF_1_SINGLETON): Likewise.
+	* elf/get-dynamic-info.h (elf_get_dynamic_info): Assert
+	DT_1_SUPPORTED_MASK bits.
+	* include/elf.h (DT_1_SUPPORTED_MASK): New macro.
+
+2012-11-20  Carlos O'Donell  <carlos_odonell@mentor.com>
+
+	* sysdeps/unix/make-syscalls.sh: Document prefixes.
+
+2012-11-20  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/sh/dl-machine.h (ELF_MACHINE_RUNTIME_FIXUP_PARAMS): New
+	macro.
+
+	* sysdeps/unix/sysv/linux/bits/socket.h (struct mmsghdr, recvmmsg)
+	(sendmmsg): Move declarations...
+	* socket/sys/socket.h: ... here.
+	* sysdeps/unix/sysv/linux/recvmmsg.c [!defined __NR_recvmmsg &&
+	!defined __NR_socketcall] (recvmmsg): Move ENOSYS stub into and
+	include it from...
+	* socket/recvmmsg.c: ... this new file.
+	* sysdeps/unix/sysv/linux/internal_sendmmsg.S [__ASSUME_SENDMMSG]
+	(sendmmsg): Rename to __sendmmsg, create weak alias and make
+	definition of __sendmmsg hidden.
+	* sysdeps/unix/sysv/linux/sendmmsg.c (sendmmsg): Likewise.
+	[!defined __NR_sendmmsg && !defined __NR_socketcall] (sendmmsg):
+	Move ENOSYS stub into and include it from...
+	* socket/sendmmsg.c: ... this new file.
+	* sysdeps/unix/sysv/linux/Makefile [subdir=socket]
+	(sysdep_routines): Move recvmmsg and sendmmsg...
+	* socket/Makefile (routines): ... here.
+	* socket/Versions (GLIBC_2.17): Add recvmmsg and sendmmsg.
+	(GLIBC_PRIVATE): Add __sendmmsg.
+	* include/sys/socket.h (__sendmmsg): Add declarations.
+	* resolv/res_send.c (send_dg): Invoke __sendmmsg instead of
+	sendmmsg.
+
+2012-11-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/ieee754/ldbl-128/s_nearbyintl.c (__nearbyintl): Mark
+	variable I1 with __attribute__ ((unused)).
+	* sysdeps/ieee754/ldbl-128/s_rintl.c (__rintl): Likewise.
+
+2012-11-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* stdio-common/_itowa.c (_itowa) [BITS_PER_MP_LIMB == 64]: Declare
+	DUMMY variables with __attribute__ ((unused)).
+
+	* bits/byteswap.h: Include <bits/types.h>.
+	(__bswap_64): Use __uint64_t instead of unsigned long long int.
+
+2012-11-19  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/mach/hurd/ptsname.c (ptsname): Change the type of PEERNAME to
+	string_t.  Do not manually set errno.
+	(__ptsname_r): Change the type of PEERNAME to string_t, and check its
+	length with __strnlen.  Make sure to both set errno and return it on
+	failure.
+
+2012-11-19  David S. Miller  <davem@davemloft.net>
+
+	With help from Joseph Myers.
+	* sysdeps/ieee754/ldbl-128/s_atanl.c (__atanl): Handle tiny and
+	very large arguments properly.
+	* math/libm-test.inc (atan_test): New tests.
+	(atan2_test): New tests.
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+2012-11-19  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14856]
+	* posix/bits/posix1_lim.h [!__USE_XOPEN2K] (_POSIX_TZNAME_MAX):
+	Define to 3.
+
+	* conform/data/errno.h-data [POSIX] (EADDRINUSE): Do not expect.
+	[POSIX] (EADDRNOTAVAIL): Likewise.
+	[POSIX] (EAFNOSUPPORT): Likewise.
+	[POSIX] (EALREADY): Likewise.
+	[POSIX] (ECONNABORTED): Likewise.
+	[POSIX] (ECONNREFUSED): Likewise.
+	[POSIX] (ECONNRESET): Likewise.
+	[POSIX] (EDESTADDRREQ): Likewise.
+	[POSIX] (EDQUOT): Likewise.
+	[POSIX] (EHOSTUNREACH): Likewise.
+	[POSIX] (EIDRM): Likewise.
+	[POSIX] (EISCONN): Likewise.
+	[POSIX] (ELOOP): Likewise.
+	[POSIX] (EMULTIHOP): Likewise.
+	[POSIX] (ENETDOWN): Likewise.
+	[POSIX] (ENETUNREACH): Likewise.
+	[POSIX] (ENOBUFS): Likewise.
+	[POSIX] (ENODATA): Likewise.
+	[POSIX] (ENOLINK): Likewise.
+	[POSIX] (ENOMSG): Likewise.
+	[POSIX] (ENOPROTOOPT): Likewise.
+	[POSIX] (ENOSR): Likewise.
+	[POSIX] (ENOSTR): Likewise.
+	[POSIX] (ENOTCONN): Likewise.
+	[POSIX] (ENOTSOCK): Likewise.
+	[POSIX] (EOPNOTSUPP): Likewise.
+	[POSIX] (EOVERFLOW): Likewise.
+	[POSIX] (EPROTO): Likewise.
+	[POSIX] (EPROTONOSUPPORT): Likewise.
+	[POSIX] (EPROTOTYPE): Likewise.
+	[POSIX] (ESTALE): Likewise.
+	[POSIX] (ETIME): Likewise.
+	[POSIX] (ETXTBSY): Likewise.
+	[POSIX] (EWOULDBLOCK): Likewise.
+	[!ISO && !ISO99 && !ISO11] (E*): Do not allow.
+	* conform/data/fcntl.h-data [POSIX] (SEEK_SET): Allow.
+	[POSIX] (SEEK_CUR): Likewise.
+	[POSIX] (SEEK_END): Likewise.
+	[POSIX || UNIX98] (mode_t): Do not require.
+	[POSIX] (off_t): Likewise.
+	[POSIX] (pid_t): Likewise.
+	[POSIX] (sys/stat.h): Do not allow header.
+	[POSIX] (unistd.h): Likewise.
+	[!ISO && !ISO99 && !ISO11] (timespec): Do not allow.
+	[!ISO && !ISO99 && !ISO11] (tv_nsec): Likewise.
+	[!ISO && !ISO99 && !ISO11] (tv_sec): Likewise.
+	* conform/data/locale.h-data [POSIX] (LC_MESSAGES): Do not
+	require.
+	* conform/data/mqueue.h-data [!ISO && !ISO99 && !ISO11] (struct
+	sigevent): Specify elements.
+	[XOPEN2K8 || POSIX2008] (struct sigevent): Remove duplicate type
+	entry.
+	[!ISO && !ISO99 && !ISO11] (mq_*): Allow.
+	[!ISO && !ISO99 && !ISO11] (MQ_*): Likewise.
+
+	* conform/data/cpio.h-data [POSIX]: Disable whole file.
+	* conform/data/glob.h-data [POSIX] (GLOB_NOSYS): Do not expect.
+	* conform/data/limits.h-data [!ISO && !ISO99 && !ISO11]
+	(AIO_LIST_MAX): Change to AIO_LISTIO_MAX.
+	[!ISO && !ISO99 && !ISO11] (ATEXT_MAX): Remove.
+	[!ISO && !ISO99 && !ISO11 && !POSIX && !XPG3] (ATEXIT_MAX): Allow.
+	[POSIX || POSIX2008 || XPG3] (IOV_MAX): Do not allow.
+	[POSIX || POSIX2008 || XPG3] (_XOPEN_IOV_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (MQ_PRIO_MAX): Allow.
+	[!ISO && !ISO99 && !ISO11] (RE_DUP_MAX): Remove duplicate entry.
+	[POSIX || XPG3 || XPG4 || UNIX98] (SS_REPL_MAX): Do not allow.
+	[POSIX || XPG3 || XPG4 || UNIX98] (SYMLOOP_MAX): Likewise.
+	[POSIX || XPG3 || XPG4] (FILESIZEBITS): Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (POSIX_ALLOC_SIZE_MIN):
+	Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (POSIX_REC_INCR_XFER_SIZE):
+	Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (POSIX_REC_MAX_XFER_SIZE):
+	Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (POSIX_REC_XFER_ALIGN):
+	Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (SYMLINK_MAX): Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (_POSIX_SS_REPL_MAX): Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (_POSIX_SYMLINK_MAX): Likewise.
+	[POSIX || XPG3 || XPG4 || UNIX98] (_POSIX_SYMLOOP_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (BC_BASE_MAX): Use macro-constant.
+	Specify lower bound on value.
+	[!ISO && !ISO99 && !ISO11] (BC_DIM_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (BC_SCALE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (BC_STRING_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (COLL_WEIGHTS_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (EXPR_NEST_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (RE_DUP_MAX): Likewise
+	[POSIX || XPG3 || XPG4] (CHARCLASS_NAME_MAX): Do not allow.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_CLOCKRES_MIN): Specify exact
+	value.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_AIO_LISTIO_MAX): Do not specify
+	as optional.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_AIO_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_ARG_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_CHILD_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_DELAYTIMER_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_LINK_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_LOGIN_NAME_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_MAX_CANON): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_MAX_INPUT): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_MQ_OPEN_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_MQ_PRIO_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_NAME_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_NGROUPS_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_OPEN_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_PATH_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_PIPE_BUF): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_RE_DUP_MAX): Remove duplicate
+	entry.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_RTSIG_MAX): Do not specify as
+	optional.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_SEM_NSEMS_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_SEM_VALUE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_SIGQUEUE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_SSIZE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_STREAM_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_THREAD_DESTRUCTOR_ITERATIONS):
+	Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_THREAD_KEYS_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_THREAD_THREADS_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_TIMER_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_TTY_NAME_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX_TZNAME_MAX): Likewise.  Give
+	value as 3 for [POSIX || XPG3 || XPG4 || UNIX98].
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_BC_BASE_MAX): Do not specify
+	as optional.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_BC_DIM_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_BC_SCALE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_BC_STRING_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_CHARCLASS_NAME_MAX):
+	Likewise.  Do not allow for [POSIX || XPG3 || XPG4 || UNIX98].
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_COLL_WEIGHTS_MAX): Do not
+	specify as optional.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_EXPR_NEST_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_LINE_MAX): Likewise.
+	[!ISO && !ISO99 && !ISO11] (_POSIX2_RE_DUP_MAX): Likewise.
+	[POSIX || POSIX2008 || XPG3] (_XOPEN_IOV_MAX): Do not allow.
+	[POSIX || XPG3] (NL_ARGMAX): Do not allow.
+	[XPG3] (NL_LANGMAX): Likewise.
+	[POSIX || XPG3] (NL_MSGMAX): Likewise.
+	[POSIX || XPG3] (NL_NMAX): Likewise.
+	[POSIX || XPG3] (NL_SETMAX): Likewise.
+	[POSIX || XPG3] (NL_TEXTMAX): Likewise.
+	[XPG3] (NZERO): Likewise.
+	[XPG4 || UNIX98] (TMP_MAX): Only enable for these conditions.
+	[POSIX || XPG3 || XPG4 || UNIX98] (*_MIN): Do not allow.
+	[!ISO && !ISO99 && !ISO11] (*_t): Allow.
+	* conform/data/regex.h-data [!ISO && !ISO99 && !ISO11]
+	(REG_ERANGE): Expect.
+	* conform/data/stdio.h-data [POSIX] (L_cuserid): Use
+	optional-constant.
+	[POSIX || XOPEN2K || XOPEN2K8 || POSIX2008] (getchar_unlocked):
+	Use (void) in prototype.
+	[POSIX] (*_t): Allow.
+	* conform/data/sys/times.h-data [POSIX]: Enable whole file.
+	* conform/data/wordexp.h-data [!ISO && !ISO99 && !ISO11]
+	(WRDE_BADVAL): Expect.
+
+	* conform/data/fcntl.h-data [XPG3 || XPG4] (O_DSYNC): Do not
+	expect.
+	[XPG3 || XPG4] (O_RSYNC): Likewise.
+	* conform/data/signal.h-data [XPG3 || XPG4] (pthread_kill):
+	Likewise.
+	[XPG3 || XPG4] (pthread_sigmask): Likewise.
+	[XPG3 || XPG4] (sigqueue): Likewise.
+	[XPG3 || XPG4] (sigtimedwait): Likewise.
+	[XPG3 || XPG4] (sigwaitinfo): Likewise.
+	* conform/data/stdio.h-data [XPG3 || XPG4] (snprintf): Likewise.
+	[XPG3 || XPG4] (vsnprintf): Likewise.
+	* conform/data/sys/stat.h-data [XPG3 || XPG4] (blkcnt_t):
+	Likewise.
+	[XPG3 || XPG4] (blksize_t): Likewise.
+	* conform/data/time.h-data [XPG3 || XPG4] (struct timespec):
+	Likewise.
+	[XPG3 || XPG4] (CLOCK_PROCESS_CPUTIME_ID): Likewise.
+	[XPG3 || XPG4] (CLOCK_THREAD_CPUTIME_ID): Likewise.
+	[XPG3 || XPG4] (struct itimerspec): Likewise.
+	[XPG3 || XPG4] (CLOCK_REALTIME): Likewise.
+	[XPG3 || XPG4] (TIMER_ABSTIME): Likewise.
+	[XPG3 || XPG4] (CLOCK_MONOTONIC): Likewise.
+	[XPG3 || XPG4] (clockid_t): Likewise.
+	[XPG3 || XPG4] (timer_t): Likewise.
+	[XPG3 || XPG4] (clock_getres): Likewise.
+	[XPG3 || XPG4] (clock_gettime): Likewise.
+	[XPG3 || XPG4] (clock_settime): Likewise.
+	[XPG3 || XPG4] (nanosleep): Likewise.
+	[XPG3 || XPG4] (timer_create): Likewise.
+	[XPG3 || XPG4] (timer_delete): Likewise.
+	[XPG3 || XPG4] (timer_gettime): Likewise.
+	[XPG3 || XPG4] (timer_getoverrun): Likewise.
+	[XPG3 || XPG4] (timer_settime): Likewise.
+	* conform/data/unistd.h-data [XPG3 || XPG4] (fdatasync): Likewise.
+	[XPG3 || XPG4] (getlogin_r): Likewise.
+	[XPG3 || XPG4] (pread): Likewise.
+	[XPG3 || XPG4] (pthread_atfork): Likewise.
+	[XPG3 || XPG4] (pwrite): Likewise.
+
+	[BZ #14835]
+	* signal/signal.h [__USE_XOPEN_EXTENDED]: Include
+	<bits/siginfo.h>.
+
+2012-11-19  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* malloc/mtrace.c (muntrace): Reset MALLSTREAM and the hooks before
+	finalizing MALLSTREAM.
+
+	* sysdeps/mach/hurd/syncfs.c: New file.
+
+2012-11-19  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14719]
+	* nss/getXXbyYY_r.c (INTERNAL (REENTRANT_NAME)): Set h_errno to
+	NETDB_INTERNAL when NSS_STATUS_UNAVAIL.
+	* resolv/nss_dns/dns-host.c (_nss_dns_gethostbyname3_r): Set
+	h_errno to NETDB_INTERNAL when errno is EMFILE or ENFILE.
+	(_nss_dns_gethostbyname4_r): Likewise.
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Set result to
+	EAI_SYSTEM if NSS_STATUS_UNAVAIL.
+
+2012-11-19  Peng Haitao  <penght@cn.fujitsu.com>
+
+	[BZ #13763]
+	* sunrpc/bindrsvprt.c: Add lock to protect static variable.
+
+2012-11-19  Steve McIntyre  <steve.mcintyre@linaro.org>
+
+	* sysdeps/generic/ldconfig.h (FLAG_AARCH64_LIB64): New macro.
+	* elf/cache.c (print_entry): Print ",AArch64" for
+	FLAG_AARCH64_LIB64
+
+	* sysdeps/generic/ldconfig.h (FLAG_ARM_LIBHF): New macro.
+	* elf/cache.c (print_entry): Print ",hard-float" for
+	FLAG_ARM_LIBHF.
+
+2012-11-18  David S. Miller  <davem@davemloft.net>
+
+	With help from Joseph Myers.
+	* sysdeps/ieee754/flt-32/e_j0f.c (__ieee754_y0f): Adjust tinyness
+	cutoff to 2**-13.
+	* sysdeps/ieee754/flt-32/e_j1f.c (__ieee754_y1f): Adjust tinyness
+	cutoff to 2**-25.
+	* sysdeps/ieee754/ldbl-128/e_j0l.c (U0): New constant.
+	( __ieee754_y0l): Avoid arithmetic underflow when 'x' is very
+	small.
+	* sysdeps/ieee754/ldbl-128/e_j1l.c (__ieee754_y1l): Likewise.
+	* math/libm-test.inc (y0_test): New tests.
+	(y1_test): New tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2012-11-18  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* configure.in (libc_cv_ld_gnu_indirect_function): Use .quad on
+	64-bit targets.
+	* configure: Regenerated.
+
+2012-11-17  David S. Miller  <davem@davemloft.net>
+
+	[BZ #14811]
+	* sysdeps/ieee754/ldbl-128/e_powl.c (__ieee754_powl): Saturate
+	nonzero exponents with absolute value below 0x1p-128 to +/-
+	0x1p-128.
+
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/fxstatat.c: Include <string.h>.
@@ -726,14 +1288,6 @@
 	* conform/data/stdalign.h-data: New file.
 	* conform/data/stdbool.h-data: Likewise.
 	* conform/data/stdnoreturn.h-data: Likewise.
-
-2012-11-07  Andreas Jaeger  <aj@suse.de>
-
-	[BZ #14809]
-	* sysdeps/unix/sysv/linux/sys/sysctl.h (_UAPI_LINUX_KERNEL_H)
-	(_UAPI_LINUX_TYPES_H): Starting with Linux 3.7, the include header
-	guards are changed.  Only define if not yet defined, #undef back
-	after including linux/sysctl.h if defined here.
 
 2012-11-07  Roland McGrath  <roland@hack.frob.com>
 
