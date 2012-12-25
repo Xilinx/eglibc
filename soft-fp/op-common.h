@@ -29,8 +29,10 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define _FP_DECL(wc, X)						\
-  _FP_I_TYPE X##_c __attribute__((unused)), X##_s, X##_e;	\
+#define _FP_DECL(wc, X)				\
+  _FP_I_TYPE X##_c __attribute__((unused));	\
+  _FP_I_TYPE X##_s __attribute__((unused));	\
+  _FP_I_TYPE X##_e;				\
   _FP_FRAC_DECL_##wc(X)
 
 /*
@@ -746,11 +748,11 @@ do {									 \
 #define _FP_MUL(fs, wc, R, X, Y)			\
 do {							\
   R##_s = X##_s ^ Y##_s;				\
+  R##_e = X##_e + Y##_e + 1;				\
   switch (_FP_CLS_COMBINE(X##_c, Y##_c))		\
   {							\
   case _FP_CLS_COMBINE(FP_CLS_NORMAL,FP_CLS_NORMAL):	\
     R##_c = FP_CLS_NORMAL;				\
-    R##_e = X##_e + Y##_e + 1;				\
 							\
     _FP_MUL_MEAT_##fs(R,X,Y);				\
 							\
@@ -809,11 +811,11 @@ do {							\
 #define _FP_DIV(fs, wc, R, X, Y)			\
 do {							\
   R##_s = X##_s ^ Y##_s;				\
+  R##_e = X##_e - Y##_e;				\
   switch (_FP_CLS_COMBINE(X##_c, Y##_c))		\
   {							\
   case _FP_CLS_COMBINE(FP_CLS_NORMAL,FP_CLS_NORMAL):	\
     R##_c = FP_CLS_NORMAL;				\
-    R##_e = X##_e - Y##_e;				\
 							\
     _FP_DIV_MEAT_##fs(R,X,Y);				\
     break;						\

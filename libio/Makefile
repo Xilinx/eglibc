@@ -68,7 +68,7 @@ tests = test-fmemopen tst-ext tst-ext2				\
 	tst-mmap2-eofsync tst-mmap-offend bug-fopena+		\
 	bug-ungetc2 bug-ungetc3 bug-ungetc4			\
 	tst-memstream1 tst-memstream2				\
-	bug-memstream1 tst-popen1 bug-fclose1 tst-fwrite-error
+	bug-memstream1 tst-popen1 tst-fwrite-error
 tests-$(OPTION_EGLIBC_LOCALE_CODE)				\
      += tst-swscanf tst-fgetws tst-setvbuf1			\
 	tst-ungetwc1 tst-ungetwc2 bug-ftell bug-ungetwc2	\
