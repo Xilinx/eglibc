@@ -96,12 +96,8 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_compare_and_exchange_val_rel(mem, newval, oldval)                              \
   ({                                                                                          \
     __typeof (*(mem)) __result;                                                               \
-    if (sizeof (*mem) == 4) {                                                                 \
-        if (__builtin_types_compatible_p (typeof (*mem), int))                                \
-            __result = __arch_compare_and_exchange_val_32_acq(mem, newval, oldval);           \
-        else if (__builtin_types_compatible_p (typeof (*mem), unsigned int))                  \
-            __result = __arch_compare_and_exchange_val_32_acq_unsigned(mem, newval, oldval);  \
-    }                                                                                         \
+    if (sizeof (*mem) == 4)                                                                   \
+      __result = __arch_compare_and_exchange_val_32_acq(mem, newval, oldval);                 \
     else if (sizeof (*mem) == 8)                                                              \
       __result = __arch_compare_and_exchange_val_64_acq(mem, newval, oldval);                 \
     else                                                                                      \
