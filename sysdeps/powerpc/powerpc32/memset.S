@@ -1,6 +1,5 @@
 /* Optimized memset implementation for PowerPC.
-   Copyright (C) 1997, 1999, 2000, 2003, 2007, 2011
-	Free Software Foundation, Inc.
+   Copyright (C) 1997-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -276,7 +275,7 @@ L(checklinesize):
 	beq	cr1,L(nondcbz)
 
 /* If the cache line size is 32 bytes then goto to L(zloopstart),
-   which is coded specificly for 32-byte lines (and 601).  */
+   which is coded specifically for 32-byte lines (and 601).  */
 	cmplwi	cr1,rCLS,32
 	beq	cr1,L(zloopstart)
 

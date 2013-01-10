@@ -1,3 +1,544 @@
+2013-01-09  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/s390/fpu/libm-test-ulps: Update.
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (mcr): Reword comment.
+	(__acr): Likewise.
+	(__cpy): Likewise.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (mcr): Likewise.
+	(__acr): Likewise.
+	(__cpy): Likewise.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (mcr): Likewise.
+	(__acr): Likewise.
+	(__cpy): Likewise.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+
+2013-01-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* io/sys/stat.h [__GNUC__ && __GNUC__ >= 2 &&
+	__USE_EXTERN_INLINES]: Change condition to [__USE_EXTERN_INLINES].
+	* sysdeps/unix/sysv/linux/sys/sysmacros.h [__GNUC__ && __GNUC__ >=
+	2 && __USE_EXTERN_INLINES]: Likewise.
+
+2013-01-08  Andreas Jaeger  <aj@suse.de>
+
+	[BZ# 14985]
+	* sysdeps/unix/sysv/linux/sparc/bits/epoll.h (EPOLL_NONBLOCK):
+	Remove.
+	* sysdeps/unix/sysv/linux/bits/epoll.h (EPOLL_NONBLOCK): Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/epoll.h (EPOLL_NONBLOCK): Likewise.
+
+2013-01-07  Anton Blanchard  <anton@samba.org>
+
+	* sysdeps/powerpc/fpu/feholdexcpt.c: Fixed spelling errors.
+	* sysdeps/powerpc/fpu/feupdateenv.c: Likewise.
+	* sysdeps/powerpc/fpu/math_ldbl.h: Likewise.
+	* sysdeps/powerpc/powerpc32/bits/atomic.h: Likewise.
+	* sysdeps/powerpc/powerpc32/cell/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc32/dl-machine.c: Likewise.
+	* sysdeps/powerpc/powerpc32/dl-start.S: Likewise.
+	* sysdeps/powerpc/powerpc32/memset.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/slowpow.c: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/hp-timing.h: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/memcmp.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/strncmp.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power6/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power7/memchr.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power7/memcmp.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power7/memrchr.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power7/strcasecmp.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power7/strncmp.S: Likewise.
+	* sysdeps/powerpc/powerpc32/strncmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/bits/atomic.h: Likewise.
+	* sysdeps/powerpc/powerpc64/cell/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc64/dl-machine.h: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/s_ceill.S: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/s_nearbyintl.S: Likewise.
+	* sysdeps/powerpc/powerpc64/hp-timing.h: Likewise.
+	* sysdeps/powerpc/powerpc64/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/slowpow.c: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/memcmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/strncmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power6/memcpy.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/memchr.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/memcmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/memrchr.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/strcasecmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/strncmp.S: Likewise.
+	* sysdeps/powerpc/powerpc64/strncmp.S: Likewise.
+
+2013-01-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* malloc/malloc.h (__MALLOC_P): Remove all definitions.
+	(__MALLOC_PMT): Likewise.
+	[__GNUC__] (__MALLOC_HOOK_VOLATILE): Make not conditional on
+	[__GNUC__], only on [_LIBC].
+	[__GNUC__] (__MALLOC_DEPRECATED): Likewise.
+	[!__GNUC__] (__MALLOC_HOOK_VOLATILE): Remove definition.
+	[!__GNUC__] (__MALLOC_DEPRECATED): Likewise.
+	* malloc/malloc.c (malloc_hook_ini): Do not use __MALLOC_P in
+	forward declaration.
+	(realloc_hook_ini): Likewise.
+	(memalign_hook_ini): Likewise.
+	(__libc_memalign): Do not use __MALLOC_PMT in variable
+	declaration.
+	(__libc_valloc): Likewise.
+	(__libc_pvalloc): Likewise.
+	(__libc_calloc): Likewise.
+	(__posix_memalign): Likewise.
+
+	[BZ #14996]
+	* math/s_casinh.c: Include <float.h>.
+	(__casinh): Do not do computation with squaring and square root
+	for large arguments.
+	* math/s_casinhf.c: Include <float.h>.
+	(__casinhf): Do not do computation with squaring and square root
+	for large arguments.
+	* math/s_casinhl.c: Include <float.h>.
+	[LDBL_MANT_DIG == 106] (LDBL_EPSILON): Undefine and redefine.
+	(__casinhl): Do not do computation with squaring and square root
+	for large arguments.
+	* math/libm-test.inc (casin_test): Add more tests.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-01-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/cacheinfo.c (__x86_64_data_cache_size): Removed.
+	(__x86_64_raw_data_cache_size): Likewise.
+	(__x86_64_data_cache_size_half): Likewise.
+	(__x86_64_raw_data_cache_size_half): Likewise.
+	(__x86_64_shared_cache_size): Likewise.
+	(__x86_64_raw_shared_cache_size): Likewise.
+	(__x86_64_shared_cache_size_half): Likewise.
+	(__x86_64_raw_shared_cache_size_half): Likewise.
+	* sysdeps/x86_64/cacheinfo.c (__x86_64_data_cache_size): Renamed
+	to ...
+	(__x86_data_cache_size): This.
+	(__x86_64_raw_data_cache_size): Renamed to ...
+	(__x86_raw_data_cache_size): This.
+	(__x86_64_data_cache_size_half): Renamed to ...
+	(__x86_data_cache_size_half): This.
+	(__x86_64_raw_data_cache_size_half): Renamed to ...
+	(__x86_raw_data_cache_size_half): This.
+	(__x86_64_shared_cache_size): Renamed to ...
+	(__x86_shared_cache_size): This.
+	(__x86_64_raw_shared_cache_size): Renamed to ...
+	(__x86_raw_shared_cache_size): This.
+	(__x86_64_shared_cache_size_half): Renamed to ...
+	(__x86_shared_cache_size_half): This.
+	(__x86_64_raw_shared_cache_size_half): Renamed to ...
+	(__x86_raw_shared_cache_size_half): This.
+	* sysdeps/x86_64/memcpy.S: Updated.
+	* sysdeps/x86_64/memset.S: Likewise.
+	* sysdeps/x86_64/multiarch/memcmp-sse4.S: Likewise.
+	* sysdeps/x86_64/multiarch/memcpy-ssse3-back.S: Likewise.
+	* sysdeps/x86_64/multiarch/memcpy-ssse3.S: Likewise.
+
+2013-01-04  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2013-01-04  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/fpu/test-powerpc-snan.c (_GNU_SOURCE): Define as
+	1 to avoid redefinition warning.
+	(__USE_GNU): Don't define.
+	(init_signaling_nan): Protoize.
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2013-01-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c: Remove commented code.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__cr): Remove.
+	(__cpymn): Likewise.
+	(norm): Remove commented code.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__inv): Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__cr): Remove.
+	(__cpymn): Likewise.
+	(norm): Remove commented code.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__inv): Likewise.
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (mpone): Define
+	mp_no value for 1.0 and 2.0.
+	(norm): Use RADIXI instead of radixi.d.
+	(denorm): Likewise.
+	(__mul): Use 0.0 instead of zero.d.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (mpone): Define
+	mp_no value for 1.0 and 2.0.
+	(norm): Use RADIXI instead of radixi.d.
+	(denorm): Likewise.
+	(__mul): Use 0.0 instead of zero.d.
+
+2013-01-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14994]
+	* math/s_casinh.c (__casinh): Reduce finite argument to first
+	quadrant then set signs of results at the end.
+	* math/s_casinhf.c (__casinhf): Likewise.
+	* math/s_casinhl.c (__casinhl): Likewise.
+	* math/libm-test.inc (casin_test): Add more tests.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-01-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.h: Fix code formatting.
+
+	* sysdeps/ieee754/dbl-64/mpa.h: Clean up comment for MP_NO.
+
+	* sysdeps/ieee754/dbl-64/mpa.c(norm): Remove commented
+	declarations.
+	(denorm): Likewise.
+	(__mp_dbl): Likewise.
+	(__inv): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.h: Remove commented declarations
+	and adjust the header comment.
+
+	* sysdeps/ieee754/dbl-64/mpa.h (__mpexp): Remove unnecessary
+	variable name from declaration.
+
+2013-01-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Initialize COMMON_CPUID_INDEX_7 element.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_RTM): New macro.
+	(CPUID_RTM): Likewise.
+	(HAS_RTM): Likewise.
+	(COMMON_CPUID_INDEX_7): New enum.
+
+2013-01-03  Andreas Schwab  <schwab@linux-m68k.org>
+
+	[BZ #14981]
+	* malloc/mtrace.c (tr_reallochook): If realloc returns NULL when
+	size is zero, record memory as freed.
+
+2013-01-03  Andreas Jaeger  <aj@suse.de>
+
+	* po/ia.po: Add new Interlingua translation.
+
+2012-01-03  Allan McRae  <allan@archlinux.org>
+
+	* locale/programs/localedef.c: Fix description of '--posix' flag.
+
+2013-01-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* NEWS: Update dates in second copyright notice.
+	* README: Update copyright dates in example.
+	* manual/libc.texinfo: Update copyright dates.
+	* scripts/test-installation.pl: Update copyright date in --version
+	output.
+
+	* hurd/ctty-input.c: Fix copyright notice formatting.
+	* hurd/ctty-output.c: Likewise.
+	* hurd/dtable.c: Likewise.
+	* hurd/hurd-raise.c: Likewise.
+	* hurd/hurdprio.c: Likewise.
+	* hurd/msgportdemux.c: Likewise.
+	* misc/sys/file.h: Likewise.
+	* misc/sys/ioctl.h: Likewise.
+	* sysdeps/gnu/netinet/ip_icmp.h: Likewise.
+	* sysdeps/mach/hurd/chdir.c: Likewise.
+	* sysdeps/mach/hurd/fchdir.c: Likewise.
+	* sysdeps/mach/hurd/rename.c: Likewise.
+	* sysdeps/mach/hurd/rmdir.c: Likewise.
+	* sysdeps/mach/hurd/seekdir.c: Likewise.
+	* sysdeps/mach/hurd/setsid.c: Likewise.
+	* sysdeps/posix/wait3.c: Likewise.
+
+	* All files with FSF copyright notices: Update copyright dates
+	using scripts/update-copyrights.
+	* intl/plural.c: Regenerated.
+	* locale/programs/charmap-kw.h: Likewise.
+	* locale/programs/locfile-kw.h: Likewise.
+
+2013-01-02  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpexp.h (__mpexp_twomm1): Fix first
+	four values.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__mul): Split mantissa
+	calculation loop and add branch prediction.
+
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Add assert to
+	check access beyond bounds of m1np.
+
+	* sysdeps/ieee754/dbl-64/mpa.c [! NO__CONST]: New constant
+	MPTWO.
+	(__inv): Remove local variable MPTWO to use the global
+	constant.
+	* sysdeps/ieee754/dbl-64/mpa.h: Declare MPTWO.
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Remove local
+	variable MPTWO.
+	* sysdeps/ieee754/dbl-64/mpsqrt.c (__mpsqrt): Make MPHALF and
+	MP3HALFS static const.
+
+2013-01-01  David S. Miller  <davem@davemloft.net>
+
+	* po/ca.po: Update from translation team.
+
+2013-01-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* scripts/update-copyrights: New file.
+	* Makeconfig: Reformat copyright notice.
+	* ctype/ctype.h: Likewise.
+	* debug/swprintf_chk.c: Likewise.
+	* elf/dl-cache.c: Likewise.
+	* elf/dl-debug.c: Likewise.
+	* elf/dl-object.c: Likewise.
+	* grp/initgroups.c: Likewise.
+	* hurd/Makefile: Likewise.
+	* hurd/hurd/signal.h: Likewise.
+	* hurd/hurdfault.c: Likewise.
+	* hurd/hurdioctl.c: Likewise.
+	* hurd/hurdlookup.c: Likewise.
+	* hurd/intr-msg.c: Likewise.
+	* iconv/gconv_open.c: Likewise.
+	* libio/swprintf.c: Likewise.
+	* locale/lc-ctype.c: Likewise.
+	* locale/nl_langinfo.c: Likewise.
+	* mach/Machrules: Likewise.
+	* mach/Makefile: Likewise.
+	* malloc/obstack.h: Likewise.
+	* manual/Makefile: Likewise.
+	* manual/tsort.awk: Likewise.
+	* misc/bits/stab.def: Likewise.
+	* nis/nis_print_group_entry.c: Likewise.
+	* nis/nis_table.c: Likewise.
+	* nis/nss_compat/compat-pwd.c: Likewise.
+	* nis/nss_compat/compat-spwd.c: Likewise.
+	* po/Makefile: Likewise.
+	* posix/fnmatch.c: Likewise.
+	* posix/regex.h: Likewise.
+	* resolv/Makefile: Likewise.
+	* resolv/nss_dns/dns-network.c: Likewise.
+	* resolv/res_hconf.c: Likewise.
+	* scripts/gen-sorted.awk: Likewise.
+	* soft-fp/soft-fp.h: Likewise.
+	* stdio-common/printf.h: Likewise.
+	* stdlib/monetary.h: Likewise.
+	* stdlib/random.c: Likewise.
+	* stdlib/random_r.c: Likewise.
+	* sysdeps/generic/Makefile: Likewise.
+	* sysdeps/gnu/Makefile: Likewise.
+	* sysdeps/ieee754/dbl-64/doasin.c: Likewise.
+	* sysdeps/ieee754/dbl-64/dosincos.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_asin.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_atan2.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_exp.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_log.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_pow.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_remainder.c: Likewise.
+	* sysdeps/ieee754/dbl-64/e_sqrt.c: Likewise.
+	* sysdeps/ieee754/dbl-64/halfulp.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mpa.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mpatan.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mpatan2.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mpexp.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mplog.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mpsqrt.c: Likewise.
+	* sysdeps/ieee754/dbl-64/mptan.c: Likewise.
+	* sysdeps/ieee754/dbl-64/s_atan.c: Likewise.
+	* sysdeps/ieee754/dbl-64/s_sin.c: Likewise.
+	* sysdeps/ieee754/dbl-64/s_tan.c: Likewise.
+	* sysdeps/ieee754/dbl-64/sincos32.c: Likewise.
+	* sysdeps/ieee754/dbl-64/slowexp.c: Likewise.
+	* sysdeps/ieee754/dbl-64/slowpow.c: Likewise.
+	* sysdeps/ieee754/ldbl-128/ldbl2mpn.c: Likewise.
+	* sysdeps/ieee754/ldbl-128/mpn2ldbl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/mpn2ldbl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/printf_fphex.c: Likewise.
+	* sysdeps/mach/hurd/errnos.awk: Likewise.
+	* sysdeps/mach/hurd/fork.c: Likewise.
+	* sysdeps/mach/hurd/getcwd.c: Likewise.
+	* sysdeps/mach/hurd/i386/trampoline.c: Likewise.
+	* sysdeps/mach/hurd/mmap.c: Likewise.
+	* sysdeps/mach/hurd/utimes.c: Likewise.
+	* sysdeps/mach/hurd/xmknod.c: Likewise.
+	* sysdeps/posix/profil.c: Likewise.
+	* sysdeps/posix/readdir_r.c: Likewise.
+	* sysdeps/powerpc/bits/mathdef.h: Likewise.
+	* sysdeps/powerpc/bits/setjmp.h: Likewise.
+	* sysdeps/powerpc/powerpc32/__longjmp-common.S: Likewise.
+	* sysdeps/powerpc/powerpc32/memset.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/slowexp.c: Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/slowpow.c: Likewise.
+	* sysdeps/powerpc/powerpc32/sysdep.h: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/slowexp.c: Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/slowpow.c: Likewise.
+	* sysdeps/pthread/lio_listio.c: Likewise.
+	* sysdeps/sparc/dl-procinfo.h: Likewise.
+	* sysdeps/unix/i386/sysdep.S: Likewise.
+	* sysdeps/unix/sysv/linux/aio_sigqueue.c: Likewise.
+	* sysdeps/unix/sysv/linux/fstatvfs64.c: Likewise.
+	* sysdeps/unix/sysv/linux/getdents.c: Likewise.
+	* sysdeps/unix/sysv/linux/msgctl.c: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/sysdep.h: Likewise.
+	* sysdeps/unix/sysv/linux/semctl.c: Likewise.
+	* sysdeps/unix/sysv/linux/shmctl.c: Likewise.
+	* sysdeps/unix/sysv/linux/speed.c: Likewise.
+	* sysdeps/unix/sysv/linux/xstatconv.h: Likewise.
+	* sysdeps/wordsize-32/divdi3.c: Likewise.
+	* time/sys/time.h: Likewise.
+	* wcsmbs/Makefile: Likewise.
+
+2013-01-01  David S. Miller  <davem@davemloft.net>
+
+	* po/fr.po: Update from translation team.
+
+	* catgets/gencat.c: Update copyright year.
+	* csu/version.c: Likewise.
+	* debug/catchsegv.sh: Likewise.
+	* debug/pcprofiledump.c: Likewise.
+	* debug/xtrace.sh: Likewise.
+	* elf/ldconfig.c: Likewise.
+	* elf/ldd.bash.in: Likewise.
+	* elf/pldd.c: Likewise.
+	* elf/sotruss.ksh: Likewise.
+	* elf/sprof.c: Likewise.
+	* iconv/iconv_prog.c: Likewise.
+	* iconv/iconvconfig.c: Likewise.
+	* locale/programs/locale.c: Likewise.
+	* locale/programs/localedef.c: Likewise.
+	* login/programs/pt_chown.c: Likewise.
+	* malloc/memusage.sh: Likewise.
+	* malloc/memusagestat.c: Likewise.
+	* malloc/mtrace.pl: Likewise.
+	* nscd/nscd.c: Likewise.
+	* nss/getent.c: Likewise.
+	* nss/makedb.c: Likewise.
+	* posix/getconf.c: Likewise.
+
+2012-12-31  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__mp_dbl): Favour normal
+	numbers.
+
+2012-12-30  Mike Frysinger  <vapier@gentoo.org>
+
+	* math/bits/mathcalls.h (modf): Use __nonnull.
+
+2012-12-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/branred.h: Include dla.h.
+	(split): Use macro CN instead of the bare value.
+	* sysdeps/ieee754/dbl-64/dla.h: Add comment to explain why CN
+	could be used.
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Use CN
+	instead of the bare value.
+	(power1): Likewise.
+
+2012-12-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Remove
+	__ATAN_TWOM.
+	* sysdeps/ieee754/dbl-64/mpatan.h: Likewise.
+
+	* sysdeps/ieee754/dbl-64/atnat.h: Replaced constants with
+	their values.
+	* sysdeps/ieee754/dbl-64/atnat2.h: Likewise.
+	* sysdeps/ieee754/dbl-64/s_tan.c (tan): Likewise.
+	* sysdeps/ieee754/dbl-64/ulog.h: Likewise.
+	* sysdeps/ieee754/dbl-64/utan.h: Likewise.
+
+2012-12-28  Andreas Jaeger  <aj@suse.de>
+
+	* elf/elf.h (NT_S390_TDB, NT_FILE, NT_SIGINFO): Define.  New
+	values are from Linux 3.7.
+
+	* sysdeps/gnu/netinet/tcp.h (TCPI_OPT_SYN_DATA)
+	(TCPI_OPT_ECN_SEEN): Define.  Sync with Linux 3.7.
+
+2012-12-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* misc/sys/cdefs.h (__glibc_likely): Wrap __builtin_expect for
+	TRUE case.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (norm): Define R as RADIXI.
+	(norm): Likewise.
+	* sysdeps/ieee754/dbl-64/mpa2.h: Remove all static const
+	variables with preprocessor constants.
+	* sysdeps/ieee754/dbl-64/mpatan.h: Likewise.
+	* sysdeps/ieee754/dbl-64/mpexp.h: Likewise.
+	* sysdeps/ieee754/dbl-64/mpsqrt.h: Likewise.
+
+2012-12-27  Bruno Haible  <bruno@clisp.org>
+
+	[BZ #14317]
+	* string/xpg-strerror.c (__xpg_strerror_r): Optimize, call strlen
+	only if needed.
+
+2012-12-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Eliminate __mpexp_nn
+	and use variable directly.
+	* sysdeps/ieee754/dbl-64/mpexp.h (__mpexp_nn): Remove.
+
+	* sysdeps/ieee754/dbl-64/mpa.c [! NO__CONST]: New constant
+	MPONE.
+	* sysdeps/ieee754/dbl-64/mpa.h: Declare MPONE.
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Remove local
+	variable MPONE.
+	* sysdeps/ieee754/dbl-64/mpatan2.c (__mpatan2): Likewise.
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Likewise.
+	* sysdeps/ieee754/dbl-64/mplog.c (__mplog): Remove mplog.h
+	include directive.  Remove local variable MPONE.
+	* sysdeps/ieee754/dbl-64/mplog.h: Remove.
+	* sysdeps/x86_64/fpu/multiarch/mpa-avx.c: Define NO__CONST.
+	* sysdeps/x86_64/fpu/multiarch/mpa-fma4.c: Likewise.
+
 2012-12-25  David S. Miller  <davem@davemloft.net>
 
 	* version.h (RELEASE): Set to "development".
@@ -1189,7 +1730,7 @@
 
 2012-11-08  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
 
-        * sysdeps/s390/dl-procinfo.c (_dl_s390_cap_flags): Add "te".
+	* sysdeps/s390/dl-procinfo.c (_dl_s390_cap_flags): Add "te".
 	* sysdeps/s390/dl-procinfo.h (HWCAP_S390_TE): Add enum value.
 	* sysdeps/unix/sysv/linux/s390/hwcap.h (HWCAP_S390_TE): Add macro
 	definition.
@@ -11511,7 +12052,7 @@
 	(ETAGS): Remove, it's in Makeconfig.
 	(move-if-change): Remove, it's in Makeconfig.
 
-2013-04-23  Paul Eggert  <eggert@cs.ucla.edu>
+2012-04-23  Paul Eggert  <eggert@cs.ucla.edu>
 
 	[BZ #13970]
 	* stdlib/stdlib.h: Remove warn_unused_result attribute from strtol etc.
@@ -18993,7 +19534,7 @@
 	* sysdeps/unix/bsd/bsd4.4/bits/socket.h (__cmsg_nxthdr): Use NULL
 	instead of 0.
 	* sysdeps/unix/sysv/linux/bits/socket.h (__cmsg_nxthdr): Use (void*)0
-	instead of 0.                              .
+	instead of 0.
 	* sysdeps/unix/sysv/linux/sparc/bits/socket.h: Likewise.
 	Patch in part by Pavel Roskin <proski@gnu.org>.
 

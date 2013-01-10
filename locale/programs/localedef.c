@@ -1,4 +1,4 @@
-/* Copyright (C) 1995-2011, 2012 Free Software Foundation, Inc.
+/* Copyright (C) 1995-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1995.
 
@@ -131,7 +131,7 @@ static const struct argp_option options[] =
     N_("Create output even if warning messages were issued") },
   { "old-style", OPT_OLDSTYLE, NULL, 0, N_("Create old-style tables") },
   { "prefix", OPT_PREFIX, "PATH", 0, N_("Optional output file prefix") },
-  { "posix", OPT_POSIX, NULL, 0, N_("Be strictly POSIX conform") },
+  { "posix", OPT_POSIX, NULL, 0, N_("Strictly conform to POSIX") },
   { "quiet", OPT_QUIET, NULL, 0,
     N_("Suppress warnings and information messages") },
   { "verbose", 'v', NULL, 0, N_("Print more messages") },
@@ -409,7 +409,7 @@ print_version (FILE *stream, struct argp_state *state)
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
-"), "2012");
+"), "2013");
   fprintf (stream, gettext ("Written by %s.\n"), "Ulrich Drepper");
 }
 

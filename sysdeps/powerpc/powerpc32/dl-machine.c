@@ -1,5 +1,5 @@
 /* Machine-dependent ELF dynamic relocation functions.  PowerPC version.
-   Copyright (C) 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1995-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -114,7 +114,7 @@ __elf_preferred_address (struct link_map *loader, size_t maplength,
   /* Otherwise, quickly look for a suitable gap between 0x3FFFF and
      0x70000000.  0x3FFFF is so that references off NULL pointers will
      cause a segfault, 0x70000000 is just paranoia (it should always
-     be superceded by the program's load address).  */
+     be superseded by the program's load address).  */
   low =  0x0003FFFF;
   high = 0x70000000;
   for (nsid = 0; nsid < DL_NNS; ++nsid)

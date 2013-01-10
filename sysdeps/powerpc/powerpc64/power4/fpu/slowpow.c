@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * written by International Business Machines Corp.
- * Copyright (C) 2001, 2006 Free Software Foundation
+ * Copyright (C) 2001-2013 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -59,7 +59,7 @@ __slowpow (double x, double y, double z)
   res1 = (double) (ldpp - ldeps);
 
   if (res != res1)		/* if result still not accurate enough */
-    {				/* use mpa for higher persision.  */
+    {				/* use mpa for higher precision.  */
       mp_no mpx, mpy, mpz, mpw, mpp, mpr, mpr1;
       static const mp_no eps = { -3, {1.0, 4.0} };
       int p;

@@ -1,5 +1,5 @@
 /* Atomic operations.  PowerPC32 version.
-   Copyright (C) 2003, 2004, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2003-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Paul Mackerras <paulus@au.ibm.com>, 2003.
 
@@ -21,7 +21,7 @@
     This is a hint to the hardware to expect additional updates adjacent
     to the lock word or not.  If we are acquiring a Mutex, the hint
     should be true. Otherwise we releasing a Mutex or doing a simple
-    atomic operation.  In that case we don't expect addtional updates
+    atomic operation.  In that case we don't expect additional updates
     adjacent to the lock word after the Store Conditional and the hint
     should be false.  */
     
@@ -35,7 +35,7 @@
 
 /*
  * The 32-bit exchange_bool is different on powerpc64 because the subf
- * does signed 64-bit arthmatic while the lwarx is 32-bit unsigned
+ * does signed 64-bit arithmetic while the lwarx is 32-bit unsigned
  * (a load word and zero (high 32) form).  So powerpc64 has a slightly
  * different version in sysdeps/powerpc/powerpc64/bits/atomic.h.
  */

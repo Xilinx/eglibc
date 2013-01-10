@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * written by International Business Machines Corp.
- * Copyright (C) 2001, 2011 Free Software Foundation
+ * Copyright (C) 2001-2013 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,19 +48,13 @@ __mpatan(mp_no *x, mp_no *y, int p) {
   int i,m,n;
   double dx;
   mp_no
-    mpone    = {0,{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}},
-    mptwo    = {0,{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}},
     mptwoim1 = {0,{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 		0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}};
 
   mp_no mps,mpsm,mpt,mpt1,mpt2,mpt3;
 
-		      /* Choose m and initiate mpone, mptwo & mptwoim1 */
+		      /* Choose m and initiate mptwoim1 */
     if      (EX>0) m=7;
     else if (EX<0) m=0;
     else {
@@ -68,9 +62,8 @@ __mpatan(mp_no *x, mp_no *y, int p) {
       for (m=6; m>0; m--)
 	{if (dx>__atan_xm[m].d) break;}
     }
-    mpone.e    = mptwo.e    = mptwoim1.e = 1;
-    mpone.d[0] = mpone.d[1] = mptwo.d[0] = mptwoim1.d[0] = ONE;
-    mptwo.d[1] = TWO;
+    mptwoim1.e = 1;
+    mptwoim1.d[0] = ONE;
 
 				 /* Reduce x m times */
     __mul(x,x,&mpsm,p);
@@ -101,7 +94,7 @@ __mpatan(mp_no *x, mp_no *y, int p) {
     __sub(&mps,&mpt1,&mpt,p);
 
 			  /* Compute Atan(x) */
-    mptwoim1.d[1] = __atan_twom[m].d;
+    mptwoim1.d[1] = 1 << m;
     __mul(&mptwoim1,&mpt,y,p);
 
   return;

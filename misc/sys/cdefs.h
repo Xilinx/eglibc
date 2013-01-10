@@ -1,5 +1,4 @@
-/* Copyright (C) 1992-2002, 2004, 2005, 2006, 2007, 2009, 2011, 2012
-   Free Software Foundation, Inc.
+/* Copyright (C) 1992-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -378,8 +377,10 @@
 
 #if __GNUC__ >= 3
 # define __glibc_unlikely(cond) __builtin_expect((cond), 0)
+# define __glibc_likely(cond) __builtin_expect((cond), 1)
 #else
 # define __glibc_unlikely(cond) (cond)
+# define __glibc_likely(cond) (cond)
 #endif
 
 #include <bits/wordsize.h>

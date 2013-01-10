@@ -1,5 +1,5 @@
 /* Prototype declarations for math functions; helper file for <math.h>.
-   Copyright (C) 1996-2003, 2006, 2011, 2012 Free Software Foundation, Inc.
+   Copyright (C) 1996-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -112,8 +112,7 @@ __MATHCALL (log,, (_Mdouble_ __x));
 __MATHCALL (log10,, (_Mdouble_ __x));
 
 /* Break VALUE into integral and fractional parts.  */
-__MATHCALL (modf,, (_Mdouble_ __x, _Mdouble_ *__iptr))
-     __attribute__ ((__nonnull__ (2)));
+__MATHCALL (modf,, (_Mdouble_ __x, _Mdouble_ *__iptr)) __nonnull ((2));
 _Mdouble_END_NAMESPACE
 
 #ifdef __USE_GNU

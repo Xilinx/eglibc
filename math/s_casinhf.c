@@ -1,5 +1,5 @@
 /* Return arc hyperbole sine for float value.
-   Copyright (C) 1997-2012 Free Software Foundation, Inc.
+   Copyright (C) 1997-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -20,7 +20,7 @@
 #include <complex.h>
 #include <math.h>
 #include <math_private.h>
-
+#include <float.h>
 
 __complex__ float
 __casinhf (__complex__ float x)
@@ -62,20 +62,38 @@ __casinhf (__complex__ float x)
     }
   else
     {
+      float rx, ix;
       __complex__ float y;
 
-      __real__ y = (__real__ x - __imag__ x) * (__real__ x + __imag__ x) + 1.0;
-      __imag__ y = 2.0 * __real__ x * __imag__ x;
+      /* Avoid cancellation by reducing to the first quadrant.  */
+      rx = fabsf (__real__ x);
+      ix = fabsf (__imag__ x);
 
-      y = __csqrtf (y);
+      if (rx >= 1.0f / FLT_EPSILON || ix >= 1.0f / FLT_EPSILON)
+	{
+	  /* For large x in the first quadrant, x + csqrt (1 + x * x)
+	     is sufficiently close to 2 * x to make no significant
+	     difference to the result; avoid possible overflow from
+	     the squaring and addition.  */
+	  __real__ y = rx;
+	  __imag__ y = ix;
+	  res = __clogf (y);
+	  __real__ res += (float) M_LN2;
+	}
+      else
+	{
+	  __real__ y = (rx - ix) * (rx + ix) + 1.0;
+	  __imag__ y = 2.0 * rx * ix;
 
-      __real__ y += __real__ x;
-      __imag__ y += __imag__ x;
+	  y = __csqrtf (y);
 
-      res = __clogf (y);
+	  __real__ y += rx;
+	  __imag__ y += ix;
 
-      /* Ensure zeros have correct sign and results are correct if
-	 very close to branch cuts.  */
+	  res = __clogf (y);
+	}
+
+      /* Give results the correct sign for the original argument.  */
       __real__ res = __copysignf (__real__ res, __real__ x);
       __imag__ res = __copysignf (__imag__ res, __imag__ x);
     }

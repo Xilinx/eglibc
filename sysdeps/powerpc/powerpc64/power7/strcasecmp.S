@@ -1,5 +1,5 @@
 /* Optimized strcasecmp implementation for PowerPC64.
-   Copyright (C) 2011 Free Software Foundation, Inc.
+   Copyright (C) 2011-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -40,8 +40,8 @@ ENTRY (BP_SYM (__STRCMP))
 #define rSTR1	r5	/* 1st string */
 #define rSTR2	r4	/* 2nd string */
 #define rLOCARG	r5	/* 3rd argument: locale_t */
-#define rCHAR1	r6	/* Byte readed from 1st string */
-#define rCHAR2	r7	/* Byte readed from 2nd string */
+#define rCHAR1	r6	/* Byte read from 1st string */
+#define rCHAR2	r7	/* Byte read from 2nd string */
 #define rADDR1	r8	/* Address of tolower(rCHAR1) */
 #define rADDR2	r12	/* Address of tolower(rCHAR2) */
 #define rLWR1	r8	/* Word tolower(rCHAR1) */

@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * Written by International Business Machines Corp.
- * Copyright (C) 2001, 2011 Free Software Foundation, Inc.
+ * Copyright (C) 2001-2013 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,15 +23,12 @@
 /*  FUNCTIONS:                                                          */
 /*               mcr                                                    */
 /*               acr                                                    */
-/*               cr                                                     */
 /*               cpy                                                    */
-/*               cpymn                                                  */
 /*               mp_dbl                                                 */
 /*               dbl_mp                                                 */
 /*               add                                                    */
 /*               sub                                                    */
 /*               mul                                                    */
-/*               inv                                                    */
 /*               dvd                                                    */
 /*                                                                      */
 /* Arithmetic functions for multiple precision numbers.                 */
@@ -39,20 +36,42 @@
 /************************************************************************/
 
 
-typedef struct {/* This structure holds the details of a multi-precision     */
-  int e;        /* floating point number, x: d[0] holds its sign (-1,0 or 1) */
-  double d[40]; /* e holds its exponent (...,-2,-1,0,1,2,...) and            */
-} mp_no;        /* d[1]...d[p] hold its mantissa digits. The value of x is,  */
-		/* x = d[1]*r**(e-1) + d[2]*r**(e-2) + ... + d[p]*r**(e-p).  */
-		/* Here   r = 2**24,   0 <= d[i] < r  and  1 <= p <= 32.     */
-		/* p is a global variable. A multi-precision number is       */
-		/* always normalized. Namely, d[1] > 0. An exception is      */
-		/* a zero which is characterized by d[0] = 0. The terms      */
-		/* d[p+1], d[p+2], ... of a none zero number have no         */
-		/* significance and so are the terms e, d[1],d[2],...        */
-		/* of a zero.                                                */
+/* The mp_no structure holds the details of a multi-precision floating point
+   number.
 
-typedef union { int i[2]; double d; } number;
+   - The radix of the number (R) is 2 ^ 24.
+
+   - E: The exponent of the number.
+
+   - D[0]: The sign (-1, 1) or 0 if the value is 0.  In the latter case, the
+     values of the remaining members of the structure are ignored.
+
+   - D[1] - D[p]: The mantissa of the number where:
+
+	0 <= D[i] < R and
+	P is the precision of the number and 1 <= p <= 32
+
+     D[p+1] ... D[39] have no significance.
+
+   - The value of the number is:
+
+	D[1] * R ^ (E - 1) + D[2] * R ^ (E - 2) ... D[p] * R ^ (E - p)
+
+   */
+typedef struct
+{
+  int e;
+  double d[40];
+} mp_no;
+
+typedef union
+{
+  int i[2];
+  double d;
+} number;
+
+extern const mp_no mpone;
+extern const mp_no mptwo;
 
 #define  X   x->d
 #define  Y   y->d
@@ -63,21 +82,18 @@ typedef union { int i[2]; double d; } number;
 
 #define ABS(x)   ((x) <  0  ? -(x) : (x))
 
-int __acr(const mp_no *, const mp_no *, int);
-// int  __cr(const mp_no *, const mp_no *, int);
-void __cpy(const mp_no *, mp_no *, int);
-// void __cpymn(const mp_no *, int, mp_no *, int);
-void __mp_dbl(const mp_no *, double *, int);
-void __dbl_mp(double, mp_no *, int);
-void __add(const mp_no *, const mp_no *, mp_no *, int);
-void __sub(const mp_no *, const mp_no *, mp_no *, int);
-void __mul(const mp_no *, const mp_no *, mp_no *, int);
-// void __inv(const mp_no *, mp_no *, int);
-void __dvd(const mp_no *, const mp_no *, mp_no *, int);
+int __acr (const mp_no *, const mp_no *, int);
+void __cpy (const mp_no *, mp_no *, int);
+void __mp_dbl (const mp_no *, double *, int);
+void __dbl_mp (double, mp_no *, int);
+void __add (const mp_no *, const mp_no *, mp_no *, int);
+void __sub (const mp_no *, const mp_no *, mp_no *, int);
+void __mul (const mp_no *, const mp_no *, mp_no *, int);
+void __dvd (const mp_no *, const mp_no *, mp_no *, int);
 
 extern void __mpatan (mp_no *, mp_no *, int);
 extern void __mpatan2 (mp_no *, mp_no *, mp_no *, int);
 extern void __mpsqrt (mp_no *, mp_no *, int);
-extern void __mpexp (mp_no *, mp_no *__y, int);
+extern void __mpexp (mp_no *, mp_no *, int);
 extern void __c32 (mp_no *, mp_no *, mp_no *, int);
 extern int __mpranred (double, mp_no *, int);

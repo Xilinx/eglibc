@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * Written by International Business Machines Corp.
- * Copyright (C) 2001, 2011 Free Software Foundation, Inc.
+ * Copyright (C) 2001-2013 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,23 +28,15 @@
 #define MPEXP_H
 
 extern const number __mpexp_twomm1[33] attribute_hidden;
-extern const number __mpexp_nn[9] attribute_hidden;
-extern const number __mpexp_radix attribute_hidden;
-extern const number __mpexp_radixi attribute_hidden;
-extern const number __mpexp_zero attribute_hidden;
-extern const number __mpexp_one attribute_hidden;
-extern const number __mpexp_two attribute_hidden;
-extern const number __mpexp_half attribute_hidden;
-
 
 #ifndef AVOID_MPEXP_H
 #ifdef BIG_ENDI
   const number
 	__mpexp_twomm1[33] = {                     /* 2**-m1 */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
+/**/                  {{0x3ff00000, 0x00000000} }, /* 1      */
+/**/                  {{0x3ff00000, 0x00000000} }, /* 1      */
+/**/                  {{0x3ff00000, 0x00000000} }, /* 1      */
+/**/                  {{0x3ff00000, 0x00000000} }, /* 1      */
 /**/                  {{0x3ee00000, 0x00000000} }, /* 2**-17 */
 /**/                  {{0x3e800000, 0x00000000} }, /* 2**-23 */
 /**/                  {{0x3e800000, 0x00000000} }, /* 2**-23 */
@@ -75,35 +67,15 @@ extern const number __mpexp_half attribute_hidden;
 /**/                  {{0x3b100000, 0x00000000} }, /* 2**-78 */
 /**/                  {{0x3ae00000, 0x00000000} }, /* 2**-81 */
   };
-  const number
-	       __mpexp_nn[9]={                     /* n      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x3ff00000, 0x00000000} }, /* 1      */
-/**/                  {{0x40000000, 0x00000000} }, /* 2      */
-/**/                  {{0x40080000, 0x00000000} }, /* 3      */
-/**/                  {{0x40100000, 0x00000000} }, /* 4      */
-/**/                  {{0x40140000, 0x00000000} }, /* 5      */
-/**/                  {{0x40180000, 0x00000000} }, /* 6      */
-/**/                  {{0x401c0000, 0x00000000} }, /* 7      */
-/**/                  {{0x40200000, 0x00000000} }, /* 8      */
-  };
-
-  const number
-/**/ __mpexp_radix    = {{0x41700000, 0x00000000} }, /* 2**24  */
-/**/ __mpexp_radixi   = {{0x3e700000, 0x00000000} }, /* 2**-24 */
-/**/ __mpexp_zero     = {{0x00000000, 0x00000000} }, /* 0      */
-/**/ __mpexp_one      = {{0x3ff00000, 0x00000000} }, /* 1      */
-/**/ __mpexp_two      = {{0x40000000, 0x00000000} }, /* 2      */
-/**/ __mpexp_half     = {{0x3fe00000, 0x00000000} }; /* 1/2    */
 
 #else
 #ifdef LITTLE_ENDI
   const number
 	__mpexp_twomm1[33] = {                     /* 2**-m1 */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
+/**/                  {{0x00000000, 0x3ff00000} }, /* 1      */
+/**/                  {{0x00000000, 0x3ff00000} }, /* 1      */
+/**/                  {{0x00000000, 0x3ff00000} }, /* 1      */
+/**/                  {{0x00000000, 0x3ff00000} }, /* 1      */
 /**/                  {{0x00000000, 0x3ee00000} }, /* 2**-17 */
 /**/                  {{0x00000000, 0x3e800000} }, /* 2**-23 */
 /**/                  {{0x00000000, 0x3e800000} }, /* 2**-23 */
@@ -134,36 +106,16 @@ extern const number __mpexp_half attribute_hidden;
 /**/                  {{0x00000000, 0x3b100000} }, /* 2**-78 */
 /**/                  {{0x00000000, 0x3ae00000} }, /* 2**-81 */
   };
-  const number
-	       __mpexp_nn[9]={                     /* n      */
-/**/                  {{0x00000000, 0x00000000} }, /* 0      */
-/**/                  {{0x00000000, 0x3ff00000} }, /* 1      */
-/**/                  {{0x00000000, 0x40000000} }, /* 2      */
-/**/                  {{0x00000000, 0x40080000} }, /* 3      */
-/**/                  {{0x00000000, 0x40100000} }, /* 4      */
-/**/                  {{0x00000000, 0x40140000} }, /* 5      */
-/**/                  {{0x00000000, 0x40180000} }, /* 6      */
-/**/                  {{0x00000000, 0x401c0000} }, /* 7      */
-/**/                  {{0x00000000, 0x40200000} }, /* 8      */
-  };
-
-  const number
-/**/ __mpexp_radix    = {{0x00000000, 0x41700000} }, /* 2**24  */
-/**/ __mpexp_radixi   = {{0x00000000, 0x3e700000} }, /* 2**-24 */
-/**/ __mpexp_zero     = {{0x00000000, 0x00000000} }, /* 0      */
-/**/ __mpexp_one      = {{0x00000000, 0x3ff00000} }, /* 1      */
-/**/ __mpexp_two      = {{0x00000000, 0x40000000} }, /* 2      */
-/**/ __mpexp_half     = {{0x00000000, 0x3fe00000} }; /* 1/2    */
 
 #endif
 #endif
 #endif
 
-#define  RADIX     __mpexp_radix.d
-#define  RADIXI    __mpexp_radixi.d
-#define  ZERO      __mpexp_zero.d
-#define  ONE       __mpexp_one.d
-#define  TWO       __mpexp_two.d
-#define  HALF      __mpexp_half.d
+#define  RADIX     0x1.0p24		/* 2^24 */
+#define  RADIXI    0x1.0p-24		/* 2^-24 */
+#define  ZERO      0.0			/* 0 */
+#define  ONE       1.0			/* 1 */
+#define  TWO       2.0			/* 2 */
+#define  HALF      0x1.0p-1		/* 1/2 */
 
 #endif

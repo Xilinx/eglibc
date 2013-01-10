@@ -1,5 +1,5 @@
 /* Optimized memrchr implementation for PowerPC64/POWER7 using cmpb insn.
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2013 Free Software Foundation, Inc.
    Contributed by Luis Machado <luisgpm@br.ibm.com>.
    This file is part of the GNU C Library.
 
@@ -52,7 +52,7 @@ L(proceed):
 	cmpb	r10,r12,r4    /* Check for BYTE in DWORD1.  */
 	sld	r10,r10,r0
 	srd	r10,r10,r0
-	cmpldi	cr7,r10,0     /* If r10 == 0, no BYTE's have been found.  */
+	cmpldi	cr7,r10,0     /* If r10 == 0, no BYTEs have been found.  */
 	bne	cr7,L(done)
 
 	/* Are we done already?  */

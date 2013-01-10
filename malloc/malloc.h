@@ -1,6 +1,5 @@
 /* Prototypes and definition for malloc implementation.
-   Copyright (C) 1996,1997,1999,2000,2002-2004,2005,2007,2009,2011,2012
-   Free Software Foundation, Inc.
+   Copyright (C) 1996-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,29 +28,13 @@
 #define __malloc_size_t size_t
 #define __malloc_ptrdiff_t ptrdiff_t
 
-#ifdef __GNUC__
-
-# define __MALLOC_P(args)	args __THROW
-/* This macro will be used for functions which might take C++ callback
-   functions.  */
-# define __MALLOC_PMT(args)	args
-
-# ifdef _LIBC
-#  define __MALLOC_HOOK_VOLATILE
-#  define __MALLOC_DEPRECATED
-# else
-#  define __MALLOC_HOOK_VOLATILE volatile
-#  define __MALLOC_DEPRECATED __attribute_deprecated__
-# endif
-
-#else	/* Not GCC.  */
-
-# define __MALLOC_P(args)	args
-# define __MALLOC_PMT(args)	args
+#ifdef _LIBC
 # define __MALLOC_HOOK_VOLATILE
+# define __MALLOC_DEPRECATED
+#else
+# define __MALLOC_HOOK_VOLATILE volatile
 # define __MALLOC_DEPRECATED __attribute_deprecated__
-
-#endif	/* GCC.  */
+#endif
 
 
 __BEGIN_DECLS

@@ -1,5 +1,5 @@
 /* sqrt function.  PowerPC32 version.
-   Copyright (C) 2007, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2007-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 /* double [fp1] sqrt (double x [fp1])
    Power4 (ISA V2.0) and above implement sqrt in hardware (not optional).
    The fsqrt instruction generates the correct value for all inputs and
-   sets the appropriate floating point exceptions.  Extented checking is
+   sets the appropriate floating point exceptions.  Extended checking is
    only needed to set errno (via __kernel_standard) if the input value
    is negative.
    

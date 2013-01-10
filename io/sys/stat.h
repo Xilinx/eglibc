@@ -1,5 +1,4 @@
-/* Copyright (C) 1991, 1992, 1995-2007, 2009, 2010, 2012
-   Free Software Foundation, Inc.
+/* Copyright (C) 1991-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -447,7 +446,7 @@ extern int __xmknodat (int __ver, int __fd, const char *__path,
 		       __mode_t __mode, __dev_t *__dev)
      __THROW __nonnull ((3, 5));
 
-#if defined __GNUC__ && __GNUC__ >= 2 && defined __USE_EXTERN_INLINES
+#ifdef __USE_EXTERN_INLINES
 /* Inlined versions of the real stat and mknod functions.  */
 
 __extern_inline int

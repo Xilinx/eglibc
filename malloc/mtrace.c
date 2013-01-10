@@ -1,5 +1,5 @@
 /* More debugging hooks for `malloc'.
-   Copyright (C) 1991-2012 Free Software Foundation, Inc.
+   Copyright (C) 1991-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 		 Written April 2, 1991 by John Gilmore of Cygnus Support.
 		 Based on mcheck.c by Mike Haertel.
@@ -219,8 +219,13 @@ tr_reallochook (ptr, size, caller)
 
   tr_where (caller, info);
   if (hdr == NULL)
-    /* Failed realloc.  */
-    fprintf (mallstream, "! %p %#lx\n", ptr, (unsigned long int) size);
+    {
+      if (size != 0)
+	/* Failed realloc.  */
+	fprintf (mallstream, "! %p %#lx\n", ptr, (unsigned long int) size);
+      else
+	fprintf (mallstream, "- %p\n", ptr);
+    }
   else if (ptr == NULL)
     fprintf (mallstream, "+ %p %#lx\n", hdr, (unsigned long int) size);
   else

@@ -1,7 +1,7 @@
 /*
  * IBM Accurate Mathematical Library
  * Written by International Business Machines Corp.
- * Copyright (C) 2001, 2011 Free Software Foundation, Inc.
+ * Copyright (C) 2001-2013 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,8 +30,6 @@
 extern const number __atan_xm[8] attribute_hidden;
 extern const number __atan_twonm1[33] attribute_hidden;
 extern const number __atan_twom[8] attribute_hidden;
-extern const number __atan_one attribute_hidden;
-extern const number __atan_two attribute_hidden;
 extern const int __atan_np[33] attribute_hidden;
 
 
@@ -85,22 +83,6 @@ extern const int __atan_np[33] attribute_hidden;
 /**/                  {{0x405d4000, 0x00000000} }, /* 117    */
 		    };
 
-  const number
-    __atan_twom[8] = {                             /* 2**m   */
-/**/                  {{0x3ff00000, 0x00000000} }, /*   1.0  */
-/**/                  {{0x40000000, 0x00000000} }, /*   2.0  */
-/**/                  {{0x40100000, 0x00000000} }, /*   4.0  */
-/**/                  {{0x40200000, 0x00000000} }, /*   8.0  */
-/**/                  {{0x40300000, 0x00000000} }, /*  16.0  */
-/**/                  {{0x40400000, 0x00000000} }, /*  32.0  */
-/**/                  {{0x40500000, 0x00000000} }, /*  64.0  */
-/**/                  {{0x40600000, 0x00000000} }, /* 128.0  */
-		    };
-
-  const number
-/**/ __atan_one     = {{0x3ff00000, 0x00000000} }, /* 1      */
-/**/ __atan_two     = {{0x40000000, 0x00000000} }; /* 2      */
-
 #else
 #ifdef LITTLE_ENDI
 
@@ -152,22 +134,6 @@ __atan_twonm1[33] = {                             /* 2n-1   */
 /**/                  {{0x00000000, 0x405d4000} }, /* 117    */
 		    };
 
-  const number
-    __atan_twom[8] = {                             /* 2**m   */
-/**/                  {{0x00000000, 0x3ff00000} }, /*   1.0  */
-/**/                  {{0x00000000, 0x40000000} }, /*   2.0  */
-/**/                  {{0x00000000, 0x40100000} }, /*   4.0  */
-/**/                  {{0x00000000, 0x40200000} }, /*   8.0  */
-/**/                  {{0x00000000, 0x40300000} }, /*  16.0  */
-/**/                  {{0x00000000, 0x40400000} }, /*  32.0  */
-/**/                  {{0x00000000, 0x40500000} }, /*  64.0  */
-/**/                  {{0x00000000, 0x40600000} }, /* 128.0  */
-		    };
-
-  const number
-/**/ __atan_one    = {{0x00000000, 0x3ff00000} }, /* 1      */
-/**/ __atan_two    = {{0x00000000, 0x40000000} }; /* 2      */
-
 #endif
 #endif
 
@@ -178,5 +144,5 @@ __atan_twonm1[33] = {                             /* 2n-1   */
 #endif
 #endif
 
-#define  ONE       __atan_one.d
-#define  TWO       __atan_two.d
+#define  ONE       1.0
+#define  TWO       2.0

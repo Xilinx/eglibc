@@ -1,5 +1,5 @@
 /* Machine-dependent ELF startup code.  PowerPC version.
-   Copyright (C) 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1995-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -74,7 +74,7 @@ _dl_start_user:
 	slwi	r5,r3,2
 	add	r6,r4,r5
 	addi	r5,r6,4
-/* pass the auxilary vector in r6. This is passed to us just after _envp.  */
+/* pass the auxiliary vector in r6. This is passed to us just after _envp.  */
 2:	lwzu	r0,4(r6)
 	cmpwi	r0,0
 	bne	2b

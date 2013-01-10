@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2012 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,8 +22,6 @@
 /* Flags to be passed to epoll_create1.  */
 enum
   {
-    EPOLL_CLOEXEC  = 010000000,
+    EPOLL_CLOEXEC  = 010000000
 #define EPOLL_CLOEXEC EPOLL_CLOEXEC
-    EPOLL_NONBLOCK = 000000004
-#define EPOLL_NONBLOCK EPOLL_NONBLOCK
   };
