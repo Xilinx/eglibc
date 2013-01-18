@@ -112,5 +112,5 @@ tests: $(objpfx)ftwtest.out
 endif
 
 $(objpfx)ftwtest.out: ftwtest-sh $(objpfx)ftwtest
-	$(SHELL) $< $(common-objpfx) '$(built-program-cmd)' > $@
+	$(SHELL) $< $(common-objpfx) '$(test-program-cmd)' > $@
 endif

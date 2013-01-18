@@ -82,6 +82,32 @@ extern const mp_no mptwo;
 
 #define ABS(x)   ((x) <  0  ? -(x) : (x))
 
+#define  RADIX     0x1.0p24		/* 2^24    */
+#define  RADIXI    0x1.0p-24		/* 2^-24   */
+#define  CUTTER    0x1.0p76		/* 2^76    */
+
+#define  ZERO      0.0			/* 0       */
+#define  MZERO     -0.0			/* 0 with the sign bit set */
+#define  ONE       1.0			/* 1       */
+#define  MONE      -1.0			/* -1      */
+#define  TWO       2.0			/*  2      */
+
+#define  TWO5      0x1.0p5		/* 2^5     */
+#define  TWO8      0x1.0p8		/* 2^52    */
+#define  TWO10     0x1.0p10		/* 2^10    */
+#define  TWO18     0x1.0p18		/* 2^18    */
+#define  TWO19     0x1.0p19		/* 2^19    */
+#define  TWO23     0x1.0p23		/* 2^23    */
+#define  TWO52     0x1.0p52		/* 2^52    */
+#define  TWO57     0x1.0p57		/* 2^57    */
+#define  TWO71     0x1.0p71		/* 2^71    */
+#define  TWOM1032  0x1.0p-1032		/* 2^-1032 */
+#define  TWOM1022  0x1.0p-1022		/* 2^-1022 */
+
+#define  HALF      0x1.0p-1		/* 1/2 */
+#define  MHALF     -0x1.0p-1		/* -1/2 */
+#define  HALFRAD   0x1.0p23		/* 2^23 */
+
 int __acr (const mp_no *, const mp_no *, int);
 void __cpy (const mp_no *, mp_no *, int);
 void __mp_dbl (const mp_no *, double *, int);
@@ -97,3 +123,33 @@ extern void __mpsqrt (mp_no *, mp_no *, int);
 extern void __mpexp (mp_no *, mp_no *, int);
 extern void __c32 (mp_no *, mp_no *, mp_no *, int);
 extern int __mpranred (double, mp_no *, int);
+
+/* Given a power POW, build a multiprecision number 2^POW.  */
+static inline void
+__pow_mp (int pow, mp_no *y, int p)
+{
+  int i, rem;
+
+  /* The exponent is E such that E is a factor of 2^24.  The remainder (of the
+     form 2^x) goes entirely into the first digit of the mantissa as it is
+     always less than 2^24.  */
+  EY = pow / 24;
+  rem = pow - EY * 24;
+  EY++;
+
+  /* If the remainder is negative, it means that POW was negative since
+     |EY * 24| <= |pow|.  Adjust so that REM is positive and still less than
+     24 because of which, the mantissa digit is less than 2^24.  */
+  if (rem < 0)
+    {
+      EY--;
+      rem += 24;
+    }
+  /* The sign of any 2^x is always positive.  */
+  Y[0] = ONE;
+  Y[1] = 1 << rem;
+
+  /* Everything else is ZERO.  */
+  for (i = 2; i <= p; i++)
+    Y[i] = ZERO;
+}

@@ -25,24 +25,33 @@
 #define ASM_SIZE_DIRECTIVE(name) .size name,.-name
 
 /* Define an entry point visible from C.  */
-#define ENTRY(name)							      \
-  .globl C_SYMBOL_NAME(name);						      \
-  .type C_SYMBOL_NAME(name),%function;					      \
-  .align 4;								      \
-  C_LABEL(name)								      \
-  cfi_startproc;							      \
+#define ENTRY(name)						\
+  .globl C_SYMBOL_NAME(name);					\
+  .type C_SYMBOL_NAME(name),%function;				\
+  .align 4;							\
+  C_LABEL(name)							\
+  cfi_startproc;						\
+  CALL_MCOUNT
+
+/* Define an entry point visible from C.  */
+#define ENTRY_ALIGN(name, align)				\
+  .globl C_SYMBOL_NAME(name);					\
+  .type C_SYMBOL_NAME(name),%function;				\
+  .p2align align;						\
+  C_LABEL(name)							\
+  cfi_startproc;						\
   CALL_MCOUNT
 
 #undef	END
-#define END(name)							      \
-  cfi_endproc;								      \
+#define END(name)						\
+  cfi_endproc;							\
   ASM_SIZE_DIRECTIVE(name)
 
 /* If compiled for profiling, call `mcount' at the start of each function.  */
 #ifdef	PROF
-# define CALL_MCOUNT			\
-	str	x30, [sp, #-16]!;	\
-	bl	mcount;			\
+# define CALL_MCOUNT						\
+	str	x30, [sp, #-16]!;				\
+	bl	mcount;						\
 	ldr	x30, [sp], #16	;
 #else
 # define CALL_MCOUNT		/* Do nothing.  */

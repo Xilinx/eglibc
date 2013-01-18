@@ -1,6 +1,6 @@
-/* Copyright (C) 2009 Free Software Foundation, Inc.
+/* Test backtrace and backtrace_symbols.
+   Copyright (C) 2009-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by CodeSourcery.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,12 +13,13 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
 
 #include <execinfo.h>
 #include <search.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static int do_test (void);
@@ -40,10 +41,10 @@ volatile int x;
 
 /* Use this attribute to prevent inlining, so that all expected frames
    are present.  */
-#define NO_INLINE __attribute__((noinline))
+#define NO_INLINE __attribute__ ((noinline))
 
 NO_INLINE void
-fn1 (void) 
+fn1 (void)
 {
   void *addresses[NUM_FUNCTIONS];
   char **symbols;
@@ -62,7 +63,7 @@ fn1 (void)
   /* Convert them to symbols.  */
   symbols = backtrace_symbols (addresses, n);
   /* Check that symbols were obtained.  */
-  if (symbols == NULL) 
+  if (symbols == NULL)
     {
       FAIL ();
       return;
@@ -86,15 +87,15 @@ fn1 (void)
      check do_test.  */
 }
 
-NO_INLINE static int 
-fn2 (void) 
+NO_INLINE static int
+fn2 (void)
 {
   fn1 ();
   /* Prevent tail calls.  */
   return x;
 }
 
-NO_INLINE int 
+NO_INLINE int
 fn3 (void)
 {
   fn2();
@@ -102,8 +103,8 @@ fn3 (void)
   return x;
 }
 
-NO_INLINE static int 
-do_test (void) 
+NO_INLINE static int
+do_test (void)
 {
   fn3 ();
   return ret;

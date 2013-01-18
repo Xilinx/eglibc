@@ -129,9 +129,6 @@
 # define __KERNEL_STRICT_NAMES
 #endif
 
-/* Always use ISO C things.  */
-#define	__USE_ANSI	1
-
 /* Convenience macros to test the versions of glibc and gcc.
    Use them like this:
    #if __GNUC_PREREQ (2,8)
@@ -360,14 +357,6 @@
 
 #define __GLIBC_PREREQ(maj, min) \
 	((__GLIBC__ << 16) + __GLIBC_MINOR__ >= ((maj) << 16) + (min))
-
-/* Decide whether a compiler supports the long long datatypes.  */
-#if defined __GNUC__ \
-    || (defined __PGI && defined __i386__ ) \
-    || (defined __INTEL_COMPILER && (defined __i386__ || defined __ia64__)) \
-    || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L)
-# define __GLIBC_HAVE_LONG_LONG	1
-#endif
 
 /* This is here only because every header file already includes this one.  */
 #ifndef __ASSEMBLER__

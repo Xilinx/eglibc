@@ -118,6 +118,8 @@ tests           += tst-exec
 tests-$(OPTION_EGLIBC_SPAWN) += tst-spawn
 tests-$(OPTION_EGLIBC_WORDEXP) += wordexp-test
 endif
+tests-static	= tst-exec-static tst-spawn-static
+tests		+= $(tests-static)
 others		:= getconf
 install-bin	:= getconf
 install-others-programs	:= $(inst_libexecdir)/getconf
@@ -143,13 +145,13 @@ ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
 tests: $(objpfx)globtest.out
 $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
-	$(SHELL) $< $(common-objpfx) '$(run-via-rtld-prefix)' \
-		'$(test-wrapper)' '$(test-wrapper-env)'
+	$(SHELL) $< $(common-objpfx) '$(test-via-rtld-prefix)' \
+		'$(test-program-prefix)' '$(test-wrapper-env)'
 LDLIBS-globtest += $(shell cat $(common-objpfx)nss/fixed-nsswitch-libs)
 ifeq (y,$(OPTION_EGLIBC_WORDEXP))
 tests: $(objpfx)wordexp-tst.out
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
-	$(SHELL) $< $(common-objpfx) '$(run-program-prefix)'
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)'
 endif
 endif
 endif
@@ -201,8 +203,10 @@ CFLAGS-execlp.os = -fomit-frame-pointer
 tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 		--none random --col --color --colour
 
-tst-exec-ARGS = -- $(host-built-program-cmd)
-tst-spawn-ARGS = -- $(host-built-program-cmd)
+tst-exec-ARGS = -- $(host-test-program-cmd)
+tst-exec-static-ARGS = $(tst-exec-ARGS)
+tst-spawn-ARGS = -- $(host-test-program-cmd)
+tst-spawn-static-ARGS = $(tst-spawn-ARGS)
 tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); pwd` $(objpfx)tst-dir
 tst-chmod-ARGS = $(objdir)
 tst-vfork3-ARGS = --test-dir=$(objpfx)
@@ -302,7 +306,7 @@ $(objpfx)tst-vfork3-mem: $(objpfx)tst-vfork3.out
 # time to process.
 $(objpfx)tst-rxspencer-mem: $(objpfx)tst-rxspencer.out
 	MALLOC_TRACE=$(objpfx)tst-rxspencer.mtrace $(tst-rxspencer-ENV) \
-	  $(run-program-prefix) $(objpfx)tst-rxspencer rxspencer/tests \
+	  $(test-program-prefix) $(objpfx)tst-rxspencer rxspencer/tests \
 	  > /dev/null
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-rxspencer.mtrace > $@
 
@@ -340,3 +344,8 @@ $(objpfx)getconf.speclist: getconf-speclist.c posix-envs.def
 	$(compile.c) -E -o - \
 	    | sed -n -e '/@@@PRESENT_/s/@@@PRESENT_//p' > $@.new
 	mv -f $@.new $@
+
+# This file is only actually needed at install time.  But forcing it to
+# be built both makes it available for eyeball inspection and avoids the
+# surprise of things that look like compilation being done by 'make install'.
+others: $(objpfx)getconf.speclist

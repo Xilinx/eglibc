@@ -659,6 +659,7 @@ libc_cv_nss_crypt
 all_warnings
 force_install
 bindnow
+hardcoded_path_in_tests
 oldest_abi
 use_default_link
 sysheaders
@@ -745,6 +746,7 @@ enable_shared
 enable_profile
 enable_versioning
 enable_oldest_abi
+enable_hardcoded_path_in_tests
 enable_stackguard_randomization
 enable_add_ons
 enable_hidden_plt
@@ -1397,6 +1399,9 @@ Optional Features:
                           objects [default=yes if supported]
   --enable-oldest-abi=ABI configure the oldest ABI supported [e.g. 2.2]
                           [default=glibc default]
+  --enable-hardcoded-path-in-tests
+                          hardcode newly built glibc path in tests
+                          [default=no]
   --enable-stackguard-randomization
                           initialize __stack_chk_guard canary with a random
                           number at program start
@@ -3698,6 +3703,15 @@ _ACEOF
 fi
 
 
+# Check whether --enable-hardcoded-path-in-tests was given.
+if test "${enable_hardcoded_path_in_tests+set}" = set; then :
+  enableval=$enable_hardcoded_path_in_tests; hardcoded_path_in_tests=$enableval
+else
+  hardcoded_path_in_tests=no
+fi
+
+
+
 # Check whether --enable-stackguard-randomization was given.
 if test "${enable_stackguard_randomization+set}" = set; then :
   enableval=$enable_stackguard_randomization; enable_stackguard_randomize=$enableval
@@ -4281,6 +4295,7 @@ if test x"$libc_cv_ld_gnu_indirect_function" != xyes; then
     multi_arch=no
   fi
 fi
+multi_arch_d=
 if test x"$multi_arch" != xno; then
   multi_arch_d=/multiarch
 fi
@@ -4333,11 +4348,16 @@ while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   set $m
   # Prepend the machine's FPU directory unless --without-fp.
   if test "$with_fp" = yes; then
-    mach="$mach /$1/fpu"
+    maybe_fpu=/fpu
   else
-    mach="$mach /$1/nofpu"
+    maybe_fpu=/nofpu
   fi
-  mach="$mach /$1"
+  # For each machine term, try it with and then without /multiarch.
+  for try_fpu in $maybe_fpu ''; do
+    for try_multi in $multi_arch_d ''; do
+      mach="$mach /$1$try_fpu$try_multi"
+    done
+  done
   tail="$2"
 done
 
@@ -4351,15 +4371,16 @@ for b in $base ''; do
       test "$v" = / && continue
       for o in /$ostry ''; do
 	test "$o" = / && continue
-	for m in $multi_arch_d $mach ''; do
+	for m in $mach ''; do
 	  for d in $add_ons_pfx ''; do
 	    for a in $add_ons_sfx ''; do
-	      if test -n "$m0$m0sub$b$v$o$m$msub"; then
+	      try_suffix="$m0$b$v$o$m"
+	      if test -n "$try_suffix"; then
 		try_srcdir="${srcdir}/"
 		case "$d" in
 		/*) try_srcdir= ;;
 		esac
-		try="${d}sysdeps$m0$m0sub$b$v$o$m$msub$a"
+		try="${d}sysdeps$try_suffix$a"
 		test -n "$enable_debug_configure" &&
 		echo "$0 DEBUG: try $try" >&2
 		if test -d "$try_srcdir$try"; then

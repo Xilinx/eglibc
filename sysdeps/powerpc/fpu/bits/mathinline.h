@@ -127,4 +127,4 @@ __NTH (fdimf (float __x, float __y))
 
 #endif /* __USE_ISOC99 */
 #endif /* !__NO_MATH_INLINES && __OPTIMIZE__ */
-#endif /* __GNUC__ && !__NO_FPRS__ */
+#endif /* __GNUC__ && !_SOFT_FLOAT && !__NO_FPRS__ */
