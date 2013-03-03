@@ -1,3 +1,38 @@
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/m68k/coldfire/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+	* sysdeps/unix/sysv/linux/m68k/m680x0/nptl/libc.abilist:
+	Likewise.
+
+2013-02-08  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_O_CLOEXEC): Define for 2.6.23 or later.
+	(__ASSUME_SOCK_CLOEXEC, __ASSUME_IN_NONBLOCK, __ASSUME_PIPE2)
+	(__ASSUME_EVENTFD2, __ASSUME_SIGNALFD4, __ASSUME_DUP3): Define for
+	2.6.27 or later.
+	(__ASSUME_ACCEPT4): Define for 2.6.28 or later.
+
+2013-02-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/m68k/memchr.S [!__BOUNDED_POINTERS__] (__ubp_memchr):
+	Remove alias.
+
+2013-01-20  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/m680x0/fpu/libm-test-ulps: Update.
+
+	* sysdeps/m68k/Makefile (CFLAGS-backtrace.c): Add -funwind-tables.
+
+2013-01-19  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/backtrace.c: New file.
+
+	* sysdeps/unix/sysv/linux/m68k/nptl/not-cancel.h: New file.
+	* sysdeps/unix/sysv/linux/m68k/syscalls.list: Add waitpid.
+
 2013-01-10  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/m68k/bits/byteswap.h (__bswap_64): Use __extension__

@@ -1,3 +1,34 @@
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/ia64/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/ia64/sigaction.c: Do not include
+	<bp-checks.h>.
+	(__libc_sigaction): Do not use CHECK_1_NULL_OK.
+
+2013-02-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/ia64/memchr.S [!__BOUNDED_POINTERS__] (__ubp_memchr):
+	Remove alias.
+	* sysdeps/unix/sysv/linux/ia64/umount.c: Do not include
+	<bp-checks.h>.
+	(umount): Do not use CHECK_STRING.
+
+2013-01-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/ia64/sigpending.c: Don't include
+	<bp-checks.h>.
+	(sigpending): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/ia64/sigprocmask.c: Don't include
+	<bp-checks.h>.
+	(__sigprocmask): Don't use CHECK_SIGSET and CHECK_SIGSET_NULL_OK.
+
 2013-01-02  Joseph Myers  <joseph@codesourcery.com>
 
 	* All files with FSF copyright notices: Update copyright dates

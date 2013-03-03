@@ -1,3 +1,115 @@
+2013-02-28  Richard Henderson <rth@redhat.com>
+
+	* sysdeps/arm/preconfigure: Adjust scan for __ARM_ARCH_* defines.
+
+	* sysdeps/arm/preconfigure: Handle __ARM_ARCH_6*__.
+
+	* sysdeps/unix/sysv/linux/arm/Makefile [elf] (sysdep-rtld-routines):
+	Include libc-do-syscall.
+
+	* sysdeps/arm/sysdep.h: Fix assembly whitespace.
+	* ports/sysdeps/unix/sysv/linux/arm/nptl/sysdep-cancel.h: Likewise.
+	* sysdeps/unix/sysv/linux/arm/sysdep.h: Likewise.
+
+	* sysdeps/arm/sysdep.h (PC_OFS): New macros.
+	* sysdeps/arm/__longjmp.S (__longjmp): Use PC_OFS.
+	* sysdeps/arm/setjmp.S (__sigsetjmp): Likewise.
+	* sysdeps/unix/arm/sysdep.S (__syscall_error): Likewise.
+	* sysdeps/unix/sysv/linux/arm/getcontext.S (__getcontext): Likewise.
+	* sysdeps/unix/sysv/linux/arm/setcontext.S (__startcontext): Likewise.
+	* sysdeps/unix/sysv/linux/arm/nptl/sysdep-cancel.h
+	(SINGLE_THREAD_P): Likewise.
+	* sysdeps/unix/sysv/linux/arm/sysdep.h
+	(SYSCALL_ERROR_HANDLER): Likewise.
+	* sysdeps/unix/sysv/linux/arm/nptl/unwind-forcedunwind.c
+	(_Unwind_Resume): Use stringified PC_OFS.
+	* sysdeps/unix/sysv/linux/arm/nptl/unwind-resume.c
+	(_Unwind_Resume): Likewise.
+
+	* ports/sysdeps/arm/arm-mcount.S: Always use unified syntax and
+	always add IT markup.
+	* sysdeps/unix/sysv/linux/arm/mmap64.S (__mmap64): Likewise.
+	* sysdeps/arm/dl-tlsdesc.S (_dl_tlsdesc_dynamic): Add IT markup.
+	* sysdeps/unix/arm/sysdep.S (__syscall_error): Likewise.
+	* sysdeps/unix/sysv/linux/arm/clone.S (__clone): Likewise.
+	* sysdeps/unix/sysv/linux/arm/mmap.S (__mmap): Likewise.
+	* sysdeps/unix/sysv/linux/arm/syscall.S (syscall): Likewise.
+	* sysdeps/unix/sysv/linux/arm/sysdep.h (PSEUDO_RET): Likewise.
+	* sysdeps/unix/sysv/linux/arm/vfork.S (__vfork): Likewise.
+
+	* ports/sysdeps/arm/__longjmp.S: Define NO_THUMB before <sysdep.h>
+	* sysdeps/arm/crti.S, sysdeps/arm/crtn.S: Likewise.
+	* sysdeps/arm/dl-trampoline.S: Likewise.
+	* sysdeps/arm/memcpy.S: Likewise.
+	* sysdeps/arm/memmove.S: Likewise.
+	* sysdeps/arm/memset.S: Likewise.
+	* sysdeps/arm/setjmp.S: Likewise.
+	* sysdeps/arm/strlen.S: Likewise.
+	* sysdeps/unix/sysv/linux/arm/____longjmp_chk.S: Likewise.
+	* sysdeps/unix/sysv/linux/arm/setcontext.S: Likewise.
+
+2013-02-27  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/arm/sysdep.h (CFI_SECTIONS): New macro.
+	(ENTRY): Use it.
+	* sysdeps/arm/dl-tlsdesc.S: Likewise.
+	* sysdeps/arm/dl-trampoline.S: Likewise.
+	* sysdeps/unix/sysv/linux/arm/nptl/sysdep-cancel.h (PSEUDO): Likewise.
+
+2013-02-18  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14920]
+	* sysdeps/unix/sysv/linux/arm/nptl/lowlevellock.h
+	(FUTEX_WAIT_REQUEUE_PI): Define.
+	(FUTEX_CMP_REQUEUE_PI): Likewise.
+	(lll_futex_wait_requeue_pi): Likewise.
+	(lll_futex_timed_wait_requeue_pi): Likewise.
+	(lll_futex_cmp_requeue_pi): Likewise.
+
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/arm/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+
+2013-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/arm/frame.h (struct layout): Do not use __unbounded.
+	* sysdeps/unix/sysv/linux/arm/sigaction.c (__libc_sigaction): Do
+	not use __ptrvalue.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/arm/pread.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/arm/pread64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/arm/pwrite.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/arm/pwrite64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite64): Don't use CHECK_N.
+
+2013-02-08  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #15006]
+	* sysdeps/unix/sysv/linux/arm/dl-cache.h
+	[__ARM_PCS_VFP] (_dl_cache_check_flags): Allow plain FLAG_ELF_LIBC6.
+	[!__ARM_PCS_VFP] (_dl_cache_check_flags): Likewise.
+	* sysdeps/unix/sysv/linux/arm/readelflib.c (process_elf_file):
+	Set FLAG_ARM_LIBSF for soft-float ABI otherwise just FLAG_ELF_LIBC6.
+
+2013-02-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/arm/truncate64.c: Do not include
+	<bp-checks.h>.
+	(truncate64): Do not use CHECK_STRING.
+
 2013-01-02  Joseph Myers  <joseph@codesourcery.com>
 
 	* All files with FSF copyright notices: Update copyright dates

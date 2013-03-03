@@ -43,6 +43,7 @@
 #include "endian.h"
 #include "mpa.h"
 #include <sys/param.h>
+#include <alloca.h>
 
 #ifndef SECTION
 # define SECTION
@@ -59,8 +60,9 @@ const mp_no mptwo = {1, {1.0, 2.0}};
 static int
 mcr (const mp_no *x, const mp_no *y, int p)
 {
-  int i;
-  for (i = 1; i <= p; i++)
+  long i;
+  long p2 = p;
+  for (i = 1; i <= p2; i++)
     {
       if (X[i] == Y[i])
 	continue;
@@ -76,7 +78,7 @@ mcr (const mp_no *x, const mp_no *y, int p)
 int
 __acr (const mp_no *x, const mp_no *y, int p)
 {
-  int i;
+  long i;
 
   if (X[0] == ZERO)
     {
@@ -107,8 +109,10 @@ __acr (const mp_no *x, const mp_no *y, int p)
 void
 __cpy (const mp_no *x, mp_no *y, int p)
 {
+  long i;
+
   EY = EX;
-  for (int i = 0; i <= p; i++)
+  for (i = 0; i <= p; i++)
     Y[i] = X[i];
 }
 #endif
@@ -119,8 +123,8 @@ __cpy (const mp_no *x, mp_no *y, int p)
 static void
 norm (const mp_no *x, double *y, int p)
 {
-#define R  RADIXI
-  int i;
+#define R RADIXI
+  long i;
   double a, c, u, v, z[5];
   if (p < 5)
     {
@@ -194,17 +198,18 @@ norm (const mp_no *x, double *y, int p)
 static void
 denorm (const mp_no *x, double *y, int p)
 {
-  int i, k;
+  long i, k;
+  long p2 = p;
   double c, u, z[5];
 
-#define R  RADIXI
+#define R RADIXI
   if (EX < -44 || (EX == -44 && X[1] < TWO5))
     {
       *y = ZERO;
       return;
     }
 
-  if (p == 1)
+  if (p2 == 1)
     {
       if (EX == -42)
 	{
@@ -228,7 +233,7 @@ denorm (const mp_no *x, double *y, int p)
 	  k = 1;
 	}
     }
-  else if (p == 2)
+  else if (p2 == 2)
     {
       if (EX == -42)
 	{
@@ -281,7 +286,7 @@ denorm (const mp_no *x, double *y, int p)
 
   if (u == z[3])
     {
-      for (i = k + 1; i <= p; i++)
+      for (i = k + 1; i <= p2; i++)
 	{
 	  if (X[i] == ZERO)
 	    continue;
@@ -323,7 +328,8 @@ void
 SECTION
 __dbl_mp (double x, mp_no *y, int p)
 {
-  int i, n;
+  long i, n;
+  long p2 = p;
   double u;
 
   /* Sign.  */
@@ -347,7 +353,7 @@ __dbl_mp (double x, mp_no *y, int p)
     x *= RADIX;
 
   /* Digits.  */
-  n = MIN (p, 4);
+  n = MIN (p2, 4);
   for (i = 1; i <= n; i++)
     {
       u = (x + TWO52) - TWO52;
@@ -357,7 +363,7 @@ __dbl_mp (double x, mp_no *y, int p)
       x -= u;
       x *= RADIX;
     }
-  for (; i <= p; i++)
+  for (; i <= p2; i++)
     Y[i] = ZERO;
 }
 
@@ -369,53 +375,64 @@ static void
 SECTION
 add_magnitudes (const mp_no *x, const mp_no *y, mp_no *z, int p)
 {
-  int i, j, k;
+  long i, j, k;
+  long p2 = p;
+  double zk;
 
   EZ = EX;
 
-  i = p;
-  j = p + EY - EX;
-  k = p + 1;
+  i = p2;
+  j = p2 + EY - EX;
+  k = p2 + 1;
 
-  if (j < 1)
+  if (__glibc_unlikely (j < 1))
     {
       __cpy (x, z, p);
       return;
     }
-  else
-    Z[k] = ZERO;
+
+  zk = ZERO;
 
   for (; j > 0; i--, j--)
     {
-      Z[k] += X[i] + Y[j];
-      if (Z[k] >= RADIX)
+      zk += X[i] + Y[j];
+      if (zk >= RADIX)
 	{
-	  Z[k] -= RADIX;
-	  Z[--k] = ONE;
+	  Z[k--] = zk - RADIX;
+	  zk = ONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
   for (; i > 0; i--)
     {
-      Z[k] += X[i];
-      if (Z[k] >= RADIX)
+      zk += X[i];
+      if (zk >= RADIX)
 	{
-	  Z[k] -= RADIX;
-	  Z[--k] = ONE;
+	  Z[k--] = zk - RADIX;
+	  zk = ONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
-  if (Z[1] == ZERO)
+  if (zk == ZERO)
     {
-      for (i = 1; i <= p; i++)
+      for (i = 1; i <= p2; i++)
 	Z[i] = Z[i + 1];
     }
   else
-    EZ += ONE;
+    {
+      Z[1] = zk;
+      EZ += ONE;
+    }
 }
 
 /* Subtract the magnitudes of *X and *Y assuming that abs (*x) > abs (*y) > 0.
@@ -426,71 +443,70 @@ static void
 SECTION
 sub_magnitudes (const mp_no *x, const mp_no *y, mp_no *z, int p)
 {
-  int i, j, k;
+  long i, j, k;
+  long p2 = p;
+  double zk;
 
   EZ = EX;
+  i = p2;
+  j = p2 + EY - EX;
+  k = p2;
 
-  if (EX == EY)
+  /* Y is too small compared to X, copy X over to the result.  */
+  if (__glibc_unlikely (j < 1))
     {
-      i = j = k = p;
-      Z[k] = Z[k + 1] = ZERO;
+      __cpy (x, z, p);
+      return;
+    }
+
+  /* The relevant least significant digit in Y is non-zero, so we factor it in
+     to enhance accuracy.  */
+  if (j < p2 && Y[j + 1] > ZERO)
+    {
+      Z[k + 1] = RADIX - Y[j + 1];
+      zk = MONE;
     }
   else
-    {
-      j = EX - EY;
-      if (j > p)
-	{
-	  __cpy (x, z, p);
-	  return;
-	}
-      else
-	{
-	  i = p;
-	  j = p + 1 - j;
-	  k = p;
-	  if (Y[j] > ZERO)
-	    {
-	      Z[k + 1] = RADIX - Y[j--];
-	      Z[k] = MONE;
-	    }
-	  else
-	    {
-	      Z[k + 1] = ZERO;
-	      Z[k] = ZERO;
-	      j--;
-	    }
-	}
-    }
+    zk = Z[k + 1] = ZERO;
 
+  /* Subtract and borrow.  */
   for (; j > 0; i--, j--)
     {
-      Z[k] += (X[i] - Y[j]);
-      if (Z[k] < ZERO)
+      zk += (X[i] - Y[j]);
+      if (zk < ZERO)
 	{
-	  Z[k] += RADIX;
-	  Z[--k] = MONE;
+	  Z[k--] = zk + RADIX;
+	  zk = MONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
+  /* We're done with digits from Y, so it's just digits in X.  */
   for (; i > 0; i--)
     {
-      Z[k] += X[i];
-      if (Z[k] < ZERO)
+      zk += X[i];
+      if (zk < ZERO)
 	{
-	  Z[k] += RADIX;
-	  Z[--k] = MONE;
+	  Z[k--] = zk + RADIX;
+	  zk = MONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
+  /* Normalize.  */
   for (i = 1; Z[i] == ZERO; i++);
   EZ = EZ - i + 1;
-  for (k = 1; i <= p + 1;)
+  for (k = 1; i <= p2 + 1;)
     Z[k++] = Z[i++];
-  for (; k <= p;)
+  for (; k <= p2;)
     Z[k++] = ZERO;
 }
 
@@ -602,8 +618,11 @@ void
 SECTION
 __mul (const mp_no *x, const mp_no *y, mp_no *z, int p)
 {
-  int i, j, k, k2;
+  long i, j, k, ip, ip2;
+  long p2 = p;
   double u, zk;
+  const mp_no *a;
+  double *diag;
 
   /* Is z=0?  */
   if (__glibc_unlikely (X[0] * Y[0] == ZERO))
@@ -612,46 +631,236 @@ __mul (const mp_no *x, const mp_no *y, mp_no *z, int p)
       return;
     }
 
-  /* Multiply, add and carry.  */
-  k2 = (__glibc_unlikely (p < 3)) ? p + p : p + 3;
-  zk = Z[k2] = ZERO;
+  /* We need not iterate through all X's and Y's since it's pointless to
+     multiply zeroes.  Here, both are zero...  */
+  for (ip2 = p2; ip2 > 0; ip2--)
+    if (X[ip2] != ZERO || Y[ip2] != ZERO)
+      break;
 
-  for (k = k2; k > p; k--)
+  a = X[ip2] != ZERO ? y : x;
+
+  /* ... and here, at least one of them is still zero.  */
+  for (ip = ip2; ip > 0; ip--)
+    if (a->d[ip] != ZERO)
+      break;
+
+  /* The product looks like this for p = 3 (as an example):
+
+
+				a1    a2    a3
+		 x		b1    b2    b3
+		 -----------------------------
+			     a1*b3 a2*b3 a3*b3
+		       a1*b2 a2*b2 a3*b2
+		 a1*b1 a2*b1 a3*b1
+
+     So our K needs to ideally be P*2, but we're limiting ourselves to P + 3
+     for P >= 3.  We compute the above digits in two parts; the last P-1
+     digits and then the first P digits.  The last P-1 digits are a sum of
+     products of the input digits from P to P-k where K is 0 for the least
+     significant digit and increases as we go towards the left.  The product
+     term is of the form X[k]*X[P-k] as can be seen in the above example.
+
+     The first P digits are also a sum of products with the same product term,
+     except that the sum is from 1 to k.  This is also evident from the above
+     example.
+
+     Another thing that becomes evident is that only the most significant
+     ip+ip2 digits of the result are non-zero, where ip and ip2 are the
+     'internal precision' of the input numbers, i.e. digits after ip and ip2
+     are all ZERO.  */
+
+  k = (__glibc_unlikely (p2 < 3)) ? p2 + p2 : p2 + 3;
+
+  while (k > ip + ip2 + 1)
+    Z[k--] = ZERO;
+
+  zk = ZERO;
+
+  /* Precompute sums of diagonal elements so that we can directly use them
+     later.  See the next comment to know we why need them.  */
+  diag = alloca (k * sizeof (double));
+  double d = ZERO;
+  for (i = 1; i <= ip; i++)
     {
-      for (i = k - p, j = p; i < p + 1; i++, j--)
-	zk += X[i] * Y[j];
+      d += X[i] * Y[i];
+      diag[i] = d;
+    }
+  while (i < k)
+    diag[i++] = d;
+
+  while (k > p2)
+    {
+      long lim = k / 2;
+
+      if (k % 2 == 0)
+	/* We want to add this only once, but since we subtract it in the sum
+	   of products above, we add twice.  */
+	zk += 2 * X[lim] * Y[lim];
+
+      for (i = k - p2, j = p2; i < j; i++, j--)
+	zk += (X[i] + X[j]) * (Y[i] + Y[j]);
+
+      zk -= diag[k - 1];
 
       u = (zk + CUTTER) - CUTTER;
       if (u > zk)
 	u -= RADIX;
-      Z[k] = zk - u;
+      Z[k--] = zk - u;
       zk = u * RADIXI;
+    }
+
+  /* The real deal.  Mantissa digit Z[k] is the sum of all X[i] * Y[j] where i
+     goes from 1 -> k - 1 and j goes the same range in reverse.  To reduce the
+     number of multiplications, we halve the range and if k is an even number,
+     add the diagonal element X[k/2]Y[k/2].  Through the half range, we compute
+     X[i] * Y[j] as (X[i] + X[j]) * (Y[i] + Y[j]) - X[i] * Y[i] - X[j] * Y[j].
+
+     This reduction tells us that we're summing two things, the first term
+     through the half range and the negative of the sum of the product of all
+     terms of X and Y in the full range.  i.e.
+
+     SUM(X[i] * Y[i]) for k terms.  This is precalculated above for each k in
+     a single loop so that it completes in O(n) time and can hence be directly
+     used in the loop below.  */
+  while (k > 1)
+    {
+      long lim = k / 2;
+
+      if (k % 2 == 0)
+	/* We want to add this only once, but since we subtract it in the sum
+	   of products above, we add twice.  */
+        zk += 2 * X[lim] * Y[lim];
+
+      for (i = 1, j = k - 1; i < j; i++, j--)
+	zk += (X[i] + X[j]) * (Y[i] + Y[j]);
+
+      zk -= diag[k - 1];
+
+      u = (zk + CUTTER) - CUTTER;
+      if (u > zk)
+	u -= RADIX;
+      Z[k--] = zk - u;
+      zk = u * RADIXI;
+    }
+  Z[k] = zk;
+
+  /* Get the exponent sum into an intermediate variable.  This is a subtle
+     optimization, where given enough registers, all operations on the exponent
+     happen in registers and the result is written out only once into EZ.  */
+  int e = EX + EY;
+
+  /* Is there a carry beyond the most significant digit?  */
+  if (__glibc_unlikely (Z[1] == ZERO))
+    {
+      for (i = 1; i <= p2; i++)
+	Z[i] = Z[i + 1];
+      e--;
+    }
+
+  EZ = e;
+  Z[0] = X[0] * Y[0];
+}
+
+/* Square *X and store result in *Y.  X and Y may not overlap.  For P in
+   [1, 2, 3], the exact result is truncated to P digits.  In case P > 3 the
+   error is bounded by 1.001 ULP.  This is a faster special case of
+   multiplication.  */
+void
+SECTION
+__sqr (const mp_no *x, mp_no *y, int p)
+{
+  long i, j, k, ip;
+  double u, yk;
+
+  /* Is z=0?  */
+  if (__glibc_unlikely (X[0] == ZERO))
+    {
+      Y[0] = ZERO;
+      return;
+    }
+
+  /* We need not iterate through all X's since it's pointless to
+     multiply zeroes.  */
+  for (ip = p; ip > 0; ip--)
+    if (X[ip] != ZERO)
+      break;
+
+  k = (__glibc_unlikely (p < 3)) ? p + p : p + 3;
+
+  while (k > 2 * ip + 1)
+    Y[k--] = ZERO;
+
+  yk = ZERO;
+
+  while (k > p)
+    {
+      double yk2 = 0.0;
+      long lim = k / 2;
+
+      if (k % 2 == 0)
+	yk += X[lim] * X[lim];
+
+      /* In __mul, this loop (and the one within the next while loop) run
+         between a range to calculate the mantissa as follows:
+
+         Z[k] = X[k] * Y[n] + X[k+1] * Y[n-1] ... + X[n-1] * Y[k+1]
+		+ X[n] * Y[k]
+
+         For X == Y, we can get away with summing halfway and doubling the
+	 result.  For cases where the range size is even, the mid-point needs
+	 to be added separately (above).  */
+      for (i = k - p, j = p; i < j; i++, j--)
+	yk2 += X[i] * X[j];
+
+      yk += 2.0 * yk2;
+
+      u = (yk + CUTTER) - CUTTER;
+      if (u > yk)
+	u -= RADIX;
+      Y[k--] = yk - u;
+      yk = u * RADIXI;
     }
 
   while (k > 1)
     {
-      for (i = 1, j = k - 1; i < k; i++, j--)
-	zk += X[i] * Y[j];
+      double yk2 = 0.0;
+      long lim = k / 2;
 
-      u = (zk + CUTTER) - CUTTER;
-      if (u > zk)
+      if (k % 2 == 0)
+	yk += X[lim] * X[lim];
+
+      /* Likewise for this loop.  */
+      for (i = 1, j = k - 1; i < j; i++, j--)
+	yk2 += X[i] * X[j];
+
+      yk += 2.0 * yk2;
+
+      u = (yk + CUTTER) - CUTTER;
+      if (u > yk)
 	u -= RADIX;
-      Z[k] = zk - u;
-      zk = u * RADIXI;
-      k--;
+      Y[k--] = yk - u;
+      yk = u * RADIXI;
     }
-  Z[k] = zk;
+  Y[k] = yk;
 
-  EZ = EX + EY;
+  /* Squares are always positive.  */
+  Y[0] = 1.0;
+
+  /* Get the exponent sum into an intermediate variable.  This is a subtle
+     optimization, where given enough registers, all operations on the exponent
+     happen in registers and the result is written out only once into EZ.  */
+  int e = EX * 2;
+
   /* Is there a carry beyond the most significant digit?  */
-  if (__glibc_unlikely (Z[1] == ZERO))
+  if (__glibc_unlikely (Y[1] == ZERO))
     {
       for (i = 1; i <= p; i++)
-	Z[i] = Z[i + 1];
-      EZ--;
+	Y[i] = Y[i + 1];
+      e--;
     }
 
-  Z[0] = X[0] * Y[0];
+  EY = e;
 }
 
 /* Invert *X and store in *Y.  Relative error bound:
@@ -664,7 +873,7 @@ static void
 SECTION
 __inv (const mp_no *x, mp_no *y, int p)
 {
-  int i;
+  long i;
   double t;
   mp_no z, w;
   static const int np1[] =

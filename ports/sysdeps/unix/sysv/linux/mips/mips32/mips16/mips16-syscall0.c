@@ -1,5 +1,5 @@
-/* wchar_t type related definitions.  i386/x86-64 version.
-   Copyright (C) 2000-2013 Free Software Foundation, Inc.
+/* MIPS16 syscall wrappers.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,17 +16,15 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#ifndef _BITS_WCHAR_H
-#define _BITS_WCHAR_H	1
+#include <sysdep.h>
+#include <mips16-syscall.h>
 
-#include <bits/wordsize.h>
+#undef __mips16_syscall0
 
-#if __WORDSIZE == 64
-# define __WCHAR_MIN	(-2147483647 - 1)
-# define __WCHAR_MAX	(2147483647)
-#else
-# define __WCHAR_MIN	(-2147483647l - 1l)
-# define __WCHAR_MAX	(2147483647l)
-#endif
-
-#endif	/* bits/wchar.h */
+long long __nomips16
+__mips16_syscall0 (long number)
+{
+  union __mips16_syscall_return ret;
+  ret.reg.v0 = INTERNAL_SYSCALL_MIPS16 (number, ret.reg.v1, 0);
+  return ret.val;
+}

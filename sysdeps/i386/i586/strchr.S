@@ -20,8 +20,6 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
 /* This version is especially optimized for the i586 (and following?)
    processors.  This is mainly done by using the two pipelines.  The
@@ -36,14 +34,13 @@
 /* The magic value which is used throughout in the whole code.  */
 #define magic 0xfefefeff
 
-#define PARMS	LINKAGE+16	/* space for 4 saved regs */
+#define PARMS	4+16	/* space for 4 saved regs */
 #define RTN	PARMS
-#define STR	RTN+RTN_SIZE
-#define CHR	STR+PTR_SIZE
+#define STR	RTN
+#define CHR	STR+4
 
 	.text
-ENTRY (BP_SYM (strchr))
-	ENTER
+ENTRY (strchr)
 
 	pushl %edi		/* Save callee-safe registers.  */
 	cfi_adjust_cfa_offset (-4)
@@ -57,7 +54,6 @@ ENTRY (BP_SYM (strchr))
 
 	movl STR(%esp), %eax
 	movl CHR(%esp), %edx
-	CHECK_BOUNDS_LOW (%eax, STR(%esp))
 
 	movl %eax, %edi		/* duplicate string pointer for later */
 	cfi_rel_offset (edi, 12)
@@ -82,7 +78,7 @@ ENTRY (BP_SYM (strchr))
 	jp L(0)			/* exactly two bits set */
 
 	xorb (%eax), %cl	/* is byte the one we are looking for? */
-	jz L(2)			/* yes => return pointer */
+	jz L(out)		/* yes => return pointer */
 
 	xorb %dl, %cl		/* load single byte and test for NUL */
 	je L(3)			/* yes => return NULL */
@@ -91,7 +87,7 @@ ENTRY (BP_SYM (strchr))
 	incl %eax
 
 	cmpb %cl, %dl		/* is byte == C? */
-	je L(2)			/* aligned => return pointer */
+	je L(out)		/* aligned => return pointer */
 
 	cmpb $0, %cl		/* is byte NUL? */
 	je L(3)			/* yes => return NULL */
@@ -104,7 +100,7 @@ ENTRY (BP_SYM (strchr))
 L(0):	movb (%eax), %cl	/* load single byte */
 
 	cmpb %cl, %dl		/* is byte == C? */
-	je L(2)			/* aligned => return pointer */
+	je L(out)		/* aligned => return pointer */
 
 	cmpb $0, %cl		/* is byte NUL? */
 	je L(3)			/* yes => return NULL */
@@ -274,23 +270,21 @@ L(1):	xorl %ecx, %ebp			/* (word^magic) */
 L(5):	subl $4, %eax		/* adjust pointer */
 	testb %bl, %bl		/* first byte == C? */
 
-	jz L(2)			/* yes => return pointer */
+	jz L(out)		/* yes => return pointer */
 
 	incl %eax		/* increment pointer */
 	testb %bh, %bh		/* second byte == C? */
 
-	jz L(2)			/* yes => return pointer */
+	jz L(out)		/* yes => return pointer */
 
 	shrl $16, %ebx		/* make upper bytes accessible */
 	incl %eax		/* increment pointer */
 
 	cmp $0, %bl		/* third byte == C */
-	je L(2)			/* yes => return pointer */
+	je L(out)		/* yes => return pointer */
 
 	incl %eax		/* increment pointer */
 
-L(2):	CHECK_BOUNDS_HIGH (%eax, STR(%esp), jb)
-	RETURN_BOUNDED_POINTER (STR(%esp))
 L(out):	popl %ebp		/* restore saved registers */
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (ebp)
@@ -305,8 +299,7 @@ L(out):	popl %ebp		/* restore saved registers */
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
-	RET_PTR
+	ret
 
 	cfi_adjust_cfa_offset (16)
 	cfi_rel_offset (edi, 12)
@@ -318,7 +311,7 @@ L(out):	popl %ebp		/* restore saved registers */
 L(4):	subl $4, %eax		/* adjust pointer */
 	cmpb %dl, %cl		/* first byte == C? */
 
-	je L(2)			/* yes => return pointer */
+	je L(out)		/* yes => return pointer */
 
 	cmpb $0, %cl		/* first byte == NUL? */
 	je L(3)			/* yes => return NULL */
@@ -326,7 +319,7 @@ L(4):	subl $4, %eax		/* adjust pointer */
 	incl %eax		/* increment pointer */
 
 	cmpb %dl, %ch		/* second byte == C? */
-	je L(2)			/* yes => return pointer */
+	je L(out)		/* yes => return pointer */
 
 	cmpb $0, %ch		/* second byte == NUL? */
 	je L(3)			/* yes => return NULL */
@@ -335,7 +328,7 @@ L(4):	subl $4, %eax		/* adjust pointer */
 	incl %eax		/* increment pointer */
 
 	cmpb %dl, %cl		/* third byte == C? */
-	je L(2)			/* yes => return pointer */
+	je L(out)		/* yes => return pointer */
 
 	cmpb $0, %cl		/* third byte == NUL? */
 	je L(3)			/* yes => return NULL */
@@ -344,13 +337,12 @@ L(4):	subl $4, %eax		/* adjust pointer */
 
 	/* The test four the fourth byte is necessary!  */
 	cmpb %dl, %ch		/* fourth byte == C? */
-	je L(2)			/* yes => return pointer */
+	je L(out)		/* yes => return pointer */
 
 L(3):	xorl %eax, %eax
-	RETURN_NULL_BOUNDED_POINTER
 	jmp L(out)
-END (BP_SYM (strchr))
+END (strchr)
 
 #undef index
-weak_alias (BP_SYM (strchr), BP_SYM (index))
+weak_alias (strchr, index)
 libc_hidden_builtin_def (strchr)

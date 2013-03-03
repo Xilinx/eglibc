@@ -1,3 +1,54 @@
+2013-02-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/powerpc/powerpc32/405/memcmp.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memcmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/memcpy.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/memset.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/strcmp.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(strcmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/strcpy.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(strcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/strlen.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(strlen): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/405/strncmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/476/memset.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/nptl/libc.abilist:
+	Add __cxa_thread_atexit_impl.
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx32/nptl/libc.abilist:
+	Likewise.
+
+2013-02-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/powerpc/nofpu/fegetenv.c: Do not include <bp-sym.h>.
+	(fegetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/nofpu/fesetenv.c: Do not include <bp-sym.h>.
+	(fesetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/nofpu/feupdateenv.c: Do not include <bp-sym.h>.
+	(feupdateenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/nofpu/fgetexcptflg.c: Do not include <bp-sym.h>.
+	(fegetexceptflag): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/nofpu/fraiseexcpt.c: Do not include <bp-sym.h>.
+	(feraiseexcept): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/nofpu/fsetexcptflg.c: Do not include <bp-sym.h>.
+	(fesetexceptflag): Do not use BP_SYM in versioned symbols.
+
 2013-01-02  Joseph Myers  <joseph@codesourcery.com>
 
 	* All files with FSF copyright notices: Update copyright dates

@@ -546,7 +546,7 @@ struct rtld_global_ro
   EXTERN uintptr_t _dl_sysinfo;
 #endif
 
-#if defined NEED_DL_SYSINFO || defined NEED_DL_SYSINFO_DSO
+#ifdef NEED_DL_SYSINFO_DSO
   /* The vsyscall page is a virtual DSO pre-mapped by the kernel.
      This points to its ELF header.  */
   EXTERN const ElfW(Ehdr) *_dl_sysinfo_dso;
@@ -1013,6 +1013,10 @@ extern int _dl_addr_inside_object (struct link_map *l, const ElfW(Addr) addr)
 
 /* Show show of an object.  */
 extern void _dl_show_scope (struct link_map *new, int from);
+
+extern struct link_map *_dl_find_dso_for_object (const ElfW(Addr) addr)
+     internal_function;
+rtld_hidden_proto (_dl_find_dso_for_object)
 
 __END_DECLS
 

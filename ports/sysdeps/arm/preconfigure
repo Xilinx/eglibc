@@ -10,7 +10,7 @@ arm*)
 		# an appropriate directory exists in sysdeps/arm
 		archcppflag=`echo "" |
 		$CC $CFLAGS $CPPFLAGS -E -dM - |
-		  grep __ARM_ARCH |
+		  grep '__ARM_ARCH_[0-9].*__' |
 		  sed -e 's/^#define //' -e 's/ .*//'`
 
 		case x$archcppflag in
@@ -28,7 +28,10 @@ arm*)
 		  machine=armv6t2
 		  echo "Found compiler is configured for $machine"
 		  ;;
-
+		x__ARM_ARCH_6*__)
+		  machine=armv6
+		  echo "Found compiler is configured for $machine"
+		  ;;
 		*)
 		  machine=arm
 		  echo 2>&1 "arm/preconfigure: Did not find ARM architecture type; using default"

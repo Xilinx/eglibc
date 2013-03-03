@@ -20,20 +20,18 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
 /* BEWARE: `#ifdef memset' means that memset is redefined as `bzero' */
 #define BZERO_P (defined memset)
 
-#define PARMS	LINKAGE+4	/* space for 1 saved reg */
+#define PARMS	4+4	/* space for 1 saved reg */
 #if BZERO_P
 # define DEST	PARMS
-# define LEN	DEST+PTR_SIZE
+# define LEN	DEST+4
 #else
 # define RTN	PARMS
-# define DEST	RTN+RTN_SIZE
-# define CHR	DEST+PTR_SIZE
+# define DEST	RTN
+# define CHR	DEST+4
 # define LEN	CHR+4
 #endif
 
@@ -45,15 +43,13 @@ ENTRY_CHK (__memset_chk)
 	jb	HIDDEN_JUMPTARGET (__chk_fail)
 END_CHK (__memset_chk)
 #endif
-ENTRY (BP_SYM (memset))
-	ENTER
+ENTRY (memset)
 
 	cld
 	pushl	%edi
 	cfi_adjust_cfa_offset (4)
 	movl	DEST(%esp), %edx
 	movl	LEN(%esp), %ecx
-	CHECK_BOUNDS_BOTH_WIDE (%edx, DEST(%esp), %ecx)
 #if BZERO_P
 	xorl	%eax, %eax	/* fill with 0 */
 #else
@@ -90,19 +86,17 @@ ENTRY (BP_SYM (memset))
 1:
 #if !BZERO_P
 	movl DEST(%esp), %eax	/* start address of destination is result */
-	RETURN_BOUNDED_POINTER (DEST(%esp))
 #endif
 	popl	%edi
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
 #if BZERO_P
 	ret
 #else
-	RET_PTR
+	ret
 #endif
-END (BP_SYM (memset))
+END (memset)
 libc_hidden_builtin_def (memset)
 
 #if defined PIC && !defined NOT_IN_libc && !BZERO_P

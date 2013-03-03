@@ -39,6 +39,7 @@
 # undef PSEUDO
 # define PSEUDO(name, syscall_name, args)				      \
       .align 2;								      \
+      .set nomips16;							      \
   L(pseudo_start):							      \
       cfi_startproc;							      \
   99: PSEUDO_ERRJMP							      \
@@ -52,6 +53,7 @@
     .set reorder;							      \
     bne a3, zero, 99b;					       		      \
     ret;								      \
+    cfi_endproc;							      \
   .size __##syscall_name##_nocancel,.-__##syscall_name##_nocancel;	      \
   ENTRY (name)								      \
     .set noreorder;							      \

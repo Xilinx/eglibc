@@ -20,8 +20,6 @@
 #include <unistd.h>
 #include <sysdep.h>
 
-#include <bp-checks.h>
-
 /* This must be initialized data because commons can't have aliases.  */
 void *__curbrk = 0;
 
@@ -33,11 +31,10 @@ weak_alias (__curbrk, ___brk_addr)
 int
 __brk (void *addr)
 {
-  void *__unbounded newbrk;
+  void *newbrk;
 
   INTERNAL_SYSCALL_DECL (err);
-  newbrk = (void *__unbounded) INTERNAL_SYSCALL (brk, err, 1,
-						 __ptrvalue (addr));
+  newbrk = (void *) INTERNAL_SYSCALL (brk, err, 1, addr);
 
   __curbrk = newbrk;
 

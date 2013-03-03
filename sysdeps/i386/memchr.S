@@ -28,18 +28,15 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE+8		/* space for 2 saved regs */
+#define PARMS	4+8		/* space for 2 saved regs */
 #define RTN	PARMS
-#define STR	RTN+RTN_SIZE
-#define CHR	STR+PTR_SIZE
+#define STR	RTN
+#define CHR	STR+4
 #define LEN	CHR+4
 
 	.text
-ENTRY (BP_SYM (__memchr))
-	ENTER
+ENTRY (__memchr)
 
 	/* Save callee-safe registers used in this function.  */
 	pushl %esi
@@ -53,7 +50,6 @@ ENTRY (BP_SYM (__memchr))
 	movl CHR(%esp), %edx	/* c: byte we are looking for.  */
 	movl LEN(%esp), %esi	/* len: length of memory block.  */
 	cfi_rel_offset (esi, 4)
-	CHECK_BOUNDS_LOW (%eax, STR(%esp))
 
 	/* If my must not test more than three characters test
 	   them one by one.  This is especially true for 0.  */
@@ -312,28 +308,15 @@ L(8):	testb %cl, %cl		/* test first byte in dword */
 	incl %eax		/* increment source pointer */
 
 	/* No further test needed we we know it is one of the four bytes.  */
-L(9):
-#if __BOUNDED_POINTERS__
-	CHECK_BOUNDS_HIGH (%eax, STR(%esp), jb)
-	/* If RTN pointer is phony, don't copy return value into it.  */
-	movl RTN(%esp), %ecx
-	testl %ecx, %ecx
-	jz L(pop)
-	RETURN_BOUNDED_POINTER (STR(%esp))
-#endif
-L(pop):	popl %edi		/* pop saved registers */
+L(9):	popl %edi		/* pop saved registers */
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 	popl %esi
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (esi)
 
-	LEAVE
-	RET_PTR
-END (BP_SYM (__memchr))
+	ret
+END (__memchr)
 
-weak_alias (BP_SYM (__memchr), BP_SYM (memchr))
-#if !__BOUNDED_POINTERS__
-weak_alias (__memchr, __ubp_memchr)
-#endif
+weak_alias (__memchr, memchr)
 libc_hidden_builtin_def (memchr)

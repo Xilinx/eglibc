@@ -18,8 +18,6 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <machine/asm.h>
-#include "bp-sym.h"
-#include "bp-asm.h"
 
 	.section .rodata
 
@@ -34,15 +32,14 @@ two64:	.byte 0, 0, 0, 0, 0, 0, 0xf0, 0x43
 #define MO(op) op
 #endif
 
-#define PARMS	LINKAGE		/* no space for saved regs */
+#define PARMS	4		/* no space for saved regs */
 #define VAL0	PARMS
 #define VAL1	VAL0+4
 #define VAL2	VAL1+4
 #define EXPP	VAL2+4
 
 	.text
-ENTRY (BP_SYM (__frexpl))
-	ENTER
+ENTRY (__frexpl)
 
 	movl	VAL0(%esp), %ecx
 	movl	VAL2(%esp), %eax
@@ -80,11 +77,9 @@ ENTRY (BP_SYM (__frexpl))
 	/* Store %ecx in the variable pointed to by the second argument,
 	   get the factor from the stack and return.  */
 1:	movl	EXPP(%esp), %eax
-	CHECK_BOUNDS_BOTH_WIDE (%eax, EXPP(%esp), $4)
 	fldt	VAL0(%esp)
 	movl	%ecx, (%eax)
 
-	LEAVE
 	ret
-END (BP_SYM (__frexpl))
-weak_alias (BP_SYM (__frexpl), BP_SYM (frexpl))
+END (__frexpl)
+weak_alias (__frexpl, frexpl)

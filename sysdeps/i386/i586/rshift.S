@@ -18,18 +18,15 @@
 
 #include "sysdep.h"
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE+16		/* space for 4 saved regs */
+#define PARMS	4+16		/* space for 4 saved regs */
 #define RES	PARMS
-#define S	RES+PTR_SIZE
-#define SIZE	S+PTR_SIZE
+#define S	RES+4
+#define SIZE	S+4
 #define CNT	SIZE+4
 
 	.text
-ENTRY (BP_SYM (__mpn_rshift))
-	ENTER
+ENTRY (__mpn_rshift)
 
 	pushl	%edi
 	cfi_adjust_cfa_offset (4)
@@ -48,12 +45,6 @@ ENTRY (BP_SYM (__mpn_rshift))
 	movl	SIZE(%esp),%ebx
 	cfi_rel_offset (ebx, 0)
 	movl	CNT(%esp),%ecx
-#if __BOUNDED_POINTERS__
-	shll	$2, %ebx		/* convert limbs to bytes */
-	CHECK_BOUNDS_BOTH_WIDE (%edi, RES(%esp), %ebx)
-	CHECK_BOUNDS_BOTH_WIDE (%esi, S(%esp), %ebx)
-	shrl	$2, %ebx
-#endif
 
 /* We can use faster code for shift-by-1 under certain conditions.  */
 	cmp	$1,%ecx
@@ -152,7 +143,6 @@ L(end2):
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
 	ret
 
 /* We loop from least significant end of the arrays, which is only
@@ -261,6 +251,5 @@ L(L1):	movl	%edx,(%edi)		/* store last limb */
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
 	ret
-END (BP_SYM (__mpn_rshift))
+END (__mpn_rshift)

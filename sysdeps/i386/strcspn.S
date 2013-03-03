@@ -22,20 +22,16 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE		/* no space for saved regs */
+#define PARMS	4		/* no space for saved regs */
 #define STR	PARMS
-#define STOP	STR+PTR_SIZE
+#define STOP	STR+4
 
 	.text
-ENTRY (BP_SYM (strcspn))
-	ENTER
+ENTRY (strcspn)
 
 	movl STR(%esp), %edx
 	movl STOP(%esp), %eax
-	CHECK_BOUNDS_LOW (%edx, STR(%esp))
 
 	/* First we create a table with flags for all possible characters.
 	   For the ASCII (7bit/8bit) or ISO-8859-X character sets which are
@@ -236,11 +232,9 @@ L(5):	incl %eax
 
 L(4):	addl $256, %esp		/* remove stopset */
 	cfi_adjust_cfa_offset (-256)
-	CHECK_BOUNDS_HIGH (%eax, STR(%esp), jb)
 	subl %edx, %eax		/* we have to return the number of valid
 				   characters, so compute distance to first
 				   non-valid character */
-	LEAVE
 	ret
-END (BP_SYM (strcspn))
+END (strcspn)
 libc_hidden_builtin_def (strcspn)

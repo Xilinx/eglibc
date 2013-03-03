@@ -432,20 +432,15 @@ static-only-routines =
 endif
 endif
 
-# Bounded pointer thunks are only built for *.ob
-elide-bp-thunks = $(addprefix $(bppfx),$(bp-thunks))
-
 elide-routines.oS += $(filter-out $(static-only-routines),\
-				  $(routines) $(aux) $(sysdep_routines)) \
-		     $(elide-bp-thunks)
-elide-routines.os += $(static-only-routines) $(elide-bp-thunks)
+				  $(routines) $(aux) $(sysdep_routines))
+elide-routines.os += $(static-only-routines)
 
 # If we have versioned code we don't need the old versions in any of the
 # static libraries.
-elide-routines.o  += $(shared-only-routines) $(elide-bp-thunks)
-elide-routines.op += $(shared-only-routines) $(elide-bp-thunks)
-elide-routines.og += $(shared-only-routines) $(elide-bp-thunks)
-elide-routines.ob += $(shared-only-routines)
+elide-routines.o  += $(shared-only-routines)
+elide-routines.op += $(shared-only-routines)
+elide-routines.og += $(shared-only-routines)
 
 # Shared library building.
 
@@ -633,11 +628,7 @@ headers := $(headers) $(sysdep_headers)
 
 # This is the list of all object files, gotten by
 # replacing every ".c" in `sources' with a ".o".
-# We also add bounded-pointer thunks, which are later
-# elided for all suffixes except for `.ob'.
-override objects := $(addprefix $(objpfx),$(sources:.c=.o) \
-		      $(patsubst %,$(bppfx)%.o,\
-			$(filter $(routines) $(sysdep_routines),$(bp-thunks))))
+override objects := $(addprefix $(objpfx),$(sources:.c=.o))
 
 
 # The makefile may define $(extra-libs) with `libfoo libbar'
@@ -1340,9 +1331,7 @@ mostlyclean: common-mostlyclean
 
 do-tests-clean:
 	-rm -f $(addprefix $(objpfx),$(addsuffix .out,$(tests) $(xtests) \
-						      $(test-srcs)) \
-				     $(addsuffix -bp.out,$(tests) $(xtests) \
-							 $(test-srcs)))
+						      $(test-srcs)))
 
 # Remove the object files.
 common-mostlyclean:
@@ -1351,12 +1340,8 @@ common-mostlyclean:
 				     $(addsuffix .o,$(tests) $(xtests) \
 						    $(test-srcs) $(others) \
 						    $(sysdep-others)) \
-				     $(addsuffix -bp,$(tests) $(xtests) \
-						     $(test-srcs)) \
 				     $(addsuffix .out,$(tests) $(xtests) \
-						      $(test-srcs)) \
-				     $(addsuffix -bp.out,$(tests) $(xtests) \
-							 $(test-srcs)))
+						      $(test-srcs)))
 	-rm -f $(addprefix $(objpfx),$(extra-objs) $(extra-test-objs) \
 				     $(install-lib) $(install-lib.so) \
 				     $(install-lib.so:%.so=%_pic.a))

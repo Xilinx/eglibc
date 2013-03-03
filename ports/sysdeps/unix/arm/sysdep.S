@@ -31,8 +31,9 @@ __syscall_error:
 	/* We translate the system's EWOULDBLOCK error into EAGAIN.
 	   The GNU C library always defines EWOULDBLOCK==EAGAIN.
 	   EWOULDBLOCK_sys is the original number.  */
-	cmp r0, $EWOULDBLOCK_sys /* Is it the old EWOULDBLOCK?  */
-	moveq r0, $EAGAIN	/* Yes; translate it to EAGAIN.  */
+	cmp	r0, $EWOULDBLOCK_sys /* Is it the old EWOULDBLOCK?  */
+	it	eq
+	moveq	r0, $EAGAIN	/* Yes; translate it to EAGAIN.  */
 #endif
 
 #ifndef IS_IN_rtld
@@ -50,14 +51,14 @@ __syscall_error:
 	mvn r0, #0
 	RETINSTR (, ip)
 
-1:	.word errno(gottpoff) + (. - 2b - 8)
+1:	.word errno(gottpoff) + (. - 2b - PC_OFS)
 #elif RTLD_PRIVATE_ERRNO
 	ldr r1, 1f
 0:	str r0, [pc, r1]
 	mvn r0, $0
 	DO_RET(r14)
 
-1:	.word C_SYMBOL_NAME(rtld_errno) - 0b - 8
+1:	.word C_SYMBOL_NAME(rtld_errno) - 0b - PC_OFS
 #else
 #error "Unsupported non-TLS case"
 #endif

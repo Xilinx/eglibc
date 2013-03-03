@@ -29,7 +29,7 @@
 	.text
 	@ emit debug information with cfi
 	@ use arm-specific pseudos for unwinding itself
-	.cfi_sections .debug_frame
+	CFI_SECTIONS
 	.hidden _dl_tlsdesc_return
 	.global	_dl_tlsdesc_return
 	.type	_dl_tlsdesc_return,#function
@@ -116,6 +116,7 @@ _dl_tlsdesc_dynamic:
 	ldr	r3, [r1]
 	ldr	r2, [r0, r3, lsl #3]
 	cmn	r2, #1
+	ittt	ne
 	ldrne	r3, [r1, #4]
 	addne	r3, r2, r3
 	rsbne	r0, r4, r3

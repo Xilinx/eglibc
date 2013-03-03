@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <ldsodefs.h>
-#include <bp-start.h>
-#include <bp-sym.h>
 
 extern void __libc_init_first (int argc, char **argv, char **envp);
 #ifndef SHARED
@@ -87,7 +85,7 @@ apply_irel (void)
 # endif
 #else
 # define STATIC
-# define LIBC_START_MAIN BP_SYM (__libc_start_main)
+# define LIBC_START_MAIN __libc_start_main
 #endif
 
 #ifdef MAIN_AUXVEC_ARG
@@ -102,14 +100,14 @@ apply_irel (void)
 STATIC int LIBC_START_MAIN (int (*main) (int, char **, char **
 					 MAIN_AUXVEC_DECL),
 			    int argc,
-			    char *__unbounded *__unbounded ubp_av,
+			    char **argv,
 #ifdef LIBC_START_MAIN_AUXVEC_ARG
-			    ElfW(auxv_t) *__unbounded auxvec,
+			    ElfW(auxv_t) *auxvec,
 #endif
 			    __typeof (main) init,
 			    void (*fini) (void),
 			    void (*rtld_fini) (void),
-			    void *__unbounded stack_end)
+			    void *stack_end)
      __attribute__ ((noreturn));
 
 
@@ -118,29 +116,23 @@ STATIC int LIBC_START_MAIN (int (*main) (int, char **, char **
    finalizers were called in more than one place.  */
 STATIC int
 LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
-		 int argc, char *__unbounded *__unbounded ubp_av,
+		 int argc, char **argv,
 #ifdef LIBC_START_MAIN_AUXVEC_ARG
-		 ElfW(auxv_t) *__unbounded auxvec,
+		 ElfW(auxv_t) *auxvec,
 #endif
 		 __typeof (main) init,
 		 void (*fini) (void),
-		 void (*rtld_fini) (void), void *__unbounded stack_end)
+		 void (*rtld_fini) (void), void *stack_end)
 {
-#if __BOUNDED_POINTERS__
-  char **argv;
-#else
-# define argv ubp_av
-#endif
-
   /* Result of the 'main' function.  */
   int result;
 
   __libc_multiple_libcs = &_dl_starting_up && !_dl_starting_up;
 
 #ifndef SHARED
-  char *__unbounded *__unbounded ubp_ev = &ubp_av[argc + 1];
+  char **ev = &argv[argc + 1];
 
-  INIT_ARGV_and_ENVIRON;
+  __environ = ev;
 
   /* Store the lowest stack address.  This is done in ld.so if this is
      the code for the DSO.  */
@@ -150,12 +142,12 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
   /* First process the auxiliary vector since we need to find the
      program header to locate an eventually present PT_TLS entry.  */
 #  ifndef LIBC_START_MAIN_AUXVEC_ARG
-  ElfW(auxv_t) *__unbounded auxvec;
+  ElfW(auxv_t) *auxvec;
   {
-    char *__unbounded *__unbounded evp = ubp_ev;
+    char **evp = ev;
     while (*evp++ != NULL)
       ;
-    auxvec = (ElfW(auxv_t) *__unbounded) evp;
+    auxvec = (ElfW(auxv_t) *) evp;
   }
 #  endif
   _dl_aux_init (auxvec);

@@ -49,6 +49,7 @@ __mpexp (mp_no *x, mp_no *y, int p)
       0, 0, 0, 0, 3, 3, 4, 4, 5, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6,
       6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8
     };
+
   static const int m1p[33] =
     {
       0, 0, 0, 0,
@@ -71,16 +72,7 @@ __mpexp (mp_no *x, mp_no *y, int p)
       {0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 39, 43, 47, 51, 55, 59, 63},
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 47, 50, 54}
     };
-  mp_no mpk =
-    {
-      0,
-      {
-	0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-      }
-    };
-  mp_no mps, mpak, mpt1, mpt2;
+  mp_no mps, mpk, mpt1, mpt2;
 
   /* Choose m,n and compute a=2**(-m).  */
   n = np[p];
@@ -115,37 +107,52 @@ __mpexp (mp_no *x, mp_no *y, int p)
 	  break;
     }
 
-  /* Compute s=x*2**(-m). Put result in mps.  */
+  /* Compute s=x*2**(-m). Put result in mps.  This is the range-reduced input
+     that we will use to compute e^s.  For the final result, simply raise it
+     to 2^m.  */
   __pow_mp (-m, &mpt1, p);
   __mul (x, &mpt1, &mps, p);
 
-  /* Evaluate the polynomial. Put result in mpt2.  */
-  mpk.e = 1;
-  mpk.d[0] = ONE;
-  mpk.d[1] = n;
-  __dvd (&mps, &mpk, &mpt1, p);
-  __add (&mpone, &mpt1, &mpak, p);
-  for (k = n - 1; k > 1; k--)
+  /* Compute the Taylor series for e^s:
+
+         1 + x/1! + x^2/2! + x^3/3! ...
+
+     for N iterations.  We compute this as:
+
+         e^x = 1 + (x * n!/1! + x^2 * n!/2! + x^3 * n!/3!) / n!
+             = 1 + (x * (n!/1! + x * (n!/2! + x * (n!/3! + x ...)))) / n!
+
+     k! is computed on the fly as KF and at the end of the polynomial loop, KF
+     is n!, which can be used directly.  */
+  __cpy (&mps, &mpt2, p);
+
+  double kf = 1.0;
+
+  /* Evaluate the rest.  The result will be in mpt2.  */
+  for (k = n - 1; k > 0; k--)
     {
-      __mul (&mps, &mpak, &mpt1, p);
-      mpk.d[1] = k;
-      __dvd (&mpt1, &mpk, &mpt2, p);
-      __add (&mpone, &mpt2, &mpak, p);
+      /* n! / k! = n * (n - 1) ... * (n - k + 1) */
+      kf *= k + 1;
+
+      __dbl_mp (kf, &mpk, p);
+      __add (&mpt2, &mpk, &mpt1, p);
+      __mul (&mps, &mpt1, &mpt2, p);
     }
-  __mul (&mps, &mpak, &mpt1, p);
+  __dbl_mp (kf, &mpk, p);
+  __dvd (&mpt2, &mpk, &mpt1, p);
   __add (&mpone, &mpt1, &mpt2, p);
 
   /* Raise polynomial value to the power of 2**m. Put result in y.  */
   for (k = 0, j = 0; k < m;)
     {
-      __mul (&mpt2, &mpt2, &mpt1, p);
+      __sqr (&mpt2, &mpt1, p);
       k++;
       if (k == m)
 	{
 	  j = 1;
 	  break;
 	}
-      __mul (&mpt1, &mpt1, &mpt2, p);
+      __sqr (&mpt1, &mpt2, p);
       k++;
     }
   if (j)

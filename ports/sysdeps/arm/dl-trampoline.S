@@ -16,6 +16,8 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
+/* ??? Needs more rearrangement for the LDM to handle thumb mode.  */
+#define NO_THUMB
 #include <sysdep.h>
 #include <libc-symbols.h>
 
@@ -28,7 +30,7 @@
 	.text
 	.globl _dl_runtime_resolve
 	.type _dl_runtime_resolve, #function
-	.cfi_sections .debug_frame
+	CFI_SECTIONS
 	cfi_startproc
 	.align 2
 _dl_runtime_resolve:
@@ -77,7 +79,7 @@ _dl_runtime_resolve:
 #ifndef PROF
 	.globl _dl_runtime_profile
 	.type _dl_runtime_profile, #function
-	.cfi_sections .debug_frame
+	CFI_SECTIONS
 	cfi_startproc
 	.align 2
 _dl_runtime_profile:

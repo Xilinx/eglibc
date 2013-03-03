@@ -45,10 +45,6 @@ routines	:= strcat strchr strcmp strcoll strcpy strcspn		\
 
 routines-$(OPTION_EGLIBC_ENVZ) += envz 
 
-# Gcc internally generates calls to unbounded memcpy and memset
-# for -fbounded-pointer compiles.  Glibc uses memchr for explicit checks.
-o-objects.ob	:= memcpy.o memset.o memchr.o
-
 strop-tests	:= memchr memcmp memcpy memmove mempcpy memset memccpy	\
 		   stpcpy stpncpy strcat strchr strcmp strcpy strcspn	\
 		   strlen strncmp strncpy strpbrk strrchr strspn memmem	\
@@ -81,8 +77,6 @@ CFLAGS-tst-strlen.c = -fno-builtin
 CFLAGS-stratcliff.c = -fno-builtin
 CFLAGS-test-ffs.c = -fno-builtin
 CFLAGS-tst-inlcall.c = -fno-builtin
-CFLAGS-bug-strstr1.c = -fno-builtin
-CFLAGS-bug-strcasestr1.c = -fno-builtin
 
 ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-svc.out

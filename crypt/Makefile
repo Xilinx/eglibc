@@ -74,9 +74,6 @@ $(addprefix $(objpfx),$(tests)): $(objpfx)libcrypt.so
 else
 $(addprefix $(objpfx),$(tests)): $(objpfx)libcrypt.a
 endif
-ifeq (yes,$(build-bounded))
-$(tests:%=$(objpfx)%-bp): $(objpfx)libcrypt_b.a
-endif
 endif # eglibc: OPTION_EGLIBC_CRYPT
 
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.

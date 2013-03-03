@@ -19,18 +19,15 @@
 
 #include "sysdep.h"
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE+16		/* space for 4 saved regs */
+#define PARMS	4+16		/* space for 4 saved regs */
 #define RES	PARMS
-#define S1	RES+PTR_SIZE
-#define S2	S1+PTR_SIZE
-#define SIZE	S2+PTR_SIZE
+#define S1	RES+4
+#define S2	S1+4
+#define SIZE	S2+4
 
 	.text
-ENTRY (BP_SYM (__mpn_sub_n))
-	ENTER
+ENTRY (__mpn_sub_n)
 
 	pushl	%edi
 	cfi_adjust_cfa_offset (4)
@@ -48,13 +45,6 @@ ENTRY (BP_SYM (__mpn_sub_n))
 	movl	S2(%esp),%ebx
 	cfi_rel_offset (ebx, 0)
 	movl	SIZE(%esp),%ecx
-#if __BOUNDED_POINTERS__
-	shll	$2, %ecx	/* convert limbs to bytes */
-	CHECK_BOUNDS_BOTH_WIDE (%edi, RES(%esp), %ecx)
-	CHECK_BOUNDS_BOTH_WIDE (%esi, S1(%esp), %ecx)
-	CHECK_BOUNDS_BOTH_WIDE (%ebx, S2(%esp), %ecx)
-	shrl	$2, %ecx
-#endif
 	movl	(%ebx),%ebp
 	cfi_rel_offset (ebp, 4)
 
@@ -149,6 +139,5 @@ L(end2):
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
 	ret
-END (BP_SYM (__mpn_sub_n))
+END (__mpn_sub_n)

@@ -20,21 +20,20 @@
 #include <sysdep.h>
 #include <ulimit.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/resource.h>
-
-
-extern int _etext;
 
 /* Function depends on CMD:
    1 = Return the limit on the size of a file, in units of 512 bytes.
    2 = Set the limit on the size of a file to NEWLIMIT.  Only the
        super-user can increase the limit.
-   3 = Return the maximum possible address of the data segment.
+   3 = illegal due to shared libraries; normally is
+       (Return the maximum possible address of the data segment.)
    4 = Return the maximum number of files that the calling process
        can open.
    Returns -1 on errors.  */
 long int
-ulimit (int cmd, ...)
+__ulimit (int cmd, ...)
 {
   struct rlimit limit;
   va_list va;
@@ -46,39 +45,39 @@ ulimit (int cmd, ...)
     {
     case UL_GETFSIZE:
       /* Get limit on file size.  */
-      if (getrlimit (RLIMIT_FSIZE, &limit) == 0)
+      if (__getrlimit (RLIMIT_FSIZE, &limit) == 0)
 	/* Convert from bytes to 512 byte units.  */
-	result = limit.rlim_cur / 512;
+	result =  (limit.rlim_cur == RLIM_INFINITY
+		   ? LONG_MAX : limit.rlim_cur / 512);
       break;
 
     case UL_SETFSIZE:
       /* Set limit on file size.  */
       {
 	long int newlimit = va_arg (va, long int);
+	long int newlen;
 
 	if ((rlim_t) newlimit > RLIM_INFINITY / 512)
 	  {
 	    limit.rlim_cur = RLIM_INFINITY;
 	    limit.rlim_max = RLIM_INFINITY;
+	    newlen = LONG_MAX;
 	  }
 	else
 	  {
 	    limit.rlim_cur = newlimit * 512;
 	    limit.rlim_max = newlimit * 512;
+	    newlen = newlimit;
 	  }
 
-	result = setrlimit (RLIMIT_FSIZE, &limit);
+	result = __setrlimit (RLIMIT_FSIZE, &limit);
+	if (result != -1)
+	  result = newlen;
       }
       break;
 
-    case __UL_GETMAXBRK:
-      /* Get maximum address for `brk'.  */
-      if (getrlimit (RLIMIT_DATA, &limit) == 0)
-	result = ((long int) &_etext) + limit.rlim_cur;
-      break;
-
     case __UL_GETOPENMAX:
-      result = sysconf (_SC_OPEN_MAX);
+      result = __sysconf (_SC_OPEN_MAX);
       break;
 
     default:
@@ -89,3 +88,5 @@ ulimit (int cmd, ...)
 
   return result;
 }
+
+weak_alias (__ulimit, ulimit);

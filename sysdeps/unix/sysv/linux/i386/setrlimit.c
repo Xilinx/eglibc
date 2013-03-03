@@ -22,17 +22,16 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 #include <shlib-compat.h>
-#include <bp-checks.h>
 
 extern int __new_setrlimit (enum __rlimit_resource resource,
-			    const struct rlimit *__unboundedrlimits);
+			    const struct rlimit *rlimits);
 
 /* Consider moving to syscalls.list.  */
 
 int
 __new_setrlimit (enum __rlimit_resource resource, const struct rlimit *rlimits)
 {
-  return INLINE_SYSCALL (setrlimit, 2, resource, CHECK_1 (rlimits));
+  return INLINE_SYSCALL (setrlimit, 2, resource, rlimits);
 }
 
 weak_alias (__new_setrlimit, __setrlimit);

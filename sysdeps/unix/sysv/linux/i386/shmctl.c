@@ -24,7 +24,6 @@
 #include <string.h>
 #include <sys/syscall.h>
 #include <bits/wordsize.h>
-#include <bp-checks.h>
 
 #include <shlib-compat.h>
 
@@ -39,8 +38,8 @@ struct __old_shmid_ds
   __ipc_pid_t shm_lpid;			/* pid of last shmop */
   unsigned short int shm_nattch;	/* number of current attaches */
   unsigned short int __shm_npages;	/* size of segment (pages) */
-  unsigned long int *__unbounded __shm_pages; /* array of ptrs to frames -> SHMMAX */
-  struct vm_area_struct *__unbounded __attaches; /* descriptors for attaches */
+  unsigned long int *__shm_pages;	/* array of ptrs to frames -> SHMMAX */
+  struct vm_area_struct *__attaches;	/* descriptors for attaches */
 };
 
 struct __old_shminfo
@@ -63,8 +62,7 @@ int
 attribute_compat_text_section
 __old_shmctl (int shmid, int cmd, struct __old_shmid_ds *buf)
 {
-  return INLINE_SYSCALL (ipc, 5, IPCOP_shmctl,
-			 shmid, cmd, 0, CHECK_1 (buf));
+  return INLINE_SYSCALL (ipc, 5, IPCOP_shmctl, shmid, cmd, 0, buf);
 }
 compat_symbol (libc, __old_shmctl, shmctl, GLIBC_2_0);
 #endif
@@ -73,7 +71,7 @@ int
 __new_shmctl (int shmid, int cmd, struct shmid_ds *buf)
 {
   return INLINE_SYSCALL (ipc, 5, IPCOP_shmctl,
-			 shmid, cmd | __IPC_64, 0, CHECK_1 (buf));
+			 shmid, cmd | __IPC_64, 0, buf);
 }
 
 versioned_symbol (libc, __new_shmctl, shmctl, GLIBC_2_2);

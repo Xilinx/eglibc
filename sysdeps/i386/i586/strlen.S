@@ -20,8 +20,6 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
 /* This version is especially optimized for the i586 (and following?)
    processors.  This is mainly done by using the two pipelines.  The
@@ -36,15 +34,13 @@
 /* The magic value which is used throughout in the whole code.  */
 #define magic 0xfefefeff
 
-#define PARMS	LINKAGE		/* no space for saved regs */
+#define PARMS	4		/* no space for saved regs */
 #define STR	PARMS
 
 	.text
-ENTRY (BP_SYM (strlen))
-	ENTER
+ENTRY (strlen)
 
 	movl STR(%esp), %eax
-	CHECK_BOUNDS_LOW (%eax, STR(%esp))
 	movl $3, %edx		/* load mask (= 3) */
 
 	andl %eax, %edx		/* separate last two bits of address */
@@ -178,11 +174,9 @@ L(3):	subl $4, %eax		/* correct too early pointer increment */
 
 	incl %eax		/* increment pointer */
 
-L(2):	CHECK_BOUNDS_HIGH (%eax, STR(%esp), jb)
-	subl STR(%esp), %eax	/* now compute the length as difference
+L(2):	subl STR(%esp), %eax	/* now compute the length as difference
 				   between start and terminating NUL
 				   character */
-	LEAVE
 	ret
-END (BP_SYM (strlen))
+END (strlen)
 libc_hidden_builtin_def (strlen)

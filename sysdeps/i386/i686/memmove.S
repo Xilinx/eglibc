@@ -20,22 +20,20 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE+4	/* one spilled register */
+#define PARMS	4+4	/* one spilled register */
 #define RTN	PARMS
 
 	.text
 
 #ifdef USE_AS_BCOPY
-# define SRC	RTN+RTN_SIZE
-# define DEST	SRC+PTR_SIZE
-# define LEN	DEST+PTR_SIZE
+# define SRC	RTN
+# define DEST	SRC+4
+# define LEN	DEST+4
 #else
-# define DEST	RTN+RTN_SIZE
-# define SRC	DEST+PTR_SIZE
-# define LEN	SRC+PTR_SIZE
+# define DEST	RTN
+# define SRC	DEST+4
+# define LEN	SRC+4
 
 # if defined PIC && !defined NOT_IN_libc
 ENTRY_CHK (__memmove_chk)
@@ -46,8 +44,7 @@ END_CHK (__memmove_chk)
 # endif
 #endif
 
-ENTRY (BP_SYM (memmove))
-	ENTER
+ENTRY (memmove)
 
 	pushl	%edi
 	cfi_adjust_cfa_offset (4)
@@ -58,8 +55,6 @@ ENTRY (BP_SYM (memmove))
 	movl	%esi, %edx
 	movl	SRC(%esp), %esi
 	cfi_register (esi, edx)
-	CHECK_BOUNDS_BOTH_WIDE (%edi, DEST(%esp), %ecx)
-	CHECK_BOUNDS_BOTH_WIDE (%esi, SRC(%esp), %ecx)
 
 	movl	%edi, %eax
 	subl	%esi, %eax
@@ -79,15 +74,13 @@ ENTRY (BP_SYM (memmove))
 	cfi_restore (esi)
 #ifndef USE_AS_BCOPY
 	movl	DEST(%esp), %eax
-	RETURN_BOUNDED_POINTER (DEST(%esp))
 #endif
 
 	popl	%edi
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
-	RET_PTR
+	ret
 
 	cfi_adjust_cfa_offset (4)
 	cfi_rel_offset (edi, 0)
@@ -113,7 +106,6 @@ ENTRY (BP_SYM (memmove))
 	cfi_restore (esi)
 #ifndef USE_AS_BCOPY
 	movl	DEST(%esp), %eax
-	RETURN_BOUNDED_POINTER (DEST(%esp))
 #endif
 
 	cld
@@ -121,9 +113,8 @@ ENTRY (BP_SYM (memmove))
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
-	RET_PTR
-END (BP_SYM (memmove))
+	ret
+END (memmove)
 #ifndef USE_AS_BCOPY
 libc_hidden_builtin_def (memmove)
 #endif

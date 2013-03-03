@@ -1,3 +1,2000 @@
+2013-03-01  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/powerpc/fpu/fpu_control.h: Move to ...
+	* sysdeps/powerpc/fpu_control.h: ... here.
+	* sysdeps/powerpc/fpu/bits/fenvinline.h: Move to ...
+	* sysdeps/powerpc/bits/fenvinline.h: ... here.
+	* sysdeps/powerpc/fpu/bits/mathinline.h: Move to ...
+	* sysdeps/powerpc/bits/mathinline.h: ... here.
+
+2013-03-01  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/dl-hwcaps.c (_dl_important_hwcaps):
+	Change [NEED_DL_SYSINFO || NEED_DL_SYSINFO_DSO] conditionals
+	to just [NEED_DL_SYSINFO_DSO].
+	* elf/dl-support.c: Likewise.
+	* elf/dl-sysdep.c (_dl_sysdep_start): Likewise.
+	* elf/rtld.c (dl_main): Likewise.
+	* elf/setup-vdso.h (setup_vdso): Likewise.
+	* sysdeps/generic/ldsodefs.h (struct rtld_global_ro): Likewise.
+	* sysdeps/unix/sysv/linux/dl-sysdep.c
+	(_dl_discover_osversion): Likewise.
+
+2013-03-01  Carlos O'Donell  <carlos@redhat.com>
+
+	* csu/libc-start.c (__pthread_initialize_minimal): Revert last change.
+	* csu/libc-tls.c (__pthread_initialize_minimal): Likewise.
+
+2013-03-01  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* NEWS: Mention libm performance improvements and non-x86 PI
+	futex support.
+
+	* csu/libc-start.c (__pthread_initialize_minimal): Change
+	function arguments.
+	* csu/libc-tls.c (__pthread_initialize_minimal): Likewise.
+
+2013-02-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/powerpc/powerpc32/bp-asm.h: Remove file.
+	* sysdeps/powerpc/powerpc32/__longjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__longjmp): Don't use BP_SYM and CHECK_BOUNDS_BOTH_WIDE_LIT.
+	* sysdeps/powerpc/powerpc32/a2/memcpy.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/add_n.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__mpn_add_n): Don't use BP_SYM.
+	(__mpn_add_n) [__BOUNDED_POINTERS_]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/addmul_1.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(__mpn_addmul_1): Don't use BP_SYM.
+	(__mpn_addmul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/bsd-_setjmp.S: Don't include
+	<bp-sym.h>.
+	(_setjmp): Don't use BP_SYM.
+	(__novmx_setjmp): Likewise.
+	(__GI__setjmp): Likewise.
+	(__vmx_setjmp): Likewise.
+	* sysdeps/powerpc/powerpc32/bsd-setjmp.S: Don't include
+	<bp-sym.h>.
+	* sysdeps/powerpc/powerpc32/bzero.S: Don't include <bp-sym.h>.
+	(__bzero): Don't use BP_SYM.
+	(__bzero) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__bzero) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc32/cell/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/fpu/__longjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__longjmp): Don't use BP_SYM and CHECK_BOUNDS_BOTH_WIDE_LIT.
+	* sysdeps/powerpc/powerpc32/fpu/setjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__sigsetjmp): Don't use BP_SYM and CHECK_BOUNDS_BOTH_WIDE_LIT.
+	* sysdeps/powerpc/powerpc32/lshift.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__mpn_lshift): Don't use BP_SYM.
+	(__mpn_lshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/memset.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	(memset) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(memset) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc32/mul_1.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__mpn_mul_1): Don't use BP_SYM.
+	(__mpn_mul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/power4/memcmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power4/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power4/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power4/strncmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power6/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power6/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/memchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__memchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/memcmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/mempcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__mempcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/memrchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__memrchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/rawmemchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__rawmemchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strcasecmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__STRCMP): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strchrnul.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__strchrnul): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strlen.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strlen): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strncmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/power7/strnlen.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__strnlen): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/rshift.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__mpn_rshift): Don't use BP_SYM.
+	(__mpn_rshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/setjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__sigsetjmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc32/start.S: Don't include "bp-sym.h".
+	(L(start_addresses)): Don't use BP_SYM.
+	(_start): Likewise.
+	* sysdeps/powerpc/powerpc32/stpcpy.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__stpcpy): Don't use BP_SYM and macros from bp-asm.h.
+	(__stpcpy) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__stpcpy) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc32/strchr.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strchr): Don't use BP_SYM.h and macros from bp-asm.h.
+	(strchr) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(strchr) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc32/strcmp.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strcmp): Don't use BP_SYM and CHECK_BOUNDS_LOW.  Remove GKM FIXME
+	comments.
+	(strcmp) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/strcpy.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strcpy): Don't use BP_SYM and macros from bp-asm.h.  Remove GKM
+	FIXME comments.
+	(strcpy) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(strcpy) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc32/strlen.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strlen): Don't use BP_SYM and CHECK_BOUNDS_LOW.  Remove GKM FIXME
+	comment.
+	* sysdeps/powerpc/powerpc32/strncmp.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM,
+	* sysdeps/powerpc/powerpc32/sub_n.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__mpn_sub_n): Don't use BP_SYM.
+	(__mpn_sub_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc32/submul_1.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(__mpn_submul_1): Don't use BP_SYM.
+	(__mpn_submul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/brk.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__brk): Don't use BP_SYM and DISCARD_BOUNDS.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/clone.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__clone): Don't use BP_SYM and DISCARD_BOUNDS.  Remove GKM FIXME
+	comment.
+
+2013-02-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (add_magnitudes):
+	Use ZK to minimize writes to Z.
+	(sub_magnitudes): Simplify code a bit.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (add_magnitudes):
+	Use ZK to minimize writes to Z.
+	(sub_magnitudes): Simplify code a bit.
+
+2013-02-27  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/gmon-start.c: Add special exception to license text.
+
+2013-02-27  Richard Henderson  <rth@redhat.com>
+
+	* scripts/config.guess: Update from config.git.
+	* scripts/config.sub: Likewise.
+
+2013-02-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpsqrt.c: Reformat.
+
+	* sysdeps/ieee754/dbl-64/mpatan2.c: Reformat.
+
+	* sysdeps/ieee754/dbl-64/mpatan.c: Reformat.
+
+	* sysdeps/ieee754/dbl-64/mptan.c: Reformat.
+
+	* sysdeps/ieee754/dbl-64/mplog.c: Reformat.
+
+2013-02-26  Roland McGrath  <roland@hack.frob.com>
+
+	* Makeconfig (%.v.i, %.v): Move these pattern rules outside of
+	[$(build-shared = yes].
+
+2013-02-26  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c: Include alloca.h.
+	(__mul): Reduce iterations for calculating mantissa.
+
+	* sysdeps/ieee754/dbl-64/sincos32.c (__c32): Use MPONE and
+	MPTWO.
+	(__mpranred): Likewise.
+
+	[BZ #15160]
+	* malloc/memusagestat.c (main): Draw graphs for heap and stack
+	only if MAXSIZE_HEAP and MAXSIZE_STACK are non-zero.
+
+2013-02-26  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* posix/regex_internal.h [__GNUC__ < 3 + (__GNUC_MINOR__ < 1]:
+	Define __attribute__.
+
+2013-02-26  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* locale/elem-hash.h (elem_hash): Mark as pure and possibly
+	unused.
+	* posix/regex_internal.h (__attribute): Remove.
+	[!_LIBC && __i386__]: Use __attribute__ instead of __attribute.
+	(re_string_context_at): Likewise.
+	(bitset_not): Use __attribute__ and mark function as possibly
+	unused.
+	(bitset_merge): Likewise.
+	(bitset_mask): Likewise.
+	(re_string_char_size_at): Likewise.
+	(re_string_wchar_at): Likewise.
+	(re_string_elem_size_at): Likewise.
+
+2013-02-25  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/sincos32.c (ss32): Remove commented
+	code.
+	(cc32): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (mcr): Use long instead of int.
+	(__acr): Likewise.
+	(__cpy): Likewise.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+
+	* sysdeps/ieee754/dbl-64/slowexp.c: Reformat in GNU coding
+	style.
+
+	* sysdeps/ieee754/dbl-64/slowpow.c: Reformat in GNU coding
+	style.
+
+	* sysdeps/ieee754/dbl-64/slowexp.c (__slowexp): Remove commented
+	code.
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__mp_dbl): Sync
+	up changes with default code.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__mp_dbl):
+	Likewise.
+
+2013-02-24  Allan McRae  <allan@archlinux.org>
+
+	* manual/socket.texi (The Internet Namespace): Order menu items
+	to match that in the file.
+
+	* manual/libc-texinfo.sh: Use @detailmenu around the detailed
+	node listing of the info page menu.
+
+2013-02-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/i386/bp-asm.h: Remove file.
+	* sysdeps/i386/add_n.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(S2): Likewise.
+	(SIZE): Likewise.
+	(__mpn_add_n): Do not use BP_SYM
+	* sysdeps/i386/addmul_1.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_addmul_1): Do not use BP_SYM
+	* sysdeps/i386/bsd-_setjmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(SIGMSK): Likewise.
+	(_setjmp): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/bsd-setjmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(SIGMSK): Likewise.
+	(setjmp): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/fpu/s_frexp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__frexp): Do not use BP_SYM.
+	(frexp): Likewise.
+	* sysdeps/i386/fpu/s_frexpf.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__frexpf): Do not use BP_SYM.
+	(frexpf): Likewise.
+	* sysdeps/i386/fpu/s_frexpl.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__frexpl): Do not use BP_SYM.
+	(frexpl): Likewise.
+	* sysdeps/i386/fpu/s_remquo.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__remquo): Do not use BP_SYM.
+	(remquo): Likewise.
+	* sysdeps/i386/fpu/s_remquof.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__remquof): Do not use BP_SYM.
+	(remquof): Likewise.
+	* sysdeps/i386/fpu/s_remquol.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(__remquol): Do not use BP_SYM.
+	(remquol): Likewise.
+	* sysdeps/i386/i486/strcat.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(strcat): Remove GKM FIXME comment.  Do not use BP_SYM.
+	* sysdeps/i386/i486/strlen.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(strlen): Do not use BP_SYM.
+	* sysdeps/i386/i586/add_n.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(S2): Likewise.
+	(SIZE): Likewise.
+	(__mpn_add_n): Do not use BP_SYM.
+	* sysdeps/i386/i586/addmul_1.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_addmul_1): Do not use BP_SYM.
+	* sysdeps/i386/i586/bzero.S (__bzero): Do not use BP_SYM in
+	weak_alias.
+	(bzero): Likewise.
+	* sysdeps/i386/i586/lshift.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S): Likewise.
+	(SIZE): Likewise.
+	(__mpn_lshift): Do not use BP_SYM.
+	* sysdeps/i386/i586/memcpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(LEN): Likewise.
+	(memcpy): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i586/mempcpy.S (__mempcpy): Do not use BP_SYM in
+	libc_hidden_def and weak_alias.
+	(mempcpy): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/i586/memset.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(LEN): Likewise.
+	[!BZERO_P] (CHR): Likewise.
+	(memset): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i586/mul_1.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_mul_1): Do not use BP_SYM.
+	* sysdeps/i386/i586/rshift.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S): Likewise.
+	(SIZE): Likewise.
+	(__mpn_rshift): Do not use BP_SYM.
+	* sysdeps/i386/i586/strchr.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(strchr): Likewise.  Do not use BP_SYM.
+	(index): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/i586/strcpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(STRCPY): Likewise.  Remove GKM FIXME comment.  Do not use BP_SYM.
+	* sysdeps/i386/i586/strlen.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(strlen): Do not use BP_SYM.
+	* sysdeps/i386/i586/sub_n.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(S2): Likewise.
+	(SIZE): Likewise.
+	(__mpn_sub_n): Do not use BP_SYM.
+	* sysdeps/i386/i586/submul_1.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_submul_1): Do not use BP_SYM.
+	* sysdeps/i386/i686/add_n.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(S2): Likewise.
+	(SIZE): Likewise.
+	(__mpn_add_n): Do not use BP_SYM.
+	* sysdeps/i386/i686/bzero.S (__bzero): Do not use BP_SYM in
+	weak_alias.
+	(bzero): Likewise.
+	* sysdeps/i386/i686/memcmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(BLK2): Likewise.
+	(LEN): Likewise.
+	(memcmp): Do not use BP_SYM.
+	(bcmp): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/i686/memcpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(LEN): Likewise.
+	(memcpy): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i686/memmove.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(LEN): Likewise.
+	(memmove): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i686/mempcpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(LEN): Likewise.
+	(__mempcpy): Likewise.  Do not use BP_SYM.
+	(mempcpy): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/i686/memset.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(LEN): Likewise.
+	[!BZERO_P] (CHR): Likewise.
+	(memset): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i686/strcmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR2): Likewise.
+	(strcmp): Do not use BP_SYM.
+	* sysdeps/i386/i686/strtok.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(DELIM): Likewise.
+	[USE_AS_STRTOK_R] (SAVE): Likewise.
+	(FUNCTION): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/i686/strtok_r.S (__strtok_r): Do not use BP_SYM in
+	aliases.
+	(strtok_r): Likewise.
+	(__GI___strtok_r): Likewise.
+	* sysdeps/i386/lshift.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S): Likewise.
+	(SIZE): Likewise.
+	(__mpn_lshift): Do not use BP_SYM.
+	* sysdeps/i386/memchr.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(__memchr): Do not use BP_SYM.
+	(memchr): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/memcmp.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(BLK2): Likewise.
+	(LEN): Likewise.
+	(memcmp): Do not use BP_SYM.
+	(bcmp): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/mul_1.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_mul_1): Do not use BP_SYM.
+	* sysdeps/i386/rawmemchr.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(__rawmemchr): Do not use BP_SYM.
+	(rawmemchr): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/rshift.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S): Likewise.
+	(SIZE): Likewise.
+	(__mpn_rshift): Do not use BP_SYM.
+	* sysdeps/i386/setjmp.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(SIGMSK): Likewise.
+	(__sigsetjmp): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/start.S: Do not include "bp-sym.h".
+	(_start): Do not use BP_SYM.
+	* sysdeps/i386/stpcpy.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(__stpcpy): Likewise.  Do not use BP_SYM.
+	(stpcpy): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/stpncpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(DEST): Likewise.
+	(SRC): Likewise.
+	(LEN): Likewise.
+	(__stpncpy): Likewise.  Do not use BP_SYM.
+	(stpncpy): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/strchr.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(strchr): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/strchrnul.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(__strchrnul): Likewise.  Do not use BP_SYM.
+	(strchrnul): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/strcspn.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STOP): Likewise.
+	(strcspn): Do not use BP_SYM.
+	* sysdeps/i386/strpbrk.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(STOP): Likewise.
+	(strpbrk): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/strrchr.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(CHR): Likewise.
+	(strrchr): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/strspn.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(SKIP): Likewise.
+	(strspn): Do not use BP_SYM.
+	* sysdeps/i386/strtok.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(STR): Likewise.
+	(DELIM): Likewise.
+	(SAVE): Likewise.
+	(FUNCTION): Likewise.  Do not use BP_SYM.
+	* sysdeps/i386/strtok_r.S (__strtok_r): Do not use BP_SYM in
+	aliases.
+	(strtok_r): Likewise.
+	(__GI___strtok_r): Likewise.
+	* sysdeps/i386/sub_n.S: Do not include "bp-sym.h" and "bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(S2): Likewise.
+	(SIZE): Likewise.
+	(__mpn_sub_n): Do not use BP_SYM.
+	* sysdeps/i386/submul_1.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(PARMS): Do not use macros from bp-asm.h.
+	(S1): Likewise.
+	(SIZE): Likewise.
+	(__mpn_submul_1): Do not use BP_SYM.
+	* sysdeps/unix/i386/sysdep.S: Do not include <bp-asm.h> and
+	<bp-sym.h>.
+	* sysdeps/unix/sysv/linux/i386/clone.S: Do not include <bp-sym.h>
+	and <bp-asm.h>.
+	(PARMS): Do not use macros from bp-asm.h.
+	(FLAGS): Likewise.
+	(PTID): Likewise.
+	(TLS): Likewise.
+	(CTID): Likewise.
+	(__clone): Do not use BP_SYM.
+	(clone): Do not use BP_SYM in weak_alias.
+	* sysdeps/unix/sysv/linux/i386/mmap64.S: Do not include <bp-sym.h>
+	and <bp-asm.h>.
+	(PARMS): Do not use macros from bp-asm.h.
+	(LEN): Likewise.
+	(__mmap64): Do not use BP_SYM.
+	(mmap64): Do not use BP_SYM in weak_alias.
+	* sysdeps/unix/sysv/linux/i386/posix_fadvise64.S: Do not include
+	<bp-sym.h> and <bp-asm.h>.
+	(PARMS): Do not use macros from bp-asm.h.
+	(__posix_fadvise64_l64): Do not use BP_SYM.
+	* sysdeps/unix/sysv/linux/i386/semtimedop.S
+	(PARMS): Do not use macros from bp-asm.h.
+	(NSOPS): Likewise.
+	(semtimedop): Do not use BP_SYM.
+	* sysdeps/unix/sysv/linux/i386/sysdep.h: Do not include <bp-sym.h>
+	and <bp-asm.h>.
+
+2013-02-21  Allan McRae  <allan@archlinux.org>
+
+	* manual/message.texi (Charset conversion in gettext):
+	Move @end statement to beginning of line.
+
+2013-02-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__inv): Mark as
+	static.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__inv):
+	Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (norm): Fix whitespace.
+	(denorm): Likewise.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (norm): Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (norm): Likewise.
+
+2013-02-21  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/s390-32/dl-trampoline.S (_dl_runtime_profile): Do a
+	tail-call to the resolved function if pltexit isn't needed.
+
+2013-02-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__mul): Mark X
+	or Y being zero as being unlikely.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__mul):
+	Likewise.
+
+2013-02-20  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/nss.texi (System Databases and Name Service Switch):
+	Remove frobnicate @pxref.
+
+2013-02-20  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/ieee754/bits/nan.h [!__GNUC__] (__nan_union): Change
+	__attribute__ ((unused)) to __attribute__ ((__unused__)).
+
+2013-02-20  Petr Machata  <pmachata@redhat.com>
+
+	* elf/elf.h (R_ARM_TARGET1): New macro.
+	(R_ARM_SBREL31, R_ARM_V4BX, R_ARM_TARGET2): Likewise.
+	(R_ARM_PREL31, R_ARM_MOVW_ABS_NC, R_ARM_MOVT_ABS): Likewise.
+	(R_ARM_MOVW_PREL_NC, R_ARM_MOVT_PREL): Likewise.
+	(R_ARM_THM_MOVW_ABS_NC, R_ARM_THM_MOVT_ABS): Likewise.
+	(R_ARM_THM_MOVW_PREL_NC, R_ARM_THM_MOVT_PREL): Likewise.
+	(R_ARM_THM_JUMP19, R_ARM_THM_JUMP6): Likewise.
+	(R_ARM_THM_ALU_PREL_11_0, R_ARM_THM_PC12): Likewise.
+	(R_ARM_ABS32_NOI, R_ARM_REL32_NOI): Likewise.
+	(R_ARM_ALU_PC_G0_NC, R_ARM_ALU_PC_G0): Likewise.
+	(R_ARM_ALU_PC_G1_NC, R_ARM_ALU_PC_G1): Likewise.
+	(R_ARM_ALU_PC_G2, R_ARM_LDR_PC_G1, R_ARM_LDR_PC_G2): Likewise.
+	(R_ARM_LDRS_PC_G0, R_ARM_LDRS_PC_G1): Likewise.
+	(R_ARM_LDRS_PC_G2, R_ARM_LDC_PC_G0): Likewise.
+	(R_ARM_LDC_PC_G1, R_ARM_LDC_PC_G2): Likewise.
+	(R_ARM_ALU_SB_G0_NC, R_ARM_ALU_SB_G0): Likewise.
+	(R_ARM_ALU_SB_G1_NC, R_ARM_ALU_SB_G1): Likewise.
+	(R_ARM_ALU_SB_G2, R_ARM_LDR_SB_G0, R_ARM_LDR_SB_G1): Likewise.
+	(R_ARM_LDR_SB_G2, R_ARM_LDRS_SB_G0): Likewise.
+	(R_ARM_LDRS_SB_G1, R_ARM_LDRS_SB_G2): Likewise.
+	(R_ARM_LDC_SB_G0, R_ARM_LDC_SB_G1, R_ARM_LDC_SB_G2): Likewise.
+	(R_ARM_MOVW_BREL_NC, R_ARM_MOVT_BREL): Likewise.
+	(R_ARM_MOVW_BREL, R_ARM_THM_MOVW_BREL_NC): Likewise.
+	(R_ARM_THM_MOVT_BREL, R_ARM_THM_MOVW_BREL): Likewise.
+	(R_ARM_PLT32_ABS, R_ARM_GOT_ABS, R_ARM_GOT_PREL): Likewise.
+	(R_ARM_GOT_BREL12, R_ARM_GOTOFF12, R_ARM_GOTRELAX): Likewise.
+	(R_ARM_TLS_LDO12, R_ARM_TLS_LE12, R_ARM_TLS_IE12GP): Likewise.
+	(R_ARM_PRIVATE_0, R_ARM_PRIVATE_1, R_ARM_PRIVATE_2): Likewise.
+	(R_ARM_PRIVATE_3, R_ARM_PRIVATE_4, R_ARM_PRIVATE_5): Likewise.
+	(R_ARM_PRIVATE_6, R_ARM_PRIVATE_7, R_ARM_PRIVATE_8): Likewise.
+	(R_ARM_PRIVATE_9, R_ARM_PRIVATE_10): Likewise.
+	(R_ARM_PRIVATE_11, R_ARM_PRIVATE_12): Likewise.
+	(R_ARM_PRIVATE_13, R_ARM_PRIVATE_14): Likewise.
+	(R_ARM_PRIVATE_15, R_ARM_ME_TOO): Likewise.
+	(R_ARM_THM_TLS_DESCSEQ16, R_ARM_THM_TLS_DESCSEQ32): Likewise.
+	(R_ARM_THM_GOT_BREL12): Likewise.
+	(R_ARM_PC24, R_ARM_PLT32): Updated a comment at this macro.
+	(R_ARM_THM_PC11, R_ARM_THM_PC9): Likewise.
+	(R_ARM_THM_ABS5, R_ARM_THM_PC22): Added a comment to this macro.
+	(R_ARM_THM_PC8, R_ARM_THM_SWI8, R_ARM_XPC25): Likewise.
+	(R_ARM_THM_XPC22, R_ARM_ALU_PCREL_7_0): Likewise.
+	(R_ARM_ALU_PCREL_15_8, R_ARM_ALU_PCREL_23_15): Likewise.
+	(R_ARM_LDR_SBREL_11_0, R_ARM_ALU_SBREL_19_12): Likewise.
+	(R_ARM_ALU_SBREL_27_20, R_ARM_TLS_DESCSEQ): Likewise.
+	(R_ARM_THM_TLS_DESCSEQ): Fixed whitespace.
+
+2013-02-20  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/ieee754/bits/nan.h [!__GNUC__] (__nan_union): Change
+	__attribute_used__ to __attribute__ ((unused)).
+
+2013-02-20  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__sqr): Copy over comment from
+	powerpc mpa.c.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__mul): Fix
+	comment formatting.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__mul): Likewise.
+
+2013-02-19  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/i386/bp-asm.h [__BOUNDED_POINTERS__] (BOUNDS_VIOLATED):
+	Remove macro.
+	(ENTER): Remove both macro definitions.
+	(LEAVE): Likewise.
+	(CHECK_BOUNDS_LOW): Likewise.
+	(CHECK_BOUNDS_HIGH): Likewise.
+	(CHECK_BOUNDS_BOTH): Likewise.
+	(CHECK_BOUNDS_BOTH_WIDE): Likewise.
+	(RETURN_BOUNDED_POINTER): Likewise.
+	(RETURN_NULL_BOUNDED_POINTER): Likewise.
+	(PUSH_ERRNO_LOCATION_RETURN): Likewise.
+	(POP_ERRNO_LOCATION_RETURN): Likewise.
+	* sysdeps/i386/add_n.S (__mpn_add_n): Do not use removed macros.
+	(__mpn_add_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/addmul_1.S (__mpn_addmul_1): Do not use removed
+	macros.
+	(__mpn_addmul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/bsd-_setjmp.S (_setjmp): Do not use removed macros.
+	* sysdeps/i386/bsd-setjmp.S (setjmp): Likewise.
+	* sysdeps/i386/fpu/s_frexp.S (__frexp): Likewise.
+	* sysdeps/i386/fpu/s_frexpf.S (__frexpf): Likewise.
+	* sysdeps/i386/fpu/s_frexpl.S (__frexpl): Likewise.
+	* sysdeps/i386/fpu/s_remquo.S (__remquo): Likewise.
+	* sysdeps/i386/fpu/s_remquof.S (__remquof): Likewise.
+	* sysdeps/i386/fpu/s_remquol.S (__remquol): Likewise.
+	* sysdeps/i386/i486/strcat.S (strcat): Likewise.
+	* sysdeps/i386/i486/strlen.S (strlen): Likewise.
+	* sysdeps/i386/i586/add_n.S (__mpn_add_n): Likewise.
+	(__mpn_add_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/addmul_1.S (__mpn_addmul_1): Do not use
+	removed macros.
+	(__mpn_addmul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/lshift.S (__mpn_lshift): Do not use removed
+	macros.
+	(__mpn_lshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/memcpy.S (memcpy): Do not use removed macros.
+	* sysdeps/i386/i586/memset.S (memset): Likewise.
+	* sysdeps/i386/i586/mul_1.S (__mpn_mul_1): Likewise.
+	(__mpn_mul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/rshift.S (__mpn_rshift): Do not use removed
+	macros.
+	(__mpn_rshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/strchr.S (strchr): Do not use removed macros.
+	Change uses of L(2) to L(out).
+	* sysdeps/i386/i586/strcpy.S (STRCPY): Do not use removed macros.
+	* sysdeps/i386/i586/strlen.S (strlen): Likewise.
+	* sysdeps/i386/i586/sub_n.S (__mpn_sub_n): Likewise.
+	(__mpn_sub_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i586/submul_1.S (__mpn_submul_1): Do not use
+	removed macros.
+	(__mpn_submul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i686/add_n.S (__mpn_add_n): Do not use removed
+	macros.
+	(__mpn_add_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i686/memcmp.S (ENTRANCE): Do not use macro ENTER.
+	(RETURN): Do not use macro LEAVE.
+	* sysdeps/i386/i686/memcpy.S (memcpy): Do not use removed macros.
+	* sysdeps/i386/i686/memmove.S (memmove): Likewise.
+	* sysdeps/i386/i686/mempcpy.S (mempcpy): Likewise.
+	* sysdeps/i386/i686/memset.S (memset): Likewise.
+	* sysdeps/i386/i686/strcmp.S (strcmp): Likewise.
+	(strcmp) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(strcmp) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/i686/strtok.S (save_ptr) [__BOUNDED_POINTERS__]:
+	Likewise.
+	(save_ptr) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(FUNCTION): Do not use removed macros.  Combine labels L(1_1),
+	L(1_2) and L(1_3) into L(1).
+	(FUNCTION) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/lshift.S (__mpn_lshift): Do not use removed macros.
+	(__mpn_lshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/memchr.S (__memchr): Do not use removed macros.
+	(__memchr) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/memcmp.S (memcmp): Do not use removed macros.
+	* sysdeps/i386/mul_1.S (__mpn_mul_1): Likewise.
+	(__mpn_mul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/rawmemchr.S (__rawmemchr): Do not use removed
+	macros.
+	* sysdeps/i386/rshift.S (__mpn_rshift): Likewise.
+	(__mpn_rshift) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/setjmp.S (__sigsetjmp): Do not use removed macros.
+	* sysdeps/i386/stpcpy.S (__stpcpy): Likewise.
+	* sysdeps/i386/stpncpy.S (__stpncpy): Likewise.
+	(__stpncpy) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/strchr.S (strchr): Do not use removed macros.
+	* sysdeps/i386/strchrnul.S (__strchrnul): Likewise.
+	* sysdeps/i386/strcspn.S (strcspn): Likewise.
+	* sysdeps/i386/strpbrk.S (strpbrk): Likewise.
+	* sysdeps/i386/strrchr.S (strrchr): Likewise.
+	* sysdeps/i386/strspn.S (strspn): Likewise.
+	* sysdeps/i386/strtok.S (save_ptr) [__BOUNDED_POINTERS__]: Remove
+	conditional code.
+	(save_ptr) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(FUNCTION) [!__BOUNDED_POINTERS__]: Likewise.
+	(FUNCTION) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(FUNCTION): Do not use removed macros.  Combine labels L(1_2) and
+	L(1_3) into L(1_1).
+	* sysdeps/i386/sub_n.S (__mpn_sub_n): Do not use removed macros.
+	(__mpn_sub_n) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/i386/submul_1.S (__mpn_submul_1): Do not use removed
+	macros.
+	(__mpn_submul_1) [__BOUNDED_POINTERS__]: Remove conditional code.
+
+2013-02-19  Jakub Jelinek  <jakub@redhat.com>
+
+	* stdlib/strtod_l.c (__mpn_lshift_1): Rewritten as function-like
+	macro.
+
+2013-02-19  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* math/atest-exp.c (exp_mpn): Remove ROUND.
+	* math/atest-exp2.c (exp_mpn): Likewise.
+	* math/atest-sincos.c (sincosx_mpn): Remove ROUND and CHK.
+
+	* stdlib/cxa_thread_atexit_impl.c: Fix Copyright year.
+	* stdlib/tst-tls-atexit-lib.c: Likewise.
+	* stdlib/tst-tls-atexit.c: Likewise.
+
+2013-02-18  Mike Frysinger  <vapier@gentoo.org>
+
+	* stdlib/stdlib.h (aligned_alloc): Use __attribute_malloc__
+	and __attribute_alloc_size__.
+
+2013-02-18  Mike Frysinger  <vapier@gentoo.org>
+
+	* include/programs/xmalloc.h: Change __attribute_alloc_size to
+	__attribute_alloc_size__.
+	* include/sys/cdefs.h (__attribute_alloc_size): Macro removed.
+	* misc/sys/cdefs.h (__attribute_alloc_size__): New macro.
+
+2013-02-18  Mike Frysinger  <vapier@gentoo.org>
+
+	* include/programs/xmalloc.h: New file.
+	* catgets/gencat.c: Include it.
+	(xmalloc, xcalloc, xrealloc, xstrdup): Don't declare them.
+	* elf/pldd.c: Likewise.
+	* iconv/iconv_charmap.c: Likewise.
+	* iconv/iconvconfig.c: Likewise.
+	* iconv/strtab.c: Likewise.
+	* locale/programs/locale.c: Likewise.
+	* locale/programs/localedef.h: Likewise.
+	* locale/programs/simple-hash.c: Likewise.
+	* nscd/nscd.h: Likewise.
+	* nss/makedb.c: Likewise.
+	* sysdeps/generic/ldconfig.h: Likewise.
+
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* Versions.def: Add GLIBC_2.18.
+	* include/link.h (struct link_map): New member l_tls_dtor_count.
+	* include/stdlib.h (__cxa_thread_atexit_impl): Declare.
+	(__call_tls_dtors): Likewise.
+	* sysdeps/unix/sysv/linux/i386/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sh/nptl/libc.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libc.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/x32/nptl/libc.abilist:
+	Likewise.
+	* stdlib/Makefile (routines): Add __cxa_thread_atexit_impl.
+	(tests): Add test case tst-tls-atexit.
+	(modules-names): Add shared library for tst-tls-atexit.
+	* stdlib/Versions (GLIBC_2.17): Add __cxa_thread_atexit_impl.
+	(GLIBC_PRIVATE): Add __call_tls_dtors.
+	* stdlib/cxa_thread_atexit_impl.c: New file with helper function
+	for libstdc++.
+	* stdlib/exit.c (__run_exit_handlers): Call __call_tls_dtors.
+	* stdlib/tst-tls-atexit.c: New test case.
+	* stdlib/tst-tls-atexit-lib.c: New test case.
+
+	* misc/tst-pselect.c: Include stdlib.h for declaration of exit.
+
+	* elf/Versions (ld): Add _dl_find_dso_for_object.
+	* elf/dl-addr.c (_dl_addr): Use _dl_find_dso_for_object.
+	* elf/dl-open.c (_dl_find_dso_for_object): New function.
+	(dl_open_worker): Use _dl_find_dso_for_object.
+	* elf/dl-sym.c (do_sym): Likewise.
+	* sysdeps/generic/ldsodefs.h: Declare _dl_find_dso_for_object.
+
+2013-02-18  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/s390-64/dl-trampoline.S (_dl_runtime_resolve):
+	Syntactic changes only.
+	(_dl_runtime_profile): Do a tail-call to the resolved function.
+
+2013-02-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/x86_64/bp-asm.h: Remove file.
+	* sysdeps/unix/sysv/linux/x86_64/clone.S: Do not include
+	<bp-sym.h> and <bp-asm.h>.
+	(__clone): Do not use BP_SYM.
+	* sysdeps/unix/sysv/linux/x86_64/sysdep.h: Do not include
+	<bp-sym.h> and <bp-asm.h>.
+	* sysdeps/unix/x86_64/sysdep.S: Likewise.
+	* sysdeps/x86_64/bsd-_setjmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(_setjmp): Do not use BP_SYM.
+	* sysdeps/x86_64/bsd-setjmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(setjmp): Do not use BP_SYM.
+	* sysdeps/x86_64/mempcpy.S (__mempcpy): Do not use BP_SYM in
+	libc_hidden_def.
+	(mempcpy): Do not use BP_SYM in weak_alias.
+	* sysdeps/x86_64/rtld-strchr.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(strchr): Do not use BP_SYM.
+	* sysdeps/x86_64/rtld-strlen.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	* sysdeps/x86_64/setjmp.S (__sigsetjmp): Do not use BP_SYM.
+	* sysdeps/x86_64/start.S: Do not include "bp-sym.h".
+	(_start): Do not use BP_SYM.
+	* sysdeps/x86_64/strcat.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(strcat): Do not use BP_SYM.
+	* sysdeps/x86_64/strcmp.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(STRCMP): Do not use BP_SYM.
+	* sysdeps/x86_64/strcpy.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(STRCPY): Do not use BP_SYM.
+	* sysdeps/x86_64/strcpy_chk.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	* sysdeps/x86_64/strtok.S: Do not include "bp-sym.h" and
+	"bp-asm.h".
+	(FUNCTION): Do not use BP_SYM.
+	* sysdeps/x86_64/strtok_r.S (strtok_r): Do not use BP_SYM in
+	weak_alias.
+	(__GI___strtok_r): Do not use BP_SYM in strong_alias.
+
+2013-02-17  Andreas Jaeger  <aj@suse.de>
+
+	* time/Versions: Sort entries.
+	* string/Versions: Likewise.
+	* resolv/Versions: Likewise.
+	* posix/Versions: Likewise.
+	* iconv/Versions: Likewise.
+	* elf/Versions: Likewise.
+	* wcsmbs/Versions: Likewise.
+
+2013-02-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__sqr): Avoid using LIM in
+	loop termination condition.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__mul): Use intermediate
+	variable to calculate EZ.
+	(__sqr): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__mul): Fix determination of
+	the lower precision input.
+
+2013-02-15  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* Makeconfig [!+link-bounded] (+link-bounded): Remove variable.
+	[!link-extra-libs] (link-extra-libs-bounded): Likewise.
+	(run-via-rtld-prefix): Do not handle %-bp tests.
+	(test-via-rtld-prefix): Do not mention %-bp tests in comment.
+	(all-object-suffixes): Remove .ob.
+	(bppfx): Remove variable.
+	[$(build-bounded) = yes] (object-suffixes): Do not add .ob.
+	[$(build-bounded) = yes] (CPPFLAGS-.ob): Remove variable.
+	[$(build-bounded) = yes] (CFLAGS-.ob): Likewise.
+	[$(build-bounded) = yes] (libtype.ob): Likewise.
+	* Makerules (elide-routines.ob): Remove variable.
+	(do-tests-clean): Do not handle *-bp.out.
+	(common-mostlyclean): Do not handle *-bp and *-bp.out.
+	* Rules [$(build-bounded) = yes] (tests-bp.out): Remove variable.
+	[$(build-bounded) = yes] (xtests-bp.out): Likewise.
+	(tests): Do not include $(tests-bp.out).
+	(xtests): Do not include $(xtests-bp.out).
+	[$(build-bounded) = yes] (binaries-bounded): Remove variable.
+	[$(build-bounded) = yes] ($(addprefix
+	$(objpfx),$(binaries-bounded))): Remove rule.
+	($(objpfx)%-bp.out): Remove rule.
+	* config.make.in (build-bounded): Remove variable.
+	* crypt/Makefile [$(build-bounded) = yes]
+	($(tests:%=$(objpfx)%-bp)): Remove dependency.
+	* csu/Makefile [$(build-bounded) = yes] (extra-objs): Do not
+	append to variable.
+	[$(build-bounded) = yes] (install-lib): Likewise.
+	[$(build-bounded) = yes] (generated): Likewise.
+	[!start-installed-name-rule] ($(objpfx)b$(start-installed-name)):
+	Remove rule.
+	* intl/Makefile [$(build-bounded) = yes]
+	($(multithread-test-srcs:%=$(objpfx)%-bp)): Remove dependency.
+	* math/Makefile [$(build-bounded) = yes]
+	($(tests:%=$(objpfx)%-bp): Likewise.
+	* misc/Makefile [$(build-bounded) = yes]
+	($(objpfx)tst-tsearch-bp): Likewise.
+	* nptl/Makeconfig (bounded-thread-library): Remove variable.
+	* rt/Makefile [$(build-bounded) = yes] ($(tests:%=$(objpfx)%-bp)):
+	Remove dependency.
+	* string/Makefile (o-objects.ob): Remove variable.
+	* sysdeps/i386/i686/Makefile [$(config-asflags-i686) = yes]
+	(CFLAGS-.ob): Remove variable.
+	[$(config-asflags-i686) = yes] (ASFLAGS-.ob): Likewise.
+	* sysdeps/sparc/sparc32/sparcv9/Makefile (ASFLAGS-.ob): Remove
+	both definitions of variable.
+	* sysdeps/sparc/sparc64/Makefile [$(have-as-vis3) = yes]
+	(ASFLAGS-.ob): Remove variable.
+
+2013-02-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* config.h.in [USE_REGPARMS && !PROF && !__BOUNDED_POINTERS__]:
+	Remove __BOUNDED_POINTERS__ from condition.
+	* elf/dl-runtime.c [!PROF && !__BOUNDED_POINTERS__]: Likewise.
+	* string/bits/string2.h [!__NO_STRING_INLINES &&
+	!__BOUNDED_POINTERS__]: Likewise.
+	* sysdeps/i386/dl-machine.h [!PROF && !__BOUNDED_POINTERS__]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/shmat.c (shmat) [__BOUNDED_POINTERS__]:
+	Remove conditional code.
+	* sysdeps/x86/bits/string.h [!__NO_STRING_INLINES &&
+	__USE_STRING_INLINES && __GNUC__ && __GNUC__ >= 2 &&
+	!__BOUNDED_POINTERS__]: Remove __BOUNDED_POINTERS__ from
+	condition.
+
+	[BZ #13550]
+	* csu/libc-start.c: Do not include <bp-sym.h>.
+	[!LIBC_START_MAIN] (LIBC_START_MAIN): Do not use BP_SYM.
+	* elf/dl-open.c: Do not include <bp-sym.h>.
+	(_dl_sysdep_start): Do not use BP_SYM in weak_extern.
+	* math/fegetenv.c: Do not include <bp-sym.h>.
+	(fegetenv): Do not use BP_SYM in versioned symbols.
+	* nptl/sysdeps/pthread/bits/libc-lockP.h
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]: Do not include
+	<bp-sym.h>.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutex_init): Do not use BP_SYM in weak_extern.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutex_destroy): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutex_lock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutex_trylock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutex_unlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutexattr_init): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutexattr_destroy): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_mutexattr_settype): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_init): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_destroy): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_rdlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_tryrdlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_wrlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_trywrlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_rwlock_unlock): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_key_create): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_setspecific): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(__pthread_getspecific): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern] (__pthread_once):
+	Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(_pthread_cleanup_push_defer): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(_pthread_cleanup_pop_restore): Likewise.
+	[!__NO_WEAK_PTHREAD_ALIASES && weak_extern]
+	(pthread_setcancelstate): Likewise.
+	* string/memchr.c [HAVE_BP_SYM_H || _LIBC]: Do not include
+	<bp-sym.h>.
+	[!(HAVE_BP_SYM_H || _LIBC)] (BP_SYM): Remove macro definition.
+	(memchr): Do not use BP_SYM in weak_alias.
+	* sysdeps/i386/fpu/fegetenv.c: Do not include <bp-sym.h>.
+	(fegetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/i386/fpu/fesetenv.c: Do not include <bp-sym.h>.
+	(fesetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/i386/fpu/feupdateenv.c: Do not include <bp-sym.h>.
+	(feupdateenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/i386/fpu/fsetexcptflg.c: Do not include <bp-sym.h>.
+	(fesetexceptflag): Do not use BP_SYM in versioned symbols.
+	* sysdeps/posix/open64.c: Do not include <bp-sym.h>.
+	(__open64): Do not use BP_SYM in weak_alias and libc_hidden_weak.
+	(open64): Do not use BP_SYM in weak_alias.
+	* sysdeps/powerpc/fpu/fegetenv.c: Do not include <bp-sym.h>.
+	(fegetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/fpu/fesetenv.c: Do not include <bp-sym.h>.
+	(fesetenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/fpu/feupdateenv.c: Do not include <bp-sym.h>.
+	(feupdateenv): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/fpu/fgetexcptflg.c: Do not include <bp-sym.h>.
+	(fegetexceptflag): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/fpu/fraiseexcpt.c: Do not include <bp-sym.h>.
+	(feraiseexcept): Do not use BP_SYM in versioned symbols.
+	* sysdeps/powerpc/fpu/fsetexcptflg.c: Do not include <bp-sym.h>.
+	(fesetexceptflag): Do not use BP_SYM in versioned symbols.
+	* sysdeps/unix/sysv/linux/powerpc/libc-start.c: Do not include
+	<bp-sym.h>.
+	(__libc_start_main): Do not use BP_SYM.
+
+2013-02-14  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__cpy): Remove
+	redundant return line.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(dbl_mp): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__cpy): Likewise.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(dbl_mp): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Use __sqr
+	instead of __mul.
+	* sysdeps/ieee754/dbl-64/mpsqrt.c (__mpsqrt): Likewise.
+	* sysdeps/ieee754/dbl-64/sincos32.c (ss32): Likewise.
+	(cc32): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__sqr): New function.
+	* sysdeps/ieee754/dbl-64/mpa.h (__sqr): Declare.
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): use __sqr instead
+	of __mul for squares.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__sqr): New
+	function
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__sqr):
+	Likewise.
+	* sysdeps/x86_64/fpu/multiarch/mpa-avx.c: Define __sqr.
+	* sysdeps/x86_64/fpu/multiarch/mpa-fma4.c: Likewise.
+
+2013-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* misc/sys/cdefs.h [!__BOUNDED_POINTERS__]: Remove conditional
+	code.
+	* csu/libc-start.c (LIBC_START_MAIN): Do not use __unbounded in
+	prototype or function definition.  Rename ubp_* variables and
+	parameters.  Remove argv definitions conditional on
+	[__BOUNDED_POINTERS__].
+	* debug/backtrace.c (__backtrace): Do not use __unbounded.
+	* elf/dl-runtime.c (_dl_fixup): Likewise.
+	* include/set-hooks.h (RUN_HOOK): Likewise.
+	* stdio-common/vfprintf.c (JUMP): Do not use __unbounded in either
+	definition.
+	* string/strcpy.c (strcpy): Do not use __unbounded.
+	* sysdeps/generic/frame.h (struct layout): Likewise.
+	* sysdeps/gnu/bits/msq.h (struct msqid_ds): Likewise.
+	* sysdeps/i386/dl-machine.h (_dl_fixup): Likewise.
+	* sysdeps/powerpc/powerpc32/backtrace.c (struct layout): Likewise.
+	* sysdeps/powerpc/powerpc64/backtrace.c (struct layout): Likewise.
+	* sysdeps/sparc/backtrace.c (struct layout): Likewise.
+	(__backtrace): Likewise.
+	* sysdeps/unix/sysv/linux/aio_sigqueue.c (__aio_sigqueue): Do not
+	use __ptrvalue.
+	* sysdeps/unix/sysv/linux/fxstat.c (__fxstat): Likewise.
+	* sysdeps/unix/sysv/linux/fxstatat.c (__fxstatat): Likewise.
+	* sysdeps/unix/sysv/linux/gai_sigqueue.c (__gai_sigqueue):
+	Likewise.
+	* sysdeps/unix/sysv/linux/i386/brk.c (__brk): Likewise.
+	* sysdeps/unix/sysv/linux/i386/fxstat.c (__fxstat): Likewise.
+	* sysdeps/unix/sysv/linux/i386/fxstatat.c (__fxstatat): Likewise.
+	* sysdeps/unix/sysv/linux/i386/lxstat.c (__lxstat): Likewise.
+	* sysdeps/unix/sysv/linux/i386/msgctl.c (struct __old_msqid_ds):
+	Do not use __unbounded.
+	* sysdeps/unix/sysv/linux/i386/setrlimit.c (__new_setrlimit):
+	Rename __unboundedrlimits parameter to rlimits in prototype.
+	* sysdeps/unix/sysv/linux/i386/shmctl.c (struct __old_shmid_ds):
+	Do not use __unbounded.
+	* sysdeps/unix/sysv/linux/i386/sigaction.c (__libc_sigaction): Do
+	not use __ptrvalue.
+	* sysdeps/unix/sysv/linux/i386/xstat.c (__xstat): Likewise.
+	* sysdeps/unix/sysv/linux/llseek.c (__llseek): Likewise.
+	* sysdeps/unix/sysv/linux/lxstat.c (__lxstat): Likewise.
+	* sysdeps/unix/sysv/linux/mmap64.c (__mmap64): Do not use
+	__ptrvalue or __unbounded.
+	(__mmap64) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/msgctl.c (struct __old_msqid_ds): Do not
+	use __unbounded.
+	(__new_msgctl): Do not use __ptrvalue.
+	* sysdeps/unix/sysv/linux/msgrcv.c (struct ipc_kludge): Do not use
+	__unbounded.
+	(__libc_msgrcv): Do not use __ptrvalue.
+	* sysdeps/unix/sysv/linux/powerpc/libc-start.c (struct
+	startup_info): Do not use __unbounded.
+	(__libc_start_main): Likewise.  Rename ubp_* variables and
+	parameters.  Remove argv definitions conditional on
+	[__BOUNDED_POINTERS__].
+	* sysdeps/unix/sysv/linux/ptrace.c (ptrace): Do not use
+	__ptrvalue.
+	* sysdeps/unix/sysv/linux/semctl.c (struct __old_semid_ds): Do not
+	use __unbounded.
+	* sysdeps/unix/sysv/linux/shmat.c (shmat): Do not use __unbounded
+	or __ptrvalue.
+	* sysdeps/unix/sysv/linux/shmctl.c (struct __old_shmid_ds): Do not
+	use __unbounded.
+	(__new_shmctl): Do not use __ptrvalue.
+	* sysdeps/unix/sysv/linux/shmdt.c (shmdt): Likewise.
+	* sysdeps/unix/sysv/linux/sigaction.c (__libc_sigaction):
+	Likewise.
+	* sysdeps/unix/sysv/linux/sigqueue.c (__sigqueue): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sigaction.c
+	(__libc_sigaction): Likewise.
+	* sysdeps/unix/sysv/linux/sysctl.c (__sysctl): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sigaction.c (__libc_sigaction):
+	Likewise.
+	* sysdeps/unix/sysv/linux/xstat.c (__xstat): Likewise.
+
+2013-02-13   Ondřej Bílka  <neleai@seznam.cz>
+
+	* stdlib/Makefile (headers): Add bits/stdlib-bsearch.h.
+
+	* string/mempcpy.c: Implement by calling memcpy.
+
+2013-02-13  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Remove NFA.
+
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Faster polynomial
+	evaluation.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__mul): Don't bother with zero
+	values in the mantissa.
+
+	* sysdeps/ieee754/dbl-64/mpa.c (add_magnitudes): Use ZK to
+	minimize writes to Z.
+	(sub_magnitudes): Simplify code a bit.
+
+2013-02-12  Roland McGrath  <roland@hack.frob.com>
+
+	* include/libc-symbols.h (stub_warning): Remove "warning: " prefix
+	from the message.  The linker prefixes all warnings with that already.
+
+2013-02-12  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15078]
+	* posix/regexec.c (extend_buffers): Add parameter min_len.
+	(check_matching): Pass minimum needed length.
+	(clean_state_log_if_needed): Likewise.
+	(get_subexp): Likewise.
+	* posix/Makefile (tests): Add bug-regex34.
+	(bug-regex34-ENV): Define.
+	* posix/bug-regex34.c: New file.
+
+	[BZ #11561]
+	* posix/regcomp.c (parse_bracket_exp): When looking up collating
+	elements compare against the byte sequence of it, not its name.
+	* posix/Makefile (tests): Add bug-regex35.
+	(bug-regex35-ENV): Define.
+	* posix/bug-regex35.c: New file.
+
+2013-02-11  Tom de Vries  <tom@codesourcery.com>
+
+	* string/str-two-way.h:  Fix typo RESULT_TYPE -> RETURN_TYPE in
+	comment.
+	Add RET0_IF_0 and CHECK_EOL to macro list in comment.
+	(AVAILABLE1, AVAILABLE2, AVAILABLE1_USES_J): Remove superfluous undef.
+	(CHECK_EOL): Add undef.
+
+2013-02-11   Ondřej Bílka  <neleai@seznam.cz>
+
+	* bits/stdlib-bsearch.h: New file.
+	* stdlib/bsearch.c: Include bits/stdlib-bsearch.h.
+	* stdlib/stdlib.h: Likewise.
+
+2013-02-11  Roland McGrath  <roland@hack.frob.com>
+
+	* manual/conf.texi (General Limits): Fix SSIZE_MAX type to ssize_t.
+	* manual/errno.texi (Error Messages): Fix typo in error_print_progname
+	declaration.
+	* manual/search.texi (Array Search Function): Add missing const in
+	lfind prototype.
+	* manual/resource.texi (Limits on Resources): Fix RLIM_INFINITY
+	declaration to use rlim_t.
+	(Basic Scheduling Functions): Remove erroneous const from
+	sched_getparam prototype.  Remove erroneous * from
+	sched_get_priority_max and sched_get_priority_min prototypes.
+	(Resource Usage): Fix summary @comment on vtimes to refer to
+	sys/vtimes.h rather than vtimes.h.
+	Add missing *s in vtimes prototype.
+	(Limits on Resources): Fix ulimit prototype to return long int.
+	* manual/math.texi (SVID Random): Fix lrand48_r and mrand48_r
+	prototypes to use long int rather than double.
+	(BSD Random): Fix initstate and setstate to use char *, not void *.
+	* manual/llio.texi (Asynchronous Reads/Writes): Fix lio_listio64
+	prototype to make second argument 'struct aiocb64 *const[]'.
+	Fix aio_read64 and aio_write64 prototypes to use struct aiocb64.
+	(Status of AIO Operations): Remove erroneous const in aio_return and
+	aio_return64 prototypes.
+	(Synchronizing I/O): Fix sync prototype to return void.
+	* manual/startup.texi (Suboptions): Remove an erroneous const in
+	getsubopt prototype.
+	* manual/getopt.texi (Using Getopt): Add a const in getopt prototype.
+	* manual/users.texi (Lookup Netgroup): Fix getnetgrent_r prototype to
+	use size_t rather than int.
+	(Scanning All Users): Likewise for getpwent_r.
+	(Setting Groups): Add missing const to setgroups prototype.
+	* manual/sysinfo.texi (mtab): Fix typo in getmntent_r prototype.
+	* manual/socket.texi (Host Names): Fix gethostbyaddr and
+	gethostbyaddr_r prototypes to use socklen_t rather than size_t and
+	'const void *' rather than 'const char *'.
+	(Host Address Functions): Likewise for inet_ntop.
+	(Networks Database): Fix getnetbyaddr prototype to use uint32_t.
+	(Receiving Data): Fix recv, recvfrom, recvmsg prototypes to use
+	ssize_t for return value.
+	(Sending Data): Likewise for send, sendto, sendmsg.
+	(Socket Option Functions): Add a missing const in setsockopt prototype.
+	* manual/stdio.texi (Simple Output): Fix fputwc_unlocked prototype to
+	use wchar_t for the argument.
+	(Formatted Input Functions): Fix swscanf prototype to use wchar_t *.
+	* manual/arith.texi (Control Functions): Fix fegetexcept prototype to
+	take no arguments.
+	(Normalization Functions): Fix scalb, scalbf, scalbl prototypes to use
+	double/float/long double for second argument.
+	Fix return types of significand, significandf, significandl.
+	* manual/filesys.texi (Setting Permissions): Use mode_t for second
+	argument in fchmod prototype.
+	(File Owner): Use uid_t and gid_t in fchown prototype.
+	(File Times): Add const to utimes, futimes, and lutimes prototypes.
+	(Making Special Files): Use mode_t and dev_t in mknod prototype.
+	(Scanning Directory Content): Fix scandir and scandir64 prototypes to
+	use 'const struct dirent **' as argument types to CMP function pointer
+	argument.
+	(Symbolic Links): Fix readlink prototype with ssize_t as return value.
+	(File Times): Fix summary magic @comment for struct utimbuf and utime
+	to refer to utime.h, not time.h.
+	* manual/string.texi (Argz Functions): Add missing const in
+	argz_extract and argz_next prototypes.
+	(Finding Tokens in a String): Likewise for basename.
+	(String/Array Comparison): Fix typo in wcscasecmp prototype.
+	(Copying and Concatenation): Fix typo in wmemmove prototype.
+	* manual/signal.texi (Using Pause): Use (void) in pause prototype.
+	(Signal Stack): Remove erroneous const in sigstack prototype.
+	* manual/time.texi (Setting an Alarm): Add missing const in setitimer
+	prototype.
+	(Simple Calendar Time): Likewise for stime.
+	* manual/terminal.texi (BSD Terminal Modes): Add missing const in stty
+	prototype.
+	* manual/sysinfo.texi (System Parameters): Fix mentions of sysctl.h to
+	say sys/sysctl.h instead.
+	* manual/syslog.texi (syslog; vsyslog): Add missing const in syslog
+	and vsyslog prototypes.
+
+2013-02-11  Tom de Vries  <tom@codesourcery.com>
+
+	* string/Makefile (CFLAGS-bug-strstr1.c, CFLAGS-bug-strcasestr1.c):
+	Remove.
+
+2013-02-11  Roland McGrath  <roland@hack.frob.com>
+
+	* misc/sys/mman.h: Fix typo in mremap comment.
+
+2013-02-08  Roland McGrath  <roland@hack.frob.com>
+
+	* manual/examples/mkfsock.c (make_named_socket): Don't add one for
+	the '\0' terminator.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* debug/segfault.c: Don't include <bp-checks.h>.
+	* sysdeps/generic/bp-checks.h: Remove file.
+	* sysdeps/unix/sysv/linux/getdents.c: Don't include <bp-checks.h>.
+	(__GETDENTS): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/i386/brk.c: Don't include <bp-checks.h>.
+	* sysdeps/unix/sysv/linux/i386/getgroups.c: Likewise.
+	(__getgroups): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/i386/setgroups.c: Likewise.
+	(setgroups): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/mmap64.c: Don't include <bp-checks.h>.
+	* sysdeps/unix/sysv/linux/msgrcv.c: Likewise.
+	(__libc_msgrcv): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/msgsnd.c: Don't include <bp-checks.h>.
+	(__libc_msgsnd): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pread.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pread64.c: Don't
+	include <bp-checks.h>.
+	(__libc_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pwrite.c: Don't
+	include <bp-checks.h>.
+	(__libc_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pwrite64.c: Don't
+	include <bp-checks.h>.
+	(__libc_pwrite64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/pread.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/pread64.c: Don't
+	include <bp-checks.h>.
+	(__libc_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/pwrite.c: Don't
+	include <bp-checks.h>.
+	(__libc_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/pwrite64.c: Don't
+	include <bp-checks.h>.
+	(__libc_pwrite64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/pread.c: Don't include <bp-checks.h>.
+	(do_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/pread64.c: Don't include <bp-checks.h>.
+	(do_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/pwrite.c: Don't include <bp-checks.h>.
+	(do_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/pwrite64.c: Don't include <bp-checks.h>.
+	(do_pwrite64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/readv.c: Don't include <bp-checks.h>.
+	(__libc_readv): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/semop.c: Don't include <bp-checks.h>.
+	(semop): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/semtimedop.c: Don't include
+	<bp-checks.h>.
+	(semtimedop): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sh/pread.c: Don't include <bp-checks.h>.
+	(__libc_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sh/pread64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sh/pwrite.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sh/pwrite64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/msgrcv.c: Don't include
+	<bp-checks.h>.
+	(__libc_msgrcv): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/sysctl.c: Don't include <bp-checks.h>.
+	(__sysctl): Don't use CHECK_N.  Remove GKM FIXME comment.
+	* sysdeps/unix/sysv/linux/writev.c: Don't include <bp-checks.h>.
+	(__libc_writev): Don't use CHECK_N.
+
+2013-02-08  Roland McGrath  <roland@hack.frob.com>
+
+	* string/strcpy.c: Removed unused variable.
+
+	* Makeconfig (+sysdep-includes): Define with := rather than =.
+	Use an existing include/ subdir of each sysdeps dir before it.
+
+2013-02-08  Carlos O'Donell  <carlos@redhat.com>
+
+	* nscd/connection.c (register_traced_file): Comment function.
+	[HAVE_INOTIFY] (union __inev): Define.
+	[HAVE_INOTIFY] (inotify_check_files): New function.
+	[HAVE_INOTIFY] (clear_db_cache): Likewise.
+	[HAVE_INOTIFY] (main_loop_poll): Call inotify_check_files and
+	clear_db_cache.
+	[HAVE_INOTIFY] (main_loop_epoll): Likewise.
+
+2013-02-08  Carlos O'Donell  <carlos@redhat.com>
+
+	* elf/dl-cache.c (_dl_load_cache_lookup): Comment that cache is
+	loaded if not already and that a failure is permanent.
+
+2013-02-08  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #15006]
+	* sysdeps/generic/ldconfig.h: Define FLAG_ARM_LIBSF.
+	* elf/cache.c (print_entry): Add FLAG_ARM_LIBSF support.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h (CHECK_1): Remove all definitions.
+	(CHECK_1_NULL_OK): Likewise.
+	* sysdeps/unix/sysv/linux/fxstat.c: Do not include <bp-checks.h>.
+	(__fxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/fxstat64.c: Do not include
+	<bp-checks.h>.
+	(___fxstat64): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/fxstatat.c: Do not include
+	<bp-checks.h>.
+	(__fxstatat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/fxstatat64.c: Do not include
+	<bp-checks.h>.
+	(__fxstatat64): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/fxstat.c: Do not include
+	<bp-checks.h>.
+	(__fxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/fxstatat.c: Do not include
+	<bp-checks.h>.
+	(__fxstatat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/getresgid.c: Do not include
+	<bp-checks.h>.
+	(__getresgid): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/getresuid.c: Do not include
+	<bp-checks.h>.
+	(__getresuid): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/lxstat.c: Do not include
+	<bp-checks.h>.
+	(__lxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/msgctl.c: Do not include
+	<bp-checks.h>.
+	(__old_msgctl): Do not use CHECK_1.
+	(__new_msgctl): Likewise.
+	* sysdeps/unix/sysv/linux/i386/setrlimit.c: Do not include
+	<bp-checks.h>.
+	(__new_setrlimit): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/i386/shmctl.c: Do not include
+	<bp-checks.h>.
+	(__old_shmctl): Do not use CHECK_1.
+	(__new_shmctl): Likewise.
+	* sysdeps/unix/sysv/linux/i386/xstat.c: Do not include
+	<bp-checks.h>.
+	(__xstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/lxstat.c: Do not include <bp-checks.h>.
+	(__lxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/lxstat64.c: Do not include
+	<bp-checks.h>.
+	(___lxstat64): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/msgctl.c: Do not include <bp-checks.h>.
+	(__old_msgctl): Do not use CHECK_1.
+	(__new_msgctl): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/gettimeofday.c: Do not include
+	<bp-checks.h>.
+	(__gettimeofday): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/ptrace.c: Do not include <bp-checks.h>.
+	(ptrace) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/s390/gettimeofday.c: Do not include
+	<bp-checks.h>.
+	(__gettimeofday): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/shmctl.c: Do not include <bp-checks.h>.
+	(__old_shmctl): Do not use CHECK_1_NULL_OK.
+	(__new_shmctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/sigtimedwait.c: Do not include
+	<bp-checks.h>.
+	(do_sigtimedwait): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/sigwaitinfo.c: Do not include
+	<bp-checks.h>.
+	(do_sigwaitinfo): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/msgctl.c: Do not include
+	<bp-checks.h>.
+	(msgctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/shmctl.c: Do not include
+	<bp-checks.h>.
+	(shmctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/ustat.c: Do not include <bp-checks.h>.
+	(ustat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/wordsize-64/fxstat.c: Do not include
+	<bp-checks.h>.
+	(__fxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/wordsize-64/fxstatat.c: Do not include
+	<bp-checks.h>.
+	(__fxstatat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/wordsize-64/lxstat.c: Do not include
+	<bp-checks.h>.
+	(__lxstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/wordsize-64/xstat.c: Do not include
+	<bp-checks.h>.
+	(__xstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/xstat.c: Do not include <bp-checks.h>.
+	(__xstat): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/xstat64.c: Do not include <bp-checks.h>.
+	(___xstat64): Do not use CHECK_1.
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h (CHECK_BOUNDS_LOW): Remove all
+	definitions.
+	(CHECK_BOUNDS_HIGH): Likewise.
+	* string/strcpy.c: Do not include <bp-checks.h>.
+	(strcpy): Do not use CHECK_BOUNDS_LOW and CHECK_BOUNDS_HIGH.
+
+2013-02-07  Roland McGrath  <roland@hack.frob.com>
+
+	* nscd/nscd-client.h (__nscd_drop_map_ref):
+	Add __attribute__ ((unused)).
+	* nis/nss-nisplus.h (niserr2nss): Likewise.
+
+	* sysdeps/x86_64/multiarch/strstr.c (__m128i_strloadu): Define it only
+	under [!(USE_AS_STRCASESTR && STRCASESTR_NONASCII)].
+
+	* csu/libc-tls.c (init_static_tls, init_slotinfo):
+	Remove inline keyword.
+	* include/rounding-mode.h (round_away): Likewise.
+	* libio/wfileops.c (adjust_wide_data): Likewise.
+	* sysdeps/x86_64/multiarch/strstr.c (__m128i_strloadu): Likewise.
+	(__m128i_strloadu_tolower): Likewise.
+	* sysdeps/x86_64/multiarch/strcasestr-nonascii.c
+	(__m128i_strloadu_tolower): Likewise.
+	* time/mktime.c (ydhms_diff): Likewise.
+	* locale/elem-hash.h (elem_hash): Likewise.
+	* locale/setlocale.c (setdata): Likewise.
+	* posix/regex_internal.h (re_string_char_size_at): Likewise.
+	(re_string_wchar_at): Likewise.
+	(bitset_not, bitset_merge, bitset_mask): Likewise.
+	[!(__GNUC__ > 3)] (inline): Remove macro.
+	* nscd/nscd-client.h (__nscd_drop_map_ref): Remove inline keyword.
+	* elf/dl-deps.c (_dl_map_object_deps: preload): Likewise.
+	* elf/tlsdeschtab.h (_dl_tlsdesc_resolve_early_return_p): Likewise.
+	(_dl_tlsdesc_wake_up_held_fixups): Likewise.
+	* string/memcmp.c (memcmp_bytes): Likewise.
+	* locale/programs/locarchive.c (compute_hashval): Likewise.
+	* sysdeps/ieee754/dbl-64/x2y2m1.c (mul_split): Likewise.
+	* sysdeps/unix/sysv/linux/fips-private.h (fips_enabled_p): Likewise.
+	* resolv/res_send.c (evNowTime, evCmpTime): Likewise.
+	* nss/getent.c (print_rpc, print_protocols): Likewise.
+	(print_passwd, print_group, print_aliases): Likewise.
+	* nis/nss-nisplus.h (niserr2nss): Likewise.
+	* nscd/connections.c (restart_p): Likewise.
+	Change return type to bool.
+
+2013-02-05  Roland McGrath  <roland@hack.frob.com>
+
+	* Makeconfig (all-Depend-files): Add existing
+	$(sorted-subdirs:=/Depend) files.
+	(all-subdirs): Remove nss.
+	* sysdeps/unix/inet/Subdirs: Add it here instead.
+	* hesiod/Depend: New file.
+
+	* elf/dl-hwcaps.c (_dl_important_hwcaps): Use a variable-length array
+	instead of calling alloca.
+
+	* io/lseek.c (__lseek): Rename to __libc_lseek.
+	Define __lseek as an alias.
+
+	* sysdeps/generic/malloc-sysdep.h: Include <stdbool.h> and <unistd.h>.
+
+2013-02-04  Carlos O'Donell  <carlos@redhat.com>
+
+	* stdlib/getenv.c (getenv): Assume __BIG_ENDIAN in the
+	else clause and remove check for non-standard endianness.
+
+2013-02-04  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2013-02-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h [__BOUNDED_POINTERS__]
+	(__ubp_memchr): Remove prototype.
+	[__BOUNDED_POINTERS__] (_CHECK_STRING): Remove macro.
+	[__BOUNDED_POINTERS__] (CHECK_STRING): Likewise.
+	[__BOUNDED_POINTERS__] (CHECK_STRING_NULL_OK): Likewise.
+	[!__BOUNDED_POINTERS__] (CHECK_STRING): Likewise.
+	* sysdeps/i386/memchr.S [!__BOUNDED_POINTERS__] (__ubp_memchr):
+	Remove alias.
+	* sysdeps/sparc/sparc32/memchr.S [!__BOUNDED_POINTERS__]
+	(__ubp_memchr): Likewise.
+	* sysdeps/sparc/sparc64/memchr.S [!__BOUNDED_POINTERS__]
+	(__ubp_memchr): Likewise.
+	* sysdeps/unix/sysv/linux/execve.c: Do not include <bp-checks.h>.
+	(__execve) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__execve) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/unix/sysv/linux/fxstatat.c (__fxstatat): Do not use
+	CHECK_STRING.
+	* sysdeps/unix/sysv/linux/fxstatat64.c (__fxstatat64): Likewise.
+	* sysdeps/unix/sysv/linux/getcwd.c: Do not include <bp-checks.h>.
+	(__getcwd): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/i386/chown.c: Do not include
+	<bp-checks.h>.
+	(__real_chown): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/i386/fchownat.c: Do not include
+	<bp-checks.h>.
+	(fchownat): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/i386/fxstatat.c (__fxstatat): Do not use
+	CHECK_STRING.
+	* sysdeps/unix/sysv/linux/i386/lchown.c: Do not include
+	<bp-checks.h>.
+	(__lchown): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/i386/lxstat.c (__lxstat): Likewise.
+	* sysdeps/unix/sysv/linux/i386/xstat.c (__xstat): Likewise.
+	* sysdeps/unix/sysv/linux/lxstat.c (__lxstat): Likewise.
+	* sysdeps/unix/sysv/linux/lxstat64.c (___lxstat64): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/truncate64.c: Do not
+	include <bp-checks.h>.
+	(truncate64): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/s390/s390-32/chown.c: Do not include
+	<bp-checks.h>.
+	(__real_chown): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/s390/s390-32/lchown.c: Do not include
+	<bp-checks.h>.
+	(__lchown): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/sh/chown.c: Do not include
+	<bp-checks.h>.
+	(__chown): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/truncate64.c: Do not include
+	<bp-checks.h>.
+	(truncate64): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/wordsize-64/lxstat.c (__lxstat):
+	Likewise.
+	* sysdeps/unix/sysv/linux/xmknod.c: Do not include <bp-checks.h>.
+	(__xmknod): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/xmknodat.c: Do not include
+	<bp-checks.h>.
+	(__xmknodat): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/xstat.c (__xstat): Likewise.
+	* sysdeps/unix/sysv/linux/xstat64.c (___xstat64): Likewise.
+
+2013-02-04  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #14142]
+	* include/errno.h: Redefine errno only if !NOT_IN_libc || IN_LIB.
+	* include/netdb.h: Likewise for h_errno.
+	* elf/tst-stackguard1.c: Include <tls.h>.
+
+2013-02-02  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* elf/link.h (struct link_map): Extend the l_addr comment.
+	* include/link.h (struct link_map): Likewise.
+
+2013-02-01  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h (BOUNDED_N): Remove all definitions.
+	(BOUNDED_1): Remove macro.
+	* debug/backtrace.c: Don't include <bp-checks.h>.
+	(ADVANCE_STACK_FRAME): Don't use BOUNDED_1.
+	(__backtrace): Likewise.
+	* sysdeps/powerpc/powerpc32/backtrace.c: Don't include
+	<bp-checks.h>.
+	(__backtrace): Don't use BOUNDED_1.
+	* sysdeps/powerpc/powerpc64/backtrace.c: Don't include
+	<bp-checks.h>.
+	(__backtrace): Don't use BOUNDED_1.
+	* sysdeps/sparc/backtrace.c: Don't include <bp-checks.h>.
+	(__backtrace): Don't use BOUNDED_1.
+	* sysdeps/unix/sysv/linux/shmat.c: Don't include <bp-checks.h>.
+	(shmat): Don't use BOUNDED_N.
+
+2013-01-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/generic/bp-start.h: Remove file.
+	* csu/libc-start.c: Don't include <bp-start.h>.
+	(LIBC_START_MAIN): Set up __environ directly instead of using
+	INIT_ARGV_and_ENVIRON.
+	* sysdeps/unix/sysv/linux/powerpc/libc-start.c: Don't include
+	<bp-start.h>.
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h (CHECK_IOCTL): Remove both
+	definitions.
+	(CHECK_FCNTL): Likewise.
+	(CHECK_N_PAGES): Likewise.
+
+	[BZ #13550]
+	* sysdeps/generic/bp-checks.h (CHECK_SIGSET): Remove both
+	definitions.
+	(CHECK_SIGSET_NULL_OK): Likewise.
+	* sysdeps/unix/sysv/linux/sigpending.c: Don't include
+	<bp-checks.h>.
+	(sigpending): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sigprocmask.c: Don't include
+	<bp-checks.h>.
+	(__sigprocmask): Don't use CHECK_SIGSET and CHECK_SIGSET_NULL_OK.
+	* sysdeps/unix/sysv/linux/sigsuspend.c: Don't include
+	<bp-checks.h>.
+	(do_sigsuspend): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sigtimedwait.c (do_sigtimedwait): Don't
+	use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sigwait.c: Don't include <bp-checks.h>.
+	(do_sigwait): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sigwaitinfo.c (do_sigwaitinfo): Don't
+	use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sigpending.c: Don't
+	include <bp-checks.h>.
+	(sigpending): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/sigprocmask.c: Don't
+	include <bp-checks.h>.
+	(__sigprocmask): Don't use CHECK_SIGSET and CHECK_SIGSET_NULL_OK.
+	* sysdeps/unix/sysv/linux/x86_64/sigpending.c: Don't include
+	<bp-checks.h>.
+	(sigpending): Don't use CHECK_SIGSET.
+	* sysdeps/unix/sysv/linux/x86_64/sigprocmask.c: Don't include
+	<bp-checks.h>.
+	(__sigprocmask): Don't use CHECK_SIGSET and CHECK_SIGSET_NULL_OK.
+
+	[BZ #13550]
+	* sysdeps/generic/bp-semctl.h: Remove file.
+	* sysdeps/unix/sysv/linux/i386/semctl.c: Don't include
+	<bp-checks.h> and <bp-semctl.h>.
+	(__old_semctl): Don't use CHECK_SEMCTL.
+	(__new_semctl): Likewise.
+	* sysdeps/unix/sysv/linux/semctl.c: Don't include <bp-checks.h>
+	and <bp-semctl.h>.
+	(__old_semctl): Don't use CHECK_SEMCTL.
+	(__new_semctl): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/semctl.c: Don't include
+	<bp-checks.h> and <bp-semctl.h>.
+	(__old_semctl): Don't use CHECK_SEMCTL.
+	(__new_semctl): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/semctl.c: Don't include
+	<bp-checks.h> and <bp-semctl.h>.
+	(semctl): Don't use CHECK_SEMCTL.
+
+	[BZ #13550]
+	* Makerules (elide-bp-thunks): Remove variable.
+	(elide-routines.oS): Don't use $(elide-bp-thunks).
+	(elide-routines.os): Likewise.
+	(elide-routines.o): Likewise.
+	(elide-routines.op): Likewise.
+	(elide-routines.og): Likewise.
+	(objects): Don't use $(bp-thunks).
+	* sysdeps/unix/Makefile ($(common-objpfx)s-proto-bp.d): Do not
+	include.
+	(common-generated): Do not add s-proto-bp.d.
+	* sysdeps/unix/make-syscalls.sh (ptr): Remove variable.
+	(int): Likewise.
+	(typ): Likewise.
+	Do not generate makefile rules for bounded-pointer thunks.
+	* sysdeps/generic/bp-thunks.h: Remove file.
+	* sysdeps/unix/sysv/linux/i386/bp-thunks.h: Likewise.
+	* sysdeps/unix/s-proto-bp.S: Likewise.
+
+	[BZ #15062]
+	* math/k_casinh.c (__kernel_casinh): Compute real and imaginary
+	parts of result separately when argument is not close to line from
+	-i to i and one part of argument is small.
+	* math/k_casinhf.c (__kernel_casinhf): Likewise.
+	* math/k_casinhl.c (__kernel_casinhl): Likewise.
+	* math/libm-test.inc (cacos_test): Add more tests.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-01-31  David S. Miller  <davem@davemloft.net>
+
+	* po/de.po: Update from translation team.
+
+2013-01-25  Maxim Kuvyrkov  <maxim.kuvyrkov@gmail.com>
+
+	* time/tzfile.c: Include stdint.h for SIZE_MAX.
+
+2013-01-25  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* configure.in (_AC_PROG_CC_C89): New definition.
+	* configure: Regenerate.
+
+	* configure.in (AC_PROG_CPP): New definition.
+	* configure: Regenerate.
+
+2013-01-23  Joseph Myers  <joseph@codesourcery.com>
+
+	* debug/tst-backtrace.h: New file.
+	* debug/tst-backtrace2.c: Include tst-backtrace.h.
+	(ret): Remove variable.
+	(x): Likewise.
+	(FAIL): Remove macro.
+	(NO_INLINE): Likewise.
+	(fn1): Use match function instead of strstr.
+	* debug/tst-backtrace3.c: Include tst-backtrace.h.
+	(ret): Remove variable.
+	(x): Likewise.
+	(FAIL): Remove macro.
+	(NO_INLINE): Likewise.
+	(fn): Use match function instead of strstr.
+	* debug/tst-backtrace4.c: Include tst-backtrace.h.
+	(ret): Remove variable.
+	(x): Likewise.
+	(FAIL): Remove macro.
+	(NO_INLINE): Likewise.
+	(handle_signal): Use match function instead of strstr.
+	* debug/tst-backtrace5.c: Include tst-backtrace.h.
+	(ret): Remove variable.
+	(x): Likewise.
+	(FAIL): Remove macro.
+	(NO_INLINE): Likewise.
+	(handle_signal): Use match function instead of strstr.
+
+2013-01-23  Roland McGrath  <roland@hack.frob.com>
+
+	* misc/sys/cdefs.h (__glibc_unlikely, __glibc_likely): Fix whitespace.
+
+2013-01-23  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/sparcv9/bits/atomic.h
+	(__arch_compare_and_exchange_val_32_acq): Use %g0 as second
+	argument of CAS if possible.
+	* sysdeps/sparc/sparc64/bits/atomic.h
+	(__arch_compare_and_exchange_val_32_acq): Likewise.
+	(__arch_compare_and_exchange_val_64_acq): Likewise.
+
+2013-01-23  Pino Toscano  <toscano.pino@tiscali.it>
+
+	* sysdeps/unix/sysv/linux/ulimit.c: Moved to ...
+	* sysdeps/posix/ulimit.c: ... this.
+	Include <limits.h>.
+	* sysdeps/unix/bsd/ulimit.c: Remove file.
+
+2013-01-23  Adam Conrad  <adconrad@0c3.net>
+
+	* elf/Makefile (LDFLAGS-tst-array2): Add $(no-as-needed).
+	(LDFLAGS-tst-array5): Likewise.
+
+2013-01-23  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15036]
+	* bits/wchar.h (__WCHAR_MAX): Define based on __WCHAR_MAX__, or
+	based on [L'\0' - 1 > 0] if [!__WCHAR_MAX__].
+	(__WCHAR_MIN): Likewise, using __WCHAR_MIN__.
+	* sysdeps/unix/sysv/linux/x86/bits/wchar.h: Remove.
+
+2013-01-21  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/backtrace.c: New file.
+	* sysdeps/sparc/sparc32/backtrace.h: New file.
+	* sysdeps/sparc/sparc32/sparcv9/backtrace.h: New file.
+	* sysdeps/sparc/sparc64/backtrace.h: New file.
+	* sysdeps/sparc/sparc64/backtrace.c: Delete.
+	* sysdeps/sparc/Makefile (CFLAGS-backtrace.c): Add
+	-funwind-tables.
+
+2013-01-21  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15020]
+	* posix/wordexp.c (exec_comm): Avoid busy loop when command has
+	closed its stdout.
+
+2013-01-20  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c: Don't include
+	"mpa2.h".
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c: Likewise.
+
 2013-01-18  Joseph Myers  <joseph@codesourcery.com>
 	    Mark Mitchell  <mark@codesourcery.com>
 	    Tom de Vries  <tom@codesourcery.com>
@@ -4552,7 +6549,7 @@
 	(do_one_test): Call check_result.
 	(test_main): Call check1.
 	* string/bug-strstr1.c (main): Moved to ...
-	* string/test-strchr.c (check1): Here.  New function.
+	* string/test-strstr.c (check1): Here.  New function.
 	(do_one_test): Break out result checking code into ...
 	(check_result): This.  New function.
 	(do_one_test): Call check_result.

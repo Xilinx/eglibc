@@ -16,6 +16,8 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
+/* ??? Needs more rearrangement for the LDM to handle thumb mode.  */
+#define NO_THUMB
 #include <sysdep.h>
 #define _SETJMP_H
 #define _ASM
@@ -105,12 +107,12 @@ ENTRY (__longjmp)
 
 #ifdef NEED_HWCAP
 # ifdef IS_IN_rtld
-1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - 8
+1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - PC_OFS
 .Lrtld_local_ro:
 	.long	C_SYMBOL_NAME(_rtld_local_ro)(GOTOFF)
 # else
 #  ifdef PIC
-1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - 8
+1:	.long	_GLOBAL_OFFSET_TABLE_ - 0b - PC_OFS
 .Lrtld_global_ro:
 	.long	C_SYMBOL_NAME(_rtld_global_ro)(GOT)
 #  else

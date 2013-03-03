@@ -21,25 +21,20 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE+4	/* space for 1 saved reg */
+#define PARMS	4+4	/* space for 1 saved reg */
 #define RTN	PARMS
-#define DEST	RTN+RTN_SIZE
-#define SRC	DEST+PTR_SIZE
+#define DEST	RTN
+#define SRC	DEST+4
 
 	.text
-ENTRY (BP_SYM (strcat))
-	ENTER
+ENTRY (strcat)
 
 	pushl %edi		/* Save callee-safe register.  */
 	cfi_adjust_cfa_offset (4)
 
 	movl DEST(%esp), %edx
 	movl SRC(%esp), %ecx
-	CHECK_BOUNDS_LOW (%edx, DEST(%esp))
-	CHECK_BOUNDS_LOW (%ecx, SRC(%esp))
 
 	testb $0xff, (%ecx)	/* Is source string empty? */
 	jz L(8)			/* yes => return */
@@ -260,14 +255,11 @@ L(9):	movb %al, (%ecx,%edx)	/* store first byte of last word */
 
 	movb %ah, 3(%ecx,%edx)	/* store fourth byte of last word */
 
-L(8):	/* GKM FIXME: check high bounds */
-	movl DEST(%esp), %eax	/* start address of destination is result */
-	RETURN_BOUNDED_POINTER (DEST(%esp))
+L(8):	movl DEST(%esp), %eax	/* start address of destination is result */
 	popl %edi		/* restore saved register */
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (edi)
 
-	LEAVE
-	RET_PTR
-END (BP_SYM (strcat))
+	ret
+END (strcat)
 libc_hidden_builtin_def (strcat)

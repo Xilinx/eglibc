@@ -22,6 +22,8 @@
 
 #include <sysdep.h>
 
+	.set	nomips16
+
 #ifdef __PIC__
 	.option pic2
 #endif
@@ -38,4 +40,4 @@ ENTRY (setjmp)
 #else
 	j	C_SYMBOL_NAME (__sigsetjmp)
 #endif
-	.end	setjmp
+END (setjmp)

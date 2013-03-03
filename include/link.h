@@ -87,7 +87,8 @@ struct link_map
     /* These first few members are part of the protocol with the debugger.
        This is the same format used in SVR4.  */
 
-    ElfW(Addr) l_addr;		/* Base address shared object is loaded at.  */
+    ElfW(Addr) l_addr;		/* Difference between the address in the ELF
+				   file and the addresses in memory.  */
     char *l_name;		/* Absolute file name object was found in.  */
     ElfW(Dyn) *l_ld;		/* Dynamic section of the shared object.  */
     struct link_map *l_next, *l_prev; /* Chain of loaded objects.  */
@@ -300,6 +301,9 @@ struct link_map
     ptrdiff_t l_tls_offset;
     /* Index of the module in the dtv array.  */
     size_t l_tls_modid;
+
+    /* Number of thread_local objects constructed by this DSO.  */
+    size_t l_tls_dtor_count;
 
     /* Information used to change permission after the relocations are
        done.  */

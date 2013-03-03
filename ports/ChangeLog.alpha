@@ -1,3 +1,57 @@
+2013-02-19  Richard Henderson  <rth@redhat.com>
+
+	[BZ #14920]
+	* sysdeps/unix/sysv/linux/alpha/nptl/lowlevellock.h
+	(FUTEX_WAIT_REQUEUE_PI): Define.
+	(FUTEX_CMP_REQUEUE_PI): Likewise.
+	(lll_futex_wait_requeue_pi): Likewise.
+	(lll_futex_timed_wait_requeue_pi): Likewise.
+	(lll_futex_cmp_requeue_pi): Likewise.
+
+2013-02-20  Richard Henderson  <rth@redhat.com>
+
+	* sysdeps/unix/alpha/sysdep.h: Include <errno.h>.
+
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/alpha/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+
+2013-02-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/alpha/memchr.c: Do not include <bp-sym.h>.
+	(memchr): Do not use BP_SYM in weak_alias.
+
+2013-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/alpha/sigaction.c
+	(__syscall_rt_sigaction): Do not use __unbounded in prototype.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/alpha/fdatasync.c: Don't include
+	<bp-checks.h>.
+	* sysdeps/unix/sysv/linux/alpha/gethostname.c: Likewise.
+	(__gethostname): Don't use CHECK_N.
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/alpha/msgctl.c: Do not include
+	<bp-checks.h>.
+	(__new_msgctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/alpha/shmctl.c: Do not include
+	<bp-checks.h>.
+	(__new_shmctl): Do not use CHECK_1.
+
+2013-01-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/alpha/semctl.c: Don't include
+	<bp-checks.h> and <bp-semctl.h>.
+	(__new_semctl): Don't use CHECK_SEMCTL.
+
 2013-01-08  Andreas Jaeger  <aj@suse.de>
 
 	[BZ# 14985]

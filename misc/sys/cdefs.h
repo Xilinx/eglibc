@@ -128,14 +128,6 @@
 #endif
 
 
-/* Support for bounded pointers.  */
-#ifndef __BOUNDED_POINTERS__
-# define __bounded	/* nothing */
-# define __unbounded	/* nothing */
-# define __ptrvalue	/* nothing */
-#endif
-
-
 /* Fortify support.  */
 #define __bos(ptr) __builtin_object_size (ptr, __USE_FORTIFY_LEVEL > 1)
 #define __bos0(ptr) __builtin_object_size (ptr, 0)
@@ -220,6 +212,15 @@
 # define __attribute_malloc__ __attribute__ ((__malloc__))
 #else
 # define __attribute_malloc__ /* Ignore */
+#endif
+
+/* Tell the compiler which arguments to an allocation function
+   indicate the size of the allocation.  */
+#if __GNUC_PREREQ (4, 3)
+# define __attribute_alloc_size__(params) \
+  __attribute__ ((__alloc_size__ params))
+#else
+# define __attribute_alloc_size__(params) /* Ignore.  */
 #endif
 
 /* At some point during the gcc 2.96 development the `pure' attribute
@@ -376,11 +377,11 @@
 #endif
 
 #if __GNUC__ >= 3
-# define __glibc_unlikely(cond) __builtin_expect((cond), 0)
-# define __glibc_likely(cond) __builtin_expect((cond), 1)
+# define __glibc_unlikely(cond)	__builtin_expect ((cond), 0)
+# define __glibc_likely(cond)	__builtin_expect ((cond), 1)
 #else
-# define __glibc_unlikely(cond) (cond)
-# define __glibc_likely(cond) (cond)
+# define __glibc_unlikely(cond)	(cond)
+# define __glibc_likely(cond)	(cond)
 #endif
 
 #include <bits/wordsize.h>

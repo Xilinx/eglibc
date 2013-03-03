@@ -1,3 +1,318 @@
+2013-02-27  Chung-Lin Tang  <cltang@codesourcery.com>
+            Maciej W. Rozycki  <macro@codesourcery.com>
+            Maxim Kuvyrkov  <maxim@codesourcery.com>
+
+	* sysdeps/mips/abort-instr.h (ABORT_INSTRUCTION) [__mips16]:
+	New macro.
+	* sysdeps/mips/dl-machine.h (elf_machine_load_address): Add
+	MIPS16 version of assembly code.
+	(RTLD_START) [__mips16]: New macro.
+	* sysdeps/mips/fpu_control.h (__mips_fpu_getcw): New prototype.
+	(__mips_fpu_setcw): Likewise.
+	(_FPU_GETCW) [__mips16]: New macro.
+	(_FPU_SETCW) [__mips16]: Likewise.
+	* sysdeps/mips/machine-gmon.h (MCOUNT): Add `.set nomips16'.
+	* sysdeps/mips/tls-macros.h (LOAD_GP) [__mips16]: New macro.
+	(TLS_GD, TLS_LD, TLS_IE, TLS_LE) [__mips16]: Likewise.
+	* sysdeps/mips/bits/atomic.h: Also use __atomic_* builtins with
+	GCC 4.7 in MIPS16 code.
+	(atomic_compare_and_exchange_val_acq) [__mips16]: New macro.
+	(atomic_compare_and_exchange_bool_acq) [__mips16]: Likewise.
+	(atomic_exchange_acq) [__mips16]: Likewise.
+	(atomic_exchange_and_add) [__mips16]: Likewise.
+	(atomic_bit_test_set) [__mips16]: Likewise.
+	(atomic_and, atomic_and_val) [__mips16]: Likewise.
+	(atomic_or, atomic_or_val) [__mips16]: Likewise.
+	(atomic_full_barrier) [__mips16]: Likewise.
+	* sysdeps/mips/nptl/tls.h (READ_THREAD_POINTER) [__mips16]:
+	Likewise.
+	* sysdeps/mips/sys/tas.h (_test_and_set): Add `__nomips16__'
+	attribute.
+	* sysdeps/unix/mips/sysdep.h (PSEUDO_NOERRNO): Add
+	`.set nomips16'.
+	(PSEUDO_ERRVAL): Likewise.
+	* sysdeps/unix/mips/mips32/sysdep.h (PSEUDO): Likewise.
+	* sysdeps/unix/mips/mips64/n32/sysdep.h (PSEUDO): Likewise.
+	* sysdeps/unix/mips/mips64/n64/sysdep.h (PSEUDO): Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips32/sysdep.h
+	(INTERNAL_SYSCALL, INTERNAL_SYSCALL_NCS) [__mips16]: New macros.
+	(INTERNAL_SYSCALL_MIPS16) [__mips16]: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall.h:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/nptl/sysdep-cancel.h (PSEUDO):
+	Add `.set nomips16'.
+	* sysdeps/mips/bsd-_setjmp.S (_setjmp): Likewise.
+	* sysdeps/mips/bsd-setjmp.S (setjmp): Likewise.
+	* sysdeps/mips/memset.S (memset): Likewise.
+	* sysdeps/mips/setjmp.S (__sigsetjmp): Likewise.
+	* sysdeps/mips/start.S (ENTRY_POINT) [__mips16]: New function.
+	* sysdeps/mips/mips32/crti.S: Add `.set nomips16'.
+	* sysdeps/mips/mips32/crtn.S: Likewise.
+	* sysdeps/mips/mips64/n32/crti.S: Likewise.
+	* sysdeps/mips/mips64/n32/crtn.S: Likewise.
+	* sysdeps/mips/mips64/n64/crti.S: Likewise.
+	* sysdeps/mips/mips64/n64/crtn.S: Likewise.
+	* sysdeps/unix/mips/sysdep.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/clone.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/getcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/makecontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/setcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/swapcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/mips/vfork.S: Likewise.
+	* sysdeps/mips/__longjmp.c (__longjmp): Rename function to...
+	(____longjmp): ... this.  Make static and add `nomips16'
+	attribute.
+	(__longjmp): New alias.
+	* sysdeps/mips/dl-trampoline.c (_dl_runtime_resolve) [__mips16]:
+	New function.
+	(_dl_runtime_pltresolve): Likewise.
+	* sysdeps/mips/setjmp_aux.c (__sigsetjmp_aux): Add `nomips16'
+	attribute.
+	* sysdeps/mips/fpu/e_sqrt.c (__ieee754_sqrt): Likewise.
+	* sysdeps/mips/fpu/e_sqrtf.c (__ieee754_sqrtf): Likewise.
+	* sysdeps/unix/sysv/linux/mips/brk.c (__brk): Rewrite in terms
+	of INTERNAL_SYSCALL.
+	* sysdeps/mips/mips32/fpu/fpu_control.c: New file.
+	* sysdeps/mips/mips32/mips16/add_n.c: New file.
+	* sysdeps/mips/mips32/mips16/addmul_1.c: New file.
+	* sysdeps/mips/mips32/mips16/lshift.c: New file.
+	* sysdeps/mips/mips32/mips16/mul_1.c: New file.
+	* sysdeps/mips/mips32/mips16/rshift.c: New file.
+	* sysdeps/mips/mips32/mips16/sub_n.c: New file.
+	* sysdeps/mips/mips32/mips16/submul_1.c: New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall0.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall1.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall2.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall3.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall4.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall5.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall6.c:
+	New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/mips16-syscall7.c:
+	New file.
+	* sysdeps/mips/mips32/fpu/Versions: New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/Versions: New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/nptl/libc.abilist: New
+	file.
+	* sysdeps/mips/mips32/mips16/fpu/Makefile: New file.
+	* sysdeps/unix/sysv/linux/mips/mips32/mips16/Makefile: New file.
+	* sysdeps/mips/preconfigure: Handle o32 MIPS16 compilation.
+
+2013-02-20  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/mips/bits/nan.h [!__GNUC__] (__nan_union): Change
+	__attribute__ ((unused)) to __attribute__ ((__unused__)).
+
+	* sysdeps/unix/sysv/linux/mips/mips32/nptl/libc.abilist: Sort
+	properly.
+
+	* sysdeps/mips/bits/nan.h [!__GNUC__] (__nan_union): Change
+	__attribute_used__ to __attribute__ ((unused)).
+
+	* sysdeps/mips/bits/nan.h [!__GNUC__] (__nan_union): Add
+	__attribute_used__.
+
+	* sysdeps/mips/bits/nan.h: Align to generic IEEE 754 file.
+
+2013-02-19  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14920]
+	* sysdeps/unix/sysv/linux/mips/nptl/lowlevellock.h
+	(FUTEX_WAIT_REQUEUE_PI): Define.
+	(FUTEX_CMP_REQUEUE_PI): Likewise.
+	(lll_futex_wait_requeue_pi): Likewise.
+	(lll_futex_timed_wait_requeue_pi): Likewise.
+	(lll_futex_cmp_requeue_pi): Likewise.
+
+2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/unix/sysv/linux/mips/mips32/nptl/libc.abilist: Add
+	__cxa_thread_atexit_impl.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/nptl/libc.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/nptl/libc.abilist:
+	Likewise.
+
+2013-02-13  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/mips/mips64/fxstat64.c (__fxstat64): Do
+	not use __ptrvalue.
+	* sysdeps/unix/sysv/linux/mips/mips64/fxstatat64.c (__fxstatat64):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/lxstat64.c (__lxstat64):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/xstat64.c (__xstat64):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/sigaction.c (__libc_sigaction):
+	Likewise.
+
+2013-02-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/include/sys/asm.h: New file.
+	* sysdeps/mips/mips64/bsd-_setjmp.S (_setjmp): Use SETUP_GP64_REG
+	and RESTORE_GP64_REG.
+	* sysdeps/mips/mips64/bsd-setjmp.S (setjmp): Likewise.
+	* sysdeps/mips/mips64/setjmp.S (__sigsetjmp): Likewise.
+	* sysdeps/mips/sys/asm.h (__mips_cfi_startproc): Define to empty.
+	(__mips_cfi_endproc): Likewise.
+	(LEAF): Use __mips_cfi_startproc.
+	(NESTED): Likewise.
+	(END): Use __mips_cfi_endproc.
+	(EXPORT): Use __mips_cfi_startproc.
+	* sysdeps/unix/mips/mips32/sysdep.h (PSEUDO): Add CFI information
+	for error-handling code in both definitions.
+	* sysdeps/unix/mips/mips64/n32/sysdep.h (PSEUDO): Likewise.
+	* sysdeps/unix/mips/mips64/n64/sysdep.h (PSEUDO): Likewise.
+	* sysdeps/unix/mips/sysdep.h (ENTRY): Use cfi_startproc.
+	(END): Use cfi_endproc.
+	(PSEUDO_END): Likewise.
+	(PSEUDO_END_NOERRNO): Likewise.
+	(PSEUDO_END_ERRVAL): Likewise.
+	* sysdeps/unix/sysv/linux/mips/clone.S (__clone): Add CFI
+	information.  Use SETUP_GP64_STACK and RESTORE_GP64_STACK.
+	* sysdeps/unix/sysv/linux/mips/getcontext.S (__getcontext):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/makecontext.S (__makecontext):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/ioctl.S (__ioctl): Use
+	SETUP_GP64_REG and RESTORE_GP64_REG.
+	* sysdeps/unix/sysv/linux/mips/mips64/nptl/sysdep-cancel.h
+	[(!NOT_IN_libc || IS_IN_libpthread || IS_IN_librt) && __PIC__]
+	(PSEUDO): Use cfi_endproc before ENTRY.
+	* sysdeps/unix/sysv/linux/mips/mips64/syscall.S (syscall): Add CFI
+	information.  Use SETUP_GP64_REG and RESTORE_GP64_REG.
+	* sysdeps/unix/sysv/linux/mips/nptl/sysdep-cancel.h [(!NOT_IN_libc
+	|| IS_IN_libpthread || IS_IN_librt) && __PIC__] (PSEUDO): Use
+	cfi_endproc before ENTRY.
+	* sysdeps/unix/sysv/linux/mips/setcontext.S (__setcontext): Add
+	CFI information.  Use SETUP_GP64_STACK and RESTORE_GP64_STACK.
+	* sysdeps/unix/sysv/linux/mips/swapcontext.S (__swapcontext):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/vfork.S (__vfork): Add CFI
+	information.  Use SETUP_GP64_REG and RESTORE_GP64_REG.
+
+2013-02-08  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/mips/mips64/fxstat64.c: Don't include
+	<bp-checks.h>.
+	* sysdeps/unix/sysv/linux/mips/pread.c: Likewise.
+	(__libc_pread): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/mips/pread64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pread64): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/mips/pwrite.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite): Don't use CHECK_N.
+	* sysdeps/unix/sysv/linux/mips/pwrite64.c: Don't include
+	<bp-checks.h>.
+	(__libc_pwrite64): Don't use CHECK_N.
+
+	* sysdeps/mips/add_n.S (__mpn_add_n): Use END.
+	* sysdeps/mips/bsd-_setjmp.S (_setjmp): Likewise.
+	* sysdeps/mips/bsd-setjmp.S (setjmp): Likewise.
+	* sysdeps/mips/mips64/add_n.S (__mpn_add_n): Use ENTRY and END.
+	* sysdeps/mips/mips64/addmul_1.S (__mpn_addmul_1): Likewise.
+	* sysdeps/mips/mips64/bsd-_setjmp.S (_setjmp): Use END.
+	* sysdeps/mips/mips64/bsd-setjmp.S (setjmp): Likewise.
+	* sysdeps/mips/mips64/lshift.S (__mpn_lshift): Use ENTRY and END.
+	* sysdeps/mips/mips64/mul_1.S (__mpn_mul_1): Likewise.
+	* sysdeps/mips/mips64/rshift.S (__mpn_rshift): Likewise.
+	* sysdeps/mips/mips64/setjmp.S (__sigsetjmp): Use END.
+	* sysdeps/mips/mips64/sub_n.S (__mpn_sub_n): Use ENTRY and END.
+	* sysdeps/mips/mips64/submul_1.S (__mpn_submul_1): Likewise.
+	* sysdeps/mips/setjmp.S (__sigsetjmp): Use END.
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/mips/mips64/msgctl.c: Do not include
+	<bp-checks.h>.
+	(__msgctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/mips/mips64/shmctl.c: Do not include
+	<bp-checks.h>.
+	(__shmctl): Do not use CHECK_1.
+	* sysdeps/unix/sysv/linux/mips/ustat.c: Do not include
+	<bp-checks.h>.
+	(ustat): Do not use CHECK_1.
+
+2013-02-05  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/mips32/sysdep.h: Add a missing
+	space in asm register specifiers throughout.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/sysdep.h: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h: Likewise.
+
+	[BZ #15054]
+	* sysdeps/unix/sysv/linux/mips/mips32/sysdep.h (MOVE32):
+	New macro.
+	(INTERNAL_SYSCALL_NCS): Use it.  Rewrite to respect the syscall
+	restart convention.
+	(INTERNAL_SYSCALL): Rewrite to respect the syscall restart
+	convention.
+	(internal_syscall0, internal_syscall1): Likewise.
+	(internal_syscall2, internal_syscall3): Likewise.
+	(internal_syscall4, internal_syscall5): Likewise.
+	(internal_syscall6, internal_syscall7): Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/sysdep.h (MOVE32):
+	New macro.
+	(INTERNAL_SYSCALL_NCS): Use it.  Rewrite to respect the syscall
+	restart convention.
+	(INTERNAL_SYSCALL): Rewrite to respect the syscall restart
+	convention.
+	(internal_syscall0, internal_syscall1): Likewise.
+	(internal_syscall2, internal_syscall3): Likewise.
+	(internal_syscall4, internal_syscall5): Likewise.
+	(internal_syscall6): Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h (MOVE32):
+	New macro.
+	(INTERNAL_SYSCALL_NCS): Use it.  Rewrite to respect the syscall
+	restart convention.
+	(INTERNAL_SYSCALL): Rewrite to respect the syscall restart
+	convention.
+	(internal_syscall0, internal_syscall1): Likewise.
+	(internal_syscall2, internal_syscall3): Likewise.
+	(internal_syscall4, internal_syscall5): Likewise.
+	(internal_syscall6): Likewise.
+
+2013-02-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/mips/mips32/truncate64.c: Do not include
+	<bp-checks.h>.
+	(truncate64): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/mips/mips64/fxstatat64.c: Do not include
+	<bp-checks.h>.
+	(__fxstatat64): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/mips/mips64/lxstat64.c: Do not include
+	<bp-checks.h>.
+	(__lxstat64): Do not use CHECK_STRING.
+	* sysdeps/unix/sysv/linux/mips/mips64/xstat64.c: Do not include
+	<bp-checks.h>.
+	(__xstat64): Do not use CHECK_STRING.
+
+2013-01-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/unix/sysv/linux/mips/mips64/semctl.c: Don't include
+	<bp-checks.h> and <bp-semctl.h>.
+	(__semctl): Don't use CHECK_SEMCTL.
+
+2013-01-29  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/sysdep.h: Correct
+	whitespace damage throughout.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h: Likewise.
+
+2013-01-25  Steve Ellcey  <sellcey@mips.com>
+
+	* sysdeps/mips/memmove.c: Remove.
+
 2013-01-10  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/mips/bits/sigcontext.h (struct

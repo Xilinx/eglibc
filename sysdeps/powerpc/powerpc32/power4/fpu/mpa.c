@@ -43,7 +43,6 @@
 
 #include "endian.h"
 #include "mpa.h"
-#include "mpa2.h"
 #include <sys/param.h>
 
 const mp_no mpone = {1, {1.0, 1.0}};
@@ -106,8 +105,6 @@ __cpy (const mp_no *x, mp_no *y, int p)
   EY = EX;
   for (i = 0; i <= p; i++)
     Y[i] = X[i];
-
-  return;
 }
 
 /* Convert a multiple precision number *X into a double precision
@@ -115,7 +112,7 @@ __cpy (const mp_no *x, mp_no *y, int p)
 static void
 norm (const mp_no *x, double *y, int p)
 {
-#define R  RADIXI
+#define R RADIXI
   long i;
   double a, c, u, v, z[5];
   if (p < 5)
@@ -182,7 +179,6 @@ norm (const mp_no *x, double *y, int p)
     c *= RADIXI;
 
   *y = c;
-  return;
 #undef R
 }
 
@@ -294,8 +290,6 @@ denorm (const mp_no *x, double *y, int p)
   c = X[0] * ((z[1] + R * (z[2] + R * z[3])) - TWO10);
 
   *y = c * TWOM1032;
-  return;
-
 #undef R
 }
 
@@ -310,9 +304,7 @@ __mp_dbl (const mp_no *x, double *y, int p)
       return;
     }
 
-  if (EX > -42)
-    norm (x, y, p);
-  else if (EX == -42 && X[1] >= TWO10)
+  if (__glibc_likely (EX > -42 || (EX == -42 && X[1] >= TWO10)))
     norm (x, y, p);
   else
     denorm (x, y, p);
@@ -360,7 +352,6 @@ __dbl_mp (double x, mp_no *y, int p)
     }
   for (; i <= p2; i++)
     Y[i] = ZERO;
-  return;
 }
 
 /* Add magnitudes of *X and *Y assuming that abs (*X) >= abs (*Y) > 0.  The
@@ -372,6 +363,7 @@ add_magnitudes (const mp_no *x, const mp_no *y, mp_no *z, int p)
 {
   long i, j, k;
   long p2 = p;
+  double zk;
 
   EZ = EX;
 
@@ -379,45 +371,54 @@ add_magnitudes (const mp_no *x, const mp_no *y, mp_no *z, int p)
   j = p2 + EY - EX;
   k = p2 + 1;
 
-  if (j < 1)
+  if (__glibc_unlikely (j < 1))
     {
       __cpy (x, z, p);
       return;
     }
-  else
-    Z[k] = ZERO;
+
+  zk = ZERO;
 
   for (; j > 0; i--, j--)
     {
-      Z[k] += X[i] + Y[j];
-      if (Z[k] >= RADIX)
+      zk += X[i] + Y[j];
+      if (zk >= RADIX)
 	{
-	  Z[k] -= RADIX;
-	  Z[--k] = ONE;
+	  Z[k--] = zk - RADIX;
+	  zk = ONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
   for (; i > 0; i--)
     {
-      Z[k] += X[i];
-      if (Z[k] >= RADIX)
+      zk += X[i];
+      if (zk >= RADIX)
 	{
-	  Z[k] -= RADIX;
-	  Z[--k] = ONE;
+	  Z[k--] = zk - RADIX;
+	  zk = ONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
-  if (Z[1] == ZERO)
+  if (zk == ZERO)
     {
       for (i = 1; i <= p2; i++)
 	Z[i] = Z[i + 1];
     }
   else
-    EZ += ONE;
+    {
+      Z[1] = zk;
+      EZ += ONE;
+    }
 }
 
 /* Subtract the magnitudes of *X and *Y assuming that abs (*x) > abs (*y) > 0.
@@ -429,73 +430,69 @@ sub_magnitudes (const mp_no *x, const mp_no *y, mp_no *z, int p)
 {
   long i, j, k;
   long p2 = p;
+  double zk;
 
   EZ = EX;
+  i = p2;
+  j = p2 + EY - EX;
+  k = p2;
 
-  if (EX == EY)
+  /* Y is too small compared to X, copy X over to the result.  */
+  if (__glibc_unlikely (j < 1))
     {
-      i = j = k = p2;
-      Z[k] = Z[k + 1] = ZERO;
+      __cpy (x, z, p);
+      return;
+    }
+
+  /* The relevant least significant digit in Y is non-zero, so we factor it in
+     to enhance accuracy.  */
+  if (j < p2 && Y[j + 1] > ZERO)
+    {
+      Z[k + 1] = RADIX - Y[j + 1];
+      zk = MONE;
     }
   else
-    {
-      j = EX - EY;
-      if (j > p2)
-	{
-	  __cpy (x, z, p);
-	  return;
-	}
-      else
-	{
-	  i = p2;
-	  j = p2 + 1 - j;
-	  k = p2;
-	  if (Y[j] > ZERO)
-	    {
-	      Z[k + 1] = RADIX - Y[j--];
-	      Z[k] = MONE;
-	    }
-	  else
-	    {
-	      Z[k + 1] = ZERO;
-	      Z[k] = ZERO;
-	      j--;
-	    }
-	}
-    }
+    zk = Z[k + 1] = ZERO;
 
+  /* Subtract and borrow.  */
   for (; j > 0; i--, j--)
     {
-      Z[k] += (X[i] - Y[j]);
-      if (Z[k] < ZERO)
+      zk += (X[i] - Y[j]);
+      if (zk < ZERO)
 	{
-	  Z[k] += RADIX;
-	  Z[--k] = MONE;
+	  Z[k--] = zk + RADIX;
+	  zk = MONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
+  /* We're done with digits from Y, so it's just digits in X.  */
   for (; i > 0; i--)
     {
-      Z[k] += X[i];
-      if (Z[k] < ZERO)
+      zk += X[i];
+      if (zk < ZERO)
 	{
-	  Z[k] += RADIX;
-	  Z[--k] = MONE;
+	  Z[k--] = zk + RADIX;
+	  zk = MONE;
 	}
       else
-	Z[--k] = ZERO;
+        {
+	  Z[k--] = zk;
+	  zk = ZERO;
+	}
     }
 
+  /* Normalize.  */
   for (i = 1; Z[i] == ZERO; i++);
   EZ = EZ - i + 1;
   for (k = 1; i <= p2 + 1;)
     Z[k++] = Z[i++];
   for (; k <= p2;)
     Z[k++] = ZERO;
-
-  return;
 }
 
 /* Add *X and *Y and store the result in *Z.  X and Y may overlap, but not X
@@ -545,7 +542,6 @@ __add (const mp_no *x, const mp_no *y, mp_no *z, int p)
       else
 	Z[0] = ZERO;
     }
-  return;
 }
 
 /* Subtract *Y from *X and return the result in *Z.  X and Y may overlap but
@@ -596,7 +592,6 @@ __sub (const mp_no *x, const mp_no *y, mp_no *z, int p)
       else
 	Z[0] = ZERO;
     }
-  return;
 }
 
 /* Multiply *X and *Y and store result in *Z.  X and Y may overlap but not X
@@ -609,8 +604,8 @@ __mul (const mp_no *x, const mp_no *y, mp_no *z, int p)
   long p2 = p;
   double u, zk, zk2;
 
-  /* Is z=0? */
-  if (X[0] * Y[0] == ZERO)
+  /* Is z=0?  */
+  if (__glibc_unlikely (X[0] * Y[0] == ZERO))
     {
       Z[0] = ZERO;
       return;
@@ -685,7 +680,106 @@ __mul (const mp_no *x, const mp_no *y, mp_no *z, int p)
     EZ = EX + EY;
 
   Z[0] = X[0] * Y[0];
-  return;
+}
+
+/* Square *X and store result in *Y.  X and Y may not overlap.  For P in
+   [1, 2, 3], the exact result is truncated to P digits.  In case P > 3 the
+   error is bounded by 1.001 ULP.  This is a faster special case of
+   multiplication.  */
+void
+__sqr (const mp_no *x, mp_no *y, int p)
+{
+  long i, j, k, ip;
+  double u, yk;
+
+  /* Is z=0?  */
+  if (__glibc_unlikely (X[0] == ZERO))
+    {
+      Y[0] = ZERO;
+      return;
+    }
+
+  /* We need not iterate through all X's since it's pointless to
+     multiply zeroes.  */
+  for (ip = p; ip > 0; ip--)
+    if (X[ip] != ZERO)
+      break;
+
+  k = (__glibc_unlikely (p < 3)) ? p + p : p + 3;
+
+  while (k > 2 * ip + 1)
+    Y[k--] = ZERO;
+
+  yk = ZERO;
+
+  while (k > p)
+    {
+      double yk2 = 0.0;
+      long lim = k / 2;
+
+      if (k % 2 == 0)
+        {
+	  yk += X[lim] * X[lim];
+	  lim--;
+	}
+
+      /* In __mul, this loop (and the one within the next while loop) run
+         between a range to calculate the mantissa as follows:
+
+         Z[k] = X[k] * Y[n] + X[k+1] * Y[n-1] ... + X[n-1] * Y[k+1]
+		+ X[n] * Y[k]
+
+         For X == Y, we can get away with summing halfway and doubling the
+	 result.  For cases where the range size is even, the mid-point needs
+	 to be added separately (above).  */
+      for (i = k - p, j = p; i <= lim; i++, j--)
+	yk2 += X[i] * X[j];
+
+      yk += 2.0 * yk2;
+
+      u = (yk + CUTTER) - CUTTER;
+      if (u > yk)
+	u -= RADIX;
+      Y[k--] = yk - u;
+      yk = u * RADIXI;
+    }
+
+  while (k > 1)
+    {
+      double yk2 = 0.0;
+      long lim = k / 2;
+
+      if (k % 2 == 0)
+        {
+	  yk += X[lim] * X[lim];
+	  lim--;
+	}
+
+      /* Likewise for this loop.  */
+      for (i = 1, j = k - 1; i <= lim; i++, j--)
+	yk2 += X[i] * X[j];
+
+      yk += 2.0 * yk2;
+
+      u = (yk + CUTTER) - CUTTER;
+      if (u > yk)
+	u -= RADIX;
+      Y[k--] = yk - u;
+      yk = u * RADIXI;
+    }
+  Y[k] = yk;
+
+  /* Squares are always positive.  */
+  Y[0] = 1.0;
+
+  EY = 2 * EX;
+  /* Is there a carry beyond the most significant digit?  */
+  if (__glibc_unlikely (Y[1] == ZERO))
+    {
+      for (i = 1; i <= p; i++)
+	Y[i] = Y[i + 1];
+      EY--;
+    }
 }
 
 /* Invert *X and store in *Y.  Relative error bound:
@@ -694,7 +788,7 @@ __mul (const mp_no *x, const mp_no *y, mp_no *z, int p)
    - For P > 3: 2.001 * R ^ (1 - P)
 
    *X = 0 is not permissible.  */
-void
+static void
 __inv (const mp_no *x, mp_no *y, int p)
 {
   long i;
@@ -719,7 +813,6 @@ __inv (const mp_no *x, mp_no *y, int p)
       __sub (&mptwo, y, &z, p);
       __mul (&w, &z, y, p);
     }
-  return;
 }
 
 /* Divide *X by *Y and store result in *Z.  X and Y may overlap but not X and Z
@@ -741,5 +834,4 @@ __dvd (const mp_no *x, const mp_no *y, mp_no *z, int p)
       __inv (y, &w, p);
       __mul (x, &w, z, p);
     }
-  return;
 }

@@ -507,7 +507,7 @@ extern int posix_memalign (void **__memptr, size_t __alignment, size_t __size)
 #ifdef __USE_ISOC11
 /* ISO C variant of aligned allocation.  */
 extern void *aligned_alloc (size_t __alignment, size_t __size)
-     __THROW __wur __attribute__ ((__malloc__, __alloc_size__ (2)));
+     __THROW __attribute_malloc__ __attribute_alloc_size__ ((2)) __wur;
 #endif
 
 __BEGIN_NAMESPACE_STD
@@ -755,6 +755,10 @@ __BEGIN_NAMESPACE_STD
 extern void *bsearch (const void *__key, const void *__base,
 		      size_t __nmemb, size_t __size, __compar_fn_t __compar)
      __nonnull ((1, 2, 5)) __wur;
+
+#ifdef __USE_EXTERN_INLINES
+# include <bits/stdlib-bsearch.h>
+#endif
 
 /* Sort NMEMB elements of BASE, of SIZE bytes each,
    using COMPAR to perform the comparisons.  */

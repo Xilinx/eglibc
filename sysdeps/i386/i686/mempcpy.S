@@ -20,14 +20,12 @@
 
 #include <sysdep.h>
 #include "asm-syntax.h"
-#include "bp-sym.h"
-#include "bp-asm.h"
 
-#define PARMS	LINKAGE		/* no space for saved regs */
+#define PARMS	4		/* no space for saved regs */
 #define RTN	PARMS
-#define DEST	RTN+RTN_SIZE
-#define SRC	DEST+PTR_SIZE
-#define LEN	SRC+PTR_SIZE
+#define DEST	RTN
+#define SRC	DEST+4
+#define LEN	SRC+4
 
 	.text
 #if defined PIC && !defined NOT_IN_libc
@@ -37,18 +35,15 @@ ENTRY_CHK (__mempcpy_chk)
 	jb	HIDDEN_JUMPTARGET (__chk_fail)
 END_CHK (__mempcpy_chk)
 #endif
-ENTRY (BP_SYM (__mempcpy))
-	ENTER
+ENTRY (__mempcpy)
 
 	movl	LEN(%esp), %ecx
 	movl	%edi, %eax
 	cfi_register (edi, eax)
 	movl	DEST(%esp), %edi
-	CHECK_BOUNDS_BOTH_WIDE (%edi, DEST(%esp), %ecx)
 	movl	%esi, %edx
 	cfi_register (esi, edx)
 	movl	SRC(%esp), %esi
-	CHECK_BOUNDS_BOTH_WIDE (%esi, SRC(%esp), %ecx)
 	cld
 	shrl	$1, %ecx
 	jnc	1f
@@ -62,11 +57,9 @@ ENTRY (BP_SYM (__mempcpy))
 	cfi_restore (edi)
 	movl	%edx, %esi
 	cfi_restore (esi)
-	RETURN_BOUNDED_POINTER (DEST(%esp))
 
-	LEAVE
-	RET_PTR
-END (BP_SYM (__mempcpy))
-libc_hidden_def (BP_SYM (__mempcpy))
-weak_alias (BP_SYM (__mempcpy), BP_SYM (mempcpy))
+	ret
+END (__mempcpy)
+libc_hidden_def (__mempcpy)
+weak_alias (__mempcpy, mempcpy)
 libc_hidden_builtin_def (mempcpy)

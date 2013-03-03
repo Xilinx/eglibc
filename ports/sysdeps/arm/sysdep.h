@@ -58,40 +58,43 @@
 #endif
 
 /* Define an entry point visible from C.  */
-#define	ENTRY(name)							      \
-  .globl C_SYMBOL_NAME(name);						      \
-  .type C_SYMBOL_NAME(name),%function;					      \
-  .align ALIGNARG(4);							      \
-  C_LABEL(name)								      \
-  .cfi_sections .debug_frame;						      \
-  cfi_startproc;							      \
-  CALL_MCOUNT
+#define	ENTRY(name)					\
+	.globl	C_SYMBOL_NAME(name);			\
+	.type	C_SYMBOL_NAME(name),%function;		\
+	.align	ALIGNARG(4);				\
+  C_LABEL(name)						\
+	CFI_SECTIONS;					\
+	cfi_startproc;					\
+	CALL_MCOUNT
+
+#define CFI_SECTIONS					\
+	.cfi_sections .debug_frame
 
 #undef	END
-#define END(name)							      \
-  cfi_endproc;								      \
-  ASM_SIZE_DIRECTIVE(name)
+#define END(name)					\
+	cfi_endproc;					\
+	ASM_SIZE_DIRECTIVE(name)
 
 /* If compiled for profiling, call `mcount' at the start of each function.  */
 #ifdef	PROF
 /* Call __gnu_mcount_nc if GCC >= 4.4.  */
 #if __GNUC_PREREQ(4,4)
-#define CALL_MCOUNT \
-  str	lr,[sp, #-4]!; \
-  cfi_adjust_cfa_offset (4); \
-  cfi_rel_offset (lr, 0); \
-  bl PLTJMP(mcount); \
-  cfi_adjust_cfa_offset (-4); \
-  cfi_restore (lr)
+#define CALL_MCOUNT					\
+	str	lr,[sp, #-4]!;				\
+	cfi_adjust_cfa_offset (4);			\
+	cfi_rel_offset (lr, 0);				\
+	bl	PLTJMP(mcount);				\
+	cfi_adjust_cfa_offset (-4);			\
+	cfi_restore (lr)
 #else /* else call _mcount */
-#define CALL_MCOUNT \
-  str	lr,[sp, #-4]!; \
-  cfi_adjust_cfa_offset (4); \
-  cfi_rel_offset (lr, 0); \
-  bl PLTJMP(mcount); \
-  ldr lr, [sp], #4; \
-  cfi_adjust_cfa_offset (-4); \
-  cfi_restore (lr)
+#define CALL_MCOUNT					\
+	str	lr,[sp, #-4]!;				\
+	cfi_adjust_cfa_offset (4);			\
+	cfi_rel_offset (lr, 0);				\
+	bl	PLTJMP(mcount);				\
+	ldr	lr, [sp], #4;				\
+	cfi_adjust_cfa_offset (-4);			\
+	cfi_restore (lr)
 #endif
 #else
 #define CALL_MCOUNT		/* Do nothing.  */
@@ -115,3 +118,11 @@
 	.eabi_attribute 24, 1
 
 #endif	/* __ASSEMBLER__ */
+
+/* This number is the offset from the pc at the current location.  */
+/* ??? At the moment we're not turning on thumb mode in assembly.  */
+#if defined(__thumb__) && !defined(__ASSEMBLER__)
+# define PC_OFS  4
+#else
+# define PC_OFS  8
+#endif
