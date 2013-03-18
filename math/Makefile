@@ -90,7 +90,7 @@ long-c-yes = $(calls:=l)
 tests = test-matherr test-fenv basic-test \
 	test-misc test-fpucw tst-definitions test-tgmath test-tgmath-ret \
 	bug-nextafter bug-nexttoward bug-tgmath1 test-tgmath-int test-tgmath2 \
-	test-dbl-wrap test-powl tst-CMPLX tst-CMPLX2
+	test-dbl-wrap test-powl tst-CMPLX tst-CMPLX2 test-snan
 tests-$(OPTION_EGLIBC_LIBM_BIG) += atest-exp atest-sincos atest-exp2
 # We do the `long double' tests only if this data type is available and
 # distinct from `double'.

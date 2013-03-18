@@ -41,6 +41,15 @@
 
 	.hidden __aeabi_read_tp
 ENTRY (__aeabi_read_tp)
+#ifdef ARCH_HAS_HARD_TP
+	mrc	p15, 0, r0, c13, c0, 3
+	bx	lr
+#elif defined(__thumb2__)
+	movw	r0, #0x0fe0
+	movt	r0, #0xffff
+	bx	r0
+#else
 	mov	r0, #0xffff0fff
 	sub	pc, r0, #31
+#endif
 END (__aeabi_read_tp)

@@ -1,3 +1,18 @@
+2013-03-11  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15234]
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx32/nptl/libpthread.abilist
+	(GLIBC_2.12): Remove pthread_atfork.
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx64/nptl/libpthread.abilist
+	(GLIBC_2.12): Likewise.
+	* sysdeps/unix/sysv/linux/tile/tilepro/nptl/libpthread.abilist
+	(GLIBC_2.12): Likewise.
+
+2013-03-05  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/tile/bits/mman.h: Remove all defines
+	provided by bits/mman-linux.h and include <bits/mman-linux.h>.
+
 2013-02-28  Chris Metcalf  <cmetcalf@tilera.com>
 
 	* sysdeps/unix/sysv/linux/tile/nptl/lowlevellock.h

@@ -20,6 +20,7 @@
 /* Thumb requires excessive IT insns here.  */
 #define NO_THUMB
 #include <sysdep.h>
+#include <arm-features.h>
 
 /*
  * Data preload for architectures that support it (ARM V5TE and above)
@@ -45,20 +46,21 @@
  * Endian independent macros for shifting bytes within registers.
  */
 #ifndef __ARMEB__
-#define pull            lsr
-#define push            lsl
+#define PULL            lsr
+#define PUSH            lsl
 #else
-#define pull            lsl
-#define push            lsr
+#define PULL            lsl
+#define PUSH            lsr
 #endif
 
 		.text
+		.syntax unified
 
 /* Prototype: void *memcpy(void *dest, const void *src, size_t n); */
 
 ENTRY(memcpy)
 
-		stmfd	sp!, {r0, r4, lr}
+		push	{r0, r4, lr}
 		cfi_adjust_cfa_offset (12)
 		cfi_rel_offset (r4, 4)
 		cfi_rel_offset (lr, 8)
@@ -68,13 +70,13 @@ ENTRY(memcpy)
 		subs	r2, r2, #4
 		blt	8f
 		ands	ip, r0, #3
-	PLD(	pld	[r1, #0]		)
+	PLD(	sfi_pld	r1, #0			)
 		bne	9f
 		ands	ip, r1, #3
 		bne	10f
 
 1:		subs	r2, r2, #(28)
-		stmfd	sp!, {r5 - r8}
+		push	{r5 - r8}
 		cfi_adjust_cfa_offset (16)
 		cfi_rel_offset (r5, 0)
 		cfi_rel_offset (r6, 4)
@@ -84,54 +86,112 @@ ENTRY(memcpy)
 
 	CALGN(	ands	ip, r1, #31		)
 	CALGN(	rsb	r3, ip, #32		)
-	CALGN(	sbcnes	r4, r3, r2		)  @ C is always set here
+	CALGN(	sbcsne	r4, r3, r2		)  @ C is always set here
 	CALGN(	bcs	2f			)
 	CALGN(	adr	r4, 6f			)
 	CALGN(	subs	r2, r2, r3		)  @ C gets set
-	CALGN(	add	pc, r4, ip		)
+#ifndef ARM_ALWAYS_BX
+	CALGN(	add	pc, r4, ip, lsl	#(ARM_BX_ALIGN_LOG2 - 2))
+#else
+	CALGN(	add	r4, r4, ip, lsl	#(ARM_BX_ALIGN_LOG2 - 2))
+	CALGN(	bx	r4			)
+#endif
 
-	PLD(	pld	[r1, #0]		)
+	PLD(	sfi_pld	r1, #0			)
 2:	PLD(	subs	r2, r2, #96		)
-	PLD(	pld	[r1, #28]		)
+	PLD(	sfi_pld	r1, #28			)
 	PLD(	blt	4f			)
-	PLD(	pld	[r1, #60]		)
-	PLD(	pld	[r1, #92]		)
+	PLD(	sfi_pld	r1, #60			)
+	PLD(	sfi_pld	r1, #92			)
 
-3:	PLD(	pld	[r1, #124]		)
-4:		ldmia	r1!, {r3, r4, r5, r6, r7, r8, ip, lr}
+3:	PLD(	sfi_pld	r1, #124		)
+4:		sfi_breg r1, \
+		ldmia	\B!, {r3, r4, r5, r6, r7, r8, ip, lr}
 		subs	r2, r2, #32
-		stmia	r0!, {r3, r4, r5, r6, r7, r8, ip, lr}
+		sfi_breg r0, \
+		stmia	\B!, {r3, r4, r5, r6, r7, r8, ip, lr}
 		bge	3b
 	PLD(	cmn	r2, #96			)
 	PLD(	bge	4b			)
 
 5:		ands	ip, r2, #28
 		rsb	ip, ip, #32
-		addne	pc, pc, ip		@ C is always clear here
+#ifndef ARM_ALWAYS_BX
+		/* C is always clear here.  */
+		addne	pc, pc, ip, lsl #(ARM_BX_ALIGN_LOG2 - 2)
 		b	7f
+#else
+		beq	7f
+		push	{r10}
+		cfi_adjust_cfa_offset (4)
+		cfi_rel_offset (r10, 0)
+		add	r10, pc, ip, lsl #(ARM_BX_ALIGN_LOG2 - 2)
+		bx	r10
+#endif
+		.p2align ARM_BX_ALIGN_LOG2
 6:		nop
-		ldr	r3, [r1], #4
-		ldr	r4, [r1], #4
-		ldr	r5, [r1], #4
-		ldr	r6, [r1], #4
-		ldr	r7, [r1], #4
-		ldr	r8, [r1], #4
-		ldr	lr, [r1], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r3, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r4, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r5, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r6, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r7, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	r8, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r1, \
+		ldr	lr, [\B], #4
 
-		add	pc, pc, ip
+#ifndef ARM_ALWAYS_BX
+		add	pc, pc, ip, lsl #(ARM_BX_ALIGN_LOG2 - 2)
 		nop
+#else
+		add	r10, pc, ip, lsl #(ARM_BX_ALIGN_LOG2 - 2)
+		bx	r10
+#endif
+		.p2align ARM_BX_ALIGN_LOG2
 		nop
-		str	r3, [r0], #4
-		str	r4, [r0], #4
-		str	r5, [r0], #4
-		str	r6, [r0], #4
-		str	r7, [r0], #4
-		str	r8, [r0], #4
-		str	lr, [r0], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r3, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r4, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r5, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r6, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r7, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	r8, [\B], #4
+		.p2align ARM_BX_ALIGN_LOG2
+		sfi_breg r0, \
+		str	lr, [\B], #4
+
+#ifdef ARM_ALWAYS_BX
+		pop	{r10}
+		cfi_adjust_cfa_offset (-4)
+		cfi_restore (r10)
+#endif
 
 	CALGN(	bcs	2b			)
 
-7:		ldmfd	sp!, {r5 - r8}
+7:		pop	{r5 - r8}
 		cfi_adjust_cfa_offset (-16)
 		cfi_restore (r5)
 		cfi_restore (r6)
@@ -139,41 +199,55 @@ ENTRY(memcpy)
 		cfi_restore (r8)
 
 8:		movs	r2, r2, lsl #31
-		ldrneb	r3, [r1], #1
-		ldrcsb	r4, [r1], #1
-		ldrcsb	ip, [r1]
-		strneb	r3, [r0], #1
-		strcsb	r4, [r0], #1
-		strcsb	ip, [r0]
+		sfi_breg r1, \
+		ldrbne	r3, [\B], #1
+		sfi_breg r1, \
+		ldrbcs	r4, [\B], #1
+		sfi_breg r1, \
+		ldrbcs	ip, [\B]
+		sfi_breg r0, \
+		strbne	r3, [\B], #1
+		sfi_breg r0, \
+		strbcs	r4, [\B], #1
+		sfi_breg r0, \
+		strbcs	ip, [\B]
 
-#if defined (__ARM_ARCH_4T__) && defined(__THUMB_INTERWORK__)
-		ldmfd	sp!, {r0, r4, lr}
+#if ((defined (__ARM_ARCH_4T__) && defined(__THUMB_INTERWORK__)) \
+     || defined (ARM_ALWAYS_BX))
+		pop	{r0, r4, lr}
 		cfi_adjust_cfa_offset (-12)
 		cfi_restore (r4)
 		cfi_restore (lr)
 		bx      lr
 #else
-		ldmfd	sp!, {r0, r4, pc}
+		pop	{r0, r4, pc}
 #endif
 
 		cfi_restore_state
 
 9:		rsb	ip, ip, #4
 		cmp	ip, #2
-		ldrgtb	r3, [r1], #1
-		ldrgeb	r4, [r1], #1
-		ldrb	lr, [r1], #1
-		strgtb	r3, [r0], #1
-		strgeb	r4, [r0], #1
+		sfi_breg r1, \
+		ldrbgt	r3, [\B], #1
+		sfi_breg r1, \
+		ldrbge	r4, [\B], #1
+		sfi_breg r1, \
+		ldrb	lr, [\B], #1
+		sfi_breg r0, \
+		strbgt	r3, [\B], #1
+		sfi_breg r0, \
+		strbge	r4, [\B], #1
 		subs	r2, r2, ip
-		strb	lr, [r0], #1
+		sfi_breg r0, \
+		strb	lr, [\B], #1
 		blt	8b
 		ands	ip, r1, #3
 		beq	1b
 
 10:		bic	r1, r1, #3
 		cmp	ip, #2
-		ldr	lr, [r1], #4
+		sfi_breg r1, \
+		ldr	lr, [\B], #4
 		beq	17f
 		bgt	18f
 
@@ -185,66 +259,71 @@ ENTRY(memcpy)
 
 	CALGN(	ands	ip, r1, #31		)
 	CALGN(	rsb	ip, ip, #32		)
-	CALGN(	sbcnes	r4, ip, r2		)  @ C is always set here
+	CALGN(	sbcsne	r4, ip, r2		)  @ C is always set here
 	CALGN(	subcc	r2, r2, ip		)
 	CALGN(	bcc	15f			)
 
-11:		stmfd	sp!, {r5 - r9}
+11:		push	{r5 - r8, r10}
 		cfi_adjust_cfa_offset (20)
 		cfi_rel_offset (r5, 0)
 		cfi_rel_offset (r6, 4)
 		cfi_rel_offset (r7, 8)
 		cfi_rel_offset (r8, 12)
-		cfi_rel_offset (r9, 16)
+		cfi_rel_offset (r10, 16)
 
-	PLD(	pld	[r1, #0]		)
+	PLD(	sfi_pld	r1, #0			)
 	PLD(	subs	r2, r2, #96		)
-	PLD(	pld	[r1, #28]		)
+	PLD(	sfi_pld	r1, #28			)
 	PLD(	blt	13f			)
-	PLD(	pld	[r1, #60]		)
-	PLD(	pld	[r1, #92]		)
+	PLD(	sfi_pld	r1, #60			)
+	PLD(	sfi_pld	r1, #92			)
 
-12:	PLD(	pld	[r1, #124]		)
-13:		ldmia	r1!, {r4, r5, r6, r7}
-		mov	r3, lr, pull #\pull
+12:	PLD(	sfi_pld	r1, #124		)
+13:		sfi_breg r1, \
+		ldmia	\B!, {r4, r5, r6, r7}
+		mov	r3, lr, PULL #\pull
 		subs	r2, r2, #32
-		ldmia	r1!, {r8, r9, ip, lr}
-		orr	r3, r3, r4, push #\push
-		mov	r4, r4, pull #\pull
-		orr	r4, r4, r5, push #\push
-		mov	r5, r5, pull #\pull
-		orr	r5, r5, r6, push #\push
-		mov	r6, r6, pull #\pull
-		orr	r6, r6, r7, push #\push
-		mov	r7, r7, pull #\pull
-		orr	r7, r7, r8, push #\push
-		mov	r8, r8, pull #\pull
-		orr	r8, r8, r9, push #\push
-		mov	r9, r9, pull #\pull
-		orr	r9, r9, ip, push #\push
-		mov	ip, ip, pull #\pull
-		orr	ip, ip, lr, push #\push
-		stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+		sfi_breg r1, \
+		ldmia	\B!, {r8, r10, ip, lr}
+		orr	r3, r3, r4, PUSH #\push
+		mov	r4, r4, PULL #\pull
+		orr	r4, r4, r5, PUSH #\push
+		mov	r5, r5, PULL #\pull
+		orr	r5, r5, r6, PUSH #\push
+		mov	r6, r6, PULL #\pull
+		orr	r6, r6, r7, PUSH #\push
+		mov	r7, r7, PULL #\pull
+		orr	r7, r7, r8, PUSH #\push
+		mov	r8, r8, PULL #\pull
+		orr	r8, r8, r10, PUSH #\push
+		mov	r10, r10, PULL #\pull
+		orr	r10, r10, ip, PUSH #\push
+		mov	ip, ip, PULL #\pull
+		orr	ip, ip, lr, PUSH #\push
+		sfi_breg r0, \
+		stmia	\B!, {r3, r4, r5, r6, r7, r8, r10, ip}
 		bge	12b
 	PLD(	cmn	r2, #96			)
 	PLD(	bge	13b			)
 
-		ldmfd	sp!, {r5 - r9}
+		pop	{r5 - r8, r10}
 		cfi_adjust_cfa_offset (-20)
 		cfi_restore (r5)
 		cfi_restore (r6)
 		cfi_restore (r7)
 		cfi_restore (r8)
-		cfi_restore (r9)
+		cfi_restore (r10)
 
 14:		ands	ip, r2, #28
 		beq	16f
 
-15:		mov	r3, lr, pull #\pull
-		ldr	lr, [r1], #4
+15:		mov	r3, lr, PULL #\pull
+		sfi_breg r1, \
+		ldr	lr, [\B], #4
 		subs	ip, ip, #4
-		orr	r3, r3, lr, push #\push
-		str	r3, [r0], #4
+		orr	r3, r3, lr, PUSH #\push
+		sfi_breg r0, \
+		str	r3, [\B], #4
 		bgt	15b
 	CALGN(	cmp	r2, #0			)
 	CALGN(	bge	11b			)

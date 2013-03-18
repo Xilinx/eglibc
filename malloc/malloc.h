@@ -22,11 +22,6 @@
 #include <features.h>
 #include <stddef.h>
 #include <stdio.h>
-# define __malloc_ptr_t  void *
-
-/* Used by GNU libc internals. */
-#define __malloc_size_t size_t
-#define __malloc_ptrdiff_t ptrdiff_t
 
 #ifdef _LIBC
 # define __MALLOC_HOOK_VOLATILE
@@ -153,18 +148,18 @@ extern void (*__MALLOC_HOOK_VOLATILE __malloc_initialize_hook) (void)
      __MALLOC_DEPRECATED;
 /* Hooks for debugging and user-defined versions. */
 extern void (*__MALLOC_HOOK_VOLATILE __free_hook) (void *__ptr,
-						   const __malloc_ptr_t)
+						   const void *)
      __MALLOC_DEPRECATED;
 extern void *(*__MALLOC_HOOK_VOLATILE __malloc_hook) (size_t __size,
-						      const __malloc_ptr_t)
+						      const void *)
      __MALLOC_DEPRECATED;
 extern void *(*__MALLOC_HOOK_VOLATILE __realloc_hook) (void *__ptr,
 						       size_t __size,
-						       const __malloc_ptr_t)
+						       const void *)
      __MALLOC_DEPRECATED;
 extern void *(*__MALLOC_HOOK_VOLATILE __memalign_hook) (size_t __alignment,
 							size_t __size,
-							const __malloc_ptr_t)
+							const void *)
      __MALLOC_DEPRECATED;
 extern void (*__MALLOC_HOOK_VOLATILE __after_morecore_hook) (void);
 

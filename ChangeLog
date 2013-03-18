@@ -1,3 +1,683 @@
+2013-03-18  Ondrej Bilka  <neleai@seznam.cz>
+
+	* sysdeps/x86_64/strlen.S: Replace with new SSE2 based
+	implementation which is faster on all x86_64 architectures.
+	Tested on AMD, Intel Nehalem, SNB, IVB.
+	* sysdeps/x86_64/strnlen.S: Likewise.
+
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines):
+	Remove all multiarch strlen and strnlen versions.
+	* sysdeps/x86_64/multiarch/ifunc-impl-list.c: Update.
+	Remove strlen and strnlen related parts.
+
+	* sysdeps/x86_64/multiarch/strcat-sse2-unaligned.S: Update.
+	Inline strlen part.
+	* sysdeps/x86_64/multiarch/strcat-ssse3.S: Likewise.
+
+	* sysdeps/x86_64/multiarch/strlen.S: Remove.
+	* sysdeps/x86_64/multiarch/strlen-sse2-no-bsf.S: Likewise.
+	* sysdeps/x86_64/multiarch/strlen-sse2-pminub.S: Likewise.
+	* sysdeps/x86_64/multiarch/strlen-sse4.S: Likewise.
+	* sysdeps/x86_64/multiarch/strnlen.S: Likewise.
+	* sysdeps/x86_64/multiarch/strnlen-sse2-no-bsf.S: Likewise.
+
+2013-03-17  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/memory.texi (Malloc Tunable Parameters):
+	Sort parameters alphabetically. Add comments for missing entries.
+
+2013-03-17  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2013-03-16  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15283]
+	* sysdeps/ieee754/ldbl-96/e_j1l.c (__ieee754_y1l): Correct test
+	for arguments at most half maximum finite value.
+	* math/libm-test.inc (j0_test): Add more tests.
+	(j1_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	[BZ #14155]
+	* sysdeps/ieee754/ldbl-128/e_j0l.c (__ieee754_j0l): Do not compute
+	1 / x and functions P and Q for arguments above 0x1p256L.
+	(__ieee754_y0l): Likewise.
+	* sysdeps/ieee754/ldbl-128/e_j1l.c (__ieee754_j1l): Likewise.
+	(__ieee754_y1l): Likewise.
+	* math/libm-test.inc (j0_test): Do not allow spurious underflows.
+	(j1_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+
+2013-03-16  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* math/test-snan.c (TEST_FUNC): Add and use minus_sNaN_var
+	variable.
+
+2013-03-15  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/dl-support.c (_dl_aux_init): Ignore zero value for AT_PAGESZ.
+	(_dl_non_dynamic_init): Don't set _dl_pagesize; it will never be
+	zero since it's initialized to EXEC_PAGESIZE.
+
+	* sysdeps/unix/sysv/linux/ldsodefs.h
+	(_dl_non_dynamic_init, _dl_aux_init): Move declarations to ...
+	* sysdeps/generic/ldsodefs.h: ... here.
+
+2013-03-15  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* math/libm-test.inc (ldexp_test): Add missing START/END markers.
+
+	* sysdeps/powerpc/fpu/test-powerpc-snan.c: Rename to
+	math/test-snan.c.
+	* math/test-snan.c: Renamed from
+	sysdeps/powerpc/fpu/test-powerpc-snan.c.
+	* math/Makefile (tests): Add test-snan.
+	* sysdeps/powerpc/fpu/Makefile (libm-tests): Don't add
+	test-powerpc-snan.
+
+	* math/basic-test.c (TEST_FUNC): Replace NANFUNC argument with
+	SUFFIX.  Initialize qNaN_var with __builtin_nan family of
+	functions.
+	(TEST_TRUNC): Add SUFFIX argument.  Initialize qNaN_var with
+	__builtin_nan family of functions.
+	* math/libm-test.inc (initialize): Initialize qnan_value with
+	__builtin_nan family of functions.
+	* sysdeps/powerpc/fpu/test-powerpc-snan.c (SNANf, SNAN, SNANl):
+	Remove variables.
+	(init_signaling_nan, snan_float, snan_double, snan_ldouble):
+	Remove functions.
+	(TEST_FUNC): Add SUFFIX argument.  Move sNaN_var into static
+	storage class.  Initialize qNaN_var and sNaN_var with
+	__builtin_nan and __builtin_nans families of functions,
+	respectively.
+
+	* math/libm-test.inc (acosh_test): Also test with qNaN input.
+	(sqrt_test): Remove duplicate test with qNaN input.
+	(lrint_test, llrint_test, lround_test, llround_test, rint_test)
+	(round_test, signbit_test, significand_test): Note missing +/-Inf
+	as well as qNaN tests.
+
+	* math/basic-test.c (TEST_FUNC, TEST_TRUNC): Rename NaN_var to
+	qNaN_var.  Fix a few strings, too.
+	* math/libm-test.inc (nan_value): Rename to qnan_value.
+	* math/gen-libm-test.pl (%beautify): Adjust to that.
+	* math/bits/mathcalls.h (nan): Refer to qNaN instead of NaN.
+	* math/test-misc.c (main): Likewise.
+	* sysdeps/ieee754/bits/nan.h (__nan_bytes, __nan_union): Rename
+	to __qnan_bytes, and __qnan_union, respectively.
+	* ports/sysdeps/mips/bits/nan.h (__nan_bytes, __nan_union):
+	Likewise.
+	* stdio-common/tstdiomisc.c (nanval, lnanval): Rename to qnanval,
+	and lqnanval, respectively.
+	* sysdeps/powerpc/bits/fenv.h: Fix usage of NaN/qNaN/sNaN.
+	* sysdeps/powerpc/fpu/fenv_libc.h: Likewise.
+	* sysdeps/powerpc/fpu/test-powerpc-snan.c (TEST_FUNC): Likewise,
+	and rename NaN_var to qNaN_var, and SNaN_var to sNaN_var.
+
+	* math/libm-test.inc (fpstack_test) [__x86_64__]: Enable test.
+	* math/test-misc.c (main) [__x86_64__]: Enable test for long
+	doubles.
+
+	* math/test-misc.c (main): Fix copy'n'pastos.
+	* misc/tst-efgcvt.c (special): Likewise.
+
+	* stdio-common/printf_fp.c (__isinfl_internal, __isnanl_internal):
+	Remove declarations.
+
+2013-03-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa-arch.h: Remove.
+	* sysdeps/ieee754/dbl-64/mpa.c: Revert last change.
+	* sysdeps/ieee754/dbl-64/mpa.h: Revert last change.
+	* sysdeps/powerpc/power4/fpu/mpa-arch.h: Remove.
+
+2013-03-15  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h (VDSO_IFUNC_RET): Add
+	macro to return vdso values correctly in IFUNC implementations.
+	* sysdeps/unix/sysv/linux/powerpc/gettimeofday.c (__gettimeofday):
+	Optimization by using IFUNC.
+
+2013-03-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Richard Henderson  <rth@redhat.com>
+	    Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
+
+	* Makefile.in (bench): New target.
+	* NEWS: Mention the benchmark framework.
+	* Rules (bench): Likewise.
+	(binaries-bench): Generate binaries for functions to
+	benchmark.
+	* benchtests/Makefile: New makefile for benchmark tests.
+	* benchtests/bench-skeleton.c: New skeleton file for benchmark
+	programs.
+	* benchtests/exp-inputs: New input file for EXP function.
+	* benchtests/pow-inputs: New input file for POW function.
+	* scripts/bench.pl: New script to generate source files for
+	benchmark programs.
+
+2013-03-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa-arch.h: New file.
+	* sysdeps/ieee754/dbl-64/mpa.c (norm): Use MANTISSA_T to store
+	computations on mantissa.  Use macros for rounding and
+	division.
+	(denorm): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__mul): Likewise.
+	(__sqr): Likewise.
+	* sysdeps/ieee754/dbl-64/mpa.h: Include mpa-arch.h.  Define
+	powers of two in terms of TWOPOW macro.
+	(mp_no): Make type of mantissa as MANTISSA_T.
+	[!RADIXI]: Define RADIXI.
+	[!TWO52]: Define TWO52.
+	* sysdeps/powerpc/power4/fpu/mpa-arch.h: New file.
+
+	* manual/nptl.texi (cindex): Modify threads to pthreads.
+
+2013-03-15  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/x86_64/preconfigure: Regenerated.
+
+2013-03-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14155]
+	* sysdeps/ieee754/dbl-64/e_j0.c (pzero): Return 1.0 for arguments
+	0x1p28 and above.
+	(qzero): Return -0.125 / x for arguments 0x1p28 and above.
+	* sysdeps/ieee754/dbl-64/e_j1.c (pzero): Return 1.0 for arguments
+	0x1p28 and above.
+	(qzero): Return 0.375 / x for arguments 0x1p28 and above.
+	* math/libm-test.inc (j0_test): Do not allow one spurious
+	underflow exception.
+	(y1_test): Likewise.
+
+2013-03-14  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* manual/Makefile (chapters): Add nptl.
+	* manual/debug.texi (Debugging Support): Add link to Threads
+	chapter.
+	* manual/nptl.texi: New file.
+
+	* sysdeps/unix/sysv/linux/times.c (__times): Fix formatting.
+
+2013-03-14  Petr Baudis  <pasky@ucw.cz>
+
+	* sysdeps/unix/sysv/linux/times.c (__times): On EFAULT, test
+	for non-NULL pointer before the memory validity test. Pointed
+	out by Holger Brunck <holger.brunck@keymile.com>.
+
+2013-03-13  Andreas Schwab  <schwab@suse.de>
+
+	* extra-lib.mk (extra-objs): Add static-only-routines as .oS
+	instead of .os.
+
+2013-03-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* timezone/zic.c: Update from tzcode 2013b.
+
+2013-03-12  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/install.texi (Configuring and compiling):
+	Mention i686 and i586.
+	* INSTALL: Regenerate.
+
+2013-03-12  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/init_array/elf-init.c: New file.
+	* csu/elf-init.c
+	(__libc_csu_init) [!NO_INITFINI]: Conditionalize _init call on this.
+	(__libc_csu_fini) [!NO_INITFINI]: Conditionalize _fini call on this.
+
+	* csu/gmon-start.c [GMON_START_ARRAY_SECTION]: Don't define
+	__gmon_start__ as global, but as static with a .preinit_array pointer.
+	* sysdeps/init_array/gmon-start.c: New file.  Use that.
+	* sysdeps/init_array/crti.S: New file, empty except for comments.
+	* sysdeps/init_array/crtn.S: Likewise.
+
+2013-03-11  Ondřej Bílka  <neleai@seznam.cz>
+
+	* sysdeps/x86_64/memset.S: Remove USE_MULTIARCH conditional for
+	definining bcopy.
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Remove Prefer_SSE_for_memop.
+	* sysdeps/x86_64/multiarch/init-arch.h: Remove
+	bit_Prefer_SSE_for_memop, index_Prefer_SSE_for_memop,
+	HAS_PREFER_SSE_FOR_MEMOP.
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines): Remove
+	memset-x86-64.
+	* sysdeps/x86_64/multiarch/ifunc-impl-list.c (__libc_ifunc_impl_list):
+	Remove bzero, memset ifunc support.
+	* sysdeps/x86_64/multiarch/bzero.S: Remove file.
+	* sysdeps/x86_64/multiarch/memset-x86-64.S: Likewise.
+	* sysdeps/x86_64/multiarch/memset.S: Likewise.
+	* sysdeps/x86_64/multiarch/memset_chk.S: Likewise.
+
+2013-03-11  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15234]
+	* Versions.def (libpthread): Add GLIBC_2.3, so that it can be used
+	by SHLIB_COMPAT.
+	* sysdeps/unix/sysv/linux/x86_64/x32/nptl/libpthread.abilist
+	(GLIBC_2.16): Remove pthread_atfork.
+
+2013-03-08  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* posix/Makefile (testcases.h): Set LC_ALL=C before sed.
+	(ptestcases.h): Likewise.
+
+2013-03-08  Roland McGrath  <roland@hack.frob.com>
+
+	* Makeconfig ($(common-objpfx)config.status): Depend on
+	sysdeps/*/preconfigure{,.in} too.
+
+2013-03-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* malloc/malloc.h (__malloc_ptr_t): Remove macro.
+	(__free_hook): Use void * instead of __malloc_ptr_t.
+	(__malloc_hook): Likewise.
+	(__realloc_hook): Likewise.
+	(__memalign_hook): Likewise.
+	(__after_morecore_hook): Likewise.
+	* malloc/arena.c (save_malloc_hook): Likewise.
+	(save_free_hook): Likewise.
+	* malloc/hooks.c (malloc_hook_ini): Likewise.
+	(realloc_hook_ini): Likewise.
+	(memalign_hook_ini): Likewise.
+	* malloc/malloc.c (malloc_hook_ini): Likewise.
+	(realloc_hook_ini): Likewise.
+	(memalign_hook_ini): Likewise.
+	(__free_hook): Likewise.
+	(__malloc_hook): Likewise.
+	(__realloc_hook): Likewise.
+	(__memalign_hook): Likewise.
+	(__libc_malloc): Likewise.
+	(__libc_free): Likewise.
+	(__libc_realloc): Likewise.
+	(__libc_memalign): Likewise.
+	(__libc_valloc): Likewise.
+	(__libc_pvalloc): Likewise.
+	(__libc_calloc): Likewise.
+	(__posix_memalign): Likewise.
+	* malloc/morecore.c (__sbrk): Likewise.
+	(__default_morecore): Likewise.
+
+	* malloc/morecore.c (__default_morecore): Use ISO C prototype.
+
+	* malloc/malloc.h (__malloc_ptrdiff_t): Remove macro.
+	* malloc/morecore.c (__default_morecore): Use ptrdiff_t instead of
+	__malloc_ptrdiff_t.
+
+	* malloc/malloc.h (__malloc_size_t): Remove macro.
+	* malloc/mcheck.c (old_malloc_hook): Use size_t instead of
+	__malloc_size_t.
+	(old_memalign_hook): Likewise.
+	(old_realloc_hook): Likewise.
+	(struct hdr): Likewise.
+	(flood): Likewise.
+	(mallochook): Likewise.
+	(memalignhook): Likewise.
+	(reallochook): Likewise.
+	* malloc/mtrace.c (tr_old_malloc_hook): Likewise.
+	(tr_old_realloc_hook): Likewise.
+	(tr_old_memalign_hook): Likewise.
+	(tr_mallochook): Likewise.
+	(tr_reallochook): Likewise.
+	(tr_memalignhook): Likewise.
+
+2013-03-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128ibm/math_ldbl.h (ldbl_pack): Rename to
+	default_ldbl_pack and using as default implementation.
+	(ldbl_unpack): Rename to default_ldbl_unpack and using as default
+	implementation.
+	* sysdeps/powerpc/fpu/math_ldbl.h (ldbl_extract_mantissa): Remove
+	redundant definition.
+	(ldbl_insert_mantissa): Likewise.
+	(ldbl_canonicalize): Likewise.
+	(ldbl_nearbyint): Likewise.
+	(ldbl_pack): Rename to ldbl_pack_ppc.
+	(ldbl_unpack): Rename to ldbl_unpack_ppc.
+	* sysdeps/unix/sysv/linux/powerpc/Implies: Remove file.
+	* sysdeps/powerpc/Implies: Add ieee754/ldbl-opt after ieee754/ldbl-128ibm.
+
+2013-03-08  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c: Move file...
+	* sysdeps/powerpc/power4/fpu/mpa.c: ... here.
+	* sysdeps/powerpc/powerpc32/power4/fpu/Makefile: Move file...
+	* sysdeps/powerpc/power4/fpu/Makefile: ... here.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c: Remove file.
+	* sysdeps/powerpc/powerpc64/power4/fpu/Makefile: Remove file.
+	* sysdeps/powerpc/powerpc32/power4/Implies: New file.
+	* sysdeps/powerpc/powerpc64/power4/Implies: New file.
+
+2013-03-07  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add
+	bits/mman-linux.h.
+
+2013-03-07  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/slowexp.c [!USE_LONG_DOUBLE_FOR_MP]:
+	Include mpa.h and declare __MPEXP.
+	[USE_LONG_DOUBLE_FOR_MP] (__slowexp): Call __IEEE754_EXPL.
+	* sysdeps/powerpc/powerpc32/power4/fpu/Makefile
+	(CPPFLAGS-slowexp.c): Define USE_LONG_DOUBLE_FOR_MP.
+	* sysdeps/powerpc/powerpc32/power4/fpu/slowexp.c: Remove.
+	* sysdeps/powerpc/powerpc64/power4/fpu/Makefile
+	(CPPFLAGS-slowexp.c): Define USE_LONG_DOUBLE_FOR_MP.
+	* sysdeps/powerpc/powerpc64/power4/fpu/slowexp.c: Remove.
+
+	* sysdeps/ieee754/dbl-64/slowpow.c [USE_LONG_DOUBLE_FOR_MP]
+	(__slowpow): Use long double EXPL and LOGL functions to
+	compute POW.
+	* sysdeps/powerpc/powerpc32/power4/fpu/Makefile
+	(CPPFLAGS-slowpow.c): Define USE_LONG_DOUBLE_FOR_MP.
+	* sysdeps/powerpc/powerpc32/power4/fpu/slowpow.c: Remove.
+	* sysdeps/powerpc/powerpc64/power4/fpu/Makefile
+	(CPPFLAGS-slowpow.c): Define USE_LONG_DOUBLE_FOR_MP.
+	* sysdeps/powerpc/powerpc64/power4/fpu/slowpow.c: Remove.
+
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c (__mul): Use
+	intermediate variable to calculate exponent.
+	(__sqr): Likewise.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c (__mul):
+	Likewise.
+	(__sqr): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa.c [!NO__MUL]: Define __mul.
+	[!NO__SQR]: Define __sqr.
+	* sysdeps/powerpc/powerpc32/power4/fpu/mpa.c: define NO__MUL
+	and NO__SQR.  Remove all code except __mul and __sqr.  Include
+	sysdeps/ieee754/dbl-64/mpa.c.
+	* sysdeps/powerpc/powerpc64/power4/fpu/mpa.c: Likewise.
+
+	[BZ #12723]
+	* posix/Makefile (tests): Add tst-pathconf.
+	* posix/tst-pathconf.c: New test case.
+	* sysdeps/unix/sysv/linux/fpathconf.c (__fpathconf): Remove
+	_PC_PIPE_BUF.
+	* sysdeps/unix/sysv/linux/pathconf.c (__pathconf): Likewise.
+
+2013-03-06  Patsy Franklin  <pfrankli@redhat.com>
+
+	* io/fcntl.h: Added a comment about AT_EACCESS and AT_REMOVEDIR.
+
+2013-03-06  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/bits/mman-linux.h (MAP_ANONYMOUS): Allow
+	definition via __MAP_ANONYMOUS.
+
+	* sysdeps/unix/sysv/linux/s390/bits/mman.h (MAP_GROWSUP): Remove,
+	it's not part of Linux headers.
+
+	* sysdeps/unix/sysv/linux/bits/mman-linux.h (MAP_HUGE_SHIFT): Define.
+	(MAP_HUGE_MASK): Define.
+
+	* sysdeps/unix/sysv/linux/powerpc/sys/ptrace.h (PTRACE_O_EXIT_KILL):
+	Define.
+	(PTRACE_O_MASK): Adjust for PTRACE_O_EXITKILL.
+	* sysdeps/unix/sysv/linux/s390/sys/ptrace.h (PTRACE_O_EXIT_KILL):
+	Define.
+	(PTRACE_O_MASK): Adjust for PTRACE_O_EXITKILL.
+	* sysdeps/unix/sysv/linux/sys/ptrace.h (PTRACE_O_EXIT_KILL):
+	Define.
+	(PTRACE_O_MASK): Adjust for PTRACE_O_EXITKILL.
+	* sysdeps/unix/sysv/linux/sparc/sys/ptrace.h (PTRACE_O_EXITKILL):
+	Define.
+	(PTRACE_O_MASK): Adjust for PTRACE_O_EXITKILL.
+
+	* sysdeps/unix/sysv/linux/x86/bits/msq.h (MSG_COPY): Likewise.
+	* sysdeps/unix/sysv/linux/generic/bits/msq.h (MSG_COPY): Define.
+	* sysdeps/unix/sysv/linux/powerpc/bits/msq.h (MSG_COPY): Likewise.
+	* sysdeps/unix/sysv/linux/bits/msq.h (MSG_COPY): Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/msq.h (MSG_COPY): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/msq.h (MSG_COPY): Define.
+
+	* sysdeps/unix/sysv/linux/pathconf.c (__statfs_filesize_max):
+	Handle f2fs.
+
+	* sysdeps/unix/sysv/linux/internal_statvfs.c (__statvfs_getflags):
+	Handle f2fs and efivarfs.
+
+	* sysdeps/unix/sysv/linux/pathconf.c (__statfs_link_max): Handle
+	f2fs.
+
+	* sysdeps/unix/sysv/linux/linux_fsinfo.h (F2FS_SUPER_MAGIC): Add.
+	(EFIVARFS_MAGIC): Add.
+	(F2FS_LINK_MAX): Add.
+
+2013-03-06  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* stdio-common/vfprintf.c: Replace __builtin_expect with
+	__glibc_unlikely.
+
+2013-03-06  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/generic/bp-sym.h: Remove file.
+	* sysdeps/powerpc/powerpc64/bp-asm.h: Likewise.
+	* sysdeps/powerpc/powerpc64/__longjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__longjmp): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/a2/memcpy.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/cell/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/memcpy.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/memset.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	(memset) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(memset) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(__bzero): Don't use BP_SYM.
+	(__bzero) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__bzero) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/power4/memcmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcmp): Don't use BP_SYM.  Remove comment about bounded
+	pointers.
+	* sysdeps/powerpc/powerpc64/power4/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power4/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	(memset) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(memset) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(__bzero): Don't use BP_SYM.
+	(__bzero) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__bzero) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/power4/strncmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.  Remove comment about bounded
+	pointers.
+	* sysdeps/powerpc/powerpc64/power6/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power6/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	(memset) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(memset) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	(__bzero): Don't use BP_SYM.
+	(__bzero) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__bzero) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/power7/memchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__memchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/memcmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcmp): Don't use BP_SYM.  Remove comment about bounded
+	pointers.
+	* sysdeps/powerpc/powerpc64/power7/memcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/mempcpy.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__mempcpy): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/memrchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__memrchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/memset.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(memset): Don't use BP_SYM.
+	(__bzero): Likewise.
+	* sysdeps/powerpc/powerpc64/power7/rawmemchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__rawmemchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/strcasecmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__STRCMP): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/strchr.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strchr): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/strchrnul.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__strchrnul): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/strlen.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strlen): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/power7/strncmp.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.  Remove comment about bounded
+	pointers.
+	* sysdeps/powerpc/powerpc64/power7/strnlen.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__strnlen): Don't use BP_SYM.
+	* sysdeps/powerpc/powerpc64/setjmp-common.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__GI__setjmp): Don't use BP_SYM.
+	(_setjmp): Likewise.
+	(__sigsetjmp): Likewise.
+	* sysdeps/powerpc/powerpc64/start.S: Don't include "bp-sym.h".
+	(L(start_addresses)): Don't use BP_SYM.
+	(_start): Likewise.
+	* sysdeps/powerpc/powerpc64/stpcpy.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(__stpcpy): Don't use BP_SYM, CHECK_BOUNDS_LOW,
+	STORE_RETURN_BOUNDS, CHECK_BOUNDS_HIGH and STORE_RETURN_VALUE.
+	(__stpcpy) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(__stpcpy) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/strchr.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strchr): Don't use BP_SYM, CHECK_BOUNDS_LOW, STORE_RETURN_BOUNDS,
+	CHECK_BOUNDS_HIGH_RTN and STORE_RETURN_VALUE.  Remove comment
+	about bounded pointers.
+	(strchr) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(strchr) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/strcmp.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strcmp): Don't use BP_SYM and CHECK_BOUNDS_LOW.  Remove comment
+	about bounded pointers.  Remove GKM FIXME comments.
+	(strcmp) [__BOUNDED_POINTERS__]: Remove conditional code.
+	* sysdeps/powerpc/powerpc64/strcpy.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strcpy): Don't use BP_SYM, CHECK_BOUNDS_LOW and
+	STORE_RETURN_BOUNDS.  Remove comment about bounded pointers.
+	Remove GKM FIXME comments.
+	(strcpy) [__BOUNDED_POINTERS__]: Remove conditional code.
+	(strcpy) [!__BOUNDED_POINTERS__]: Make code unconditional.
+	* sysdeps/powerpc/powerpc64/strlen.S: Don't include <bp-sym.h> and
+	<bp-asm.h>.
+	(strlen): Don't use BP_SYM and CHECK_BOUNDS_LOW.  Remove comment
+	about bounded pointers.  Remove GKM FIXME comment.
+	* sysdeps/powerpc/powerpc64/strncmp.S: Don't include <bp-sym.h>
+	and <bp-asm.h>.
+	(strncmp): Don't use BP_SYM.  Remove comment about bounded
+	pointers.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/brk.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__brk): Don't use BP_SYM and DISCARD_BOUNDS.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/clone.S: Don't include
+	<bp-sym.h> and <bp-asm.h>.
+	(__clone): Don't use BP_SYM and DISCARD_BOUNDS.  Remove GKM FIXME
+	comment.
+
+2013-03-05  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* stdio-common/vfprintf.c (vfprintf): Check malloc return; don't
+	call free(NULL).
+
+2013-03-05  David S. Miller  <davem@davemloft.net>
+
+	* po/es.po: Update from translation team.
+
+2013-03-05  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/s390/bits/mman.h: Include
+	<bits/mman-linux.h>.
+	(MCL_CURRENT, MCL_FUTURE): Do not define here, the generic value
+	is fine.
+	* sysdeps/unix/sysv/linux/sh/bits/mman.h: Move include of
+	<bits/mman-linux.h> to end of file.
+	(MCL_CURRENT, MCL_FUTURE): Do not define here, the generic value
+	is fine.
+	* sysdeps/unix/sysv/linux/x86/bits/mman.h: Move include of
+	<bits/mman-linux.h> to end of file.
+	(MCL_CURRENT, MCL_FUTURE): Do not define here, the generic value
+	is fine.
+	* sysdeps/unix/sysv/linux/sparc/bits/mman.h: Move include of
+	<bits/mman-linux.h> to end of file.
+
+	* sysdeps/unix/sysv/linux/bits/mman-linux.h [!MCL_CURRENT]
+	(MCL_CURRENT, MCL_FUTURE): Define here.
+
+2013-03-05  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	[BZ #15232]
+	* sysdeps/s390/s390-32/multiarch/ifunc-resolve.c: Use
+	attribute_hidden.
+	* sysdeps/s390/s390-64/multiarch/ifunc-resolve.c: Likewise.
+
+2013-03-05  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/s390-32/getcontext.S: Set the
+	fourth parameter needed for rt_sigprocmask syscall.
+	* sysdeps/unix/sysv/linux/s390/s390-32/setcontext.S:
+	* sysdeps/unix/sysv/linux/s390/s390-32/swapcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/getcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/setcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/swapcontext.S: Likewise.
+	* sysdeps/unix/sysv/linux/s390/ucontext_i.sym: Define _NSIG8.
+
+2013-03-04  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #13550]
+	* sysdeps/powerpc/powerpc32/power4/strncmp.S (strncmp): Remove
+	comment about bounded pointers.
+	* sysdeps/powerpc/powerpc32/power7/strncmp.S (strncmp): Likewise.
+	* sysdeps/powerpc/powerpc32/strncmp.S (strncmp): Likewise.
+
+2013-03-04  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/bits/mman-linux.h: New file, with Linux
+	common definitions.
+
+	* sysdeps/unix/sysv/linux/sh/bits/mman.h: Remove all defines
+	provided by bits/mman-linux.h and include <bits/mman-linux.h>.
+	* sysdeps/unix/sysv/linux/x86/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/bits/mman.h: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/mman.h: Likewise.
+
+2013-03-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #15055]
+	* sysdeps/ieee754/ldbl-128ibm/e_acoshl.c (__ieee754_acoshl): Use
+	__ieee754_sqrl instead of __sqrl.
+
 2013-03-01  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/powerpc/fpu/fpu_control.h: Move to ...

@@ -39,8 +39,6 @@ long int
 __pathconf (const char *file, int name)
 {
   struct statfs fsbuf;
-  int fd;
-  int flags;
 
   switch (name)
     {
@@ -55,21 +53,6 @@ __pathconf (const char *file, int name)
 
     case _PC_CHOWN_RESTRICTED:
       return __statfs_chown_restricted (__statfs (file, &fsbuf), &fsbuf);
-
-    case _PC_PIPE_BUF:
-      flags = O_RDONLY|O_NONBLOCK|O_NOCTTY;
-#ifdef O_CLOEXEC
-      flags |= O_CLOEXEC;
-#endif
-      fd = open_not_cancel_2 (file, flags);
-      if (fd >= 0)
-	{
-	  long int r = __fcntl (fd, F_GETPIPE_SZ);
-	  close_not_cancel_no_status (fd);
-	  if (r > 0)
-	    return r;
-	}
-      /* FALLTHROUGH */
 
     default:
       return posix_pathconf (file, name);
@@ -168,6 +151,9 @@ __statfs_link_max (int result, const struct statfs *fsbuf, const char *file,
 	 the hard way.  */
       return distinguish_extX (fsbuf, file, fd);
 
+    case F2FS_SUPER_MAGIC:
+      return F2FS_LINK_MAX;
+
     case MINIX_SUPER_MAGIC:
     case MINIX_SUPER_MAGIC2:
       return MINIX_LINK_MAX;
@@ -221,6 +207,9 @@ __statfs_filesize_max (int result, const struct statfs *fsbuf)
 
   switch (fsbuf->f_type)
     {
+    case F2FS_SUPER_MAGIC:
+      return 256;
+
     case BTRFS_SUPER_MAGIC:
       return 255;
 

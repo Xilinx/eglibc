@@ -49,7 +49,7 @@ ENTRY(__clone)
 	mov	ip, r2
 #endif
 	@ new sp is already in r1
-	stmfd	sp!, {r4, r7}
+	push	{r4, r7}
 	cfi_adjust_cfa_offset (8)
 	cfi_rel_offset (r4, 0)
 	cfi_rel_offset (r7, 4)
@@ -61,7 +61,7 @@ ENTRY(__clone)
 	cfi_endproc
 	cmp	r0, #0
 	beq	1f
-	ldmfd	sp!, {r4, r7}
+	pop	{r4, r7}
 	blt	PLTJMP(C_SYMBOL_NAME(__syscall_error))
 	RETINSTR(, lr)
 
@@ -74,17 +74,16 @@ PSEUDO_END (__clone)
 #ifdef RESET_PID
 	tst	ip, #CLONE_THREAD
 	bne	3f
-	mov	r0, #0xffff0fff
-	mov	lr, pc
-	sub	pc, r0, #31
+	GET_TLS (lr)
 	mov	r1, r0
 	tst	ip, #CLONE_VM
 	ldr	r7, =SYS_ify(getpid)
 	ite	ne
 	movne	r0, #-1
 	swieq	0x0
-	str	r0, [r1, #PID_OFFSET]
-	str	r0, [r1, #TID_OFFSET]
+	NEGOFF_ADJ_BASE (r1, TID_OFFSET)
+	str	r0, NEGOFF_OFF1 (r1, TID_OFFSET)
+	str	r0, NEGOFF_OFF2 (r1, PID_OFFSET, TID_OFFSET)
 3:
 #endif
 	@ pick the function arg and call address off the stack and execute

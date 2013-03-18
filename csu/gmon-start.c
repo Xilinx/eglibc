@@ -59,10 +59,17 @@ extern char etext[];
 # endif
 #endif
 
+#ifdef GMON_START_ARRAY_SECTION
+static void __gmon_start__ (void);
+static void (*const gmon_start_initializer) (void)
+  __attribute__ ((used, section (GMON_START_ARRAY_SECTION))) = &__gmon_start__;
+static
+#else
 /* We cannot use the normal constructor mechanism to call
    __gmon_start__ because gcrt1.o appears before crtbegin.o in the link.
    Instead crti.o calls it specially.  */
 extern void __gmon_start__ (void);
+#endif
 
 void
 __gmon_start__ (void)

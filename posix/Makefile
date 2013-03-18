@@ -97,7 +97,8 @@ tests		:= tstgetopt testfnm runtests \
 		   tst-execvp3 tst-execvp4 \
 		   tst-fnmatch2 tst-cpucount tst-cpuset \
 		   bug-getopt1 bug-getopt2 bug-getopt3 bug-getopt4 \
-		   bug-getopt5 tst-getopt_long1 bug-regex34 bug-regex35
+		   bug-getopt5 tst-getopt_long1 bug-regex34 bug-regex35 \
+		   tst-pathconf
 tests-$(OPTION_EGLIBC_LOCALE_CODE)					    \
 		+= tst-fnmatch tst-regexloc bug-regex1 bug-regex5 \
 		   bug-regex23 bug-regex25 bug-regex32 bug-regex33
@@ -242,11 +243,11 @@ bug-glob1-ARGS = "$(objpfx)"
 tst-execvp3-ARGS = --test-dir=$(objpfx)
 
 testcases.h: TESTS TESTS2C.sed
-	sed -f TESTS2C.sed < $< > $@T
+	LC_ALL=C sed -f TESTS2C.sed < $< > $@T
 	mv -f $@T $@
 
 ptestcases.h: PTESTS PTESTS2C.sed
-	sed -f PTESTS2C.sed < $< > $@T
+	LC_ALL=C sed -f PTESTS2C.sed < $< > $@T
 	mv -f $@T $@
 
 # Run a test on the header files we use.

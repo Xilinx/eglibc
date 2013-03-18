@@ -1,5 +1,5 @@
-/* bzero.  x86-64 version.
-   Copyright (C) 2010-2013 Free Software Foundation, Inc.
+/* ffs -- find first set bit in an int, from least significant end.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -13,16 +13,23 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
+   License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include <init-arch.h>
 
+	.syntax unified
 	.text
-ENTRY(__bzero)
-	mov	%rsi,%rdx	/* Adjust parameter.  */
-	xorl	%esi,%esi	/* Fill with 0s.  */
-	jmp	__libc_memset	/* Branch to IFUNC memset.  */
-END(__bzero)
-weak_alias (__bzero, bzero)
+
+ENTRY (__ffs)
+	cmp	r0, #0
+	rbit	r0, r0
+	itt	ne
+	clzne	r0, r0
+	addne	r0, r0, #1
+	bx	lr
+END (__ffs)
+
+weak_alias (__ffs, ffs)
+weak_alias (__ffs, ffsl)
+libc_hidden_builtin_def (ffs)

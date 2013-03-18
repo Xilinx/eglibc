@@ -68,7 +68,7 @@
   do {									      \
     unsigned int _val = val;						      \
     assert ((unsigned int) done < (unsigned int) INT_MAX);		      \
-    if (__builtin_expect (INT_MAX - done < _val, 0))			      \
+    if (__glibc_unlikely (INT_MAX - done < _val))			      \
       {									      \
 	done = -1;							      \
 	 __set_errno (EOVERFLOW);					      \
@@ -92,7 +92,7 @@
     if (width > 0)							      \
       {									      \
 	unsigned int d = _IO_padn (s, (Padchar), width);		      \
-	if (__builtin_expect (d == EOF, 0))				      \
+	if (__glibc_unlikely (d == EOF))				      \
 	  {								      \
 	    done = -1;							      \
 	    goto all_done;						      \
@@ -121,7 +121,7 @@
     if (width > 0)							      \
       {									      \
 	unsigned int d = _IO_wpadn (s, (Padchar), width);		      \
-	if (__builtin_expect (d == EOF, 0))				      \
+	if (__glibc_unlikely (d == EOF))				      \
 	  {								      \
 	    done = -1;							      \
 	    goto all_done;						      \
@@ -179,7 +179,7 @@
 	  done = -1;							      \
 	  goto all_done;						      \
 	}								      \
-      if (__builtin_expect (INT_MAX - done < (Len), 0))			      \
+      if (__glibc_unlikely (INT_MAX - done < (Len)))			      \
       {									      \
 	done = -1;							      \
 	 __set_errno (EOVERFLOW);					      \
@@ -1121,7 +1121,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	outstring (string, len);					      \
 	if (left)							      \
 	  PAD (L' ');							      \
-	if (__builtin_expect (string_malloced, 0))			      \
+	if (__glibc_unlikely (string_malloced))				      \
 	  free (string);						      \
       }									      \
       break;
@@ -1272,7 +1272,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	outstring (string, len);					      \
 	if (left)							      \
 	  PAD (' ');							      \
-	if (__builtin_expect (string_malloced, 0))			      \
+	if (__glibc_unlikely (string_malloced))			              \
 	  free (string);						      \
       }									      \
       break;
@@ -1333,9 +1333,9 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
     goto all_done;
 
   /* Use the slow path in case any printf handler is registered.  */
-  if (__builtin_expect (__printf_function_table != NULL
+  if (__glibc_unlikely (__printf_function_table != NULL
 			|| __printf_modifier_table != NULL
-			|| __printf_va_arg_table != NULL, 0))
+			|| __printf_va_arg_table != NULL))
     goto do_positional;
 
   /* Process whole format string.  */
@@ -1472,7 +1472,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	    left = 1;
 	  }
 
-	if (__builtin_expect (width >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+	if (__glibc_unlikely (width >= INT_MAX / sizeof (CHAR_T) - 32))
 	  {
 	    __set_errno (EOVERFLOW);
 	    done = -1;
@@ -1504,8 +1504,8 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
     LABEL (width):
       width = read_int (&f);
 
-      if (__builtin_expect (width == -1
-			    || width >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+      if (__glibc_unlikely (width == -1
+			    || width >= INT_MAX / sizeof (CHAR_T) - 32))
 	{
 	  __set_errno (EOVERFLOW);
 	  done = -1;
@@ -1581,7 +1581,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
       if (prec > width
 	  && prec > sizeof (work_buffer) / sizeof (work_buffer[0]) - 32)
 	{
-	  if (__builtin_expect (prec >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+	  if (__glibc_unlikely (prec >= INT_MAX / sizeof (CHAR_T) - 32))
 	    {
 	      __set_errno (EOVERFLOW);
 	      done = -1;
@@ -1665,7 +1665,7 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
       /* The format is correctly handled.  */
       ++nspecs_done;
 
-      if (__builtin_expect (workstart != NULL, 0))
+      if (__glibc_unlikely (workstart != NULL))
 	free (workstart);
       workstart = NULL;
 
@@ -1711,7 +1711,8 @@ do_positional:
     /* Just a counter.  */
     size_t cnt;
 
-    free (workstart);
+    if (__glibc_unlikely (workstart != NULL))
+      free (workstart);
     workstart = NULL;
 
     if (! LOCALE_SUPPORT)
@@ -1758,7 +1759,7 @@ do_positional:
 		     + sizeof (*args_type));
 
     /* Check for potential integer overflow.  */
-    if (__builtin_expect (nargs > INT_MAX / bytes_per_arg, 0))
+    if (__glibc_unlikely (nargs > INT_MAX / bytes_per_arg))
       {
 	 __set_errno (EOVERFLOW);
 	 done = -1;
@@ -1863,7 +1864,7 @@ do_positional:
 	default:
 	  if ((args_type[cnt] & PA_FLAG_PTR) != 0)
 	    args_value[cnt].pa_pointer = va_arg (ap_save, void *);
-	  else if (__builtin_expect (__printf_va_arg_table != NULL, 0)
+	  else if (__glibc_unlikely (__printf_va_arg_table != NULL)
 		   && __printf_va_arg_table[args_type[cnt] - PA_LAST] != NULL)
 	    {
 	      args_value[cnt].pa_user = alloca (args_size[cnt]);
@@ -1966,6 +1967,11 @@ do_positional:
 	      {
 		workstart = (CHAR_T *) malloc ((MAX (prec, width) + 32)
 					       * sizeof (CHAR_T));
+		if (workstart == NULL)
+		  {
+		    done = -1;
+		    goto all_done;
+		  }
 		workend = workstart + (MAX (prec, width) + 32);
 	      }
 	  }
@@ -2043,7 +2049,8 @@ do_positional:
 	    break;
 	  }
 
-	free (workstart);
+	if (__glibc_unlikely (workstart != NULL))
+	  free (workstart);
 	workstart = NULL;
 
 	/* Write the following constant string.  */
@@ -2054,8 +2061,10 @@ do_positional:
   }
 
 all_done:
-  free (args_malloced);
-  free (workstart);
+  if (__glibc_unlikely (args_malloced != NULL))
+    free (args_malloced);
+  if (__glibc_unlikely (workstart != NULL))
+    free (workstart);
   /* Unlock the stream.  */
   _IO_funlockfile (s);
   _IO_cleanup_region_end (0);

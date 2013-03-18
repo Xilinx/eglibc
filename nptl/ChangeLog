@@ -1,3 +1,32 @@
+2013-03-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* pthread_barrier_init.c (default_attr): Rename to
+	default_barrierattr.
+	(pthread_barrier_init): Adjust for the rename.
+	* pthread_mutex_init.c (default_attr): Rename to
+	default_mutexattr.
+	(__pthread_mutex_init): Adjust for the rename.
+	* pthread_rwlock_init.c (default_attr): Rebane to
+	default_rwlockattr.
+	(__pthread_rwlock_init): Adjust for the rename.
+
+2013-03-12  Carlos O'Donell  <carlos@redhat.com>
+
+	* sysdeps/unix/sysv/linux/lowlevellock.c: Include <atomic.h>.
+
+2013-03-04  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h:
+	Change multiple inclusion guard to _LINUX_I686_DL_SYSDEP_H.
+	Use #include_next.
+	(HAVE_DL_DISCOVER_OSVERSION): Remove definition, now redundant.
+	(RTLD_PRIVATE_ERRNO): Likewise.
+	(NEED_DL_SYSINFO, DL_SYSINFO_DEFAULT, DL_SYSINFO_IMPLEMENTATION):
+	Move macros and associated declaration to ...
+	* sysdeps/unix/sysv/linux/i386/dl-sysdep.h: ... here.
+	Change multiple include guard to _LINUX_I386_DL_SYSDEP_H.
+	Use #include_next.
+
 2013-03-01  Carlos O'Donell  <carlos@redhat.com>
 
 	* Makefile (tests): Revert last change.

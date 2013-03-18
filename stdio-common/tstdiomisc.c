@@ -47,9 +47,9 @@ t2 (void)
   return result;
 }
 
-volatile double nanval;
+volatile double qnanval;
 volatile double infval;
-volatile long double lnanval;
+volatile long double lqnanval;
 volatile long double linfval;
 
 
@@ -60,16 +60,17 @@ F (void)
   wchar_t wbuf[40];
   int result;
 
-  nanval = NAN;
+  qnanval = NAN;
 
   snprintf (buf, sizeof buf, "%a %A %e %E %f %F %g %G",
-	    nanval, nanval, nanval, nanval, nanval, nanval, nanval, nanval);
+	    qnanval, qnanval, qnanval, qnanval,
+	    qnanval, qnanval, qnanval, qnanval);
   result = strcmp (buf, "nan NAN nan NAN nan NAN nan NAN") != 0;
   printf ("expected \"nan NAN nan NAN nan NAN nan NAN\", got \"%s\"\n", buf);
 
   snprintf (buf, sizeof buf, "%a %A %e %E %f %F %g %G",
-	    -nanval, -nanval, -nanval, -nanval,
-	    -nanval, -nanval, -nanval, -nanval);
+	    -qnanval, -qnanval, -qnanval, -qnanval,
+	    -qnanval, -qnanval, -qnanval, -qnanval);
   result = strcmp (buf, "-nan -NAN -nan -NAN -nan -NAN -nan -NAN") != 0;
   printf ("expected \"-nan -NAN -nan -NAN -nan -NAN -nan -NAN\", got \"%s\"\n",
 	  buf);
@@ -90,13 +91,14 @@ F (void)
 
 #if __OPTION_POSIX_C_LANG_WIDE_CHAR
   swprintf (wbuf, sizeof wbuf / sizeof (wbuf[0]), L"%a %A %e %E %f %F %g %G",
-	    nanval, nanval, nanval, nanval, nanval, nanval, nanval, nanval);
+	    qnanval, qnanval, qnanval, qnanval,
+	    qnanval, qnanval, qnanval, qnanval);
   result |= wcscmp (wbuf, L"nan NAN nan NAN nan NAN nan NAN") != 0;
   printf ("expected L\"nan NAN nan NAN nan NAN nan NAN\", got L\"%S\"\n", wbuf);
 
   swprintf (wbuf, sizeof wbuf / sizeof (wbuf[0]), L"%a %A %e %E %f %F %g %G",
-	    -nanval, -nanval, -nanval, -nanval,
-	    -nanval, -nanval, -nanval, -nanval);
+	    -qnanval, -qnanval, -qnanval, -qnanval,
+	    -qnanval, -qnanval, -qnanval, -qnanval);
   result |= wcscmp (wbuf, L"-nan -NAN -nan -NAN -nan -NAN -nan -NAN") != 0;
   printf ("expected L\"-nan -NAN -nan -NAN -nan -NAN -nan -NAN\", got L\"%S\"\n",
 	  wbuf);
@@ -114,17 +116,17 @@ F (void)
 	  wbuf);
 #endif /* __OPTION_POSIX_C_LANG_WIDE_CHAR */
 
-  lnanval = NAN;
+  lqnanval = NAN;
 
   snprintf (buf, sizeof buf, "%La %LA %Le %LE %Lf %LF %Lg %LG",
-	    lnanval, lnanval, lnanval, lnanval,
-	    lnanval, lnanval, lnanval, lnanval);
+	    lqnanval, lqnanval, lqnanval, lqnanval,
+	    lqnanval, lqnanval, lqnanval, lqnanval);
   result = strcmp (buf, "nan NAN nan NAN nan NAN nan NAN") != 0;
   printf ("expected \"nan NAN nan NAN nan NAN nan NAN\", got \"%s\"\n", buf);
 
   snprintf (buf, sizeof buf, "%La %LA %Le %LE %Lf %LF %Lg %LG",
-	    -lnanval, -lnanval, -lnanval, -lnanval,
-	    -lnanval, -lnanval, -lnanval, -lnanval);
+	    -lqnanval, -lqnanval, -lqnanval, -lqnanval,
+	    -lqnanval, -lqnanval, -lqnanval, -lqnanval);
   result = strcmp (buf, "-nan -NAN -nan -NAN -nan -NAN -nan -NAN") != 0;
   printf ("expected \"-nan -NAN -nan -NAN -nan -NAN -nan -NAN\", got \"%s\"\n",
 	  buf);
@@ -147,15 +149,15 @@ F (void)
 #if __OPTION_POSIX_C_LANG_WIDE_CHAR
   swprintf (wbuf, sizeof wbuf / sizeof (wbuf[0]),
 	    L"%La %LA %Le %LE %Lf %LF %Lg %LG",
-	    lnanval, lnanval, lnanval, lnanval,
-	    lnanval, lnanval, lnanval, lnanval);
+	    lqnanval, lqnanval, lqnanval, lqnanval,
+	    lqnanval, lqnanval, lqnanval, lqnanval);
   result |= wcscmp (wbuf, L"nan NAN nan NAN nan NAN nan NAN") != 0;
   printf ("expected L\"nan NAN nan NAN nan NAN nan NAN\", got L\"%S\"\n", wbuf);
 
   swprintf (wbuf, sizeof wbuf / sizeof (wbuf[0]),
 	    L"%La %LA %Le %LE %Lf %LF %Lg %LG",
-	    -lnanval, -lnanval, -lnanval, -lnanval,
-	    -lnanval, -lnanval, -lnanval, -lnanval);
+	    -lqnanval, -lqnanval, -lqnanval, -lqnanval,
+	    -lqnanval, -lqnanval, -lqnanval, -lqnanval);
   result |= wcscmp (wbuf, L"-nan -NAN -nan -NAN -nan -NAN -nan -NAN") != 0;
   printf ("expected L\"-nan -NAN -nan -NAN -nan -NAN -nan -NAN\", got L\"%S\"\n",
 	  wbuf);

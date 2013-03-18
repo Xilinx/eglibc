@@ -1056,7 +1056,7 @@ main (void)
     }
 #endif
 
-#ifdef __i386__
+#if defined (__i386__) || defined (__x86_64__)
   /* This is a test for the strange long doubles in x86 FPUs.  */
   {
     union
@@ -1074,7 +1074,7 @@ main (void)
       }
   }
 
-  /* Special NaNs in x86 long double.  Test for scalbl.  */
+  /* Special qNaNs in x86 long double.  Test for scalbl.  */
   {
     union
     {
@@ -1087,12 +1087,12 @@ main (void)
     r = scalbl (u.d, 0.0);
     if (!isnan (r))
       {
-	puts ("scalbl(NaN, 0) does not return NaN");
+	puts ("scalbl (qNaN, 0) does not return NaN");
 	result = 1;
       }
     else if (memcmp (&r, &u.d, sizeof (double)) != 0)
       {
-	puts ("scalbl(NaN, 0) does not return the same NaN");
+	puts ("scalbl (qNaN, 0) does not return the same NaN");
 	result = 1;
       }
   }
@@ -1116,7 +1116,7 @@ main (void)
       }
     else if (fetestexcept (FE_UNDERFLOW))
       {
-	puts ("scalbl(NaN, 0) raises underflow exception");
+	puts ("scalbl (LDBL_MIN, 2147483647) raises underflow exception");
 	result = 1;
       }
 
@@ -1134,7 +1134,7 @@ main (void)
       }
     else if (fetestexcept (FE_OVERFLOW))
       {
-	puts ("scalbl(NaN, 0) raises overflow exception");
+	puts ("scalbl (LDBL_MAX, -2147483647) raises overflow exception");
 	result = 1;
       }
   }

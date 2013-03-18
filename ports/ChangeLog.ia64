@@ -1,3 +1,69 @@
+2013-03-12  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/ia64/sysdep.h (INTERNAL_SYSCALL_DECL): Add
+	__attribute__ ((unused)) to err decl.
+	(INTERNAL_SYSCALL_ERROR_P): Add (void)val dummy reference.
+
+2013-03-12  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/ia64/fpu/libm_error.c (STATIC): Delete redundant definition.
+	(_DECL_NUM, DECL_FLOAT, DECL_DOUBLE, DECL_LONG_DOUBLE): New defines.
+	(float_inf): Change definition to use DECL_FLOAT.
+	(float_huge, float_zero, float_neg_inf, float_neg_huge,
+	float_neg_zero): Likewise.
+	(double_inf): Change definition to use DECL_DOUBLE.
+	(double_huge, double_zero, double_neg_inf, double_neg_huge,
+	double_neg_zero): Likewise.
+	(long_double_inf): Change definition to use DECL_LONG_DOUBLE.
+	(long_double_huge, long_double_zero, long_double_neg_inf,
+	long_double_neg_huge, long_double_neg_zero): Likewise.
+	(RETVAL_HUGE_VALL): Change from casting a pointer to using the num
+	field of the union.
+	(RETVAL_NEG_HUGE_VALL, RETVAL_HUGEL, RETVAL_NEG_HUGEL,
+	RETVAL_HUGE_VALL, RETVAL_NEG_HUGE_VALL, RETVAL_HUGEL,
+	RETVAL_NEG_HUGEL, RETVAL_HUGE_VALD, RETVAL_NEG_HUGE_VALD,
+	RETVAL_HUGED, RETVAL_NEG_HUGED, RETVAL_HUGE_VALF,
+	RETVAL_NEG_HUGE_VALF, RETVAL_HUGEF, RETVAL_NEG_HUGEF,
+	ZEROL_VALUE, ZEROD_VALUE, ZEROF_VALUE, RETVAL_ZEROL,
+	RETVAL_ZEROD, RETVAL_ZEROF, RETVAL_NEG_ZEROL, RETVAL_NEG_ZEROD,
+	RETVAL_NEG_ZEROF): Likewise.
+
+2013-03-12  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/ia64/dl-fptr.h (ELF_PTR_TO_FDESC): New definition.
+	* sysdeps/ia64/dl-machine.h (elf_machine_runtime_setup): Change
+	struct fdesc * casts to use new ELF_PTR_TO_FDESC helper.
+	* sysdeps/ia64/entry.h: Include link.h and dl-fptr.h.
+	(ENTRY_POINT): Change cast to use new ELF_PTR_TO_FDESC helper.
+	* sysdeps/unix/sysv/linux/ia64/makecontext.c: Include link.h and
+	dl-fptr.h.
+	(struct fdesc): Remove structure, now redundant.
+	(makecontext): Change casts to use new ELF_PTR_TO_FDESC helper.
+
+2013-03-11  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/ia64/bits/mman.h: Remove all defines
+	provided by bits/mman-linux.h and include <bits/mman-linux.h>.
+
+2013-03-10  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/ia64/makecontext.c (__makecontext): Change
+	type of rbs to unsigned.  Change stack_start cast to unsigned.
+
+2013-03-10  Mike Frysinger  <vapier@gentoo.org>
+
+	* sysdeps/unix/sysv/linux/ia64/nptl/dl-sysdep.h:
+	Change multiple inclusion guard to _LINUX_IA64_DL_SYSDEP_H.
+	Use #include_next.
+	(RTLD_PRIVATE_ERRNO): Remove definition, now redundant.
+	(NEED_DL_SYSINFO, _dl_discover_osversion,
+	HAVE_DL_DISCOVER_OSVERSION): Likewise.
+
+2013-03-06  Andreas Jaeger  <aj@suse.de>
+
+	* sysdeps/unix/sysv/linux/ia64/bits/msq.h (MSG_COPY): Define.
+	(MSG_EXCEPT): Make conditional on __USE_GNU.
+
 2013-02-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
 
 	* sysdeps/unix/sysv/linux/ia64/nptl/libc.abilist: Add
