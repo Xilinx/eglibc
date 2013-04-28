@@ -1,4 +1,4 @@
-/* Test signaling NaNs in isnan, isinf, and similar functions.
+/* Test signaling NaNs in issignaling, isnan, isinf, and similar functions.
    Copyright (C) 2008-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 2005.
@@ -28,6 +28,9 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
+
+#include <math-tests.h>
+
 
 int dest_offset;
 char *dest_address;
@@ -116,6 +119,48 @@ NAME (void)								      \
   feenableexcept (FE_ALL_EXCEPT);					      \
   if (sigsetjmp(sigfpe_buf, 0))						      \
     {									      \
+      printf (#FLOAT " issignaling (qNaN) raised SIGFPE\n");		      \
+      errors++;								      \
+    } else {								      \
+      check (#FLOAT " issignaling (qNaN)", !issignaling (qNaN_var));	      \
+    }									      \
+									      \
+  feclearexcept(FE_ALL_EXCEPT);						      \
+  feenableexcept (FE_ALL_EXCEPT);					      \
+  if (sigsetjmp(sigfpe_buf, 0))						      \
+    {									      \
+      printf (#FLOAT " issignaling (-qNaN) raised SIGFPE\n");		      \
+      errors++;								      \
+    } else {								      \
+      check (#FLOAT " issignaling (-qNaN)", !issignaling (-qNaN_var));	      \
+    }									      \
+									      \
+  feclearexcept(FE_ALL_EXCEPT);						      \
+  feenableexcept (FE_ALL_EXCEPT);					      \
+  if (sigsetjmp(sigfpe_buf, 0))						      \
+    {									      \
+      printf (#FLOAT " issignaling (sNaN) raised SIGFPE\n");		      \
+      errors++;								      \
+    } else {								      \
+      check (#FLOAT " issignaling (sNaN)",				      \
+	     SNAN_TESTS (FLOAT) ? issignaling (sNaN_var) : 1);		      \
+    }									      \
+									      \
+  feclearexcept(FE_ALL_EXCEPT);						      \
+  feenableexcept (FE_ALL_EXCEPT);					      \
+  if (sigsetjmp(sigfpe_buf, 0))						      \
+    {									      \
+      printf (#FLOAT " issignaling (-sNaN) raised SIGFPE\n");		      \
+      errors++;								      \
+    } else {								      \
+      check (#FLOAT " issignaling (-sNaN)",				      \
+	     SNAN_TESTS (FLOAT) ? issignaling (minus_sNaN_var) : 1);	      \
+    }									      \
+									      \
+  feclearexcept(FE_ALL_EXCEPT);						      \
+  feenableexcept (FE_ALL_EXCEPT);					      \
+  if (sigsetjmp(sigfpe_buf, 0))						      \
+    {									      \
       printf (#FLOAT " isnan (qNaN) raised SIGFPE\n");			      \
       errors++;								      \
     } else {								      \
@@ -139,7 +184,8 @@ NAME (void)								      \
       printf (#FLOAT " isnan (sNaN) raised SIGFPE\n");			      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isnan (sNaN)", isnan (sNaN_var));			      \
+      check (#FLOAT " isnan (sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? isnan (sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -149,7 +195,8 @@ NAME (void)								      \
       printf (#FLOAT " isnan (-sNaN) raised SIGFPE\n");			      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isnan (-sNaN)", isnan (minus_sNaN_var));		      \
+      check (#FLOAT " isnan (-sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? isnan (minus_sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -179,7 +226,8 @@ NAME (void)								      \
       printf (#FLOAT " isinf (sNaN) raised SIGFPE\n");			      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isinf (sNaN)", !isinf (sNaN_var));		      \
+      check (#FLOAT " isinf (sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? !isinf (sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -189,7 +237,8 @@ NAME (void)								      \
       printf (#FLOAT " isinf (-sNaN) raised SIGFPE\n");			      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isinf (-sNaN)", !isinf (minus_sNaN_var));		      \
+      check (#FLOAT " isinf (-sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? !isinf (minus_sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -219,7 +268,8 @@ NAME (void)								      \
       printf (#FLOAT " isfinite (sNaN) raised SIGFPE\n");		      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isfinite (sNaN)", !isfinite (sNaN_var));		      \
+      check (#FLOAT " isfinite (sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? !isfinite (sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -229,7 +279,8 @@ NAME (void)								      \
       printf (#FLOAT " isfinite (-sNaN) raised SIGFPE\n");		      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isfinite (-sNaN)", !isfinite (minus_sNaN_var));	      \
+      check (#FLOAT " isfinite (-sNaN)",				      \
+	     SNAN_TESTS (FLOAT) ? !isfinite (minus_sNaN_var) : 1);	      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -259,7 +310,8 @@ NAME (void)								      \
       printf (#FLOAT " isnormal (sNaN) isnormal SIGFPE\n");		      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isnormal (sNaN)", !isnormal (sNaN_var));		      \
+      check (#FLOAT " isnormal (sNaN)",					      \
+	     SNAN_TESTS (FLOAT) ? !isnormal (sNaN_var) : 1);		      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -269,7 +321,8 @@ NAME (void)								      \
       printf (#FLOAT " isnormal (-sNaN) raised SIGFPE\n");		      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " isnormal (-sNaN)", !isnormal (minus_sNaN_var));	      \
+      check (#FLOAT " isnormal (-sNaN)",				      \
+	     SNAN_TESTS (FLOAT) ? !isnormal (minus_sNaN_var) : 1);	      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -299,7 +352,8 @@ NAME (void)								      \
       printf (#FLOAT " fpclassify (sNaN) isnormal SIGFPE\n");		      \
       errors++;								      \
     } else {								      \
-      check (#FLOAT " fpclassify (sNaN)", fpclassify (sNaN_var) == FP_NAN);   \
+      check (#FLOAT " fpclassify (sNaN)",				      \
+	     SNAN_TESTS (FLOAT) ? fpclassify (sNaN_var) == FP_NAN : 1);	      \
     }									      \
 									      \
   feclearexcept(FE_ALL_EXCEPT);						      \
@@ -310,7 +364,7 @@ NAME (void)								      \
       errors++;								      \
     } else {								      \
       check (#FLOAT " fpclassify (-sNaN)",				      \
-	     fpclassify (minus_sNaN_var) == FP_NAN);			      \
+	     SNAN_TESTS (FLOAT) ? fpclassify (minus_sNaN_var) == FP_NAN : 1); \
     }									      \
 									      \
   fesetenv(&saved_fenv); /* restore saved fenv */			      \

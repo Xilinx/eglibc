@@ -35,6 +35,7 @@
 /* Common types and definition                                          */
 /************************************************************************/
 
+#include <mpa-arch.h>
 
 /* The mp_no structure holds the details of a multi-precision floating point
    number.
@@ -61,7 +62,7 @@
 typedef struct
 {
   int e;
-  double d[40];
+  mantissa_t d[40];
 } mp_no;
 
 typedef union
@@ -82,23 +83,23 @@ extern const mp_no mptwo;
 
 #define ABS(x)   ((x) <  0  ? -(x) : (x))
 
-#define  RADIX     0x1.0p24		/* 2^24    */
-#define  RADIXI    0x1.0p-24		/* 2^-24   */
-#define  CUTTER    0x1.0p76		/* 2^76    */
+#ifndef RADIXI
+# define  RADIXI    0x1.0p-24		/* 2^-24   */
+#endif
 
-#define  ZERO      0.0			/* 0       */
-#define  MZERO     -0.0			/* 0 with the sign bit set */
-#define  ONE       1.0			/* 1       */
-#define  MONE      -1.0			/* -1      */
-#define  TWO       2.0			/*  2      */
+#ifndef TWO52
+# define  TWO52     0x1.0p52		/* 2^52    */
+#endif
 
-#define  TWO5      0x1.0p5		/* 2^5     */
-#define  TWO8      0x1.0p8		/* 2^52    */
-#define  TWO10     0x1.0p10		/* 2^10    */
-#define  TWO18     0x1.0p18		/* 2^18    */
-#define  TWO19     0x1.0p19		/* 2^19    */
-#define  TWO23     0x1.0p23		/* 2^23    */
-#define  TWO52     0x1.0p52		/* 2^52    */
+#define  TWO5      TWOPOW (5)		/* 2^5     */
+#define  TWO8      TWOPOW (8)		/* 2^52    */
+#define  TWO10     TWOPOW (10)		/* 2^10    */
+#define  TWO18     TWOPOW (18)		/* 2^18    */
+#define  TWO19     TWOPOW (19)		/* 2^19    */
+#define  TWO23     TWOPOW (23)		/* 2^23    */
+
+#define  HALFRAD   TWO23
+
 #define  TWO57     0x1.0p57		/* 2^57    */
 #define  TWO71     0x1.0p71		/* 2^71    */
 #define  TWOM1032  0x1.0p-1032		/* 2^-1032 */
@@ -106,7 +107,6 @@ extern const mp_no mptwo;
 
 #define  HALF      0x1.0p-1		/* 1/2 */
 #define  MHALF     -0x1.0p-1		/* -1/2 */
-#define  HALFRAD   0x1.0p23		/* 2^23 */
 
 int __acr (const mp_no *, const mp_no *, int);
 void __cpy (const mp_no *, mp_no *, int);
@@ -147,10 +147,10 @@ __pow_mp (int pow, mp_no *y, int p)
       rem += 24;
     }
   /* The sign of any 2^x is always positive.  */
-  Y[0] = ONE;
+  Y[0] = 1;
   Y[1] = 1 << rem;
 
-  /* Everything else is ZERO.  */
+  /* Everything else is 0.  */
   for (i = 2; i <= p; i++)
-    Y[i] = ZERO;
+    Y[i] = 0;
 }

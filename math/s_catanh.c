@@ -20,7 +20,7 @@
 #include <complex.h>
 #include <math.h>
 #include <math_private.h>
-
+#include <float.h>
 
 __complex__ double
 __catanh (__complex__ double x)
@@ -56,19 +56,54 @@ __catanh (__complex__ double x)
     }
   else
     {
-      double i2 = __imag__ x * __imag__ x;
+      if (fabs (__real__ x) >= 16.0 / DBL_EPSILON
+	  || fabs (__imag__ x) >= 16.0 / DBL_EPSILON)
+	{
+	  __imag__ res = __copysign (M_PI_2, __imag__ x);
+	  if (fabs (__imag__ x) <= 1.0)
+	    __real__ res = 1.0 / __real__ x;
+	  else if (fabs (__real__ x) <= 1.0)
+	    __real__ res = __real__ x / __imag__ x / __imag__ x;
+	  else
+	    {
+	      double h = __ieee754_hypot (__real__ x / 2.0, __imag__ x / 2.0);
+	      __real__ res = __real__ x / h / h / 4.0;
+	    }
+	}
+      else
+	{
+	  double i2 = __imag__ x * __imag__ x;
 
-      double num = 1.0 + __real__ x;
-      num = i2 + num * num;
+	  double num = 1.0 + __real__ x;
+	  num = i2 + num * num;
 
-      double den = 1.0 - __real__ x;
-      den = i2 + den * den;
+	  double den = 1.0 - __real__ x;
+	  den = i2 + den * den;
 
-      __real__ res = 0.25 * (__ieee754_log (num) - __ieee754_log (den));
+	  double f = num / den;
+	  if (f < 0.5)
+	    __real__ res = 0.25 * __ieee754_log (f);
+	  else
+	    {
+	      num = 4.0 * __real__ x;
+	      __real__ res = 0.25 * __log1p (num / den);
+	    }
 
-      den = 1 - __real__ x * __real__ x - i2;
+	  den = 1 - __real__ x * __real__ x - i2;
 
-      __imag__ res = 0.5 * __ieee754_atan2 (2.0 * __imag__ x, den);
+	  __imag__ res = 0.5 * __ieee754_atan2 (2.0 * __imag__ x, den);
+	}
+
+      if (fabs (__real__ res) < DBL_MIN)
+	{
+	  volatile double force_underflow = __real__ res * __real__ res;
+	  (void) force_underflow;
+	}
+      if (fabs (__imag__ res) < DBL_MIN)
+	{
+	  volatile double force_underflow = __imag__ res * __imag__ res;
+	  (void) force_underflow;
+	}
     }
 
   return res;

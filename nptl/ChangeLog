@@ -1,3 +1,61 @@
+2013-04-22  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* pthreadP.h (check_sched_policy_attr): New inline function.
+	(check_sched_priority_attr): Likewise.
+	(check_stacksize_attr): Likewise.
+	(__kernel_cpumask_size, __determine_cpumask_size): Declare
+	extern.
+	(check_cpuset_attr): New inline function.
+	* pthread_attr_setschedparam (__pthread_attr_setschedparam):
+	Use check_sched_priority_attr.
+	* pthread_attr_setschedpolicy.c
+	(__pthread_attr_setschedpolicy): Use check_sched_policy_attr.
+	* pthread_attr_setstack.c (__pthread_attr_setstack): Use
+	check_stacksize_attr.
+	* pthread_attr_setstacksize.c (__pthread_attr_setstacksize):
+	Likewise.
+	* sysdeps/unix/sysv/linux/pthread_attr_setaffinity.c
+	(__pthread_attr_setaffinity_new): Use check_cpuset_attr.
+
+2013-04-11  Andreas Schwab  <schwab@suse.de>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): If possible use FUTEX_WAIT_BITSET to
+	directly use absolute timeout.
+
+2013-04-07  Carlos O'Donell  <carlos@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sem_post.c: Include atomic.h.
+
+2013-04-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15337]
+	* sysdeps/unix/sysv/linux/x86_64/cancellation.S
+	[IS_IN_libpthread]
+	[SHARED && defined DO_VERSIONING && !defined NO_HIDDEN]: Mark
+	__pthread_unwind hidden.
+
+2013-03-28  Roland McGrath  <roland@hack.frob.com>
+
+	* pthread_create.c (start_thread) [!SHARED]:
+	Call __call_tls_dtors only if it's not NULL.
+
+2013-03-19  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* allocatestack.c (allocate_stack): Use __default_pthread_attr
+	instead of __default_stacksize.
+	* nptl-init.c (__pthread_initialize_minimal_internal):
+	Likewise.  Initialize guardsize.
+	* pthreadP.h (__default_pthread_attr): Declare.
+	* pthread_attr_getstacksize.c (__pthread_attr_getstacksize):
+	Use __default_pthread_attr instead of __default_stacksize.
+	* pthread_create.c (default_attr): Remove.
+	(__pthread_create_2_1): Use __default_pthread_attr instead of
+	default_attr.
+	* vars.c (__default_stacksize): Remove.
+	(__default_pthread_attr): New static variable to store
+	default thread attributes.
+
 2013-03-18  Siddhesh Poyarekar  <siddhesh@redhat.com>
 
 	* pthread_barrier_init.c (default_attr): Rename to

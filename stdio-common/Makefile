@@ -64,7 +64,7 @@ tests := tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 tst-fwrite bug16 bug17 tst-sprintf2 bug18 \
 	 bug19 tst-popen2 scanf14 scanf15 bug21 bug22 scanf16 scanf17 \
 	 tst-setvbuf1 bug23 bug24 bug-vfprintf-nargs tst-sprintf3 bug25 \
-	 tst-printf-round
+	 tst-printf-round bug26
 tests-$(OPTION_EGLIBC_LOCALE_CODE) \
       += tst-sscanf tst-swprintf test-vfprintf bug14 scanf13 tst-grouping
 tests-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO) \

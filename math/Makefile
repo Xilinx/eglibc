@@ -60,7 +60,7 @@ libm-calls = e_acos e_acosh e_asin e_atan2 e_atanh e_cosh e_exp e_fmod	\
 	     s_catan s_casin s_ccos s_csin s_ctan s_ctanh s_cacos	\
 	     s_casinh s_cacosh s_catanh s_csqrt s_cpow s_cproj s_clog10 \
 	     s_fma s_lrint s_llrint s_lround s_llround e_exp10 w_log2	\
-	     s_isinf_ns $(calls:s_%=m_%) x2y2m1 k_casinh
+	     s_isinf_ns s_issignaling $(calls:s_%=m_%) x2y2m1 k_casinh
 
 include ../Makeconfig
 
@@ -156,6 +156,33 @@ extra-objs += libieee.a ieee-math.o
 
 include ../Rules
 
+ifneq (no,$(PERL))
+# Run the math programs to automatically generate ULPs files.
+.PHONY: regen-ulps
+
+run-regen-ulps = $(test-wrapper-env) \
+	    GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
+	    $($*-ENV) $(rtld-prefix) $${run}
+
+regen-ulps: $(addprefix $(objpfx),$(libm-tests))
+	rm -f $(objpfx)ULPs; rm -f $(objpfx)NewUlps; \
+	cp $(ulps-file) $(objpfx)libm-test-ulps; \
+	for run in $^; do \
+	  echo "Regenerating ULPs for $${run}"; \
+	  $(run-regen-ulps) -u -o $(objpfx); \
+	  cat $(objpfx)ULPs >> $(objpfx)libm-test-ulps; \
+	  rm $(objpfx)ULPs; \
+	done; \
+	$(PERL) gen-libm-test.pl -o $(objpfx) -n -u $(objpfx)libm-test-ulps; \
+	echo "Automatic regeneration of ULPs complete."; \
+	echo "Difference between the current baseline and the new baseline is:";\
+	diff -urN $(ulps-file) $(objpfx)NewUlps; \
+	echo "Copy $(objpfx)NewUlps to $(ulps-file) (relative to source)."
+else
+regen-ulps:
+	@echo "Automatic regeneration of ULPs requires perl."; \
+	exit 1;
+endif
 
 # The generated sysd-rules file defines rules like this for sources
 # coming from sysdeps/ directories.  These rules find the generic sources.

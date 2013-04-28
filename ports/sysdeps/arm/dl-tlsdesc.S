@@ -17,6 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
+#include <arm-features.h>
 #include <tls.h>
 #include "tlsdesc.h"
 
@@ -28,12 +29,13 @@
 	.global	_dl_tlsdesc_return
 	.type	_dl_tlsdesc_return,#function
 	cfi_startproc
-	.fnstart
+	eabi_fnstart
 	.align 2
 _dl_tlsdesc_return:
-	ldr	r0, [r0]
+	sfi_breg r0, \
+	ldr	r0, [\B]
 	BX	(lr)
-	.fnend
+	eabi_fnend
 	cfi_endproc
 	.size	_dl_tlsdesc_return, .-_dl_tlsdesc_return
 
@@ -41,14 +43,14 @@ _dl_tlsdesc_return:
 	.global	_dl_tlsdesc_undefweak
 	.type	_dl_tlsdesc_undefweak,#function
 	cfi_startproc
-	.fnstart
+	eabi_fnstart
 	.align 2
 _dl_tlsdesc_undefweak:
 	GET_TLS (r1)
 	rsb 	r0, r0, #0
 	BX	(lr)
 	cfi_endproc
-	.fnend
+	eabi_fnend
 	.size	_dl_tlsdesc_undefweak, .-_dl_tlsdesc_undefweak
 
 #ifdef SHARED
@@ -78,28 +80,39 @@ _dl_tlsdesc_dynamic(struct tlsdesc *tdp)
 
 */
 	cfi_startproc
-	.fnstart
+	eabi_fnstart
 	.align 2
 _dl_tlsdesc_dynamic:
 	/* Our calling convention is to clobber r0, r1 and the processor
 	   flags.  All others that are modified must be saved */
-	.save	{r2,r3,r4,lr}
+	eabi_save ({r2,r3,r4,lr})
 	push	{r2,r3,r4,lr}
 	cfi_adjust_cfa_offset (16)
 	cfi_rel_offset (r2,0)
 	cfi_rel_offset (r3,4)
 	cfi_rel_offset (r4,8)
 	cfi_rel_offset (lr,12)
-	ldr	r1, [r0] /* td */
+	sfi_breg r0, \
+	ldr	r1, [\B] /* td */
 	GET_TLS (lr)
 	mov	r4, r0 /* r4 = tp */
-	ldr	r0, [r0]
-	ldr	r2, [r1, #8] /* gen_count */
-	ldr	r3, [r0]
+	sfi_breg r0, \
+	ldr	r0, [\B]
+	sfi_breg r1, \
+	ldr	r2, [\B, #8] /* gen_count */
+	sfi_breg r0, \
+	ldr	r3, [\B]
 	cmp	r2, r3
 	bhi	1f
-	ldr	r3, [r1]
+	sfi_breg r1, \
+	ldr	r3, [\B]
+#ifndef ARM_NO_INDEX_REGISTER
 	ldr	r2, [r0, r3, lsl #3]
+#else
+	add	lr, r0, r3, lsl #3
+	sfi_breg lr, \
+	ldr	r2, [\B]
+#endif
 	cmn	r2, #1
 	ittt	ne
 	ldrne	r3, [r1, #4]
@@ -110,7 +123,8 @@ _dl_tlsdesc_dynamic:
 	bl	__tls_get_addr
 	rsb	r0, r4, r0
 2:
-#if defined (__ARM_ARCH_4T__) && defined (__THUMB_INTERWORK__)
+#if ((defined (__ARM_ARCH_4T__) && defined (__THUMB_INTERWORK__)) \
+     || defined (ARM_ALWAYS_BX))
 	pop	{r2,r3,r4, lr}
 	cfi_adjust_cfa_offset (-16)
 	cfi_restore (lr)
@@ -121,7 +135,7 @@ _dl_tlsdesc_dynamic:
 #else
 	pop	{r2,r3,r4, pc}
 #endif
-	.fnend
+	eabi_fnend
 	cfi_endproc
 	.size	_dl_tlsdesc_dynamic, .-_dl_tlsdesc_dynamic
 #endif /* SHARED */
@@ -131,7 +145,7 @@ _dl_tlsdesc_dynamic:
 	.global	_dl_tlsdesc_lazy_resolver
 	.type	_dl_tlsdesc_lazy_resolver,#function
 	cfi_startproc
-	.fnstart
+	eabi_fnstart
 	.align 2
 _dl_tlsdesc_lazy_resolver:
 	/* r0 points at the tlsdesc,
@@ -141,10 +155,10 @@ _dl_tlsdesc_lazy_resolver:
 	  We push the remaining call-clobbered registers here, and also
 	  R1 -- to keep the stack correctly aligned.  */
 	/* Tell the unwinder that r2 has already been pushed.  */
-	.save	{r2}
+	eabi_save ({r2})
 	cfi_adjust_cfa_offset (4)
 	cfi_rel_offset (r2, 0)
-	.save	{r0,r1,r3,ip,lr}
+	eabi_save ({r0,r1,r3,ip,lr})
 	push	{r0, r1, r3, ip, lr}
 	cfi_adjust_cfa_offset (20)
 	cfi_rel_offset (r0, 0)
@@ -163,9 +177,10 @@ _dl_tlsdesc_lazy_resolver:
 	pop	{r2}
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (r2)
-	ldr	r1, [r0, #4]
+	sfi_breg r0, \
+	ldr	r1, [\B, #4]
 	BX	(r1)
-	.fnend
+	eabi_fnend
 	cfi_endproc
 	.size	_dl_tlsdesc_lazy_resolver, .-_dl_tlsdesc_lazy_resolver
 
@@ -175,14 +190,14 @@ _dl_tlsdesc_lazy_resolver:
 	.global	_dl_tlsdesc_resolve_hold
 	.type	_dl_tlsdesc_resolve_hold,#function
 	cfi_startproc
-	.fnstart
+	eabi_fnstart
 	.align 2
 _dl_tlsdesc_resolve_hold:
 	/* Tell the unwinder that r2 has already been pushed.  */
-	.save	{r2}
+	eabi_save ({r2})
 	cfi_adjust_cfa_offset (4)
 	cfi_rel_offset (r2, 0)
-	.save	{r0,r1,r3,ip,lr}
+	eabi_save ({r0,r1,r3,ip,lr})
 	push	{r0, r1, r3, ip, lr}
 	cfi_adjust_cfa_offset (20)
 	cfi_rel_offset (r0, 0)
@@ -202,8 +217,9 @@ _dl_tlsdesc_resolve_hold:
 	pop	{r2}
 	cfi_adjust_cfa_offset (-4)
 	cfi_restore (r2)
-	ldr     r1, [r0, #4]
+	sfi_breg r0, \
+	ldr     r1, [\B, #4]
 	BX      (r1)
-	.fnend
+	eabi_fnend
 	cfi_endproc
 	.size	_dl_tlsdesc_resolve_hold, .-_dl_tlsdesc_resolve_hold

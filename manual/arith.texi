@@ -387,6 +387,14 @@ to
 @end smallexample
 @end deftypefn
 
+@comment math.h
+@comment GNU
+@deftypefn {Macro} int issignaling (@emph{float-type} @var{x})
+This macro returns a nonzero value if @var{x} is a signaling NaN
+(sNaN).  It is based on draft TS 18661 and currently enabled as a GNU
+extension.
+@end deftypefn
+
 Another set of floating-point classification functions was provided by
 BSD.  @Theglibc{} also supports these functions; however, we
 recommend that you use the ISO C99 macros in new code.  Those are standard
@@ -1260,26 +1268,26 @@ The @code{scalb} function is the BSD name for @code{ldexp}.
 
 @comment math.h
 @comment BSD
-@deftypefun {long long int} scalbn (double @var{x}, int @var{n})
+@deftypefun double scalbn (double @var{x}, int @var{n})
 @comment math.h
 @comment BSD
-@deftypefunx {long long int} scalbnf (float @var{x}, int @var{n})
+@deftypefunx float scalbnf (float @var{x}, int @var{n})
 @comment math.h
 @comment BSD
-@deftypefunx {long long int} scalbnl (long double @var{x}, int @var{n})
+@deftypefunx {long double} scalbnl (long double @var{x}, int @var{n})
 @code{scalbn} is identical to @code{scalb}, except that the exponent
 @var{n} is an @code{int} instead of a floating-point number.
 @end deftypefun
 
 @comment math.h
 @comment BSD
-@deftypefun {long long int} scalbln (double @var{x}, long int @var{n})
+@deftypefun double scalbln (double @var{x}, long int @var{n})
 @comment math.h
 @comment BSD
-@deftypefunx {long long int} scalblnf (float @var{x}, long int @var{n})
+@deftypefunx float scalblnf (float @var{x}, long int @var{n})
 @comment math.h
 @comment BSD
-@deftypefunx {long long int} scalblnl (long double @var{x}, long int @var{n})
+@deftypefunx {long double} scalblnl (long double @var{x}, long int @var{n})
 @code{scalbln} is identical to @code{scalb}, except that the exponent
 @var{n} is a @code{long int} instead of a floating-point number.
 @end deftypefun

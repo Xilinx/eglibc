@@ -823,9 +823,9 @@ extern char *fcvt (double __value, int __ndigit, int *__restrict __decpt,
    be written to BUF.  */
 extern char *gcvt (double __value, int __ndigit, char *__buf)
      __THROW __nonnull ((3)) __wur;
+#endif
 
-
-# ifdef __USE_MISC
+#ifdef __USE_MISC
 /* Long double versions of above functions.  */
 extern char *qecvt (long double __value, int __ndigit,
 		    int *__restrict __decpt, int *__restrict __sign)
@@ -854,21 +854,20 @@ extern int qfcvt_r (long double __value, int __ndigit,
 		    int *__restrict __decpt, int *__restrict __sign,
 		    char *__restrict __buf, size_t __len)
      __THROW __nonnull ((3, 4, 5));
-# endif	/* misc */
-#endif	/* use MISC || use X/Open Unix */
+#endif	/* misc */
 
 
 __BEGIN_NAMESPACE_STD
 /* Return the length of the multibyte character
    in S, which is no longer than N.  */
-extern int mblen (const char *__s, size_t __n) __THROW __wur;
+extern int mblen (const char *__s, size_t __n) __THROW;
 /* Return the length of the given multibyte character,
    putting its `wchar_t' representation in *PWC.  */
 extern int mbtowc (wchar_t *__restrict __pwc,
-		   const char *__restrict __s, size_t __n) __THROW __wur;
+		   const char *__restrict __s, size_t __n) __THROW;
 /* Put the multibyte character represented
    by WCHAR in S, returning its length.  */
-extern int wctomb (char *__s, wchar_t __wchar) __THROW __wur;
+extern int wctomb (char *__s, wchar_t __wchar) __THROW;
 
 
 /* Convert a multibyte string to a wide char string.  */

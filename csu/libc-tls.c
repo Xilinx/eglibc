@@ -28,10 +28,6 @@
  #error makefile bug, this file is for static only
 #endif
 
-extern ElfW(Phdr) *_dl_phdr;
-extern size_t _dl_phnum;
-
-
 dtv_t _dl_static_dtv[2 + TLS_SLOTINFO_SURPLUS];
 
 
@@ -118,7 +114,7 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
   size_t align = 0;
   size_t max_align = tcbalign;
   size_t tcb_offset;
-  ElfW(Phdr) *phdr;
+  const ElfW(Phdr) *phdr;
 
   /* Look through the TLS segment if there is any.  */
   if (_dl_phdr != NULL)

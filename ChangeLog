@@ -1,3 +1,974 @@
+2013-04-27  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15409]
+	* math/s_catan.c (__catan): Handle arguments with large real or
+	imaginary part separately without squaring.
+	* math/s_catanf.c (__catanf): Likewise.
+	* math/s_catanh.c (__catanh): Likewise.
+	* math/s_catanhf.c (__catanhf): Likewise.
+	* math/s_catanhl.c [LDBL_MANT_DIG == 106] (LDBL_EPSILON): Undefine
+	and redefine.
+	(__catanhl): Handle arguments with large real or imaginary part
+	separately without squaring.
+	* math/s_catanl.c [LDBL_MANT_DIG == 106] (LDBL_EPSILON): Undefine
+	and redefine.
+	(__catanl): Handle arguments with large real or imaginary part
+	separately without squaring.
+	* math/libm-test.inc (catan_test): Add more tests.
+	(catanh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-04-27  Andreas Jaeger  <aj@suse.de>
+
+	[BZ #15007]
+	* stdlib/stdlib.h: Update guards for qecvt.
+	* stdlib/bits/stdlib-ldbl.h: Sync guards for qecvt etc with
+	<stdlib.h>.
+
+2013-04-27  Allan McRae  <allan@archlinux.org>
+
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+2013-04-26  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15406]
+	* math/s_catan.c: Include <float.h>.
+	(__catan): Ensure underflow exception occurs for underflowed
+	result.
+	* math/s_catanf.c: Include <float.h>.
+	(__catanf): Ensure underflow exception occurs for underflowed
+	result.
+	* math/s_catanh.c: Include <float.h>.
+	(__catanh): Ensure underflow exception occurs for underflowed
+	result.
+	* math/s_catanhf.c: Include <float.h>.
+	(__catanhf): Ensure underflow exception occurs for underflowed
+	result.
+	* math/s_catanhl.c: Include <float.h>.
+	(__catanhl): Ensure underflow exception occurs for underflowed
+	result.
+	* math/s_catanl.c: Include <float.h>.
+	(__catanl): Ensure underflow exception occurs for underflowed
+	result.
+	* math/libm-test.inc (catan_test): Add more tests.
+	(catanh_test): Likewise.
+
+	[BZ #15405]
+	* math/s_ccosh.c (__ccosh): Ensure underflow exception occurs for
+	underflowed result.
+	* math/s_ccoshf.c (__ccoshf): Likewise.
+	* math/s_ccoshl.c (__ccoshl): Likewise.
+	* math/s_csin.c (__csin): Likewise.
+	* math/s_csinf.c (__csinf): Likewise.
+	* math/s_csinh.c (__csinh): Likewise.
+	* math/s_csinhf.c (__csinhf): Likewise.
+	* math/s_csinhl.c (__csinhl): Likewise.
+	* math/s_csinl.c (__csinl): Likewise.
+	* math/libm-test.inc (ccos_test): Add more tests.
+	(ccosh_test): Likewise.
+	(csin_test): Likewise.
+	(csinh_test): Likewise.
+
+2013-04-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/power5/fpu/s_modf.c: Moved to ...
+	* sysdeps/powerpc/power5+/fpu/s_modf.c: ... this.
+	* sysdeps/powerpc/power5/fpu/s_modff.c: Moved to ...
+	* sysdeps/powerpc/power5+/fpu/s_modff.c: ... this.
+	* sysdeps/powerpc/powerpc32/power5+/Implies: Add powerpc/power5+ and
+	powerpc/power5+/fpu folders.
+	* sysdeps/powerpc/powerpc64/power5+/Implies: Likewise.
+
+
+2013-04-26  Markus Trippelsdorf  <markus@trippelsdorf.de>
+
+	* sysdeps/x86_64/fpu/libm-test-ulps: Update.
+
+2013-04-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/Makefile [$(config-machine) = x86_64] (tests): Remove
+	additions to variable.
+	[$(config-machine) = x86_64] (modules-names): Likewise.
+	($(objpfx)tst-audit3): Remove dependency.
+	($(objpfx)tst-audit3.out): Likewise.
+	($(objpfx)tst-audit4): Likewise.
+	($(objpfx)tst-audit4.out): Likewise.
+	($(objpfx)tst-audit5): Likewise.
+	($(objpfx)tst-audit5.out): Likewise.
+	($(objpfx)tst-audit6): Likewise.
+	($(objpfx)tst-audit6.out): Likewise.
+	($(objpfx)tst-audit7): Likewise.
+	($(objpfx)tst-audit7.out): Likewise.
+	(tst-audit3-ENV): Remove variable.
+	(tst-audit4-ENV): Likewise.
+	(tst-audit5-ENV): Likewise.
+	(tst-audit6-ENV): Likewise.
+	(tst-audit7-ENV): Likewise.
+	[$(config-cflags-avx) = yes] (AVX-CFLAGS): Likewise.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-audit4.c): Remove
+	addition to variable.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-auditmod4a.c): Likewise.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-auditmod4b.c): Likewise.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-auditmod6b.c): Likewise.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-auditmod6c.c): Likewise.
+	[$(config-cflags-avx) = yes] (CFLAGS-tst-auditmod7b.c): Likewise.
+	* sysdeps/x86_64/Makefile [$(subdir) = elf] (tests): Add
+	tst-audit3, tst-audit4 and tst-audit5.
+	[$(subdir) = elf && $(config-cflags-avx) = yes] (tests): Add
+	tst-audit6 and tst-audit7.
+	[$(subdir) = elf] (modules-names): Add audit modules for those
+	tests.
+	[$(subdir) = elf] ($(objpfx)tst-audit3): New dependency.
+	[$(subdir) = elf] ($(objpfx)tst-audit3.out): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit4): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit4.out): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit5): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit5.out): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit6): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit6.out): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit7): Likewise.
+	[$(subdir) = elf] ($(objpfx)tst-audit7.out): Likewise.
+	[$(subdir) = elf] (tst-audit3-ENV): New variable.
+	[$(subdir) = elf] (tst-audit4-ENV): Likewise.
+	[$(subdir) = elf] (tst-audit5-ENV): Likewise.
+	[$(subdir) = elf] (tst-audit6-ENV): Likewise.
+	[$(subdir) = elf] (tst-audit7-ENV): Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes] (AVX-CFLAGS):
+	Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-audit4.c): Append $(AVX-CFLAGS).
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-auditmod4a.c): Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-auditmod4b.c): Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-auditmod6b.c): Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-auditmod6c.c): Likewise.
+	[$(subdir) = elf && $(config-cflags-avx) = yes]
+	(CFLAGS-tst-auditmod7b.c): Likewise.
+	* elf/tst-audit3.c: Move to ...
+	* sysdeps/x86_64/tst-audit3.c: ... here.
+	* elf/tst-audit4.c: Move to ...
+	* sysdeps/x86_64/tst-audit4.c: ... here.
+	* elf/tst-audit5.c: Move to ...
+	* sysdeps/x86_64/tst-audit5.c: ... here.
+	* elf/tst-audit6.c: Move to ...
+	* sysdeps/x86_64/tst-audit6.c: ... here.
+	* elf/tst-audit7.c: Move to ...
+	* sysdeps/x86_64/tst-audit7.c: ... here.
+	* elf/tst-auditmod3a.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod3a.c: ... here.
+	* elf/tst-auditmod3b.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod3b.c: ... here.
+	* elf/tst-auditmod4a.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod4a.c: ... here.
+	* elf/tst-auditmod4b.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod4b.c: ... here.
+	* elf/tst-auditmod5a.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod5a.c: ... here.
+	* elf/tst-auditmod5b.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod5b.c: ... here.
+	* elf/tst-auditmod6a.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod6a.c: ... here.
+	* elf/tst-auditmod6b.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod6b.c: ... here.
+	* elf/tst-auditmod6c.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod6c.c: ... here.
+	* elf/tst-auditmod7a.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod7a.c: ... here.
+	* elf/tst-auditmod7b.c: Move to ...
+	* sysdeps/x86_64/tst-auditmod7b.c: ... here.
+
+2013-04-25  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #15366]
+	* sysdeps/generic/inttypes.h (PRId8, PRId16, etc.):
+	define unconditionally.
+	* sysdeps/generic/stdint.h (INT8_MIN, INT16_MIN, etc.):
+	define unconditionally.
+	(INT8_C, INT16_C, etc.): Likewise.
+
+2013-04-25  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* csu/libc-start.c (__libc_start_main) [!SHARED]: Declare
+	__ehdr_start with hidden visibility.
+
+	* soft-fp/op-common.h (_FP_SQRT): s/sNAN/NAN/ in a comment.
+
+2013-04-24  Carlos O'Donell  <carlos@redhat.com>
+
+	* math/libm-test.inc (cos_test): Use accurate hex constants.
+	(sincost_test): Likewise.
+
+2013-04-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (catan_test): Add more tests.
+	(catanh_test): Likewise.
+
+	* math/s_catanf.c (__catanf): Use suffixed floating-point
+	constants.
+	* math/s_catanhf.c (__catanhf): Likewise.
+	* math/s_catanhl.c (__catanhl): Likewise.
+	* math/s_catanl.c (__catanl): Likewise.
+
+	[BZ #15394]
+	* math/s_catan.c (__catan): Calculate imaginary part of result
+	with log1p not log unless computing log of number close to 0.
+	* math/s_catanf.c (__catanf): Likewise.
+	* math/s_catanl.c (__catanl): Likewise.
+	* math/s_catanh.c (__catanh): Calculate real part of result with
+	log1p not log unless computing log of number close to 0.
+	* math/s_catanhf.c (__catanhf): Likewise.
+	* math/s_catanhl.c (__catanhl): Likewise.
+	* math/libm-test.inc (catan_test): Add more tests.
+	(catanh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-04-24  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile: Mention files in which fast and slow
+	paths of math functions are implemented.
+
+2013-04-23  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/posix/timespec_get.c: New file.
+
+2013-04-23  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/power5/fpu/s_modf.c: New file: modf optimization for
+	POWER.
+	* sysdeps/powerpc/power5/fpu/s_modff.c: New file: modff optimization
+	for POWER.
+	* sysdeps/powerpc/powerpc64/power5/Implies: Add powerpc/power5 and
+	powerpc/power5/fpu folders.
+	* sysdeps/powerpc/powerpc32/power5/Implies: Likewise.
+	* benchtests/Makefile: Add modf testcase.
+	* benchtests/bench-modf.c: New file: Benchmark test for mo
+
+2013-04-23  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #14888]
+	* time/Makefile (tests): Add tst-strptime-whitespace.
+	* time/strptime_l.c (get_number): Use ISSPACE.
+	(__strptime_internal): Likewise.
+	* time/tst-strptime-whitespace.c: New test case.
+
+2013-04-23  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* nss/nss_files/files-init.c (TF): Don't initialize flexible array
+	member.
+	(_nss_files_init): Set it here.
+
+2013-04-23  Heiko Carstens  <heiko.carstens@de.ibm.com>
+
+	* sysdeps/unix/sysv/linux/s390/bits/statfs.h: Change types of
+	f_type, f_bsize, f_namelen, f_frsize, f_flags,and f_spare to
+	unsigned.
+
+2013-04-22  Jan-Benedict Glaw  <jbglaw@getslash.de>
+
+	* nss/getent.c (shadow_keys): Call endspent, not endpwent.
+
+2013-04-22  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (getaddrinfo): Compute results
+	size just once.
+
+2013-04-21  David S. Miller  <davem@davemloft.net>
+
+	* po/ru.po: Update Russion translation from translation project.
+
+2013-04-17  Adam Conrad  <adconrad@0c3.net>
+
+	* sysdeps/unix/sysv/linux/sys/fsuid.h: Remove __wur from setfsuid
+	and setfsgid.
+
+2013-04-17  Carlos O'Donell  <carlos@redhat.com>
+
+	* configure.in: Remove i386 configure warning. Remove i386 case.
+	* configure: Regenerate.
+	* sysdeps/i386/configure.in: Raise error if config_machine is i386.
+	Add example to error message.
+	* sysdeps/i386/configure: Regenerate.
+
+2013-04-17  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile (bench): Add cos, tan, slowcos and
+	slowtan.
+	* benchtests/cos-inputs: New file.
+	* benchtests/slowcos-inputs: New file.
+	* benchtests/slowcos.c: New file.
+	* benchtests/slowtan-inputs: New file.
+	* benchtests/slowtan.c: New file.
+	* benchtests/tan-inputs: New file.
+
+2013-04-16  Roland McGrath  <roland@hack.frob.com>
+
+	* rt/tst-aio7.c (do_test): Don't test O_RDONLY fd case, which is now
+	considered kosher.
+
+2013-04-16  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile: Include cppflags-iterator.mk to add
+	-DNOT_IN_libc=1 to CPPFLAGS of all benchmark programs.
+
+	* Makefile.in (bench-clean): New target.
+	* benchtests/Makefile (bench-clean): Likewise.
+
+2013-04-16  David Holsgrove  <david.holsgrove@xilinx.com>
+
+	* elf/elf.h: Add EM_MICROBLAZE and MicroBlaze relocations.
+
+2013-04-15  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* stdio-common/tstdiomisc.c: Fix coding-style violation.
+
+2013-04-15  Andreas Schwab  <schwab@suse.de>
+
+	* nscd/grpcache.c (cache_addgr): Properly check for short write.
+	* nscd/initgrcache.c (addinitgroupsX): Likewise.
+	* nscd/pwdcache.c (cache_addpw): Likewise.
+	* nscd/servicescache.c (cache_addserv): Likewise.  Don't write
+	more than recsize.
+
+2013-04-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile (bench): Write all output to
+	bench-out.tmp together.
+
+2013-04-15  Andreas Schwab  <schwab@suse.de>
+
+	* nscd/nscd.c (main): Don't fork again after closing files.
+
+2013-04-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/tst-fwrite-error.c (do_test): Fix BUF array definition.
+
+	* benchtests/Rules (bench-deps): Collect dependencies into a
+	single variable.  Add Makefile to dependencies.
+	($(objpfx)bench-%.c): Depend on bench-deps.
+
+2013-04-12  Roland McGrath  <roland@hack.frob.com>
+	    Xavier Roche  <roche+kml2@exalead.com>
+
+	[BZ #15361]
+	* sysdeps/pthread/aio_fsync.c (aio_fsync): Don't check open modes,
+	just that it's a file descriptor.
+	* manual/llio.texi (Synchronizing AIO Operations): Update description
+	for EBADF error from aio_fsync.
+
+2013-04-12  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* Rules (bench): Move target definition...
+	* benchtests/Makefile: ... here.
+
+2013-04-11  Carlos O'Donell  <carlos@redhat.com>
+
+	* math/libm-test.inc (cos_test): Fix PI/2 test.
+	(sincos_test): Likewise.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Regenerate.
+	* sysdeps/i386/fpu/libm-test-ulps: Regenerate.
+
+2013-04-11  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #13988]
+	* stdio-common/vfscanf.c (_IO_vfwscanf): When parsing a float
+	accept exponent character only when digits were seen.
+	* stdio-common/Makefile (tests): Add bug26.
+	* stdio-common/bug26.c: New file.
+
+	[BZ #14293]
+	* elf/dl-load.c (_dl_init_paths): Mark decomposed RUNPATH as
+	non-freeable.
+
+2013-04-11  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* Makeconfig (rtld-prefix): Define built linker prefix.
+	* Rules (run-bench): Use it.
+	* math/Makefile (run-regen-ulps): Likewise.
+
+	* Rules (bench): Remove eval.
+
+2013-04-10  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Roland McGrath  <roland@hack.frob.com>
+	    Ondrej Bilka  <neleai@seznam.cz>
+
+	[BZ #15346]
+	* time/getdate.c: Include ctype.h and alloca.h.
+	(__getdate_r): Trim leading and trailing spaces of input.
+	* time/tst-getdate.c (tests): Add tests with leading and
+	trailing spaces.
+
+2013-04-08  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14280]
+	* sysdeps/mach/hurd/bits/ioctls.h (_IOTS): Cast to enum __ioctl_datum
+	when computing value.
+
+2013-04-06  Carlos O'Donell  <carlos@redhat.com>
+
+	* math/README.libm-test (How can I generate "libm-test-ulps"?):
+	Use testrun.sh to run libm tests.
+
+	[BZ #15309]
+	* elf/dl-open.c (dl_open_worker): memset all of seen array.
+
+2013-04-06  Marko Myllynen  <myllynen@redhat.com>
+
+	[BZ #15264]
+	* locales/fi_FI (LC_MESSAGES): Define yesstr and nostr.
+
+2013-04-06  Carlos O'Donell  <carlos@redhat.com>
+
+	* Makefile.in (regen-ulps): New target.
+	* math/Makefile [ifneq (no,$(PERL)]: Declare regen-ulps with .PHONY.
+	[ifneq (no,$(PERL)] (run-regen-ulps): New variable.
+	[ifneq (no,$(PERL)] (regen-ulps): New target.
+	[ifeq (no,$(PERL)] (regen-ulps): New target.
+	* math/libm-test.inc (ulps_file_name): Define.
+	(output_dir): New variable.
+	(options): Add "output-dir" option.
+	(parse_opt): Handle 'o' case.
+	(main): If output_dir is non-NULL use it as a prefix
+	otherwise use "".
+	* math/README.libm-test: Update `How can I generate "libm-test-ulps"?'
+
+2013-04-06  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #10060, #10062]
+	* aclocal.m4 (LIBC_COMPILER_BUILTIN_INLINED): New macro.
+	* sysdeps/i386/configure.in: Use LIBC_COMPILER_BUILTIN_INLINED and
+	fail configure if __sync_val_compare_and_swap is not inlined.
+	* sysdeps/i386/configure: Regenerate.
+	* configure.in: Build for i686 when configured for i386.
+	* configure: Regenerate.
+	* README: Remove i386 reference.
+
+2013-04-06  Carlos O'Donell  <carlos@redhat.com>
+
+	* sysdeps/s390/s390-32/sysdep.h: Undefine PSEUDO before redefinition.
+	* sysdeps/s390/s390-64/sysdep.h: Likewise.
+
+2013-04-05  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* stdio-common/tstdiomisc.c (snanval, msnanval, lsnanval)
+	(lmsnanval): New variables.
+	(F): Add conversion tests.
+	* stdlib/tst-strtod6.c (do_test): Add issignaling tests.
+	* stdlib/Makefile ($(objpfx)tst-strtod6): Depend on $(link-libm).
+
+	* stdio-common/tstdiomisc.c (F): Properly collect individual
+	tests' results.
+
+	[BZ #14686, #15336]
+	* sysdeps/ieee754/dbl-64/urem.h (nNAN, NAN): Remove definitions.
+	* sysdeps/ieee754/dbl-64/e_remainder.c (__ieee754_remainder):
+	Instead, use input NaN values or generate a qNaN by arithmetic
+	operation.  Also fix bugs to comply with the standard.
+	* math/libm-test.inc (remainder_test): Add more tests.
+
+	[BZ #15335, #15342]
+	* sysdeps/ieee754/dbl-64/upow.h (NaNQ): Remove definitions.
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Instead, use
+	input NaN values or generate a qNaN by arithmetic operation.
+
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Remove
+	unreachable code.
+
+	* sysdeps/ieee754/dbl-64/usncs.h (NAN): Removed unused
+	definitions.
+
+2013-04-03  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #14478]
+	* math/s_cexp.c (__cexp): Ensure underflow exception occurs for
+	underflowed result.
+	* math/s_cexpf.c (__cexpf): Likewise.
+	* math/s_cexpl.c (__cexpl): Likewise.
+	* math/libm-test.inc (cexp_test): Add more tests.
+
+2013-04-03  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15330]
+	* sysdeps/posix/getaddrinfo.c (getaddrinfo): Allocate results and
+	order arrays from heap if bigger than alloca cutoff.
+
+2013-04-03  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* sysdeps/i386/fpu/math-tests.h (SNAN_TESTS_float)
+	(SNAN_TESTS_double): Refer to GCC PR56831.
+	* sysdeps/powerpc/math-tests.h (SNAN_TESTS_TYPE_CAST): Refer to
+	GCC PR56828.
+
+2013-04-03  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* Rules (bench): Move bench.out after the run is complete.
+
+	* Rules (bench): Echo currently running benchmark.
+
+	* benchtests/Makefile (bench): Add atan and slowatan.
+	* benchtests/atan-inputs: New file.
+	* benchtests/slowatan-inputs: New file.
+	* benchtests/slowatan.c: New file.
+
+	* sysdeps/ieee754/dbl-64/mpa.h (TWO): Remove definition.
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Replace TWO with
+	its value.
+
+	[BZ #15305]
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x02061d]: Define
+	__ASSUME_XFS_RESTRICTED_CHOWN.
+	* sysdeps/unix/sysv/linux/pathconf.c
+	(__statfs_chown_restricted) [!__ASSUME_XFS_RESTRICTED_CHOWN]:
+	Save and restore errno.
+
+2013-04-02  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15327]
+	* math/s_cacosh.c (__cacosh): Implement for finite nonzero
+	arguments using __kernel_casinh.
+	* math/s_cacoshf.c (__cacoshf): Implement for finite nonzero
+	arguments using __kernel_casinhf.
+	* math/s_cacoshl.c (__cacoshl): Implement for finite nonzero
+	arguments using __kernel_casinhl.
+	* math/libm-test.inc (cacosh_test): Add more tests.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-04-02  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.h (HALFRAD): Define as TWO23.
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Use mantissa_t.
+
+	* bench/Makefile (bench): Add sin and slowsin.
+	* benchtests/sin-inputs: New file.
+	* benchtests/slowsin-inputs: New file.
+	* benchtests/slowsin.c: New file.
+
+	* benchtests/Makefile: Add benchmarks for slowpow and slowexp.
+	(bench): Add slowexp and slowpow.
+	(exp-ITER): Increase iterations.
+	(pow-ITER): Likewise.
+	* benchtests/exp-inputs: Change input.
+	* benchtests/pow-inputs: Likewise.
+	* benchtests/slowexp-inputs: New file.
+	* benchtests/slowexp.c: New file.
+	* benchtests/slowpow-inputs: New file.
+	* benchtests/slowpow.c: New file.
+
+2013-04-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/fpu/s_rint.S: Remove branch prediction
+	instructions.
+	* sysdeps/powerpc/powerpc32/fpu/s_rintf.S: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/s_rint.S: Likewise.
+	* sysdeps/powerpc/powerpc64/fpu/s_rintf.S: Likewise.
+	* benchtests/Makefile: Add rint benchtest.
+	* benchtests/rint-inputs: Input for rint benchtest.
+
+2013-04-02  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* Versions.def (libm): Add GLIBC_2.18.
+	* include/math.h [!_ISOMAC] (__issignaling, __issignalingf): Add
+	hidden libm prototypes.
+	[!_ISOMAC && !__NO_LONG_DOUBLE_MATH] (__issignalingl): Likewise.
+	* math/Makefile (libm-calls): Add s_issignaling.
+	* math/Versions (libm: GLIBC_2.18): Add __issignaling,
+	__issignalingf, __issignalingl.  Adjust all libm.abilist files.
+	* math/bits/mathcalls.h [__USE_GNU] (__issignaling): New prototype
+	declaration.
+	* math/math.h [__USE_GNU] (issignaling): New macro.
+	* sysdeps/ieee754/flt-32/s_issignalingf.c: New file.
+	* sysdeps/ieee754/dbl-64/s_issignaling.c: Likewise.
+	* sysdeps/ieee754/dbl-64/wordsize-64/s_issignaling.c: Likewise.
+	* sysdeps/ieee754/ldbl-96/s_issignalingl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128/s_issignalingl.c: Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_issignalingl.c: Likewise.
+	* manual/arith.texi (issignaling): New section.
+	* manual/libm-err-tab.pl (@all_functions): Update comment.
+	* math/gen-libm-test.pl (parse_args): Apply special handling for
+	issignaling.
+	* math/libm-test.inc (print_float, issignaling_test): New
+	functions.
+	(check_float_internal): Add issignaling checks.
+	* sysdeps/generic/math-tests.h (SNAN_TESTS_TYPE_CAST): Provide
+	default definition.
+	* sysdeps/powerpc/math-tests.h: New file.
+	* math/basic-test.c (TEST_FUNC, TEST_TRUNC): Add issignaling
+	tests.
+	* math/test-snan.c (TEST_FUNC): Likewise.
+
+2013-03-30  David S. Miller  <davem@davemloft.net>
+
+	* po/de.po: Update from translation team.
+
+2013-03-30  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #10357]
+	* math/k_casinh.c (__kernel_casinh): Handle arguments with
+	imaginary part less than 1.0 and real part less than 0.5
+	specially.
+	* math/k_casinhf.c (__kernel_casinhf): Likewise.
+	* math/k_casinhl.c (__kernel_casinhl): Likewise.
+	* math/libm-test.inc (UNDERFLOW_EXCEPTION_OK_DOUBLE): New macro.
+	(cacos_test): Add more tests.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-03-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/powerpc/power4/fpu/mpa-arch.h (INTEGER_OF): Replace
+	ONE with its value.
+
+	* sysdeps/ieee754/dbl-64/mpa.h (ONE, MONE): Remove defines.
+	(__pow_mp): Replace ONE and MONE with their values.
+	* sysdeps/ieee754/dbl-64/e_log.c (__ieee754_log): Likewise.
+	* sysdeps/ieee754/dbl-64/mpatan.c (__mpatan): Likewise.
+	* sysdeps/ieee754/dbl-64/mpatan2.c (__mpatan2): Likewise.
+	* sysdeps/ieee754/dbl-64/mptan.c (__mptan): Likewise.
+	* sysdeps/ieee754/dbl-64/s_atan.c (atan): Likewise.
+	* sysdeps/ieee754/dbl-64/s_tan.c (tan): Likewise.
+
+	* sysdeps/ieee754/dbl-64/s_tan.c: Fix formatting.
+
+	* sysdeps/ieee754/dbl-64/mpa.h (ZERO, MZERO): Remove defines.
+	(__pow_mp): Replace ZERO and MZERO with their values.
+	* sysdeps/ieee754/dbl-64/e_atan2.c (__ieee754_atan2): Likewise.
+	* sysdeps/ieee754/dbl-64/e_log.c (__ieee754_log): Likewise.
+	* sysdeps/ieee754/dbl-64/mpatan2.c (__mpatan2): Likewise.
+	* sysdeps/ieee754/dbl-64/mpexp.c (__mpexp): Likewise.
+	* sysdeps/ieee754/dbl-64/s_atan.c (atan): Likewise.
+	* sysdeps/powerpc/power4/fpu/mpa.c (__mul): Likewise.
+	(__sqr): Likewise.
+
+	* sysdeps/ieee754/dbl-64/s_atan.c: Fix formatting.
+
+	* sysdeps/ieee754/dbl-64/e_log.c: Fix formatting.
+
+2013-03-28  Roland McGrath  <roland@hack.frob.com>
+
+	* include/stdlib.h [!SHARED] (__call_tls_dtors):
+	Declare with __attribute__ ((weak)).
+	* stdlib/exit.c (__libc_atexit) [!SHARED]:
+	Call __call_tls_dtors only if it's not NULL.
+
+2013-03-28  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/libc-start.c (__libc_start_main) [!SHARED]: If _dl_aux_init
+	didn't do it already, then set _dl_phdr and _dl_phnum based on the
+	magic __ehdr_start linker symbol if it's defined.
+	* sysdeps/mach/hurd/i386/init-first.c (init1) [!SHARED]: Don't set
+	them up here if it was already done.
+
+	* elf/dl-support.c (_dl_phdr): Make pointer to const.
+	(_dl_aux_init): Use const in cast when setting it.
+	* sysdeps/mach/hurd/i386/init-first.c (init1): Remove superfluous cast.
+	* sysdeps/generic/ldsodefs.h [!SHARED] (_dl_phdr): Update decl.
+	* csu/libc-tls.c (__libc_setup_tls): Make PHDR pointer to const.
+
+	* sysdeps/generic/ldsodefs.h [!SHARED] (_dl_phdr, _dl_phnum):
+	Declare them here.
+	* elf/dl-iteratephdr.c [!SHARED] (_dl_phdr, _dl_phnum): Not here.
+	* csu/libc-tls.c: Nor here.
+	* sysdeps/mach/hurd/i386/init-first.c (init1): Nor here.
+
+	* sysdeps/posix/libc_fatal.c: Don't include <sys/syslog.h>.
+	(__libc_message): Never call vsyslog.
+
+2013-03-28  Alan Modra  <amodra@gmail.com>
+
+	* sysdeps/powerpc/powerpc32/start.S (cfi_startproc, cfi_endproc):
+	Define as empty.
+	* sysdeps/powerpc/powerpc64/start.S (cfi_startproc, cfi_endproc):
+	Likewise.
+
+2013-03-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #15214]
+	* sysdeps/ieee754/ldbl-128ibm/e_logl.c (__ieee754_logl): Fix spurious
+	underflow.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2013-03-28  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15304]
+	* hesiod/nss_hesiod/hesiod-grp.c (_nss_hesiod_initgroups_dyn):
+	Don't add gid passed as argument.
+
+	* sysdeps/ieee-754/dbl-64/e_atan2.c: Reformat.
+
+2013-03-27  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15307]
+	* math/k_casinh.c (__kernel_casinh): Handle arguments with
+	imaginary part between 1.0 and 1.5 and real part less than 0.5
+	specially.
+	* math/k_casinhf.c (__kernel_casinhf): Likewise.
+	* math/k_casinhl.c (__kernel_casinhl): Likewise.
+	* math/libm-test.inc (cacos_test): Add more tests.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-03-26  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpa.c (__acr): Use integral
+	constants.
+	(norm): Likewise.
+	(denorm): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__add): Likewise.
+	(__sub): Likewise.
+	(__mul): Likewise.
+	(__sqr): Likewise.
+	(__inv): Likewise.
+	(__dvd): Likewise.
+
+	* sysdeps/ieee754/dbl-64/branred.c (__branred): Remove
+	commented code.
+	* sysdeps/ieee754/dbl-64/dosincos.c (__dubsin): Likewise.
+	(__dubcos): Likewise.
+	* sysdeps/ieee754/dbl-64/e_asin.c (__ieee754_asin): Likewise.
+	(__ieee754_acos): Likewise.
+	* sysdeps/ieee754/dbl-64/e_atan2.c (__ieee754_atan2): Likewise.
+	* sysdeps/ieee754/dbl-64/e_exp.c (__ieee754_exp): Likewise.
+	(__exp1): Likewise.
+	* sysdeps/ieee754/dbl-64/e_log.c (__ieee754_log): Likewise.
+	* sysdeps/ieee754/dbl-64/e_pow.c (__ieee754_pow): Likewise.
+	(log1): Likewise.
+	(my_log2): Likewise.
+	(checkint): Likewise.
+	* sysdeps/ieee754/dbl-64/e_remainder.c
+	(__ieee754_remainder): Likewise.
+	* sysdeps/ieee754/dbl-64/s_atan.c (atan): Likewise.
+	* sysdeps/ieee754/dbl-64/s_sin.c (__sin): Likewise.
+	(bsloww): Likewise.
+	* sysdeps/ieee754/dbl-64/s_tan.c (tan): Likewise.
+
+	* sysdeps/ieee754/dbl-64/mpa-arch.h: New file.
+	* sysdeps/ieee754/dbl-64/mpa.c (norm): Use MANTISSA_T and
+	MANTISSA_STORE_T to store computations on mantissa.  Use
+	macros for rounding and division.
+	(denorm): Likewise.
+	(__dbl_mp): Likewise.
+	(add_magnitudes): Likewise.
+	(sub_magnitudes): Likewise.
+	(__mul): Likewise.
+	(__sqr): Likewise.
+	* sysdeps/ieee754/dbl-64/mpa.h: Include mpa-arch.h.  Define
+	powers of two in terms of TWOPOW macro.
+	(mp_no): Make type of mantissa as MANTISSA_T.
+	[!RADIXI]: Define RADIXI.
+	[!TWO52]: Define TWO52.
+	* sysdeps/powerpc/power4/fpu/mpa-arch.h: New file.
+
+2013-03-25  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/s_llround.c: Fix libm ABI issue with missing
+	llroundl symbol when building for PPC32.
+
+2013-03-24  Mark H Weaver  <mhw@netris.org>
+
+	* manual/arith.texi (Normalization Functions): Fix prototypes for
+	scalbn, scalbnf, scalbnl, scalbln, scalblnf, and scalblnl.
+
+2013-03-19  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #13889]
+	* sysdeps/ieee754/ldbl-128ibm/e_expl.c (__ieee754_expl): Increase the
+	high value to check if expl overflow.
+	* sysdeps/ieee754/ldbl-128ibm/w_expl.c (__expl): Fix threshold constants
+	to check for underflow and overflow.
+	* math/libm-test.inc: Add exp test.
+
+2013-03-21  Dmitry V. Levin  <ldv@altlinux.org>
+
+	[BZ #11120]
+	* sysdeps/x86_64/strcmp.S: Replace all occurrences of NOT_IN_lib
+	with NOT_IN_libc.
+
+2013-03-21  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/w_sqrt.c (compat_symbol): Add sqrtl compat
+	symbol.
+
+2013-03-21  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args, special_functions): Properly
+	wrap blocks consisting of several statements.
+
+	* sysdeps/generic/math-tests.h: New file.
+	* sysdeps/i386/fpu/math-tests.h: Likewise.
+	* math/test-snan.c: Include it.
+	(TEST_FUNC): Use SNAN_TESTS to short-circuit certain tests.
+
+2013-03-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15285]
+	* sysdeps/ieee754/ldbl-128/e_j0l.c: Include <float.h>.
+	(__ieee754_j0l): Do not improve calculations using cos of twice
+	input for inputs above LDBL_MAX / 2.0L.
+	(__ieee754_y0l): Likewise.
+	* sysdeps/ieee754/ldbl-128/e_j1l.c: Include <float.h>.
+	(__ieee754_j1l): Do not improve calculations using cos of twice
+	input for inputs above LDBL_MAX / 2.0L.
+	(__ieee754_y1l): Likewise.
+	* math/libm-test.inc (j0_test): Add another test.
+	(j1_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+
+2013-03-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* Rules ($(objpfx)bench-%.c): Include code from a C source
+	file.
+
+2013-03-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15287]
+	* math/k_casinh.c (__kernel_casinh): Handle arguments with
+	imaginary part 1.0 and real part less than 0.5 specially.
+	* math/k_casinhf.c (__kernel_casinhf): Likewise.
+	* math/k_casinhl.c (__kernel_casinhl): Likewise.
+	* math/libm-test.inc (cacos_test): Add more tests.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-03-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* sysdeps/ieee754/dbl-64/mpsqrt.c (__mpsqrt): Use HALFRAD.
+	* sysdeps/ieee754/dbl-64/sincos32.c (__mpranred): Likewise.
+
+2013-03-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* aclocal.m4 (LIBC_CONFIG_VAR): New autoconf macro.
+	* config.make.in (config-cflags-sse4): Remove variable.
+	(config-cflags-avx): Likewise.
+	(config-cflags-sse2avx): Likewise.
+	(config-cflags-novzeroupper): Likewise.
+	(config-asflags-i686): Likewise.
+	(have-mfma4): Likewise.
+	(have-as-vis3): Likewise.
+	(MIG): Likewise.
+	* configure.in (MIG): Do not AC_SUBST.
+	(libc_cv_cc_nofma): Move AC_SUBST next to configure test.
+	(libc_cv_cc_sse4): Do not AC_SUBST.
+	(libc_cv_cc_avx): Likewise.
+	(libc_cv_cc_sse2avx): Likewise.
+	(libc_cv_cc_novzeroupper): Likewise.
+	(libc_cv_cc_fma4): Likewise.
+	(libc_cv_as_i686): Likewise.
+	(libc_cv_sparc_as_vis3): Likewise.
+	* sysdeps/i386/configure.in (config-cflags-sse4): Set using
+	LIBC_CONFIG_VAR.
+	(config-asflags-i686): Likewise.
+	(config-cflags-avx): Likewise.
+	(config-cflags-sse2avx): Likewise.
+	(have-mfma4): Likewise.
+	(config-cflags-novzeroupper): Likewise.
+	* sysdeps/mach/configure.in (MIG): Likewise.
+	* sysdeps/sparc/configure.in (have-as-vis3): Likewise.
+	* sysdeps/x86_64/configure.in (config-cflags-sse4): Set using
+	LIBC_CONFIG_VAR.
+	(config-cflags-avx): Likewise.
+	(config-cflags-sse2avx): Likewise.
+	(have-mfma4): Likewise.
+	(config-cflags-novzeroupper): Likewise.
+	* configure: Regenerated.
+	* sysdeps/i386/configure: Likewise.
+	* sysdeps/mach/configure: Likewise.
+	* sysdeps/sparc/configure: Likewise.
+	* sysdeps/x86_64/configure: Likewise.
+
+2013-03-20  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14812]
+	* locale/programs/localedef.c (options): Put N_ translation marker
+	on argument names, not just descriptions.
+
+2013-03-20  Marcus Shawcroft  <marcus.shawcroft@linaro.org>
+
+	* Makerules ($(inst_libdir)/libc.so): Use $(rtlddir).
+
+2013-03-20  Ondřej Bílka  <neleai@seznam.cz>
+
+	[BZ #14176]
+	* stdlib/stdlib.h (mblen, mbtowc, wctomb): Remove __wur.
+
+2013-03-19  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/posix/libc_fatal.c: Include <sys/mman.h>.
+	[!WRITEV_FOR_FATAL] (writev_for_fatal): New function.
+	[!WRITEV_FOR_FATAL] (WRITEV_FOR_FATAL): New macro; call that.
+	[!BEFORE_ABORT] (before_abort): New function.
+	[!BEFORE_ABORT] (BEFORE_ABORT): New macro; call that.
+	* sysdeps/unix/sysv/linux/libc_fatal.c: Trim includes.
+	(writev_for_fatal): New function.
+	(WRITEV_FOR_FATAL): New macro; call that.
+	(backtrace_and_maps): New function.
+	(BEFORE_ABORT): New macro; call that.
+	(struct str_list): Type removed.
+	(__libc_message, __libc_fatal): Functions removed.
+	Include <sysdeps/posix/libc_fatal.c> instead.
+
+2013-03-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/k_casinhf.c (__kernel_casinhf): Consistently use float
+	constants.
+	* math/k_casinhl.c (__kernel_casinhl): Consistently use long
+	double constants.
+
+2013-03-19  Andreas Schwab  <schwab@suse.de>
+
+	* sysdeps/gnu/configure.in: Set libc_cv_rtldir for s390x.
+	* sysdeps/gnu/configure: Regenerate.
+
+	* configure.in: Substitute libc_cv_rtlddir.
+	* configure: Regenerate.
+	* config.make.in (rtlddir): Set from libc_cv_rtlddir.
+	* Makeconfig (rtlddir, inst_rtlddir): New variables.
+	(rtld-LDFLAGS): Use them with $(rtld-installed-name).
+	* elf/Makefile (install-others, CFLAGS-interp.c)
+	(ldso_install, common-ldd-rewrite): Likewise.
+	($(inst_rtlddir)/$(rtld-installed-name)): Renamed from
+	$(inst_slibdir)/$(rtld-installed-name).
+	* scripts/rellns-sh: Add -p option.
+	* Makerules (make-shlib-link): Use rellns-sh to get relative name
+	for source.
+
+2013-03-19  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* manual/nptl.texi: Renamed to ...
+	* manual/threads.texi: ... this.
+	* manual/Makefile (chapters): Update.
+
+2013-03-18  Roland McGrath  <roland@hack.frob.com>
+
+	[BZ #14812]
+	* argp/argp-parse.c (argp_default_options): Put N_ translation marker
+	on argument names, not just descriptions.
+	* malloc/memusagestat.c (options): Likewise.
+	* nss/getent.c (options): Likewise.
+
+2013-03-18  Benno Schulenberg  <bensberg@justemail.net>
+
+	[BZ #14812]
+	* iconv/iconv_prog.c (options): Put N_ translation marker
+	on argument names, not just descriptions.
+	* iconv/iconvconfig.c (options): Likewise.
+
 2013-03-18  Ondrej Bilka  <neleai@seznam.cz>
 
 	* sysdeps/x86_64/strlen.S: Replace with new SSE2 based

@@ -64,9 +64,6 @@ double
 SECTION
 __ieee754_pow(double x, double y) {
   double z,a,aa,error, t,a1,a2,y1,y2;
-#if 0
-  double gor=1.0;
-#endif
   mynumber u,v;
   int k;
   int4 qx,qy;
@@ -74,8 +71,9 @@ __ieee754_pow(double x, double y) {
   u.x=x;
   if (v.i[LOW_HALF] == 0) { /* of y */
     qx = u.i[HIGH_HALF]&0x7fffffff;
-    /* Checking  if x is not too small to compute */
-    if (((qx==0x7ff00000)&&(u.i[LOW_HALF]!=0))||(qx>0x7ff00000)) return NaNQ.x;
+    /* Is x a NaN?  */
+    if (((qx == 0x7ff00000) && (u.i[LOW_HALF] != 0)) || (qx > 0x7ff00000))
+      return x;
     if (y == 1.0) return x;
     if (y == 2.0) return x*x;
     if (y == -1.0) return 1.0/x;
@@ -114,7 +112,7 @@ __ieee754_pow(double x, double y) {
 
   if (x == 0) {
     if (((v.i[HIGH_HALF] & 0x7fffffff) == 0x7ff00000 && v.i[LOW_HALF] != 0)
-	|| (v.i[HIGH_HALF] & 0x7fffffff) > 0x7ff00000)
+	|| (v.i[HIGH_HALF] & 0x7fffffff) > 0x7ff00000) /* NaN */
       return y;
     if (ABS(y) > 1.0e20) return (y>0)?0:1.0/0.0;
     k = checkint(y);
@@ -127,9 +125,10 @@ __ieee754_pow(double x, double y) {
   qx = u.i[HIGH_HALF]&0x7fffffff;  /*   no sign   */
   qy = v.i[HIGH_HALF]&0x7fffffff;  /*   no sign   */
 
-  if (qx >= 0x7ff00000 && (qx > 0x7ff00000 || u.i[LOW_HALF] != 0)) return NaNQ.x;
-  if (qy >= 0x7ff00000 && (qy > 0x7ff00000 || v.i[LOW_HALF] != 0))
-    return x == 1.0 ? 1.0 : NaNQ.x;
+  if (qx >= 0x7ff00000 && (qx > 0x7ff00000 || u.i[LOW_HALF] != 0)) /* NaN */
+    return x;
+  if (qy >= 0x7ff00000 && (qy > 0x7ff00000 || v.i[LOW_HALF] != 0)) /* NaN */
+    return x == 1.0 ? 1.0 : y;
 
   /* if x<0 */
   if (u.i[HIGH_HALF] < 0) {
@@ -142,7 +141,7 @@ __ieee754_pow(double x, double y) {
       }
       else if (qx == 0x7ff00000)
 	return y < 0 ? 0.0 : INF.x;
-      return NaNQ.x;                              /* y not integer and x<0 */
+      return (x - x) / (x - x);                   /* y not integer and x<0 */
     }
     else if (qx == 0x7ff00000)
       {
@@ -156,8 +155,7 @@ __ieee754_pow(double x, double y) {
   /* x>0 */
 
   if (qx == 0x7ff00000)                              /* x= 2^-0x3ff */
-    {if (y == 0) return NaNQ.x;
-    return (y>0)?x:0; }
+    return y > 0 ? x : 0;
 
   if (qy > 0x45f00000 && qy < 0x7ff00000) {
     if (x == 1.0) return 1.0;
@@ -206,13 +204,7 @@ static double
 SECTION
 log1(double x, double *delta, double *error) {
   int i,j,m;
-#if 0
-  int n;
-#endif
   double uu,vv,eps,nx,e,e1,e2,t,t1,t2,res,add=0;
-#if 0
-  double cor;
-#endif
   mynumber u,v;
 #ifdef BIG_ENDI
   mynumber
@@ -300,13 +292,7 @@ static double
 SECTION
 my_log2(double x, double *delta, double *error) {
   int i,j,m;
-#if 0
-  int n;
-#endif
   double uu,vv,eps,nx,e,e1,e2,t,t1,t2,res,add=0;
-#if 0
-  double cor;
-#endif
   double ou1,ou2,lu1,lu2,ov,lv1,lv2,a,a1,a2;
   double y,yy,z,zz,j1,j2,j7,j8;
 #ifndef DLA_FMS
@@ -397,9 +383,6 @@ SECTION
 checkint(double x) {
   union {int4 i[2]; double x;} u;
   int k,m,n;
-#if 0
-  int l;
-#endif
   u.x = x;
   m = u.i[HIGH_HALF]&0x7fffffff;    /* no sign */
   if (m >= 0x7ff00000) return 0;    /*  x is +/-inf or NaN  */

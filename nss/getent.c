@@ -56,7 +56,7 @@ static const char args_doc[] = N_("database [key ...]");
 /* Supported options. */
 static const struct argp_option args_options[] =
   {
-    { "service", 's', "CONFIG", 0, N_("Service configuration to be used") },
+    { "service", 's', N_("CONFIG"), 0, N_("Service configuration to be used") },
     { "no-idn", 'i', NULL, 0, N_("disable IDN encoding") },
     { NULL, 0, NULL, 0, NULL },
   };
@@ -850,7 +850,7 @@ shadow_keys (int number, char *key[])
       setspent ();
       while ((sp = getspent ()) != NULL)
 	print_shadow (sp);
-      endpwent ();
+      endspent ();
       return result;
     }
 

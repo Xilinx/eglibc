@@ -1,3 +1,33 @@
+2013-04-19  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/arm/sysdep.h
+	(eabi_fnstart, eabi_fnend, eabi_save, eabi_cantunwind, eabi_pad):
+	New macros.
+	* sysdeps/arm/dl-tlsdesc.S: Use them.
+
+2013-03-26  Mans Rullgard  <mans@mansr.com>
+
+	* sysdeps/arm/preconfigure.in: Use "test" instead of [ ].
+	* sysdeps/arm/preconfigure: Regenerated.
+
+2013-03-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/arm/configure.in (default-abi): Set using
+	LIBC_CONFIG_VAR.
+	* sysdeps/arm/configure: Regenerated.
+	* sysdeps/unix/sysv/linux/arm/Makefile: Do not include
+	default-abi.make.
+
+2013-03-18  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/arm/dl-tlsdesc.S: Include <arm-features.h>.
+	Use sfi_breg macro throughout.
+	(_dl_tlsdesc_dynamic) [!ARM_NO_INDEX_REGISTER]: Avoid two-register
+	addressing mode.
+	(_dl_tlsdesc_dynamic) [ARM_ALWAYS_BX]: Don't pop into pc.
+
+	* sysdeps/arm/arm-features.h: Add comment for ARM_NO_INDEX_REGISTER.
+
 2013-03-15  Roland McGrath  <roland@hack.frob.com>
 
 	* sysdeps/arm/sysdep.h [!ARM_SFI_MACROS] (sfi_sp): New macro.

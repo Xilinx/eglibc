@@ -1,4 +1,5 @@
-/* Copyright (C) 1993-2013 Free Software Foundation, Inc.
+/* Catastrophic failure reports.  Generic POSIX.1 version.
+   Copyright (C) 1993-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,12 +28,31 @@
 #include <string.h>
 #include <sysdep.h>
 #include <unistd.h>
-#include <sys/syslog.h>
+#include <sys/mman.h>
 #include <sys/uio.h>
 #include <not-cancel.h>
 
 #ifdef FATAL_PREPARE_INCLUDE
 #include FATAL_PREPARE_INCLUDE
+#endif
+
+#ifndef WRITEV_FOR_FATAL
+# define WRITEV_FOR_FATAL	writev_for_fatal
+static bool
+writev_for_fatal (int fd, const struct iovec *iov, size_t niov, size_t total)
+{
+  return TEMP_FAILURE_RETRY (__writev (fd, iov, niov)) == total;
+}
+#endif
+
+#ifndef BEFORE_ABORT
+# define BEFORE_ABORT		before_abort
+static void
+before_abort (int do_abort __attribute__ ((unused)),
+              bool written __attribute__ ((unused)),
+              int fd __attribute__ ((unused)))
+{
+}
 #endif
 
 struct str_list
@@ -42,17 +62,14 @@ struct str_list
   struct str_list *next;
 };
 
-
 /* Abort with an error message.  */
 void
 __libc_message (int do_abort, const char *fmt, ...)
 {
   va_list ap;
-  va_list ap_copy;
   int fd = -1;
 
   va_start (ap, fmt);
-  va_copy (ap_copy, ap);
 
 #ifdef FATAL_PREPARE
   FATAL_PREPARE;
@@ -121,8 +138,7 @@ __libc_message (int do_abort, const char *fmt, ...)
 	  list = list->next;
 	}
 
-      if (TEMP_FAILURE_RETRY (__writev (fd, iov, nlist)) == total)
-	written = true;
+      written = WRITEV_FOR_FATAL (fd, iov, nlist, total);
 
       if (do_abort)
 	{
@@ -131,7 +147,7 @@ __libc_message (int do_abort, const char *fmt, ...)
 	  struct abort_msg_s *buf = __mmap (NULL, total,
 					    PROT_READ | PROT_WRITE,
 					    MAP_ANON | MAP_PRIVATE, -1, 0);
-	  if (buf != MAP_FAILED)
+	  if (__glibc_likely (buf != MAP_FAILED))
 	    {
 	      buf->size = total;
 	      char *wp = buf->msg;
@@ -151,15 +167,13 @@ __libc_message (int do_abort, const char *fmt, ...)
 
   va_end (ap);
 
-  /* If we  had no success writing the message, use syslog.  */
-  if (! written)
-    vsyslog (LOG_ERR, fmt, ap_copy);
-
-  va_end (ap_copy);
-
   if (do_abort)
-    /* Kill the application.  */
-    abort ();
+    {
+      BEFORE_ABORT (do_abort, written, fd);
+
+      /* Kill the application.  */
+      abort ();
+    }
 }
 
 

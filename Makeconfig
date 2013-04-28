@@ -151,11 +151,17 @@ libdir = $(exec_prefix)/lib
 endif
 inst_libdir = $(install_root)$(libdir)
 
-# Where to install the shared library and dynamic linker.
+# Where to install the shared library.
 ifndef slibdir
 slibdir = $(exec_prefix)/lib
 endif
 inst_slibdir = $(install_root)$(slibdir)
+
+# Where to install the dynamic linker.
+ifndef rtlddir
+rtlddir = $(slibdir)
+endif
+inst_rtlddir = $(install_root)$(rtlddir)
 
 # Prefix to put on files installed in $(libdir).  For libraries `libNAME.a',
 # the prefix is spliced between `lib' and the name, so the linker switch
@@ -441,7 +447,7 @@ endif
 endif
 ifeq (yes,$(build-shared))
 ifndef rtld-LDFLAGS
-rtld-LDFLAGS = -Wl,-dynamic-linker=$(slibdir)/$(rtld-installed-name)
+rtld-LDFLAGS = -Wl,-dynamic-linker=$(rtlddir)/$(rtld-installed-name)
 endif
 ifndef rtld-tests-LDFLAGS
 ifeq (yes,$(build-hardcoded-path-in-tests))
@@ -598,6 +604,9 @@ endif
 # How to run a program we just linked with our library.
 # The program binary is assumed to be $(word 2,$^).
 built-program-file = $(dir $(word 2,$^))$(notdir $(word 2,$^))
+rtld-prefix = $(elf-objpfx)$(rtld-installed-name)			      \
+	      --library-path						      \
+	      $(rpath-link)$(patsubst %,:%,$(sysdep-library-path))
 ifeq (yes,$(build-shared))
 comma = ,
 sysdep-library-path = \
@@ -611,9 +620,7 @@ $(subst $(empty) ,:,$(strip $(patsubst -Wl$(comma)-rpath-link=%, %,\
 # empty.
 run-via-rtld-prefix =							      \
   $(if $(strip $(filter $(notdir $(built-program-file)),		      \
-			$(tests-static) $(xtests-static))),,		      \
-       $(elf-objpfx)$(rtld-installed-name)				      \
-	 --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)))
+			$(tests-static) $(xtests-static))),, $(rtld-prefix))
 else
 run-via-rtld-prefix =
 endif

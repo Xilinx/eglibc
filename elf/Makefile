@@ -66,7 +66,7 @@ ld-map		= $(common-objpfx)ld.map
 ifeq (yes,$(build-shared))
 extra-objs	= $(all-rtld-routines:%=%.os) soinit.os sofini.os interp.os
 generated	+= librtld.os dl-allobjs.os ld.so ldd
-install-others	= $(inst_slibdir)/$(rtld-installed-name)
+install-others	= $(inst_rtlddir)/$(rtld-installed-name)
 install-bin-script = ldd
 endif
 
@@ -152,12 +152,6 @@ selinux-enabled := $(shell cat /selinux/enforce 2> /dev/null)
 ifneq ($(selinux-enabled),1)
 tests-execstack-yes = tst-execstack tst-execstack-needed tst-execstack-prog
 endif
-ifeq (x86_64,$(config-machine))
-tests += tst-audit3 tst-audit4 tst-audit5
-ifeq (yes,$(config-cflags-avx))
-tests += tst-audit6 tst-audit7
-endif
-endif
 endif
 ifeq ($(run-built-tests),yes)
 tests: $(objpfx)tst-leaks1-mem $(objpfx)tst-leaks1-static-mem \
@@ -219,13 +213,6 @@ ifeq (yesyes,$(have-fpie)$(build-shared))
 modules-names += tst-piemod1
 tests += tst-pie1
 tests-pie += tst-pie1
-endif
-ifeq (x86_64,$(config-machine))
-modules-names += tst-auditmod3a tst-auditmod3b \
-		tst-auditmod4a tst-auditmod4b \
-		tst-auditmod5a tst-auditmod5b \
-		tst-auditmod6a tst-auditmod6b tst-auditmod6c \
-		tst-auditmod7a tst-auditmod7b
 endif
 modules-execstack-yes = tst-execstack-mod
 extra-test-objs += $(addsuffix .os,$(strip $(modules-names)))
@@ -340,7 +327,7 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 
 # interp.c exists just to get this string into the libraries.
-CFLAGS-interp.c = -D'RUNTIME_LINKER="$(slibdir)/$(rtld-installed-name)"' \
+CFLAGS-interp.c = -D'RUNTIME_LINKER="$(rtlddir)/$(rtld-installed-name)"' \
 		  -DNOT_IN_libc=1
 $(objpfx)interp.os: $(common-objpfx)config.make
 
@@ -372,18 +359,19 @@ $(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so $(+force)
 	$(make-target-directory)
 	$(do-install-program)
 
-$(inst_slibdir)/$(rtld-installed-name): \
+$(inst_rtlddir)/$(rtld-installed-name): \
   $(inst_slibdir)/$(rtld-version-installed-name) \
   $(inst_slibdir)/libc-$(version).so
+	$(make-target-directory)
 	$(make-shlib-link)
 
 # Special target called by parent to install just the dynamic linker.
 .PHONY: ldso_install
-ldso_install: $(inst_slibdir)/$(rtld-installed-name)
+ldso_install: $(inst_rtlddir)/$(rtld-installed-name)
 endif
 
 
-common-ldd-rewrite = -e 's%@RTLD@%$(slibdir)/$(rtld-installed-name)%g' \
+common-ldd-rewrite = -e 's%@RTLD@%$(rtlddir)/$(rtld-installed-name)%g' \
 		     -e 's%@VERSION@%$(version)%g' \
 		     -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
 		     -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g'
@@ -1000,27 +988,6 @@ tst-audit1-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 $(objpfx)tst-audit2.out: $(objpfx)tst-auditmod1.so
 tst-audit2-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 
-$(objpfx)tst-audit3: $(objpfx)tst-auditmod3a.so
-$(objpfx)tst-audit3.out: $(objpfx)tst-auditmod3b.so
-tst-audit3-ENV = LD_AUDIT=$(objpfx)tst-auditmod3b.so
-
-$(objpfx)tst-audit4: $(objpfx)tst-auditmod4a.so
-$(objpfx)tst-audit4.out: $(objpfx)tst-auditmod4b.so
-tst-audit4-ENV = LD_AUDIT=$(objpfx)tst-auditmod4b.so
-
-$(objpfx)tst-audit5: $(objpfx)tst-auditmod5a.so
-$(objpfx)tst-audit5.out: $(objpfx)tst-auditmod5b.so
-tst-audit5-ENV = LD_AUDIT=$(objpfx)tst-auditmod5b.so
-
-$(objpfx)tst-audit6: $(objpfx)tst-auditmod6a.so
-$(objpfx)tst-audit6.out: $(objpfx)tst-auditmod6b.so \
-			 $(objpfx)tst-auditmod6c.so
-tst-audit6-ENV = LD_AUDIT=$(objpfx)tst-auditmod6b.so:$(objpfx)tst-auditmod6c.so
-
-$(objpfx)tst-audit7: $(objpfx)tst-auditmod7a.so
-$(objpfx)tst-audit7.out: $(objpfx)tst-auditmod7b.so
-tst-audit7-ENV = LD_AUDIT=$(objpfx)tst-auditmod7b.so
-
 $(objpfx)tst-audit8: $(common-objpfx)math/libm.so
 $(objpfx)tst-audit8.out: $(objpfx)tst-auditmod1.so
 tst-audit8-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
@@ -1147,19 +1114,6 @@ $(objpfx)tst-initorder2.out: $(objpfx)tst-initorder2
 	$(test-program-prefix) \
 	  $< > $@
 	cmp $@ tst-initorder2.exp > /dev/null
-
-ifeq (yes,$(config-cflags-avx))
-AVX-CFLAGS=-mavx
-ifeq (yes,$(config-cflags-novzeroupper))
-AVX-CFLAGS+=-mno-vzeroupper
-endif
-CFLAGS-tst-audit4.c += $(AVX-CFLAGS)
-CFLAGS-tst-auditmod4a.c += $(AVX-CFLAGS)
-CFLAGS-tst-auditmod4b.c += $(AVX-CFLAGS)
-CFLAGS-tst-auditmod6b.c += $(AVX-CFLAGS)
-CFLAGS-tst-auditmod6c.c += $(AVX-CFLAGS)
-CFLAGS-tst-auditmod7b.c += $(AVX-CFLAGS)
-endif
 
 $(objpfx)tst-relsort1: $(libdl)
 $(objpfx)tst-relsort1mod1.so: $(libm) $(objpfx)tst-relsort1mod2.so
