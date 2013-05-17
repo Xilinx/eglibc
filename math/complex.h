@@ -90,7 +90,7 @@ __BEGIN_DECLS
    here unconditionally since `long double' is required in ISO C99.  */
 #if !(defined __NO_LONG_DOUBLE_MATH && defined _LIBC)	\
     || defined __LDBL_COMPAT
-# if defined __LDBL_COMPAT || defined __NO_LONG_DOUBLE_MATH
+# ifdef __LDBL_COMPAT
 #  undef __MATHDECL_1
 #  define __MATHDECL_1(type, function, args) \
   extern type __REDIRECT_NTH(__MATH_PRECNAME(function), args, function)

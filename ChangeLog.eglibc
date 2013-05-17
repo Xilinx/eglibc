@@ -1,3 +1,7 @@
+2013-05-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/complex.h, math/math.h: Revert differences from glibc.
+
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>
 
 	* sunrpc/proto.h [IS_in_build] (REPORT_BUGS_TO): Remove.

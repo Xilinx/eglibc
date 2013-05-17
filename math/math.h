@@ -109,9 +109,6 @@ extern long double __REDIRECT_NTH (nexttowardl,
 				   nextafter) __attribute__ ((__const__));
 #    endif
 #   endif
-#  endif
-
-#  if defined __LDBL_COMPAT || defined __NO_LONG_DOUBLE_MATH
 
 #   undef __MATHDECL_1
 #   define __MATHDECL_2(type, function,suffix, args, alias) \
