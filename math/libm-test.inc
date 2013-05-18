@@ -132,7 +132,6 @@
 #include <string.h>
 #include <argp.h>
 #include <tininess.h>
-#include <gnu/option-groups.h>
 
 /* Allow platforms without all rounding modes to test properly,
    assuming they provide an __FE_UNDEFINED in <bits/fenv.h> which
@@ -247,15 +246,8 @@ static FLOAT max_error, real_max_error, imag_max_error;
      __retval; })
 
 
-#if __OPTION_EGLIBC_LIBM_BIG
 #define MANT_DIG CHOOSE ((LDBL_MANT_DIG-1), (DBL_MANT_DIG-1), (FLT_MANT_DIG-1),  \
 			 (LDBL_MANT_DIG-1), (DBL_MANT_DIG-1), (FLT_MANT_DIG-1))
-#else
-/* Reduce precision to which the results are checked against
-   expected values.  */
-#define MANT_DIG CHOOSE ((FLT_MANT_DIG-3), (FLT_MANT_DIG-4), (FLT_MANT_DIG-1), \
-                         (FLT_MANT_DIG-3), (FLT_MANT_DIG-4), (FLT_MANT_DIG-1))
-#endif
 
 static void
 init_max_error (void)
@@ -6823,12 +6815,7 @@ erfc_test (void)
 #ifdef TEST_LDOUBLE
   /* The result can only be represented in long double.  */
 # if LDBL_MIN_10_EXP < -319
-#  if __OPTION_EGLIBC_LIBM_BIG
   TEST_f_f (erfc, 27.0L, 0.523704892378925568501606768284954709e-318L);
-#  else
-  /* ldbl-wrap uses single-precision erfc, so it can't handle e-318 values.  */
-  TEST_f_f (erfc, 27.0L, 0.0L);
-#  endif
 # endif
 # if LDBL_MANT_DIG >= 106
   TEST_f_f (erfc, 0x1.ffff56789abcdef0123456789a8p+2L, 1.123161416304655390092138725253789378459e-29L);

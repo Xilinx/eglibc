@@ -104,9 +104,6 @@
 #include <math.h>
 #include <math_private.h>
 #include <math_ldbl_opt.h>
-#include <gnu/option-groups.h>
-
-#if __OPTION_EGLIBC_LIBM_BIG
 
 /* Evaluate P[n] x^n  +  P[n-1] x^(n-1)  +  ...  +  P[0] */
 
@@ -956,10 +953,5 @@ __erfcl (long double x)
 	return two - tiny;
     }
 }
-
-#else /* !__OPTION_EGLIBC_LIBM_BIG */
-# include <sysdeps/ieee754/ldbl-wrap/s_erfl-wrap.c>
-long_double_symbol (libm, __erfl, erfl);
-#endif /* __OPTION_EGLIBC_LIBM_BIG */
 
 long_double_symbol (libm, __erfcl, erfcl);

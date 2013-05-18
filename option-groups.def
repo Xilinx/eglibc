@@ -464,19 +464,6 @@ config OPTION_EGLIBC_LIBM
        group, you will not be able to build 'libstdc++' against the
        resulting EGLIBC installation.
 
-config OPTION_EGLIBC_LIBM_BIG
-   bool "Math library size"
-   help
-       This option group enables default configuration of the math library.
-       Not selecting this option group removes most of the extended and
-       double precision math functions and replaces them with wrappers
-       to the single precision couterparts.
-       Doing so greatly degrades quality of calculations carried
-       out by the functions of the math library, but also significantly
-       reduces the size of the libm.
-       This option group is useful for systems that do not rely on precise
-       floating point math.
-
 config OPTION_EGLIBC_LOCALES
    bool "Locale definitions"
    help

@@ -1,5 +1,22 @@
 2013-05-17  Joseph Myers  <joseph@codesourcery.com>
 
+	* configure.in, math/Makefile, math/gen-libm-test.pl,
+	math/libm-test.inc, option-groups.def, option-groups.defaults,
+	sysdeps/ieee754/ldbl-128/s_erfl.c,
+	sysdeps/ieee754/ldbl-128/s_log1pl.c,
+	sysdeps/ieee754/ldbl-128ibm/s_erfl.c,
+	sysdeps/ieee754/ldbl-128ibm/s_log1pl.c,
+	sysdeps/ieee754/ldbl-96/s_erfl.c,
+	sysdeps/ieee754/ldbl-opt/s_atan.c,
+	sysdeps/ieee754/ldbl-opt/s_sin.c,
+	sysdeps/ieee754/ldbl-opt/s_tan.c: Revert OPTION_EGLIBC_LIBM_BIG
+	support.
+	* configure: Regenerated.
+	* math/test-dbl-wrap.c, sysdeps/ieee754/dbl-wrap,
+	sysdeps/ieee754/ldbl-wrap: Remove.
+
+2013-05-17  Joseph Myers  <joseph@codesourcery.com>
+
 	* math/complex.h, math/math.h: Revert differences from glibc.
 
 2012-11-17  Joseph Myers  <joseph@codesourcery.com>

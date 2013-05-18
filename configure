@@ -4181,11 +4181,6 @@ fi
 
 # We have now validated the configuration.
 
-# Peek into option-groups.config to check if sysdeps/ieee754/[l]dbl-wrap needs
-# to be included into $sysnames.
-grep "OPTION_EGLIBC_LIBM_BIG = n" option-groups.config > /dev/null 2>&1
-use_dbl_wrap=$?
-
 # Expand the list of system names into a full list of directories
 # from each element's parent name and Implies file (if present).
 set $sysnames
@@ -4220,14 +4215,6 @@ while test $# -gt 0; do
       for x in $implied_candidate; do
 	found=no
 	if test -d $xsrcdir$name_base/$x; then
-	  # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
-	  # ieee754/dbl-64.
-	  if test "$use_dbl_wrap" = "0"; then
-	    case $x in
-	      ieee754/dbl-64) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/dbl-wrap\"" ;;
-	      ieee754/ldbl-*) eval "${implies_type}=\"\$${implies_type} \$name_base/ieee754/ldbl-wrap\"" ;;
-	    esac
-	  fi
 	  eval "${implies_type}=\"\$${implies_type} \$name_base/\$x\""
 	  found=yes
 	fi
@@ -4241,16 +4228,6 @@ while test $# -gt 0; do
 	   echo "DEBUG: $name $implies_file $x try($d) {$try_srcdir}$try" >&2
 	  if test $try != $xsrcdir$name_base/$x && test -d $try_srcdir$try;
 	  then
-	    # If !OPTION_EGLIBC_LIBM_BIG, add ieee754/dbl-wrap just before
-	    # ieee754/dbl-64.
-	    if test "$use_dbl_wrap" = "0"; then
-	      case $try in
-	      sysdeps/ieee754/dbl-64)
-	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/dbl-wrap\"" ;;
-	      sysdeps/ieee754/ldbl-*)
-	        eval "${implies_type}=\"\$${implies_type} sysdeps/ieee754/ldbl-wrap\"" ;;
-	      esac
-	    fi
 	    eval "${implies_type}=\"\$${implies_type} \$try\""
 	    found=yes
 	    case "$sysnames_add_ons" in

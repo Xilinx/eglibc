@@ -47,7 +47,7 @@ use vars qw (%results);
 use vars qw (@tests @functions);
 use vars qw ($count);
 use vars qw (%beautify @all_floats);
-use vars qw ($output_dir $ulps_file $default_ulp);
+use vars qw ($output_dir $ulps_file);
 
 # all_floats is sorted and contains all recognised float types
 @all_floats = ('double', 'float', 'idouble',
@@ -85,12 +85,11 @@ use vars qw ($output_dir $ulps_file $default_ulp);
 # h: help
 # o: output-directory
 # n: generate new ulps file
-use vars qw($opt_u $opt_h $opt_o $opt_n $opt_d);
-getopts('u:o:d:nh');
+use vars qw($opt_u $opt_h $opt_o $opt_n);
+getopts('u:o:nh');
 
 $ulps_file = 'libm-test-ulps';
 $output_dir = '';
-$default_ulp = '0';
 
 if ($opt_h) {
   print "Usage: gen-libm-test.pl [OPTIONS]\n";
@@ -98,13 +97,11 @@ if ($opt_h) {
   print " -o DIR     directory where generated files will be placed\n";
   print " -n         only generate sorted file NewUlps from libm-test-ulps\n";
   print " -u FILE    input file with ulps\n";
-  print " -d NUM     set the default value for ulp to NUM\n";
   exit 0;
 }
 
 $ulps_file = $opt_u if ($opt_u);
 $output_dir = $opt_o if ($opt_o);
-$default_ulp = $opt_d if ($opt_d);
 
 $input = "libm-test.inc";
 $output = "${output_dir}libm-test.c";
@@ -458,11 +455,7 @@ sub generate_testfile {
       if (exists $results{$fct}{'has_ulps'}) {
 	$line .= "DELTA$fct";
       } else {
-	if ($type eq 'complex') {
-	  $line .= "BUILD_COMPLEX ($default_ulp, $default_ulp)";
-	} else {
-	  $line .= "$default_ulp";
-	}
+	$line .= '0';
       }
       if (exists $results{$fct}{'has_fails'}) {
 	$line .= ", FAIL$fct";
@@ -641,21 +634,22 @@ sub get_ulps {
 
   if ($type eq 'complex') {
     my ($res);
+    # Return 0 instead of BUILD_COMPLEX (0,0)
     if (!exists $results{$test}{'real'}{'ulp'}{$float} &&
 	!exists $results{$test}{'imag'}{'ulp'}{$float}) {
-      return "BUILD_COMPLEX ($default_ulp, $default_ulp)";
+      return "0";
     }
     $res = 'BUILD_COMPLEX (';
     $res .= (exists $results{$test}{'real'}{'ulp'}{$float}
-	     ? $results{$test}{'real'}{'ulp'}{$float} : "$default_ulp");
+	     ? $results{$test}{'real'}{'ulp'}{$float} : "0");
     $res .= ', ';
     $res .= (exists $results{$test}{'imag'}{'ulp'}{$float}
-	     ? $results{$test}{'imag'}{'ulp'}{$float} : "$default_ulp");
+	     ? $results{$test}{'imag'}{'ulp'}{$float} : "0");
     $res .= ')';
     return $res;
   }
   return (exists $results{$test}{'normal'}{'ulp'}{$float}
-	  ? $results{$test}{'normal'}{'ulp'}{$float} : "$default_ulp");
+	  ? $results{$test}{'normal'}{'ulp'}{$float} : "0");
 }
 
 sub get_failure {
