@@ -17,23 +17,28 @@
 
 extern double modf (double, double *);
 
-#define CALL_BENCH_FUNC(j, i) modf ( in[j].arg0, &i);
+#define CALL_BENCH_FUNC(j, i) modf (in[j].arg0, &i);
 
 struct args
 {
-  double arg0;
+  volatile double arg0;
 } in[] =
 {
   {  42.42 },
   { -42.42 }
 };
 
-#define NUM_SAMPLES (sizeof (in) / sizeof (struct args))
+#define NUM_VARIANTS 1
+#define NUM_SAMPLES(v) (sizeof (in) / sizeof (struct args))
 
 static volatile double ret = 0.0;
-#define BENCH_FUNC(j) ({double iptr; ret =  CALL_BENCH_FUNC (j, iptr);})
+#define BENCH_FUNC(v, j) \
+({									      \
+  double iptr;								      \
+  ret =  CALL_BENCH_FUNC (j, iptr);					      \
+})
 
-#define ITER 250000000
 #define FUNCNAME "modf"
+#define VARIANT(v) FUNCNAME "()"
 
 #include "bench-skeleton.c"

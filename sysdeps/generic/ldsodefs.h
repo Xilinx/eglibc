@@ -26,6 +26,7 @@
 #define __need_NULL
 #include <stddef.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <elf.h>
 #include <dlfcn.h>
@@ -647,6 +648,16 @@ extern char **_dl_argv
 #endif
      ;
 #ifdef IS_IN_rtld
+extern unsigned int _dl_skip_args attribute_hidden
+# ifndef DL_ARGV_NOT_RELRO
+     attribute_relro
+# endif
+     ;
+extern unsigned int _dl_skip_args_internal attribute_hidden
+# ifndef DL_ARGV_NOT_RELRO
+     attribute_relro
+# endif
+     ;
 extern char **_dl_argv_internal attribute_hidden
 # ifndef DL_ARGV_NOT_RELRO
      attribute_relro

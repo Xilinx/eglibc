@@ -24,6 +24,9 @@ subdir	:= debug
 
 headers	:= execinfo.h
 
+# Note that ptsname_r_chk and getlogin_r are not here, but in
+# login/Makefile instead.  If that subdir is omitted from the
+# build, its _FORTIFY_SOURCE support will be too.
 routines  = noophooks \
 	    memcpy_chk memmove_chk mempcpy_chk memset_chk stpcpy_chk \
 	    strcat_chk strcpy_chk strncat_chk strncpy_chk stpncpy_chk \
@@ -32,7 +35,7 @@ routines  = noophooks \
 	    gets_chk chk_fail readonly-area fgets_chk fgets_u_chk \
 	    read_chk pread_chk pread64_chk recv_chk recvfrom_chk \
 	    readlink_chk readlinkat_chk getwd_chk getcwd_chk \
-	    realpath_chk ptsname_r_chk fread_chk fread_u_chk \
+	    realpath_chk fread_chk fread_u_chk \
 	    confstr_chk getgroups_chk ttyname_r_chk \
 	    gethostname_chk getdomainname_chk \
 	    asprintf_chk vasprintf_chk dprintf_chk \
@@ -41,7 +44,6 @@ routines  = noophooks \
 	    fdelt_chk poll_chk ppoll_chk \
 	    stack_chk_fail fortify_fail \
 	    $(static-only-routines)
-routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin_r_chk
 routines-$(OPTION_EGLIBC_BACKTRACE) += backtrace backtracesyms backtracesymsfd 
 routines-$(OPTION_POSIX_WIDE_CHAR_DEVICE_IO)			\
 	 += wprintf_chk fwprintf_chk				\

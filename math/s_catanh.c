@@ -72,24 +72,51 @@ __catanh (__complex__ double x)
 	}
       else
 	{
-	  double i2 = __imag__ x * __imag__ x;
-
-	  double num = 1.0 + __real__ x;
-	  num = i2 + num * num;
-
-	  double den = 1.0 - __real__ x;
-	  den = i2 + den * den;
-
-	  double f = num / den;
-	  if (f < 0.5)
-	    __real__ res = 0.25 * __ieee754_log (f);
+	  if (fabs (__real__ x) == 1.0
+	      && fabs (__imag__ x) < DBL_EPSILON * DBL_EPSILON)
+	    __real__ res = (__copysign (0.5, __real__ x)
+			    * (M_LN2 - __ieee754_log (fabs (__imag__ x))));
 	  else
 	    {
-	      num = 4.0 * __real__ x;
-	      __real__ res = 0.25 * __log1p (num / den);
+	      double i2 = 0.0;
+	      if (fabs (__imag__ x) >= DBL_EPSILON * DBL_EPSILON)
+		i2 = __imag__ x * __imag__ x;
+
+	      double num = 1.0 + __real__ x;
+	      num = i2 + num * num;
+
+	      double den = 1.0 - __real__ x;
+	      den = i2 + den * den;
+
+	      double f = num / den;
+	      if (f < 0.5)
+		__real__ res = 0.25 * __ieee754_log (f);
+	      else
+		{
+		  num = 4.0 * __real__ x;
+		  __real__ res = 0.25 * __log1p (num / den);
+		}
 	    }
 
-	  den = 1 - __real__ x * __real__ x - i2;
+	  double absx, absy, den;
+
+	  absx = fabs (__real__ x);
+	  absy = fabs (__imag__ x);
+	  if (absx < absy)
+	    {
+	      double t = absx;
+	      absx = absy;
+	      absy = t;
+	    }
+
+	  if (absy < DBL_EPSILON / 2.0)
+	    den = (1.0 - absx) * (1.0 + absx);
+	  else if (absx >= 1.0)
+	    den = (1.0 - absx) * (1.0 + absx) - absy * absy;
+	  else if (absx >= 0.75 || absy >= 0.5)
+	    den = -__x2y2m1 (absx, absy);
+	  else
+	    den = (1.0 - absx) * (1.0 + absx) - absy * absy;
 
 	  __imag__ res = 0.5 * __ieee754_atan2 (2.0 * __imag__ x, den);
 	}

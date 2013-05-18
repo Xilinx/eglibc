@@ -69,9 +69,7 @@ routines-$(OPTION_EGLIBC_SPAWN) +=					      \
 	spawnattr_getpgroup spawnattr_setpgroup spawn spawnp spawni	      \
 	spawnattr_getsigmask spawnattr_getschedpolicy spawnattr_getschedparam \
 	spawnattr_setsigmask spawnattr_setschedpolicy spawnattr_setschedparam
-routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin getlogin_r
 routines-$(OPTION_EGLIBC_WORDEXP) += wordexp
-routines-$(OPTION_EGLIBC_BSD) += setlogin
 
 include ../Makeconfig
 

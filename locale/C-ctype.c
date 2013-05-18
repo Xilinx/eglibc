@@ -18,6 +18,7 @@
 
 #include "localeinfo.h"
 #include <endian.h>
+#include <stdint.h>
 #include <gnu/option-groups.h>
 
 #if __OPTION_EGLIBC_LOCALE_CODE

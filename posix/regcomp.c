@@ -17,6 +17,7 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#include <stdint.h>
 #include <gnu/option-groups.h>
 
 static reg_errcode_t re_compile_internal (regex_t *preg, const char * pattern,

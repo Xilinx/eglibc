@@ -1,4 +1,4 @@
-/* Define slowpow.
+/* _FORTIFY_SOURCE wrapper for open.
    Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -16,4 +16,14 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define slowpow pow
+#include <fcntl.h>
+#include <stdio.h>
+
+int
+__open_2 (const char *file, int oflag)
+{
+  if (oflag & O_CREAT)
+    __fortify_fail ("invalid open call: O_CREAT without mode");
+
+  return __open (file, oflag);
+}

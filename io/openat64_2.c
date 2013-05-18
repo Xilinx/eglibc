@@ -1,4 +1,4 @@
-/* Define slowatan.
+/* _FORTIFY_SOURCE wrapper for openat64.
    Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -16,4 +16,14 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define slowatan atan
+#include <fcntl.h>
+#include <stdio.h>
+
+int
+__openat64_2 (int fd, const char *file, int oflag)
+{
+  if (oflag & O_CREAT)
+    __fortify_fail ("invalid openat64 call: O_CREAT without mode");
+
+  return __openat64 (fd, file, oflag);
+}

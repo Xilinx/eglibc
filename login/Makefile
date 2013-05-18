@@ -24,10 +24,12 @@ subdir	:= login
 
 headers	:= utmp.h bits/utmp.h lastlog.h pty.h
 
-routines := getpt grantpt unlockpt ptsname
+routines := getpt grantpt unlockpt ptsname ptsname_r_chk
 routines-$(OPTION_EGLIBC_UTMP) \
 	 += getutent getutent_r getutid getutline getutid_r getutline_r \
 	    utmp_file utmpname updwtmp
+routines-$(OPTION_EGLIBC_GETLOGIN) += getlogin getlogin_r getlogin_r_chk
+routines-$(OPTION_EGLIBC_BSD) += setlogin
 
 CFLAGS-grantpt.c = -DLIBEXECDIR='"$(libexecdir)"'
 
