@@ -1,3 +1,48 @@
+2013-05-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15465]
+	* sysdeps/mips/dl-lookup.c (do_lookup_x): Use DSO_FILENAME.
+	(add_dependency): Likewise.
+	(_dl_lookup_symbol_x): Likewise.
+	(_dl_debug_bindings): Likewise.
+	* sysdeps/mips/dl-machine.h (elf_machine_reloc): Use
+	RTLD_PROGNAME.
+
+2013-05-22  Edjunior Barbosa Machado  <emachado@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/mips/bits/siginfo.h (siginfo_t): Add
+	si_addr_lsb to _sifields.sifault.
+	(si_addr_lsb): Define new macro.
+	(BUS_MCEERR_AR, BUS_MCEERR_AO): Define new values.
+
+2013-05-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/mips32/libm-test-ulps: Update test names.
+	* sysdeps/mips/mips64/libm-test-ulps: Likewise.
+
+2013-05-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15506]
+	* sysdeps/unix/sysv/linux/mips/mips64/nptl/sysdep-cancel.h
+	[!__PIC__] (PSEUDO): Undefine and redefine.
+	(PSEUDO_END): Undefine and redefine unconditionally.
+	[!__PIC__] (STK_PAD): Define to 0.
+	[!__PIC__] (STKOFF_GP): Do not define.
+	[!__PIC__] (STKSPACE): Define to (STKOFF_SVMSK + SZREG).
+	(PSEUDO_JMP): Define depending on [__PIC__].
+	(CENABLE): Use PSEUDO_JMP in all definitions.
+	(CDISABLE): Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/sysdep.h
+	(SYSCALL_ERROR_LABEL): Define unconditionally.
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/sysdep.h
+	(SYSCALL_ERROR_LABEL): Define unconditionally.
+
+2013-05-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/mips32/libm-test-ulps: Update names of sincos
+	tests.
+	* sysdeps/mips/mips64/libm-test-ulps: Likewise.
+
 2013-05-16  Maciej W. Rozycki  <macro@codesourcery.com>
 
 	[BZ #15442]
@@ -44,8 +89,8 @@
 	* sysdeps/unix/sysv/linux/mips/bits/msq.h (MSG_COPY): Define.
 
 2013-02-27  Chung-Lin Tang  <cltang@codesourcery.com>
-            Maciej W. Rozycki  <macro@codesourcery.com>
-            Maxim Kuvyrkov  <maxim@codesourcery.com>
+	    Maciej W. Rozycki  <macro@codesourcery.com>
+	    Maxim Kuvyrkov  <maxim@codesourcery.com>
 
 	* sysdeps/mips/abort-instr.h (ABORT_INSTRUCTION) [__mips16]:
 	New macro.
@@ -506,7 +551,7 @@
 
 2012-11-06  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
-        * sysdeps/mips/memmove.c: New file.  Use memcpy for forward memmove.
+	* sysdeps/mips/memmove.c: New file.  Use memcpy for forward memmove.
 
 2012-11-05  Joseph Myers  <joseph@codesourcery.com>
 
@@ -658,14 +703,14 @@
 
 2012-08-13  Maxim Kuvyrkov  <maxim@codesourcery.com>
 
-        [__GNUC_PREREQ (4, 8)]
-        (atomic_exchange_and_add): Split into ...
-        (atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
-        New atomic macros.
-        [!__GNUC_PREREQ (4, 8)]
-        (atomic_exchange_and_add): Split into ...
-        (atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
-        New atomic macros.
+	[__GNUC_PREREQ (4, 8)]
+	(atomic_exchange_and_add): Split into ...
+	(atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
+	New atomic macros.
+	[!__GNUC_PREREQ (4, 8)]
+	(atomic_exchange_and_add): Split into ...
+	(atomic_exchange_and_add_acq, atomic_exchange_and_add_rel): ... these.
+	New atomic macros.
 
 2012-08-09  Joseph Myers  <joseph@codesourcery.com>
 
@@ -727,21 +772,21 @@
 	Likewise.
 
 2012-07-11  Tom de Vries  <vries@codesourcery.com>
-            Maxim Kuvyrkov  <maxim@codesourcery.com>
+	    Maxim Kuvyrkov  <maxim@codesourcery.com>
 
-        * sysdeps/mips/bits/atomic.h [__GNUC_PREREQ (4, 8)]
-        (__arch_compare_and_exchange_bool_32_int)
-        (__arch_compare_and_exchange_val_32_int)
-        (__arch_compare_and_exchange_bool_64_int)
-        (__arch_compare_and_exchange_val_64_int)
-        Define in terms of __atomic_compare_exchange_n.
-        [__GNUC_PREREQ (4, 8)]
-        (__arch_exchange_32_int, __arch_exchange_64_int):
-        Define in terms of __atomic_exchange_n.
-        [__GNUC_PREREQ (4, 8)]
-        (__arch_exchange_and_add_32_int, __arch_exchange_and_add_64_int):
-        Define in terms of __atomic_fetch_add.
-        [!__GNUC_PREREQ (4, 8)]: Update formatting.
+	* sysdeps/mips/bits/atomic.h [__GNUC_PREREQ (4, 8)]
+	(__arch_compare_and_exchange_bool_32_int)
+	(__arch_compare_and_exchange_val_32_int)
+	(__arch_compare_and_exchange_bool_64_int)
+	(__arch_compare_and_exchange_val_64_int)
+	Define in terms of __atomic_compare_exchange_n.
+	[__GNUC_PREREQ (4, 8)]
+	(__arch_exchange_32_int, __arch_exchange_64_int):
+	Define in terms of __atomic_exchange_n.
+	[__GNUC_PREREQ (4, 8)]
+	(__arch_exchange_and_add_32_int, __arch_exchange_and_add_64_int):
+	Define in terms of __atomic_fetch_add.
+	[!__GNUC_PREREQ (4, 8)]: Update formatting.
 
 2012-07-06  Petar Jovanovic  <petar.jovanovic@rt-rk.com>
 

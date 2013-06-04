@@ -1,3 +1,902 @@
+2013-06-03  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #15536]
+	* math/libm-test.inc (MAX_EXP): Remove
+	(MIN_EXP): Define.
+	(ulp): Use MIN_EXP - MANT_DIG.
+	(check_ulp): Verify subnormal ulps. Only allow a range of +/- 1 ulp.
+
+2013-05-31  Carlos O'Donell  <carlos@redhat.com>
+
+	* po/be.po: Revert last change.
+	* po/zh_CN.po: Likewise.
+	* po/header.pot: Likewise.
+
+2013-05-31  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile ($(common-objpfx)linkobj/libc.so): Define
+	link-libc-deps to empty as target-specific variable.
+	* Makerules (link-libc-args): New variable.
+	(libc-for-link): Likewise.
+	(link-libc-deps): Likewise.
+	(lib%.so): Depend on $(link-libc-deps).  Link with
+	$(link-libc-args).
+	(build-module): Link with $(link-libc-args).
+	(build-module-asneeded): Likewise.
+	(build-module-helper-objlist): Filter out $(link-libc-deps) from
+	list of objects.
+	($(common-objpfx)libc.so): Define link-libc-deps to empty as
+	target-specific variable.
+	($(extra-modules-build:%=$(objpfx)%.so)): Depend on
+	$(link-libc-deps) instead of libc.so and libc_nonshared.a.
+	* crypt/Makefile ($(objpfx)libcrypt.so): Remove dependencies on
+	libc.
+	* debug/Makefile ($(objpfx)libSegFault.so): Remove dependencies on
+	libc and ld.so.
+	($(objpfx)libpcprofile.so): Likewise.
+	* dlfcn/Makefile (LDLIBS-bug-atexit3-lib.so): Remove ld.so and
+	libc_nonshared.a.
+	($(objpfx)libdl.so): Remove dependencies on libc and ld.so.
+	* hesiod/Makefile ($(objpfx)libnss_hesiod.so): Likewise.
+	* iconvdata/extra-module.mk ($(objpfx)$(mod).so): Depend on
+	$(link-libc-deps).
+	($(objpfx)$(mod).so): Remove dependencies on libc and ld.so.
+	* locale/Makefile ($(objpfx)libBrokenLocale.so): Likewise.
+	* login/Makefile ($(objpfx)libutil.so): Likewise.
+	* malloc/Makefile ($(objpfx)libmemusage.so): Likewise.
+	* math/Makefile ($(objpfx)libm.so): Likewise.
+	* nis/Makefile ($(services:%=$(objpfx)libnss_%.so)
+	$(objpfx)libnsl.so): Define libc-for-link as target-specific
+	variable instead of depending directly on libc.
+	* nss/Makefile ($(services:%=$(objpfx)libnss_%.so)): Likewise.
+	($(objpfx)/libnss_test1.so): Change dependencies on libc to
+	$(link-libc-deps).
+	* resolv/Makefile ($(objpfx)libresolv.so): Remove dependencies on
+	libc.
+	[$(have-ssp) = yes] (LDLIBS-resolv.so): Remove variable.
+	($(objpfx)libnss_dns.so): Remove dependencies on libc.
+	($(objpfx)libanl.so): Likewise.
+	* rt/Makefile ($(objpfx)librt.so): Remove dependencies on libc and
+	ld.so.
+	* stdlib/Makefile ($(objpfx)tst-putenvmod.so): Depend on
+	$(link-libc-deps).
+	* sysdeps/i386/fpu/Makefile: Remove file.
+	* sysdeps/powerpc/fpu/Makefile [$(subdir) = math]
+	($(objpfx)libm.so): Remove dependency on ld.so.
+
+2013-05-30  Patsy Franklin  <pfrankli@redhat.com>
+
+	[BZ # 15553]
+	* nis/yp_xdr.c (XDRMAXNAME): Define.
+	(XDRMAXRECORD): Define.
+	(xdr_domainname): Use XDRMAXNAME.
+	(xdr_mapname): Likewise.
+	(xdr_peername): Likewise.
+	(xdr_keydat): Use XDRMAXRECORD.
+	(xdr_valdat): Likewise.
+
+2013-05-30  Jeff Law  <law@redhat.com>
+
+	[BZ #14256]
+	* manual/errno.texi (ESTALE): Update to account for more than
+	just NFS file systems.
+	* sysdeps/gnu/errlist.c: Regenerated.
+
+2013-05-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15465]
+	* elf/Makefile (tests): Add tst-null-argv.
+	(modules-names):  Add tst-null-argv-lib.
+	($(objpfx)tst-null-argv): Depend on tst-null-argv-lib.so.
+	(tst-null-argv-ENV): Set environment for tst-null-argv.
+	* sysdeps/generic/ldsodefs.h (DSO_FILENAME): New macro.
+	(RTLD_PROGNAME): New macro.
+	* elf/tst-null-argv.c: New test case.
+	* elf/tst-null-argv-lib.c: Library for test case.
+	* elf/dl-conflict.c (_dl_resolve_conflicts): Use DSO_FILENAME.
+	* elf/dl-deps.c (_dl_map_object_deps): Likewise.
+	* elf/dl-error.c (_dl_signal_error): Use RTLD_PROGNAME.
+	* elf/dl-fini.c (_dl_fini): Use DSO_FILENAME.
+	* elf/dl-init.c (call_init): Likewise.
+	(_dl_init): Likewise.
+	* elf/dl-load.c (print_search_path): Likewise.
+	(_dl_map_object): Likewise.
+	* elf/dl-lookup.c (do_lookup_x): Likewise.
+	(add_dependency): Likewise.
+	(_dl_lookup_symbol_x): Likewise.
+	(_dl_debug_bindings): Likewise.
+	* elf/dl-open.c (_dl_show_scope): Likewise.
+	* elf/dl-reloc.c (_dl_relocate_object): Likewise.
+	* elf/dl-version.c (match_symbol): Likewise.
+	(_dl_check_map_versions): Likewise.
+	* elf/rtld.c (dl_main): Likewise.
+	(print_unresolved): Use RTLD_PROGNAME.
+	(print_missing_version): Likewise.
+	* sysdeps/i386/dl-machine.h (elf_machine_rel): Likewise.
+	(elf_machine_rela): Likewise.
+	* sysdeps/powerpc/powerpc32/dl-machine.c
+	(__process_machine_rela): Likewise.
+	* sysdeps/powerpc/powerpc64/dl-machine.h (elf_machine_rela):
+	Likewise.
+	* sysdeps/s390/s390-32/dl-machine.h (elf_machine_rela):
+	Likewise.
+	* sysdeps/s390/s390-64/dl-machine.h (elf_machine_rela):
+	Likewise.
+	* sysdeps/sh/dl-machine.h (elf_machine_rela): Likewise.
+	* sysdeps/sparc/sparc32/dl-machine.h (elf_machine_rela):
+	Likewise.
+	* sysdeps/sparc/sparc64/dl-machine.h (elf_machine_rela):
+	Likewise.
+	* sysdeps/x86_64/dl-machine.h (elf_machine_rela): Likewise.
+
+2013-05-28  Carlos O'Donell  <carlos@redhat.com>
+
+	* po/be.po: Add descriptive title.
+	* po/zh_CN.po: Likewise.
+	* po/header.pot: Likewise.
+
+2013-05-28  Mike Frysinger  <vapier@gentoo.org>
+
+	* locale/programs/locarchive.c (create_archive): Inlucde fname in
+	error message.
+	(enlarge_archive): Likewise.
+
+2013-05-28  Ben North  <ben@redfrontdoor.org>
+
+	* manual/arith.texi (frexp): It is the magnitude of the return
+	value which lies in [0.5, 1), not the return value itself.
+
+2013-05-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2013-05-26  Thomas Schwinge  <thomas@codesourcery.com>
+
+	* stdio-common/bug26.c (main): Correct fscanf template.
+
+	* sysdeps/mach/hurd/dl-sysdep.c (_dl_sysdep_start:go): Don't
+	declare _dl_skip_args.
+
+	* sysdeps/mach/hurd/i386/init-first.c (_dl_non_dynamic_init):
+	Don't declare.
+
+	* manual/platform.texi: Add missing @end deftypefun.
+
+2013-05-24  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15529]
+	* sysdeps/ieee754/ldbl-96/e_hypotl.c (__ieee754_hypotl): Set high
+	bit of mantissa of 2^16382.
+	* math/libm-test.inc (hypot_test_data): Add more tests.
+
+	* math/libm-test.inc: Add drem and pow10 to list of tested
+	functions.
+	(pow10_test): New function.
+	(drem_test): Likewise.
+	(drem_test_tonearest): Likewise.
+	(drem_test_towardzero): Likewise.
+	(drem_test_downward): Likewise.
+	(drem_test_upward): Likewise.
+	(main): Call the new functions.
+
+	* math/libm-test.inc (finite_test_data): Remove.
+	(finite_test): Run tests from isfinite_test_data.
+	(gamma_test_data): Remove.
+	(gamma_test): Run tests from lgamma_test_data.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-05-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* manual/platform.texi: Add PowerPC PPR function set documentation.
+	* sysdeps/powerpc/sys/platform/ppc.h: Add PowerPC PPR set function
+	implementation.
+
+2013-05-24  Carlos O'Donell  <carlos@redhat.com>
+
+	* math/libm-test.inc (MAX_EXP): Define.
+	(ULPDIFF): Define.
+	(ulp): New function.
+	(check_float_internal): Use ULPDIFF.
+	(cpow_test): Disable failing test.
+	(check_ulp): Test ulp() implemetnation.
+	(main): Call check_ulp before starting tests.
+
+2013-05-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (generate_testfile): Do not handle
+	START_DATA and END_DATA.
+	* math/libm-test.inc (acos_test_data): Do not use START_DATA and
+	END_DATA.
+	(acos_tonearest_test_data): Likewise.
+	(acos_towardzero_test_data): Likewise.
+	(acos_downward_test_data): Likewise.
+	(acos_upward_test_data): Likewise.
+	(acosh_test_data): Likewise.
+	(asin_test_data): Likewise.
+	(asin_tonearest_test_data): Likewise.
+	(asin_towardzero_test_data): Likewise.
+	(asin_downward_test_data): Likewise.
+	(asin_upward_test_data): Likewise.
+	(asinh_test_data): Likewise.
+	(atan_test_data): Likewise.
+	(atanh_test_data): Likewise.
+	(atan2_test_data): Likewise.
+	(cabs_test_data): Likewise.
+	(cacos_test_data): Likewise.
+	(cacosh_test_data): Likewise.
+	(carg_test_data): Likewise.
+	(casin_test_data): Likewise.
+	(casinh_test_data): Likewise.
+	(catan_test_data): Likewise.
+	(catanh_test_data): Likewise.
+	(cbrt_test_data): Likewise.
+	(ccos_test_data): Likewise.
+	(ccosh_test_data): Likewise.
+	(ceil_test_data): Likewise.
+	(cexp_test_data): Likewise.
+	(cimag_test_data): Likewise.
+	(clog_test_data): Likewise.
+	(clog10_test_data): Likewise.
+	(conj_test_data): Likewise.
+	(copysign_test_data): Likewise.
+	(cos_test_data): Likewise.
+	(cos_tonearest_test_data): Likewise.
+	(cos_towardzero_test_data): Likewise.
+	(cos_downward_test_data): Likewise.
+	(cos_upward_test_data): Likewise.
+	(cosh_test_data): Likewise.
+	(cosh_tonearest_test_data): Likewise.
+	(cosh_towardzero_test_data): Likewise.
+	(cosh_downward_test_data): Likewise.
+	(cosh_upward_test_data): Likewise.
+	(cpow_test_data): Likewise.
+	(cproj_test_data): Likewise.
+	(creal_test_data): Likewise.
+	(csin_test_data): Likewise.
+	(csinh_test_data): Likewise.
+	(csqrt_test_data): Likewise.
+	(ctan_test_data): Likewise.
+	(ctan_tonearest_test_data): Likewise.
+	(ctan_towardzero_test_data): Likewise.
+	(ctan_downward_test_data): Likewise.
+	(ctan_upward_test_data): Likewise.
+	(ctanh_test_data): Likewise.
+	(ctanh_tonearest_test_data): Likewise.
+	(ctanh_towardzero_test_data): Likewise.
+	(ctanh_downward_test_data): Likewise.
+	(ctanh_upward_test_data): Likewise.
+	(erf_test_data): Likewise.
+	(erfc_test_data): Likewise.
+	(exp_test_data): Likewise.
+	(exp_tonearest_test_data): Likewise.
+	(exp_towardzero_test_data): Likewise.
+	(exp_downward_test_data): Likewise.
+	(exp_upward_test_data): Likewise.
+	(exp10_test_data): Likewise.
+	(exp2_test_data): Likewise.
+	(expm1_test_data): Likewise.
+	(fabs_test_data): Likewise.
+	(fdim_test_data): Likewise.
+	(finite_test_data): Likewise.
+	(floor_test_data): Likewise.
+	(fma_test_data): Likewise.
+	(fma_towardzero_test_data): Likewise.
+	(fma_downward_test_data): Likewise.
+	(fma_upward_test_data): Likewise.
+	(fmax_test_data): Likewise.
+	(fmin_test_data): Likewise.
+	(fmod_test_data): Likewise.
+	(fpclassify_test_data): Likewise.
+	(frexp_test_data): Likewise.
+	(gamma_test_data): Likewise.
+	(hypot_test_data): Likewise.
+	(ilogb_test_data): Likewise.
+	(isfinite_test_data): Likewise.
+	(isgreater_test_data): Likewise.
+	(isgreaterequal_test_data): Likewise.
+	(isinf_test_data): Likewise.
+	(isless_test_data): Likewise.
+	(islessequal_test_data): Likewise.
+	(islessgreater_test_data): Likewise.
+	(isnan_test_data): Likewise.
+	(isnormal_test_data): Likewise.
+	(issignaling_test_data): Likewise.
+	(isunordered_test_data): Likewise.
+	(j0_test_data): Likewise.
+	(j1_test_data): Likewise.
+	(jn_test_data): Likewise.
+	(ldexp_test_data): Likewise.
+	(lgamma_test_data): Likewise.
+	(lrint_test_data): Likewise.
+	(lrint_tonearest_test_data): Likewise.
+	(lrint_towardzero_test_data): Likewise.
+	(lrint_downward_test_data): Likewise.
+	(lrint_upward_test_data): Likewise.
+	(llrint_test_data): Likewise.
+	(llrint_tonearest_test_data): Likewise.
+	(llrint_towardzero_test_data): Likewise.
+	(llrint_downward_test_data): Likewise.
+	(llrint_upward_test_data): Likewise.
+	(log_test_data): Likewise.
+	(log10_test_data): Likewise.
+	(log1p_test_data): Likewise.
+	(log2_test_data): Likewise.
+	(logb_test_data): Likewise.
+	(logb_downward_test_data): Likewise.
+	(lround_test_data): Likewise.
+	(llround_test_data): Likewise.
+	(modf_test_data): Likewise.
+	(nearbyint_test_data): Likewise.
+	(nextafter_test_data): Likewise.
+	(nexttoward_test_data): Likewise.
+	(pow_test_data): Likewise.
+	(pow_tonearest_test_data): Likewise.
+	(pow_towardzero_test_data): Likewise.
+	(pow_downward_test_data): Likewise.
+	(pow_upward_test_data): Likewise.
+	(remainder_test_data): Likewise.
+	(remainder_tonearest_test_data): Likewise.
+	(remainder_towardzero_test_data): Likewise.
+	(remainder_downward_test_data): Likewise.
+	(remainder_upward_test_data): Likewise.
+	(remquo_test_data): Likewise.
+	(rint_test_data): Likewise.
+	(rint_tonearest_test_data): Likewise.
+	(rint_towardzero_test_data): Likewise.
+	(rint_downward_test_data): Likewise.
+	(rint_upward_test_data): Likewise.
+	(round_test_data): Likewise.
+	(scalb_test_data): Likewise.
+	(scalbn_test_data): Likewise.
+	(scalbln_test_data): Likewise.
+	(signbit_test_data): Likewise.
+	(sin_test_data): Likewise.
+	(sin_tonearest_test_data): Likewise.
+	(sin_towardzero_test_data): Likewise.
+	(sin_downward_test_data): Likewise.
+	(sin_upward_test_data): Likewise.
+	(sincos_test_data): Likewise.
+	(sinh_test_data): Likewise.
+	(sinh_tonearest_test_data): Likewise.
+	(sinh_towardzero_test_data): Likewise.
+	(sinh_downward_test_data): Likewise.
+	(sinh_upward_test_data): Likewise.
+	(sqrt_test_data): Likewise.
+	(tan_test_data): Likewise.
+	(tan_tonearest_test_data): Likewise.
+	(tan_towardzero_test_data): Likewise.
+	(tan_downward_test_data): Likewise.
+	(tan_upward_test_data): Likewise.
+	(tanh_test_data): Likewise.
+	(tgamma_test_data): Likewise.
+	(trunc_test_data): Likewise.
+	(y0_test_data): Likewise.
+	(y1_test_data): Likewise.
+	(yn_test_data): Likewise.
+	(significand_test_data): Likewise.
+
+	* math/gen-libm-test.pl (@functions): Remove variable.
+	(generate_testfile): Don't handle START and END lines.
+	* math/libm-test.inc (START): New macro.
+	(END): Likewise.
+	(END_COMPLEX): Likewise.
+	(acos_test): Use END macro without arguments.
+	(acos_test_tonearest): Likewise.
+	(acos_test_towardzero): Likewise.
+	(acos_test_downward): Likewise.
+	(acos_test_upward): Likewise.
+	(acosh_test): Likewise.
+	(asin_test): Likewise.
+	(asin_test_tonearest): Likewise.
+	(asin_test_towardzero): Likewise.
+	(asin_test_downward): Likewise.
+	(asin_test_upward): Likewise.
+	(asinh_test): Likewise.
+	(atan_test): Likewise.
+	(atanh_test): Likewise.
+	(atan2_test): Likewise.
+	(cabs_test): Likewise.
+	(cacos_test): Use END_COMPLEX macro without arguments.
+	(cacosh_test): Likewise.
+	(carg_test): Use END macro without arguments.
+	(casin_test): Use END_COMPLEX macro without arguments.
+	(casinh_test): Likewise.
+	(catan_test): Likewise.
+	(catanh_test): Likewise.
+	(cbrt_test): Use END macro without arguments.
+	(ccos_test): Use END_COMPLEX macro without arguments.
+	(ccosh_test): Likewise.
+	(ceil_test): Use END macro without arguments.
+	(cexp_test): Use END_COMPLEX macro without arguments.
+	(cimag_test): Use END macro without arguments.
+	(clog_test): Use END_COMPLEX macro without arguments.
+	(clog10_test): Likewise.
+	(conj_test): Likewise.
+	(copysign_test): Use END macro without arguments.
+	(cos_test): Likewise.
+	(cos_test_tonearest): Likewise.
+	(cos_test_towardzero): Likewise.
+	(cos_test_downward): Likewise.
+	(cos_test_upward): Likewise.
+	(cosh_test): Likewise.
+	(cosh_test_tonearest): Likewise.
+	(cosh_test_towardzero): Likewise.
+	(cosh_test_downward): Likewise.
+	(cosh_test_upward): Likewise.
+	(cpow_test): Use END_COMPLEX macro without arguments.
+	(cproj_test): Likewise.
+	(creal_test): Use END macro without arguments.
+	(csin_test): Use END_COMPLEX macro without arguments.
+	(csinh_test): Likewise.
+	(csqrt_test): Likewise.
+	(ctan_test): Likewise.
+	(ctan_test_tonearest): Likewise.
+	(ctan_test_towardzero): Likewise.
+	(ctan_test_downward): Likewise.
+	(ctan_test_upward): Likewise.
+	(ctanh_test): Likewise.
+	(ctanh_test_tonearest): Likewise.
+	(ctanh_test_towardzero): Likewise.
+	(ctanh_test_downward): Likewise.
+	(ctanh_test_upward): Likewise.
+	(erf_test): Use END macro without arguments.
+	(erfc_test): Likewise.
+	(exp_test): Likewise.
+	(exp_test_tonearest): Likewise.
+	(exp_test_towardzero): Likewise.
+	(exp_test_downward): Likewise.
+	(exp_test_upward): Likewise.
+	(exp10_test): Likewise.
+	(exp2_test): Likewise.
+	(expm1_test): Likewise.
+	(fabs_test): Likewise.
+	(fdim_test): Likewise.
+	(finite_test): Likewise.
+	(floor_test): Likewise.
+	(fma_test): Likewise.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+	(fmax_test): Likewise.
+	(fmin_test): Likewise.
+	(fmod_test): Likewise.
+	(fpclassify_test): Likewise.
+	(frexp_test): Likewise.
+	(gamma_test): Likewise.
+	(hypot_test): Likewise.
+	(ilogb_test): Likewise.
+	(isfinite_test): Likewise.
+	(isgreater_test): Likewise.
+	(isgreaterequal_test): Likewise.
+	(isinf_test): Likewise.
+	(isless_test): Likewise.
+	(islessequal_test): Likewise.
+	(islessgreater_test): Likewise.
+	(isnan_test): Likewise.
+	(isnormal_test): Likewise.
+	(issignaling_test): Likewise.
+	(isunordered_test): Likewise.
+	(j0_test): Likewise.
+	(j1_test): Likewise.
+	(jn_test): Likewise.
+	(ldexp_test): Likewise.
+	(lgamma_test): Likewise.
+	(lrint_test): Likewise.
+	(lrint_test_tonearest): Likewise.
+	(lrint_test_towardzero): Likewise.
+	(lrint_test_downward): Likewise.
+	(lrint_test_upward): Likewise.
+	(llrint_test): Likewise.
+	(llrint_test_tonearest): Likewise.
+	(llrint_test_towardzero): Likewise.
+	(llrint_test_downward): Likewise.
+	(llrint_test_upward): Likewise.
+	(log_test): Likewise.
+	(log10_test): Likewise.
+	(log1p_test): Likewise.
+	(log2_test): Likewise.
+	(logb_test): Likewise.
+	(logb_test_downward): Likewise.
+	(lround_test): Likewise.
+	(llround_test): Likewise.
+	(modf_test): Likewise.
+	(nearbyint_test): Likewise.
+	(nextafter_test): Likewise.
+	(nexttoward_test): Likewise.
+	(pow_test): Likewise.
+	(pow_test_tonearest): Likewise.
+	(pow_test_towardzero): Likewise.
+	(pow_test_downward): Likewise.
+	(pow_test_upward): Likewise.
+	(remainder_test): Likewise.
+	(remainder_test_tonearest): Likewise.
+	(remainder_test_towardzero): Likewise.
+	(remainder_test_downward): Likewise.
+	(remainder_test_upward): Likewise.
+	(remquo_test): Likewise.
+	(rint_test): Likewise.
+	(rint_test_tonearest): Likewise.
+	(rint_test_towardzero): Likewise.
+	(rint_test_downward): Likewise.
+	(rint_test_upward): Likewise.
+	(round_test): Likewise.
+	(scalb_test): Likewise.
+	(scalbn_test): Likewise.
+	(scalbln_test): Likewise.
+	(signbit_test): Likewise.
+	(sin_test): Likewise.
+	(sin_test_tonearest): Likewise.
+	(sin_test_towardzero): Likewise.
+	(sin_test_downward): Likewise.
+	(sin_test_upward): Likewise.
+	(sincos_test): Likewise.
+	(sinh_test): Likewise.
+	(sinh_test_tonearest): Likewise.
+	(sinh_test_towardzero): Likewise.
+	(sinh_test_downward): Likewise.
+	(sinh_test_upward): Likewise.
+	(sqrt_test): Likewise.
+	(tan_test): Likewise.
+	(tan_test_tonearest): Likewise.
+	(tan_test_towardzero): Likewise.
+	(tan_test_downward): Likewise.
+	(tan_test_upward): Likewise.
+	(tanh_test): Likewise.
+	(tgamma_test): Likewise.
+	(trunc_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	(yn_test): Likewise.
+	(significand_test): Likewise.
+
+2013-05-24  Ondřej Bílka  <neleai@seznam.cz>
+
+	[BZ #15381]
+	* libio/genops.c (_IO_no_init): Initialize wide struct info.
+
+2013-05-23  Edjunior Machado  <emachado@linux.vnet.ibm.com>
+
+	[BZ #14894]
+	* sysdeps/powerpc/sys/platform/ppc.h: Add __ppc_yield,
+	__ppc_mdoio and __ppc_mdoom.
+	* manual/platform.texi: Document new functions __ppc_yield,
+	__ppc_mdoio and __ppc_mdoom.
+
+2013-05-22  Carlos O'Donell  <carlos@redhat.com>
+
+	* elf/ldconfig.c (is_hwcap_platform): Make comments full setences.
+	(main): Mention "tls" pseudo-hwcap is legacy.
+	* elf/dl-hwcaps.c (_dl_important_hwcaps): Correct rounding comment.
+
+2013-05-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Output only string of
+	arguments as text for test name, not full call or descriptions of
+	tests for extra outputs.
+	(generate_testfile): Do not pass function name to parse_args.
+	Generate this_func variable from START.
+	* math/libm-test.inc (struct test_f_f_data): Rename test_name
+	field to arg_str.
+	(struct test_ff_f_data): Likewise.
+	(test_ff_f_data_nexttoward): Likewise.
+	(struct test_fi_f_data): Likewise.
+	(struct test_fl_f_data): Likewise.
+	(struct test_if_f_data): Likewise.
+	(struct test_fff_f_data): Likewise.
+	(struct test_c_f_data): Likewise.
+	(struct test_f_f1_data): Likewise.  Remove field extra_name.
+	(struct test_fF_f1_data): Likewise.
+	(struct test_ffI_f1_data): Likewise.
+	(struct test_c_c_data): Rename test_name field to arg_str.
+	(struct test_cc_c_data): Likewise.
+	(struct test_f_i_data): Likewise.
+	(struct test_ff_i_data): Likewise.
+	(struct test_f_l_data): Likewise.
+	(struct test_f_L_data): Likewise.
+	(struct test_fFF_11_data): Likewise.  Remove fields extra1_name
+	and extra2_name.
+	(COMMON_TEST_SETUP): New macro.
+	(EXTRA_OUTPUT_TEST_SETUP): Likewise.
+	(COMMON_TEST_CLEANUP): Likewise.
+	(EXTRA_OUTPUT_TEST_CLEANUP): Likewise.
+	(RUN_TEST_f_f): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_f): Update call to RUN_TEST_f_f.
+	(RUN_TEST_2_f): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_2_f): Update call to RUN_TEST_2_f.
+	(RUN_TEST_fff_f): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_fff_f): Update call to RUN_TEST_fff_f.
+	(RUN_TEST_c_f): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_c_f): Update call to RUN_TEST_c_f.
+	(RUN_TEST_f_f1): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_f1): Update call to RUN_TEST_f_f1.
+	(RUN_TEST_fF_f1): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_fF_f1): Update call to RUN_TEST_fF_f1.
+	(RUN_TEST_fI_f1): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_fI_f1): Update call to RUN_TEST_fI_f1.
+	(RUN_TEST_ffI_f1): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_ffI_f1): Update call to RUN_TEST_ffI_f1.
+	(RUN_TEST_c_c): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_c_c): Update call to RUN_TEST_c_c.
+	(RUN_TEST_cc_c): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_cc_c): Update call to RUN_TEST_cc_c.
+	(RUN_TEST_f_i): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_i): Update call to RUN_TEST_f_i.
+	(RUN_TEST_f_i_tg): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_f_i_tg): Update call to RUN_TEST_f_i_tg.
+	(RUN_TEST_ff_i_tg): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_ff_i_tg): Update call to RUN_TEST_ff_i_tg.
+	(RUN_TEST_f_b): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_b): Update call to RUN_TEST_f_b.
+	(RUN_TEST_f_b_tg): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_f_b_tg): Update call to RUN_TEST_f_b_tg.
+	(RUN_TEST_f_l): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_l): Update call to RUN_TEST_f_l.
+	(RUN_TEST_f_L): Take argument string.  Call new setup and cleanup
+	macros.
+	(RUN_TEST_LOOP_f_L): Update call to RUN_TEST_f_L.
+	(RUN_TEST_fFF_11): Take argument string.  Call new setup and
+	cleanup macros.
+	(RUN_TEST_LOOP_fFF_11): Update call to RUN_TEST_fFF_11.
+
+2013-05-22  Edjunior Barbosa Machado  <emachado@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/bits/siginfo.h (siginfo_t): Add si_addr_lsb
+	to _sifields.sigfault.
+	(si_addr_lsb): Define new macro.
+	(BUS_MCEERR_AR, BUS_MCEERR_AO): Define new values.
+	* sysdeps/unix/sysv/linux/sparc/bits/siginfo.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/siginfo.h: Likewise.
+
+2013-05-03  Carlos O'Donell  <carlos at redhat.com>
+
+	[BZ #15441]
+	* intl/dcigettext.c (DCIGETTEXT): Skip translating if _nl_find_msg
+	returns -1.
+	(_nl_find_msg): Return -1 if recursive call returned -1. If newmem is
+	null return -1.
+	* intl/loadmsgcat.c (_nl_load_domain): If _nl_find_msg returns -1 abort
+	loading the domain.
+
+2013-05-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Do not include expected
+	result in test name.
+	* sysdeps/i386/fpu/libm-test-ulps: Update test names.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/s390/fpu/libm-test-ulps: Likewise.
+	* sysdeps/sh/sh4/fpu/libm-test-ulps: Likewise.
+	* sysdeps/sparc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2013-05-22  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile: Sort function entries.
+
+	* benchtests/Makefile (bench): Add asin, acos, sinh, cosh,
+	tanh, asinh, acosh, atanh.
+	* benchtests/acos-inputs: New file.
+	* benchtests/acosh-inputs: New file.
+	* benchtests/asin-inputs: New file.
+	* benchtests/asinh-inputs: New file.
+	* benchtests/atanh-inputs: New file.
+	* benchtests/cosh-inputs: New file.
+	* benchtests/log-inputs: New file.
+	* benchtests/sinh-inputs: New file.
+	* benchtests/tanh-inputs: New file.
+
+2013-05-21  Dmitry V. Levin  <ldv@altlinux.org>
+
+	[BZ #15339]
+	* posix/tst-getaddrinfo4.c: New test.
+	* posix/Makefile (tests): Add it.
+
+2013-05-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15339]
+	* nss/getXXbyYY_r.c (REENTRANT_NAME): Set NETDB_INTERNAL only
+	when no services were used.
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Set h_errno.
+	Return EAI_SYSTEM if h_errno is NETDB_INTERNAL.
+
+2013-05-21  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15014]
+	* nss/getXXbyYY_r.c (INTERNAL (REENTRANT_NAME))
+	[HANDLE_DIGITS_DOTS]: Set any_service when digits-dots parsing was
+	successful.
+	* nss/digits_dots.c (__nss_hostname_digits_dots): Remove
+	redundant variable declarations and reallocation of buffer when
+	parsing as IPv6 address.  Always set NSS status when called from
+	reentrant functions.  Use NETDB_INTERNAL instead of TRY_AGAIN when
+	buffer too small.  Correct computation of needed size.
+	* nss/Makefile (tests): Add test-digits-dots.
+	* nss/test-digits-dots.c: New test.
+
+2013-05-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile: Remove instructions for adding
+	benchmark tests.
+	* benchtests/README: New file to explain how to execute and
+	enhance the benchmark tests.
+
+2013-05-21  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15493]
+	* setjmp/Makefile (tests): Add tst-sigsetjmp.
+	* setjmp/tst-sigsetjmp.c: New test.
+
+2013-05-20  Ondřej Bílka  <neleai@seznam.cz>
+
+	* sysdeps/x86_64/memset.S (memset): New implementation.
+	(__bzero): Likewise.
+	(__memset_tail): New function.
+
+2013-05-20  Ondřej Bílka  <neleai@seznam.cz>
+
+	* sysdeps/x86_64/multiarch/memcpy-sse2-unaligned.S: New file.
+	* sysdeps/x86_64/multiarch/memcpy.S (__new_memcpy): Add
+	__memcpy_sse2_unaligned ifunc selection.
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines):
+	Add memcpy-sse2-unaligned.S.
+	* sysdeps/x86_64/multiarch/ifunc-impl-list.c (__libc_ifunc_impl_list):
+	Add: __memcpy_sse2_unaligned.
+
+2013-05-19  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15490]
+	* sysdeps/ieee754/dbl-64/s_nearbyint.c (__nearbyint): Use
+	math_force_eval before restoring floating-point envrionment.
+	* sysdeps/ieee754/flt-32/s_nearbyintf.c (__nearbyintf): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_nearbyintl.c (__nearbyintl):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_nearbyintl.c: Include
+	<math_private.h>.
+	(__nearbyintl): Use math_force_eval before restoring
+	floating-point environment.
+	* sysdeps/ieee754/ldbl-96/s_nearbyintl.c (__nearbyintl): Likewise.
+
+	* math/gen-libm-test.pl (special_functions): Remove.
+	(parse_args): Don't handle TEST_extra.  Handle functions with no
+	return value.
+	* math/libm-test.inc (struct test_sincos_data): Replace with
+	struct test_fFF_11_data.
+	(RUN_TEST_sincos): Replace with RUN_TEST_fFF_11.
+	(RUN_TEST_LOOP_sincos): Replace with RUN_TEST_LOOP_fFF_11.
+	(sincos_test_data): Change element type to struct
+	test_fFF_11_data.  Use TEST_fFF_11 instead of TEST_extra.
+	(sincos_test): Use RUN_TEST_LOOP_fFF_11 instead of
+	RUN_TEST_LOOP_sincos.
+	* math/README.libm-test: Don't mention special handling of
+	individual functions.
+	* sysdeps/i386/fpu/libm-test-ulps: Update names of sincos tests.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/s390/fpu/libm-test-ulps: Likewise.
+	* sysdeps/sh/sh4/fpu/libm-test-ulps: Likewise.
+	* sysdeps/sparc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	* math/gen-libm-test.pl (get_variable): Remove function.
+	(parse_args): Don't show pointer parameters to call in test
+	names.  Use "extra output N" in test names for extra outputs
+	rather than naming variables.
+
+2013-05-18  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15488]
+	* math/complex.h [__USE_ISOC11 && __GNUC_PREREQ (4, 7) &&
+	__NO_LONG_DOUBLE_MATH] (CMPLXL): Define macro.
+	* math/tst-CMPLX.c (do_test) [NO_LONG_DOUBLE]: Do not disable long
+	double tests.
+	* make/tst-CMPLX2.c [NO_LONG_DOUBLE] (check_long_double): Do not
+	disable.
+	(do_test) [NO_LONG_DOUBLE]: Do not disable call to
+	check_long_double.
+
+	* math/gen-libm-test.pl (@tests): Remove variable.
+	($count): Likewise.
+	(new_test): Remove function.
+	(show_exceptions): New function.
+	(special_functions): Use show_exceptions instead of new_test.
+	(parse_args): Likewise.
+	(generate_testfile): Pass only function name in generated call to
+	print_max_error or print_complex_max_error.
+	(get_ulps): Do not handle complex tests specially.
+	(output_test): Rename to ...
+	(get_all_ulps_for_test): ... this.  Return a string rather than
+	printing to a file.  Require ulps to be present.
+	(output_ulps): Generate arrays rather than #defines.
+	* math/libm-test.inc: Move down #include of "libm-test-ulps.h".
+	(struct ulp_data): New type.
+	(BUILD_COMPLEX_ULP): Remove macro.
+	(compare_ulp_data): New function.
+	(find_ulps): Likewise.
+	(find_test_ulps): Likewise.
+	(find_function_ulps): Likewise.
+	(find_complex_function_ulps): Likewise.
+	(print_max_error): Determine allowed ulps using
+	find_function_ulps.
+	(print_complex_max_error): Determine allowed ulps using
+	find_complex_function_ulps.
+	(check_float_internal): Determine max ulps using find_test_ulps.
+	(check_float): Do not take max_ulp parameter.  Update call to
+	check_float_internal.
+	(check_complex): Likewise.
+	(check_int): Do not take max_ulp parameter.
+	(check_long): Likewise.
+	(check_bool): Likewise.
+	(check_longlong): Likewise.
+	(struct test_f_f_data): Remove max_ulp field.
+	(struct test_ff_f_data): Likewise.
+	(struct test_ff_f_data_nexttoward): Likewise.
+	(struct test_fi_f_data): Likewise.
+	(struct test_fl_f_data): Likewise.
+	(struct test_if_f_data): Likewise.
+	(struct test_fff_f_data): Likewise.
+	(struct test_c_f_data): Likewise.
+	(struct test_f_f1_data): Remove max_ulp and extra_ulp fields.
+	(struct test_fF_f1_data): Likewise.
+	(struct test_ffI_f1_data): Likewise.
+	(struct test_c_c_data): Remove max_ulp field.
+	(struct test_cc_c_data): Likewise.
+	(struct test_f_i_data): Likewise.
+	(struct test_ff_i_data): Likewise.
+	(struct test_f_l_data): Likewise.
+	(struct test_f_L_data): Likewise.
+	(struct test_sincos_data): Likewise.
+	(RUN_TEST_f_f): Do not handle ulps.
+	(RUN_TEST_LOOP_f_f): Likewise.
+	(RUN_TEST_2_f): Likewise.
+	(RUN_TEST_LOOP_2_f): Likewise.
+	(RUN_TEST_fff_f): Likewise.
+	(RUN_TEST_LOOP_fff_f): Likewise.
+	(RUN_TEST_c_f): Likewise.
+	(RUN_TEST_LOOP_c_f): Likewise.
+	(RUN_TEST_f_f1): Likewise.
+	(RUN_TEST_LOOP_f_f1): Likewise.
+	(RUN_TEST_fF_f1): Likewise.
+	(RUN_TEST_LOOP_fF_f1): Likewise.
+	(RUN_TEST_fI_f1): Likewise.
+	(RUN_TEST_LOOP_fI_f1): Likewise.
+	(RUN_TEST_ffI_f1): Likewise.
+	(RUN_TEST_LOOP_ffI_f1): Likewise.
+	(RUN_TEST_c_c): Likewise.
+	(RUN_TEST_LOOP_c_c): Likewise.
+	(RUN_TEST_cc_c): Likewise.
+	(RUN_TEST_LOOP_cc_c): Likewise.
+	(RUN_TEST_f_i): Likewise.
+	(RUN_TEST_LOOP_f_i): Likewise.
+	(RUN_TEST_f_i_tg): Likewise.
+	(RUN_TEST_LOOP_f_i_tg): Likewise.
+	(RUN_TEST_ff_i_tg): Likewise.
+	(RUN_TEST_LOOP_ff_i_tg): Likewise.
+	(RUN_TEST_f_b): Likewise.
+	(RUN_TEST_LOOP_f_b): Likewise.
+	(RUN_TEST_f_b_tg): Likewise.
+	(RUN_TEST_LOOP_f_b_tg): Likewise.
+	(RUN_TEST_f_l): Likewise.
+	(RUN_TEST_LOOP_f_l): Likewise.
+	(RUN_TEST_f_L): Likewise.
+	(RUN_TEST_LOOP_f_L): Likewise.
+	(RUN_TEST_sincos): Likewise.
+	(RUN_TEST_LOOP_sincos): Likewise.
+
 2013-05-17  Joseph Myers  <joseph@codesourcery.com>
 
 	[BZ #15480]
@@ -121,6 +1020,7 @@
 
 2013-05-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	[BZ # 15497]
 	* sysdeps/powerpc/fpu/e_hypot.c (GET_TWO_FLOAT_WORD): Fix test for
 	negative infinity on POWER6 or lower.
 	* sysdeps/powerpc/fpu/e_hypotf.c (GET_TWO_FLOAT_WORD): Likewise.

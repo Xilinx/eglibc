@@ -1,5 +1,4 @@
-/* Copyright (C) 2011-2013 Free Software Foundation, Inc.
-
+/* Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -13,13 +12,27 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define _MCOUNT_DECL(from, self) \
- void __mcount_internal (u_long from, u_long self)
+/* Testcase for BZ #15014 */
 
-/* Call __mcount_internal with our the return PC for our caller, and
-   the return PC our caller will return to.  Empty since we use an
-   assembly stub instead. */
-#define MCOUNT
+#include <stdlib.h>
+#include <netdb.h>
+#include <errno.h>
+
+static int
+do_test (void)
+{
+  char buf[32];
+  struct hostent *result = NULL;
+  struct hostent ret;
+  int h_err = 0;
+  int err;
+
+  err = gethostbyname_r ("1.2.3.4", &ret, buf, sizeof (buf), &result, &h_err);
+  return err == ERANGE && h_err == NETDB_INTERNAL ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+#define TEST_FUNCTION do_test ()
+#include "../test-skeleton.c"

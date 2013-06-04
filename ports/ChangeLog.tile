@@ -1,3 +1,33 @@
+2013-05-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15465]
+	* sysdeps/tile/dl-machine.h (elf_machine_rela): Use
+	RTLD_PROGNAME.
+
+2013-05-23  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/tilegx/Makefile ($(cflags-mcmodel-large)):
+	Test for assembler and linker support for "-mcmodel=large -fpic"
+	in addition to compiler support; provide -DNO_PLT_PCREL if not.
+	* sysdeps/tile/start.S [NO_PLT_PCREL]: Guard for no PC-relative
+	PLT operators in assembly.
+	* sysdeps/tile/crti.S [NO_PLT_PCREL]: Likewise.
+
+2013-05-22  Edjunior Barbosa Machado  <emachado@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/tile/bits/siginfo.h (siginfo_t): Fix comment
+	formatting. Add	si_addr_lsb to _sifields.sigfault.
+	(si_addr_lsb): Define new macro.
+	(BUS_MCEERR_AR, BUS_MCEERR_AO): Define new values.
+
+2013-05-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/tile/libm-test-ulps: Update test names.
+
+2013-05-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/tile/libm-test-ulps: Update names of sincos tests.
+
 2013-05-16  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* sysdeps/tile/tilegx/memusage.h: Add missing #include <stdint.h> due

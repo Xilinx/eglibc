@@ -1,3 +1,18 @@
+2013-05-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #15465]
+	* sysdeps/hppa/dl-machine.h (elf_machine_rela): Use
+	RTLD_PROGNAME.
+	(elf_machine_rela_relative): Likewise.
+
+2013-05-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/hppa/fpu/libm-test-ulps: Update test names.
+
+2013-05-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/hppa/fpu/libm-test-ulps: Update names of sincos tests.
+
 2013-05-15  Carlos O'Donell  <carlos@redhat.com>
 
 	* sysdeps/hppa/fpu/libm-test-ulps: Remove old values for ceil, floor,

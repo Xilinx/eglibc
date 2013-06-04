@@ -44,7 +44,7 @@ makedb-modules = xmalloc hash-string
 extra-objs		+= $(makedb-modules:=.o)
 
 tests			= tst-nss-test1
-tests-$(OPTION_EGLIBC_INET) += test-netdb
+tests-$(OPTION_EGLIBC_INET) += test-netdb test-digits-dots
 xtests-$(OPTION_EGLIBC_INET) += bug-erange
 
 include ../Makeconfig
@@ -130,12 +130,11 @@ ifeq (yes,$(have-selinux))
 LDLIBS-makedb		:= -lselinux
 endif
 
-# Depend on libc.so so a DT_NEEDED is generated in the shared objects.
-# This ensures they will load libc.so for needed symbols if loaded by
-# a statically-linked program that hasn't already loaded it.
 libnss-libc = $(common-objpfx)linkobj/libc.so
-$(services:%=$(objpfx)libnss_%.so): $(libnss-libc) \
-				    $(common-objpfx)libc_nonshared.a
+# Target-specific variable setting to link objects using deprecated
+# RPC interfaces with the version of libc.so that makes them available
+# for new links:
+$(services:%=$(objpfx)libnss_%.so): libc-for-link = $(libnss-libc)
 
 $(objpfx)libnss_db.so: $(objpfx)libnss_files.so
 
@@ -153,8 +152,7 @@ $(inst_vardbdir)/Makefile: db-Makefile $(+force)
 	$(do-install)
 
 CFLAGS-nss_test1.c = -DNOT_IN_libc=1
-$(objpfx)/libnss_test1.so: $(objpfx)nss_test1.os $(common-objpfx)libc.so \
-			   $(common-objpfx)libc_nonshared.a
+$(objpfx)/libnss_test1.so: $(objpfx)nss_test1.os $(link-libc-deps)
 	$(build-module)
 ifdef libnss_test1.so-version
 $(objpfx)/libnss_test1.so$(libnss_test1.so-version): $(objpfx)/libnss_test1.so
