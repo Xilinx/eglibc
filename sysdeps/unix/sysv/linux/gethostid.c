@@ -67,7 +67,7 @@ sethostid (id)
 # include <netinet/in.h>
 
 long int
-gethostid ()
+gethostid (void)
 {
   char hostname[MAXHOSTNAMELEN + 1];
   size_t buflen;

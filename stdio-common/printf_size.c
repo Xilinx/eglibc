@@ -43,7 +43,7 @@
 #define outchar(ch)							      \
   do									      \
     {									      \
-      register const int outc = (ch);					      \
+      const int outc = (ch);						      \
       if (putc (outc, fp) == EOF)					      \
 	return -1;							      \
       ++done;								      \
@@ -52,7 +52,7 @@
 #define PRINT(ptr, wptr, len)						      \
   do									      \
     {									      \
-      register size_t outlen = (len);					      \
+      size_t outlen = (len);						      \
       if (len > 20)							      \
 	{								      \
 	  if (PUT (fp, wide ? (const char *) wptr : ptr, outlen) != outlen)   \

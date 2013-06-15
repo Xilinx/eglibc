@@ -229,7 +229,7 @@ __vsyslog_chk(int pri, int flag, const char *fmt, va_list ap)
 	/* Output to stderr if requested. */
 	if (LogStat & LOG_PERROR) {
 		struct iovec iov[2];
-		register struct iovec *v = iov;
+		struct iovec *v = iov;
 
 		v->iov_base = buf + msgoff;
 		v->iov_len = bufsize - msgoff;
@@ -425,7 +425,7 @@ sigpipe_handler (int signo)
 #endif
 
 static void
-closelog_internal()
+closelog_internal (void)
 {
   if (!connected)
     return;
@@ -436,7 +436,7 @@ closelog_internal()
 }
 
 void
-closelog ()
+closelog (void)
 {
   /* Protect against multiple users and cancellation.  */
   __libc_cleanup_push (cancel_handler, NULL);

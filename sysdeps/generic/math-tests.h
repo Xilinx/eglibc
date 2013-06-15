@@ -40,3 +40,39 @@
 #ifndef SNAN_TESTS_TYPE_CAST
 # define SNAN_TESTS_TYPE_CAST	1
 #endif
+
+/* Indicate whether to run tests involving a given rounding mode for a
+   given floating-point type, given that fesetround succeeds for that
+   mode.  All are run if fesetround succeeds unless overridden.  */
+#ifndef ROUNDING_TESTS_float
+# define ROUNDING_TESTS_float(MODE)	1
+#endif
+#ifndef ROUNDING_TESTS_double
+# define ROUNDING_TESTS_double(MODE)	1
+#endif
+#ifndef ROUNDING_TESTS_long_double
+# define ROUNDING_TESTS_long_double(MODE)	1
+#endif
+
+#define ROUNDING_TESTS(TYPE, MODE)					\
+  (sizeof (TYPE) == sizeof (float) ? ROUNDING_TESTS_float (MODE)	\
+   : sizeof (TYPE) == sizeof (double) ? ROUNDING_TESTS_double (MODE)	\
+   : ROUNDING_TESTS_long_double (MODE))
+
+/* Indicate whether to run tests of floating-point exceptions for a
+   given floating-point type, given that the exception macros are
+   defined.  All are run unless overridden.  */
+#ifndef EXCEPTION_TESTS_float
+# define EXCEPTION_TESTS_float	1
+#endif
+#ifndef EXCEPTION_TESTS_double
+# define EXCEPTION_TESTS_double	1
+#endif
+#ifndef EXCEPTION_TESTS_long_double
+# define EXCEPTION_TESTS_long_double	1
+#endif
+
+#define EXCEPTION_TESTS(TYPE)					\
+  (sizeof (TYPE) == sizeof (float) ? EXCEPTION_TESTS_float	\
+   : sizeof (TYPE) == sizeof (double) ? EXCEPTION_TESTS_double	\
+   : EXCEPTION_TESTS_long_double)

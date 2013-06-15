@@ -1,3 +1,47 @@
+2013-06-13  Siddhesh Poyarekar  <siddhesh@redhat.com>
+	    Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #15618]
+	* tst-pthread-attr-affinity: New test case.
+	* Makefile (tests): Add it.
+	* sysdeps/unix/sysv/linux/pthread_attr_getaffinity.c
+	(__pthread_attr_getaffinity_new): Copy minimum of source and
+	destination sizes to avoid a buffer overrun.
+
+2013-06-10  Carlos O'Donell  <carlos@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/lowlevellock.h
+	(lll_futex_wake): Return syscall error.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h
+	(lll_futex_wake): Return syscall error.
+
+2013-08-06   Ondřej Bílka  <neleai@seznam.cz>
+
+	* sysdeps/pthread/allocalim.h: (__libc_use_alloca): Fix warning.
+
+2013-06-06   Ondřej Bílka  <neleai@seznam.cz>
+
+	* tst-cond22.c: Fix leading whitespaces.
+	* tst-umask1.c: Likewise.
+
+2013-06-06  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_barrier_wait.S: Remove
+	trailing whitespace.
+	* sysdeps/unix/sysv/linux/powerpc/pt-longjmp.c: Likewise.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_barrier_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_broadcast.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_signal.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_once.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_rdlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_unlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/lowlevellock.h: Likewise.
+	* tst-mutexpp10.c: Likewise.
+	* tst-stackguard1.c: Likewise.
+
 2013-05-31  Joseph Myers  <joseph@codesourcery.com>
 
 	* Makefile ($(objpfx)libpthread.so): Remove dependencies on libc

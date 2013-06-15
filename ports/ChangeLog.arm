@@ -1,3 +1,33 @@
+2013-06-14  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15492]
+	* sysdeps/arm/fpu_control.h [_LIBC || !__SOFTFP__]
+	(_FPU_RESERVED): Change value to 0x00086060.
+
+2013-06-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/arm/math-tests.h [__SOFTFP__] (EXCEPTION_TESTS_float):
+	Define to 0.
+	[__SOFTFP__] (EXCEPTION_TESTS_double): Likewise.
+	[__SOFTFP__] (EXCEPTION_TESTS_long_double): Likewise.
+
+2013-06-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/arm/math-tests.h: New file.
+
+2013-06-05  Richard Henderson  <rth@redhat.com>
+
+	[BZ #15583]
+	* sysdeps/arm/armv6/strcpy.S (strcpy): Fix register usage in
+	non ARCH_HAS_T2 case.
+
+2013-06-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/arm/machine-gmon.h: Remove trailing whitespace.
+	* sysdeps/unix/sysv/linux/arm/mmap.S: Likewise.
+	* sysdeps/unix/sysv/linux/arm/nptl/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/arm/swapcontext.S: Likewise.
+
 2013-05-31  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/arm/Makefile [$(subdir) = malloc]

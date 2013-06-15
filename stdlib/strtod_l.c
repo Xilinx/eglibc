@@ -989,7 +989,7 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
 		/* The exponent is too large/small to represent a valid
 		   number.  */
 		{
-	 	  FLOAT result;
+		  FLOAT result;
 
 		  /* We have to take care for special situation: a joker
 		     might have written "0.0e100000" which is in fact
@@ -1188,10 +1188,9 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
      really integer digits or belong to the fractional part; i.e. we normalize
      123e-2 to 1.23.  */
   {
-    register intmax_t incr = (exponent < 0
-			      ? MAX (-(intmax_t) int_no, exponent)
-			      : MIN ((intmax_t) dig_no - (intmax_t) int_no,
-				     exponent));
+    intmax_t incr = (exponent < 0
+		     ? MAX (-(intmax_t) int_no, exponent)
+		     : MIN ((intmax_t) dig_no - (intmax_t) int_no, exponent));
     int_no += incr;
     exponent -= incr;
   }
@@ -1512,7 +1511,7 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
 #define got_limb							      \
 	      if (bits == 0)						      \
 		{							      \
-		  register int cnt;					      \
+		  int cnt;						      \
 		  if (quot == 0)					      \
 		    cnt = BITS_PER_MP_LIMB;				      \
 		  else							      \
@@ -1664,7 +1663,7 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
 	  if (numsize < densize)
 	    {
 	      mp_size_t empty = densize - numsize;
-	      register int i;
+	      int i;
 
 	      if (bits <= 0)
 		exponent -= empty * BITS_PER_MP_LIMB;
@@ -1692,7 +1691,7 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
 		      used = MANT_DIG - bits;
 		      if (used >= BITS_PER_MP_LIMB)
 			{
-			  register int i;
+			  int i;
 			  (void) __mpn_lshift (&retval[used
 						       / BITS_PER_MP_LIMB],
 					       retval,

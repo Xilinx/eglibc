@@ -125,6 +125,7 @@
 #include <string.h>
 #include <argp.h>
 #include <tininess.h>
+#include <math-tests.h>
 
 /* Structure for ulp data for a test, a function, or the real or
    imaginary part of a function.  */
@@ -590,33 +591,37 @@ test_single_exception (const char *test_name,
 static void
 test_exceptions (const char *test_name, int exception)
 {
-  ++noExcTests;
+  if (EXCEPTION_TESTS (FLOAT))
+    {
+      ++noExcTests;
 #ifdef FE_DIVBYZERO
-  if ((exception & DIVIDE_BY_ZERO_EXCEPTION_OK) == 0)
-    test_single_exception (test_name, exception,
-			   DIVIDE_BY_ZERO_EXCEPTION, FE_DIVBYZERO,
-			   "Divide by zero");
+      if ((exception & DIVIDE_BY_ZERO_EXCEPTION_OK) == 0)
+	test_single_exception (test_name, exception,
+			       DIVIDE_BY_ZERO_EXCEPTION, FE_DIVBYZERO,
+			       "Divide by zero");
 #endif
 #ifdef FE_INVALID
-  if ((exception & INVALID_EXCEPTION_OK) == 0)
-    test_single_exception (test_name, exception, INVALID_EXCEPTION, FE_INVALID,
-			 "Invalid operation");
+      if ((exception & INVALID_EXCEPTION_OK) == 0)
+	test_single_exception (test_name, exception,
+			       INVALID_EXCEPTION, FE_INVALID,
+			       "Invalid operation");
 #endif
 #ifdef FE_OVERFLOW
-  if ((exception & OVERFLOW_EXCEPTION_OK) == 0)
-    test_single_exception (test_name, exception, OVERFLOW_EXCEPTION,
-			   FE_OVERFLOW, "Overflow");
+      if ((exception & OVERFLOW_EXCEPTION_OK) == 0)
+	test_single_exception (test_name, exception, OVERFLOW_EXCEPTION,
+			       FE_OVERFLOW, "Overflow");
 #endif
 #ifdef FE_UNDERFLOW
-  if ((exception & UNDERFLOW_EXCEPTION_OK) == 0)
-    test_single_exception (test_name, exception, UNDERFLOW_EXCEPTION,
-			   FE_UNDERFLOW, "Underflow");
+      if ((exception & UNDERFLOW_EXCEPTION_OK) == 0)
+	test_single_exception (test_name, exception, UNDERFLOW_EXCEPTION,
+			       FE_UNDERFLOW, "Underflow");
 #endif
 #ifdef FE_INEXACT
-  if ((exception & (INEXACT_EXCEPTION | NO_INEXACT_EXCEPTION)) != 0)
-    test_single_exception (test_name, exception, INEXACT_EXCEPTION,
-			   FE_INEXACT, "Inexact");
+      if ((exception & (INEXACT_EXCEPTION | NO_INEXACT_EXCEPTION)) != 0)
+	test_single_exception (test_name, exception, INEXACT_EXCEPTION,
+			       FE_INEXACT, "Inexact");
 #endif
+    }
   feclearexcept (FE_ALL_EXCEPT);
 }
 
@@ -1085,16 +1090,20 @@ struct test_fFF_11_data
 #define IF_ROUND_INIT_	/* Empty.  */
 #define IF_ROUND_INIT_FE_DOWNWARD		\
   int save_round_mode = fegetround ();		\
-  if (fesetround (FE_DOWNWARD) == 0)
+  if (ROUNDING_TESTS (FLOAT, FE_DOWNWARD)	\
+      && fesetround (FE_DOWNWARD) == 0)
 #define IF_ROUND_INIT_FE_TONEAREST		\
   int save_round_mode = fegetround ();		\
-  if (fesetround (FE_TONEAREST) == 0)
+  if (ROUNDING_TESTS (FLOAT, FE_TONEAREST)	\
+      && fesetround (FE_TONEAREST) == 0)
 #define IF_ROUND_INIT_FE_TOWARDZERO		\
   int save_round_mode = fegetround ();		\
-  if (fesetround (FE_TOWARDZERO) == 0)
+  if (ROUNDING_TESTS (FLOAT, FE_TOWARDZERO)	\
+      && fesetround (FE_TOWARDZERO) == 0)
 #define IF_ROUND_INIT_FE_UPWARD			\
   int save_round_mode = fegetround ();		\
-  if (fesetround (FE_UPWARD) == 0)
+  if (ROUNDING_TESTS (FLOAT, FE_UPWARD)		\
+      && fesetround (FE_UPWARD) == 0)
 #define ROUND_RESTORE_	/* Empty.  */
 #define ROUND_RESTORE_FE_DOWNWARD		\
   fesetround (save_round_mode)

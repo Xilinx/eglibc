@@ -53,7 +53,7 @@
 #define outchar(ch)							      \
   do									      \
     {									      \
-      register const int outc = (ch);					      \
+      const int outc = (ch);						      \
       if (putc (outc, fp) == EOF)					      \
 	return -1;							      \
       ++done;								      \
@@ -62,7 +62,7 @@
 #define PRINT(ptr, wptr, len)						      \
   do									      \
     {									      \
-      register size_t outlen = (len);					      \
+      size_t outlen = (len);						      \
       if (wide)								      \
 	while (outlen-- > 0)						      \
 	  outchar (*wptr++);						      \
@@ -397,7 +397,7 @@ __printf_fphex (FILE *fp,
 		{
 		  wnumstr[cnt] = (wchar_t) info->spec;
 		  numstr[cnt] = info->spec;	/* This is tricky,
-		  				   think about it!  */
+						   think about it!  */
 		  break;
 		}
 	      else if (tolower (ch) < 'f')

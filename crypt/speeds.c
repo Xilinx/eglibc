@@ -12,13 +12,13 @@
 #include <stdio.h>
 
 #ifndef SIGVTALRM
-/* 
+/*
  * patch from chip@chinacat.unicom.com (Chip Rosenthal):
  * you may enable it if your system does not include
  * a setitimer() function. You'll have to ensure the
  * existence a environment variable: HZ giving how many
  * ticks goes per second.
- * If not existing in your default environment 50, 60 
+ * If not existing in your default environment 50, 60
  * or even 100 may be the right value. Perhaps you should
  * then use 'time ./ufc 10000' instead of guessing.
  */
@@ -42,7 +42,7 @@ struct tms tstart, tfinish;
 char *crypt(), *fcrypt();
 
 void
-Stop ()
+Stop (void)
 {
     double elapsed;
 #ifdef NO_ITIMER
@@ -76,7 +76,7 @@ static void clearmem(start, cnt)
       *start++ = '\0';
   }
 
-main ()
+main (void)
 {
    char *s;
 #ifdef NO_ITIMER
