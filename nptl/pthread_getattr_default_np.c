@@ -1,7 +1,6 @@
-/* Set current rounding direction.
-   Copyright (C) 1997-2013 Free Software Foundation, Inc.
+/* Get the default attributes used by pthread_create in the process.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,16 +16,22 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <pthreadP.h>
+#include <assert.h>
 
 int
-fesetround (int round)
+pthread_getattr_default_np (pthread_attr_t *out)
 {
-#ifdef FE_TONEAREST
-  return (round == FE_TONEAREST) ? 0 : 1;
-#else
-  return 1;	/* Signal we are unable to set the direction.  */
-#endif
+  struct pthread_attr *real_out;
+
+  assert (sizeof (*out) >= sizeof (struct pthread_attr));
+  real_out = (struct pthread_attr *) out;
+
+  lll_lock (__default_pthread_attr_lock, LLL_PRIVATE);
+  *real_out = __default_pthread_attr;
+  lll_unlock (__default_pthread_attr_lock, LLL_PRIVATE);
+
+  return 0;
 }
-libm_hidden_def (fesetround)
-stub_warning (fesetround)

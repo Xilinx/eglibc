@@ -1,3 +1,134 @@
+2013-06-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/libc_fatal.c: Include <string.h>.
+
+	[BZ #15667]
+	* soft-fp/op-4.h (__FP_FRAC_ADD_3): Rename variables _c1 and _c2
+	to __FP_FRAC_ADD_3_c1 and __FP_FRAC_ADD_3_c2.
+
+2013-06-21  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* elf/dl-dst.h (DL_DST_REQUIRED): Remove call to
+	DL_DST_REQ_STATIC.
+	(DL_DST_REQ_STATIC): Remove macro.
+
+2013-06-21  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #7006]
+	* soft-fp/op-common.h (_FP_FROM_INT): Do not call _FP_FRAC_SLL
+	with a shift of 0 bits.
+
+2013-06-21  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* dlfcn/Makefile (tststatic2-ENV): Redefine in terms of
+	$(tststatic-ENV).
+
+2013-06-21  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	[BZ #15655]
+	* sysdeps/sh/sh4/fpu/fgetexcptflg.c: New file.
+
+2013-06-20  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* config.h.in (HAVE_CC_INHIBIT_LOOP_TO_LIBCALL): New define.
+	* configure.in (libc_cv_cc_loop_to_function): Check if compiler
+	accepts -fno-tree-loop-distribute-patterns.
+	* include/libc-symbols.h (inhibit_loop_to_libcall): New macro.
+	* string/memmove.c (MEMMOVE): Disable loop transformation to avoid
+	recursive call.
+	* string/memset.c (memset): Likewise.
+	* string/test-memmove.c (simple_memmove): Disable loop transformation
+	to library calls.
+	* string/test-memset.c (simple_memset): Likewise.
+	* benchtests/bench-memmove.c (simple_memmove): Likewise.
+	* benchtests/bench-memset.c (simple_memset): Likewise.
+	* configure: Regenerated.
+
+2013-06-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/test-misc.c (main): Ignore fesetround failure when failures
+	of subsequent rounding tests would be ignored.
+
+	[BZ #15654]
+	* math/fedisblxcpt.c (fedisableexcept): Return 0.
+	* math/feenablxcpt.c (feenableexcept): Return 0 for argument 0.
+	* math/fegetenv.c (__fegetenv): Return 0.
+	* math/fegetexcept.c (fegetexcept): Return 0.
+	* math/fegetround.c (fegetround) [FE_TONEAREST]: Return
+	FE_TONEAREST.
+	* math/feholdexcpt.c (feholdexcept): Return 0.
+	* math/fesetenv.c (__fesetenv): Return 0.
+	* math/fesetround.c (fesetround) [FE_TONEAREST]: Return 0 for
+	argument FE_TONEAREST.
+	* math/feupdateenv.c (__feupdateenv): Return 0.
+	* math/fgetexcptflg.c (__fegetexceptflag): Return 0.
+
+2013-06-18  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/rtld-Rules (rtld-compile-command.S): New variable.
+	(rtld-compile-command.s, rtld-compile-command.c): New variables.
+	($(objpfx)rtld-%.os rules): Use them.
+
+2013-06-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/powerpc/tls.h (tcbhead_t): Add Event-Based Branch
+	fields.
+
+2013-06-17  Roland McGrath  <roland@hack.frob.com>
+
+	* scripts/sysd-rules.awk: Sort sysd_rules_patterns by descending
+	length of target pattern, then descending length of dependency pattern.
+	* configure.in (AWK): Require gawk 3.1.2 or newer.
+	* manual/install.texi (Tools for Compilation): Say that we do.
+	* configure: Regenerated.
+
+	* Makerules [inhibit-sysdep-asm] (check-inhibit-asm): Variable removed.
+	($(common-objpfx)sysd-rules): Replace shell logic with running ...
+	* scripts/sysd-rules.awk: ... this new script.
+	* sysdeps/mach/hurd/Makefile (inhibit-sysdep-asm): Use a regexp rather
+	than a glob-style pattern.
+
+2013-06-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/test-misc.c (main): Do not treat incorrectly rounded
+	conversions as failure unless ROUNDING_TESTS passes.
+
+2013-06-15  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #15631]
+	* sysdeps/ieee754/dbl-64/e_sqrt.c (__ieee754_sqrt): Save and
+	restore exception state around main square root computation, then
+	check for inexactness explicitly.
+
+	* math/libm-test.inc (fma_test_data): Add another test.
+
+2013-06-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* manual/threads.texi (Non-POSIX Extensions): New document
+	node.  Document pthread_getattr_default_np and
+	pthread_setattr_default_np.
+
+	* Versions.def (libpthread): Add GLIBC_2.18.
+	* sysdeps/unix/sysv/linux/i386/nptl/libpthread.abilist: Update.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-32/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sh/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/64/nptl/libpthread.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/x32/nptl/libpthread.abilist:
+	Likewise.
+
 2013-06-14  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
 
 	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
