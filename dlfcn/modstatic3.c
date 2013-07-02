@@ -1,6 +1,6 @@
-/* Copyright (C) 2011-2013 Free Software Foundation, Inc.
+/* DSO used for dlopen testing with a static executable.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,14 +13,19 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
+unsigned int foo;
 
-int
-fesetround (int round)
+unsigned int
+getfoo (void)
 {
-  return (round == FE_TONEAREST) ? 0 : 1;
+  return foo;
 }
-libm_hidden_def (fesetround)
+
+void
+setfoo (unsigned int f)
+{
+  foo = f;
+}

@@ -20,17 +20,27 @@
 #define _DL_PROCINFO_H 1
 
 #include <ldsodefs.h>
-#include <sysdep.h>	/* This defines the PPC_FEATURE_* macros.  */
+#include <sysdep.h>	/* This defines the PPC_FEATURE[2]_* macros.  */
 
 /* There are 25 bits used, but they are bits 7..31.  */
 #define _DL_HWCAP_FIRST		7
-#define _DL_HWCAP_COUNT		32
+
+/* The total number of available bits (including those prior to
+   _DL_HWCAP_FIRST).  Some of these bits might not be used.  */
+#define _DL_HWCAP_COUNT		64
+
+/* Features started at bit 31 and decremented as new features were added.  */
+#define _DL_HWCAP_LAST		31
+
+/* AT_HWCAP2 features started at bit 31 and decremented as new features were
+   added.  HWCAP2 feature bits start at bit 0.  */
+#define _DL_HWCAP2_LAST		31
 
 /* These bits influence library search.  */
 #define HWCAP_IMPORTANT		(PPC_FEATURE_HAS_ALTIVEC \
 				+ PPC_FEATURE_HAS_DFP)
 
-#define _DL_PLATFORMS_COUNT	13
+#define _DL_PLATFORMS_COUNT	14
 
 #define _DL_FIRST_PLATFORM	32
 /* Mask to filter out platforms.  */
@@ -51,6 +61,7 @@
 #define PPC_PLATFORM_PPC440		10
 #define PPC_PLATFORM_PPC464		11
 #define PPC_PLATFORM_PPC476		12
+#define PPC_PLATFORM_POWER8		13
 
 static inline const char *
 __attribute__ ((unused))
@@ -111,6 +122,9 @@ _dl_string_platform (const char *str)
 	case '7':
 	  ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER7;
 	  break;
+	case '8':
+	  ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER8;
+	  break;
 	default:
 	  return -1;
 	}
@@ -155,16 +169,35 @@ _dl_string_platform (const char *str)
 #ifdef IS_IN_rtld
 static inline int
 __attribute__ ((unused))
-_dl_procinfo (int word)
+_dl_procinfo (unsigned int type, unsigned long int word)
 {
-  _dl_printf ("AT_HWCAP:       ");
+  switch(type)
+    {
+    case AT_HWCAP:
+      _dl_printf ("AT_HWCAP:       ");
 
-  for (int i = _DL_HWCAP_FIRST; i < _DL_HWCAP_COUNT; ++i)
-    if (word & (1 << i))
-      _dl_printf (" %s", _dl_hwcap_string (i));
+      for (int i = _DL_HWCAP_FIRST; i <= _DL_HWCAP_LAST; ++i)
+       if (word & (1 << i))
+         _dl_printf (" %s", _dl_hwcap_string (i));
+      break;
+    case AT_HWCAP2:
+      {
+       unsigned int offset = _DL_HWCAP_LAST + 1;
 
-  _dl_printf ("\n");
+       _dl_printf ("AT_HWCAP2:      ");
 
+        /* We have to go through them all because the kernel added the
+          AT_HWCAP2 features starting with the high bits.  */
+       for (int i = 0; i <= _DL_HWCAP2_LAST; ++i)
+         if (word & (1 << i))
+           _dl_printf (" %s", _dl_hwcap_string (offset + i));
+       break;
+      }
+    default:
+      /* This should not happen.  */
+      return -1;
+    }
+   _dl_printf ("\n");
   return 0;
 }
 #endif

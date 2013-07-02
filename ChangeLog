@@ -1,3 +1,196 @@
+2013-06-28  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features): Set
+	bit_Slow_SSE4_2 and bit_Prefer_PMINUB_for_stringop for Intel
+	Silvermont.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_Slow_SSE4_2): New
+	macro.
+	(index_Slow_SSE4_2): Likewise.
+	(index_Prefer_PMINUB_for_stringop): Likewise.
+	* sysdeps/x86_64/multiarch/strchr.S: Skip SSE4.2 version if
+	bit_Slow_SSE4_2 is set.
+	* sysdeps/x86_64/multiarch/strcmp.S: Likewise.
+	* sysdeps/x86_64/multiarch/strrchr.S: Likewise.
+
+2013-06-28  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/Makefile: Add comment about generating an offset to
+	rtld_global._dl_hwcap2.
+	* sysdeps/powerpc/bits/hwcap.h: Added PPC_FEATURE2_* definitions for
+	POWER8.
+	* sysdeps/powerpc/dl-procinfo.c (_dl_powerpc_cap_flags): Extend for
+	POWER8 feature descriptions defined in _dl_hwcap2.
+	* sysdeps/powerpc/dl-procinfo.h (_dl_procinfo): Implement AT_HWCAP2
+	string handling for POWER8 feature bits.
+	(_DL_HWCAP_COUNT): Increment to 64 to cover AT_HWCAP2 bits.
+	(_DL_HWCAP_LAST): New definition for position of last AT_HWCAP bit in
+	_dl_powerpc_cap_flags.
+	(_DL_HWCAP2_LAST): New definition for last usable bit of AT_HWCAP2.
+	* sysdeps/powerpc/rtld-global-offsets.sym
+	(RTLD_GLOBAL_RO_DL_HWCAP2_OFFSET): New offset macro to locate
+	_dl_hwcap2 in the rtld_global_ro structure.
+
+2013-06-28  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* elf/dl-support.c (_dl_hwcap2): Add a new hwcap field for more
+	hardware capabilities in support of AT_HWCAP2.
+	(_dl_aux_init): Read AT_HWCAP2 into GLRO(dl_hwcap2).
+	* elf/dl-sysdep.c (_dl_sysdep_start): Read AT_HWCAP2 into
+	GLRO(dl_hwcap2).
+	(_dl_show_auxv): Add support for calling _dl_procinfo to display
+	AT_HWCAP2.  If a platform doesn't chose to handle displaying AT_HWCAP2
+	explicitly the unknown a_type display mechanism is used.
+	* misc/getauxval.c (__getauxval): Return GLRO(dl_hwcap2) on AT_HWCAP2.
+	* sysdeps/generic/ldsodefs.h (rtld_global_ro): Add _dl_hwcap2 as a new
+	struct member.
+	* sysdeps/generic/dl-procinfo.h (_dl_procinfo): Add TYPE parameter
+	to macro prototype for AT_HWCAP2 support.
+	* sysdeps/i386/dl-procinfo.h: Likewise.
+	* sysdeps/s390/dl-procinfo.h: Likewise.
+	* sysdeps/powerpc/dl-procinfo.h (_dl_procinfo): Add TYPE parameter to
+	macro prototype for AT_HWCAP2 support.  Make WORD unsigned long int
+	rather than signed int.  Stub in handler for TYPE == AT_HWCAP2 to
+	return -1 for unknown a_type display fallback.
+	* sysdeps/sparc/dl-procinfo.h: Likewise.
+	* sysdeps/unix/sysv/linux/i386/dl-procinfo.h: Likewise.
+	* sysdeps/unix/sysv/linux/s390/dl-procinfo.h: Likewise.
+
+2013-06-28  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mmap64.c (__mmap64): Shift by page_shift
+	instead of MMAP2_PAGE_SHIFT in call to INLINE_SYSCALL.
+
+2013-06-28  Pierre Ynard  <linkfanel@yahoo.fr>
+
+	[BZ #12492]
+	* elf/dl-load.c (_dl_map_object_from_fd): Test for failure of
+	mprotect making __stack_prot writable.
+
+2013-06-28  Nathan Froyd  <froydnj@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/dl-profile.c (struct here_cg_arc_record): Declare 'count'
+	as being properly aligned.
+
+2013-06-28  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	* dlfcn/modstatic5.c: New file.
+	* dlfcn/tststatic5.c: New file.
+	* dlfcn/Makefile (tests): Add tststatic5.
+	(tests-static): Likewise.
+	(modules-names): Add modstatic5.
+	(tststatic5-ENV): New variable.
+	($(objpfx)tststatic5, $(objpfx)tststatic5.out): New dependencies.
+
+	[BZ #15022]
+	* elf/dl-support.c (_dl_main_map): New variable.
+	(_dl_ns): Use it to initialize [LM_ID_BASE] element.
+	(_dl_nns, _dl_load_adds): Set to 1.
+	(_dl_initial_searchlist): Refer to _dl_main_map.
+	(_dl_non_dynamic_init): Initialize _dl_main_map.l_origin.
+	* elf/dl-load.c (_dl_dst_substitute) [!SHARED]: Remove fallback
+	call to _dl_get_origin.
+	* elf/dl-open.c (dl_open_worker): Remove !SHARED special casing
+	around call_map.
+	(_dl_open) [!SHARED]: Remove code to initialize GL(dl_nns).
+	* dlfcn/modstatic3.c: New file.
+	* dlfcn/tststatic3.c: New file.
+	* dlfcn/tststatic4.c: New file.
+	* dlfcn/Makefile (tests): Add tststatic3 and tststatic4.
+	(tests-static): Likewise.
+	(modules-names): Add modstatic3.
+	(tststatic3-ENV, tststatic4-ENV): New variables.
+	($(objpfx)tststatic3, $(objpfx)tststatic3.out): New dependencies.
+	($(objpfx)tststatic4, $(objpfx)tststatic4.out): Likewise.
+
+2013-06-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* configure.in (CC): Require GCC version 4.4 or later.
+	* configure: Regenerated.
+	* manual/install.texi (Tools for Compilation): Update GCC version
+	requirement.
+	* INSTALL: Regenerated.
+
+2013-06-26  Liubov Dmitrieva  <liubov.dmitrieva@intel.com>
+
+	[BZ #15674]
+	* string/test-memcmp.c (check2): New.
+	(main): Call check2.
+
+	* sysdeps/x86_64/multiarch/memcmp-ssse3.S: Fix buffers overrun.
+
+2013-06-26  Maciej W. Rozycki  <macro@codesourcery.com>
+
+	[BZ #15022]
+	* elf/dl-open.c (_dl_open) [!SHARED]: Move call to DL_STATIC_INIT
+	over to...
+	(dl_open_worker) [!SHARED]: ... here.
+
+2013-06-26  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* elf/elf.h (AT_HWCAP2): Add a new a_type entry.
+
+2013-06-25  Richard Henderson  <rth@redhat.com>
+
+	* locale/programs/locarchive.c: Include <libc-internal.h>
+
+2013-06-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* manual/texinfo.tex: Update to version 2013-06-21.17, with
+	trailing whitespace removed.
+
+2013-06-24  Mike Frysinger  <vapier@gentoo.org>
+
+	[BZ #10283]
+	* locale/locarchive.h (struct locarhandle): Add mmap_base and mmap_len.
+	* locale/programs/locarchive.c: Include libc-mmap.h.
+	(prepare_address_space): Take two new outputs (the mmap base and len).
+	Align p to MAP_FIXED_ALIGNMENT.  Set mmap base and len to the right
+	values.
+	(create_archive): Declare new mmap base and len values for
+	prepare_address_space, and store the result in ah.
+	(file_data_available_p): Replace pagesz with MAP_FIXED_ALIGNMENT.
+	(enlarge_archive): If ah->mmap_base is not NULL, use that and
+	ah->mmap_len to unmap rather than ah->addr and ah->reserved.
+	Declare new mmap base and len values for
+	prepare_address_space, and store the result in new_ah.
+	(open_archive): Declare new mmap base and len values for
+	prepare_address_space, and store the result in ah.
+	(close_archive): If ah->mmap_base is not NULL, use that and
+	ah->mmap_len to unmap rather than ah->addr and ah->reserved.
+	* sysdeps/generic/libc-mmap.h: New file.
+
+2013-06-24  Mike Frysinger  <vapier@gentoo.org>
+
+	* include/libc-internal.h (ALIGN_DOWN): New helper macro.
+	(ALIGN_UP): Likewise.
+	(PTR_ALIGN_DOWN): Likewise.
+	(PTR_ALIGN_UP): Likewise.
+
+2013-06-24  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dl-procinfo.c (_dl_powerpc_platforms): Add "power8"
+	entry mapped to PPC_PLATFORM_POWER8.
+	* sysdeps/powerpc/dl-procinfo.h (_DL_PLATFORMS_COUNT): Increment for
+	POWER8.
+	(PPC_PLATFORM_POWER8): Add new platform bit for POWER8 processor.
+	(_dl_string_platform): Add case for exporting platform position for
+	POWER8.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/power8/Implies: Chain
+	search path to sysdeps/powerpc/powerpc32/power8 directory.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/power8/Implies: Chain
+	search path to sysdeps/powerpc/powerpc64/power8 directory.
+	* sysdeps/powerpc/powerpc32/power8/Implies: Chain search path to
+	power7 directories.
+	* sysdeps/powerpc/powerpc64/power8/Implies: Chain search path to
+	power7 directories.
+
+2013-06-24  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* INSTALL: Regenerate.
+
+	* nscd/connections.c (nscd_init): Fix comment.
+
 2013-06-22  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/libc_fatal.c: Include <string.h>.

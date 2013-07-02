@@ -1,6 +1,6 @@
-/* Copyright (C) 2011-2013 Free Software Foundation, Inc.
+/* Internal logic for dealing with mmap quirks.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,15 +13,14 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
+#ifndef _LIBC_MMAP_H
+#define _LIBC_MMAP_H 1
 
-/* Tile has no exception flags, so this routine can be a no-op.  */
-int
-feholdexcept (fenv_t *envp)
-{
-  return 0;
-}
-libm_hidden_def (feholdexcept)
+/* Using MAP_FIXED with mmap sometimes requires larger alignment.  */
+#include <sys/shm.h>
+#define MAP_FIXED_ALIGNMENT SHMLBA
+
+#endif

@@ -1,6 +1,7 @@
-/* Copyright (C) 2011-2013 Free Software Foundation, Inc.
+/* DSO used for GLRO(dl_pagesize) initialization testing with a static
+   executable.
+   Copyright (C) 2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,15 +14,13 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
+#include <unistd.h>
 
-/* Tile has no exception flags, so this routine can be a no-op.  */
 int
-feupdateenv (const fenv_t *envp)
+my_getpagesize (void)
 {
-  return 0;
+  return getpagesize ();
 }
-libm_hidden_def (feupdateenv)

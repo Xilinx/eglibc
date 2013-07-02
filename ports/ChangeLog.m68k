@@ -1,3 +1,30 @@
+2013-06-30  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/m68k/dl-trampoline.S (FMOVE): Define conditional on
+	[__mcoldfire__] and [__mcffpu__].
+	(FPSPACE): Likewise.
+	(_dl_runtime_profile): Save and restore %fp0 with FMOVE, only if
+	[FMOVE].  Use FPSPACE in stack offsets.
+
+2013-06-28  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/m68k/fpu_control.h: Fix preprocessor indentation.
+
+2013-06-28  Nathan Sidwell  <nathan@codesourcery.com>
+
+	* sysdeps/m68k/fpu_control.h [__mcoldfire__ && !__mcffpu__]
+	(_FPU_RESERVED): Provide alternative definition.
+	[__mcoldfire__ && !__mcffpu__] (_FPU_DEFAULT): Likewise.
+	[__mcoldfire__ && !__mcffpu__] (_FPU_GETCW): Likewise.
+	[__mcoldfire__ && !__mcffpu__] (_FPU_SETCW): Likewise.
+	[!(__mcoldfire__ && !__mcffpu__)]: Make existing macro definitions
+	conditional.
+
+2013-06-25  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/sysdep.h (CALL_MCOUNT) [PROF]: Use %a6 instead of
+	%fp in cfi insns.
+
 2013-06-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
 
 	* sysdeps/unix/sysv/linux/m68k/coldfire/nptl/libpthread.abilist:
