@@ -1,5 +1,5 @@
 /* setjmp for PowerPC E500.
-   Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2004-2013 Free Software Foundation, Inc.
    Contributed by Aldy Hernandez <aldyh@redhat.com>.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -13,9 +13,8 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
 #define _ASM
@@ -24,12 +23,8 @@
 #else
 # include <jmpbuf-offsets.h>
 #endif
-#include <bp-sym.h>
-#include <bp-asm.h>
 
-ENTRY (BP_SYM (__sigsetjmp))
-	CHECK_BOUNDS_BOTH_WIDE_LIT (r3, r8, r9, JB_SIZE)
-
+ENTRY (__sigsetjmp)
 #ifdef PTR_MANGLE
 	mr   r5,r1
 	PTR_MANGLE(r5, r10)
@@ -103,6 +98,6 @@ ENTRY (BP_SYM (__sigsetjmp))
 	li   r3,0
 	blr
 #else
-	b BP_SYM (__sigjmp_save@local)
+	b __sigjmp_save@local
 #endif
-END (BP_SYM (__sigsetjmp))
+END (__sigsetjmp)
