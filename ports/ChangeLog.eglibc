@@ -1,3 +1,9 @@
+2013-07-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/e500/nptl/localplt.data,
+	sysdeps/unix/sysv/linux/powerpc/powerpc32/e500/single/nptl/localplt.data:
+	Mark abort and soft-fp symbols optional.
+
 2013-07-02  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/powerpc/powerpc32/e500/fpu/s_nearbyint.c,

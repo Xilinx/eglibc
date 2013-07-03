@@ -1,6 +1,6 @@
 libc.so: __signbit
 libc.so: __signbitl
-libc.so: abort
+libc.so: abort ?
 libc.so: calloc
 libc.so: free
 libc.so: malloc
