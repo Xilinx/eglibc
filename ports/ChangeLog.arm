@@ -1,3 +1,19 @@
+2013-07-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/arm/libm-test-ulps: Regenerated.
+
+	[BZ #13304]
+	* sysdeps/arm/s_fma.c: New file.
+	* sysdeps/arm/s_fmaf.c: New file.
+	* sysdeps/arm/soft-fp/sfp-machine.h: New file.  Based on powerpc
+	version.
+	* sysdeps/arm/Implies: Add arm/soft-fp.
+
+2013-07-02  Will Newton  <will.newton@linaro.org>
+
+	* sysdeps/arm/dl-machine.h (elf_machine_rela): Pass dl_hwcap
+	to IFUNC resolver functions.
+
 2013-06-28  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* sysdeps/unix/sysv/linux/arm/dl-procinfo.h (_dl_procinfo): Add

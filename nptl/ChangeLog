@@ -1,3 +1,74 @@
+2013-07-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/x86/init-arch.c: New file.
+	* sysdeps/unix/sysv/linux/x86/init-arch.h: Likewise.
+
+2013-07-02  Andi Kleen <ak@linux.intel.com>
+
+	* sysdeps/unix/sysv/linux/x86/elision-conf.c (elision_init):
+	  Check ENABLE_LOCK_ELISION.
+
+2013-07-02  Andi Kleen  <ak@linux.intel.com>
+
+	* pthread_mutexattr_settype.c (__pthread_mutexattr_settype):
+	  Disable elision for PTHREAD_MUTEX_DEFAULT.
+
+2013-07-02  Andi Kleen  <ak@linux.intel.com>
+	    Hongjiu Lu  <hongjiu.lu@intel.com>
+
+	* pthread_mutex_lock.c
+	(__pthread_mutex_lock): Add lock elision support.
+	* pthread_mutex_timedlock.c (pthread_mutex_timedlock): Likewise.
+	* pthread_mutex_trylock.c (__pthread_mutex_trylock): Likewise.
+	* pthread_mutex_unlock.c (__pthread_mutex_unlock_usercnt): Likewise.
+	* sysdeps/unix/sysv/linux/pthread_mutex_cond_lock.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/pthreadtypes.h: Likewise.
+	* sysdeps/unix/sysv/linux/x86/Makefile: New file.
+	* sysdeps/unix/sysv/linux/x86/force-elision.h: New file
+	* sysdeps/unix/sysv/linux/x86/pthread_mutex_cond_lock.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86/pthread_mutex_lock.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86/pthread_mutex_timedlock.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86/pthread_mutex_trylock.c: Likewise.
+	* sysdeps/unix/sysv/linux/x86/pthread_mutex_unlock.c: Likewise.
+
+2013-07-02  Andi Kleen  <ak@linux.intel.com>
+
+	* tst-mutex5.c: Include config.h.
+	  (do_test): Add checks for ENABLE_LOCK_ELISION.
+	* tst-mutex8.c: Include config.h
+	  (tf): Add checks for ENABLE_LOCK_ELISION.
+	  (check_type): Likewise.
+
+2013-07-02  Andi Kleen  <ak@linux.intel.com>
+
+	* pthreadP.h: Add elision types.
+	  (PTHREAD_MUTEX_TYPE_ELISION): Add.
+	* sysdeps/pthread/pthread.h: Add elision initializers.
+	  (PTHREAD_MUTEX_ELISION_NP, PTHREAD_MUTEX_NO_ELISION_NP,
+	   PTHREAD_MUTEX_PSHARED_NP): Add new flags.
+	  (__PTHREAD_SPINS): Add.
+
+2013-07-02  Andi Kleen  <ak@linux.intel.com>
+	    Hongjiu Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/unix/sysv/linux/i386/lowlevellock.h (__lll_timedwait_tid,
+	  lll_timedlock_elision, __lll_lock_elision, __lll_unlock_elision,
+	  __lll_trylock_elision, lll_lock_elision, lll_unlock_elision,
+	  lll_trylock_elision): Add.
+	* sysdeps/unix/sysv/linux/x86/Makefile: Imply x86.
+	* sysdeps/unix/sysv/linux/x86/elision-conf.c: New file.
+	* sysdeps/unix/sysv/linux/x86/elision-conf.h: New file.
+	* sysdeps/unix/sysv/linux/x86/elision-lock.c: New file.
+	* sysdeps/unix/sysv/linux/x86/elision-timed.c: New file.
+	* sysdeps/unix/sysv/linux/x86/elision-trylock.c: New file.
+	* sysdeps/unix/sysv/linux/x86/elision-unlock.c: New file.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h (__lll_timedwait_tid,
+	  lll_timedlock_elision, __lll_lock_elision, __lll_unlock_elision,
+	  __lll_trylock_elision, lll_lock_elision, lll_unlock_elision,
+	  lll_trylock_elision): Add.
+	* nptl/sysdeps/unix/sysv/linux/x86/hle.h: New file.
+	* elision-conf.h: New file.
+
 2013-06-24  Vladimir Nikulichev  <v.nikulichev@gmail.com>
 
 	[BZ #12310]
