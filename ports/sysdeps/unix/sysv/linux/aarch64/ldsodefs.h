@@ -1,5 +1,5 @@
-/* Private jmp_buf-related definitions.  ARM EABI version.
-   Copyright (C) 2013 Free Software Foundation, Inc.
+/* Run-time dynamic linker data structures for loaded ELF shared objects. Tile.
+   Copyright (C) 2001-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -13,24 +13,20 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#ifndef _INCLUDE_BITS_SETJMP_H
-#define _INCLUDE_BITS_SETJMP_H 1
+#ifndef	_LDSODEFS_H
 
-#ifndef __ASSEMBLER__
-/* Get the public declarations.  */
-# include <sysdeps/arm/bits/setjmp.h>
-#endif
+/* Get the real definitions.  */
+#include_next <ldsodefs.h>
 
-#ifndef _ISOMAC
-/* Register list for a ldm/stm instruction to load/store
-   the general registers from a __jmp_buf.  */
-# define JMP_BUF_REGLIST	{v1-v6, sl, fp, sp, lr}
+/* Now define our stuff.  */
 
-/* Index of __jmp_buf where the sp register resides.  */
-# define __JMP_BUF_SP		8
-#endif
+/* We need special support to initialize DSO loaded for statically linked
+   binaries.  */
+extern void _dl_static_init (struct link_map *map);
+#undef DL_STATIC_INIT
+#define DL_STATIC_INIT(map) _dl_static_init (map)
 
-#endif  /* include/bits/setjmp.h */
+#endif /* ldsodefs.h */
